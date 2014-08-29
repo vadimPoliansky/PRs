@@ -43,7 +43,7 @@
     <td rowspan="2", class="prHeader1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
     </tr>
 
-    <tr class="prHeader2">
+    <tr class="prHeader2 prHeaderFinal">
     <td rowspan="1", class="prHeader2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
     <td rowspan="1", class="prHeader2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
     <td rowspan="1", class="prHeader2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
@@ -51,7 +51,7 @@
     <td rowspan="1", class="prHeader2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
     </tr>
     @{var numCount = 1;}
-    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => y.Indicator.Analyst_ID == @Model.Analyst_ID)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
         <tr areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
         <td class="prArea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
@@ -84,9 +84,9 @@
             <td indicatorID="@map.Indicator_ID" field="Indicator" class="prRowTitle">@indicatorTitle
             @{int j = 0;}
             @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
-            {
+            {   
                 if (j != 0)
-                { Html.Raw(","); }
+                { Html.Raw(','); }
                 <sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
                 j++;
                 if (!footnotes.Contains(footnote.Footnote)){
@@ -169,7 +169,7 @@
     </tr>
 
     @{numCount = 1;}
-    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => y.Indicator.Analyst_ID == @Model.Analyst_ID)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
         <tr areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
         <td class="prArea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
@@ -262,6 +262,7 @@
             var field = e.target.attributes.getNamedItem('field');
             var currentEle = $(this);
             e.stopPropagation();
+            console.trace()
 
             $.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
                 var value = data.Value || "";
@@ -326,13 +327,19 @@
                                     '" value="' + value2 + 
                                     '" class="thVal2" rows="1">' + value2 +
                                     '</textarea>' +
-                                '<a class="thButton" id="editFootnotes"><h5>Edit Footnotes for this indicator</h5></button>'
+                                @*'<a class="thButton" id="editFootnotes"><h5>Edit Footnotes for this indicator</h5></button>'*@
+                                '<textarea id="newEdit" indicatorID ="' + indicatorID.value + 
+                                    '" value="' + value2 + 
+                                    '" class="thFootnotes" rows="1">' + value2 +
+                                    '</textarea>'
                                 );
             if (field.value === "Indicator"){
                 $('.thVal2').hide();
+                $('.thFootnotes').show();
                 $('.thButton').show();
             } else {
                 $('.thVal2').show();
+                $('.thFootnotes').hide();
                 $('.thButton').hide();
             }
             $(".thVal").focus();
@@ -342,24 +349,27 @@
                 }
             });
 
-            $(".thButton").click(function(e){
+            @*$(".thButton").click(function(e){
                 var params = [
                     'height='+screen.height,
                     'width='+screen.width,
                     'fullscreen=yes' // only works in IE, but here for completeness
                 ].join(',');
                 window.open('editFootnoteMaps?fiscalYear=' + @Model.Fiscal_Year + '&indicatorID=' + indicatorID.value,'popup_window',params);
-            });
+            });*@
+
+
 
             $('body').unbind("click").click(function (evt) {
                 if (evt.target.id == "newEdit" || evt.target.id == "newEdit2" || evt.target.id == "editFootnotes") return;
                 var colorElement = $(currentEle);
+                var prop = $('.thVal').attr('field');
                 //var indicatorID = document.getElementById('newEdit').getAttribute('indica
                 var parameters = {
                     indicatorID: $('.thVal').attr('indicatorID'),
-                    updateProperty: $('.thVal').attr('field'),
+                    updateProperty: prop,
                     updateValue: $('.thVal').val().trim(),
-                    updateValueSup: $('.thVal2').val().trim(),
+                    updateValueSup: prop !== 'Indicator' ? $('.thVal2').val().trim() : $('.thFootnotes').val().trim(),
                     fiscalYear: @Model.Fiscal_Year,
                 };
                 $.ajax({
@@ -375,7 +385,11 @@
                     error: function (request){
                     }
                 });
-                $(currentEle).html($(".thVal").val().trim() + "<sup>" + $(".thVal2").val().trim() + "</sup>");
+                if (prop !== 'Indicator'){
+                    $(currentEle).html($(".thVal").val().trim() + "<sup>" + $(".thVal2").val().trim() + "</sup>");
+                } else if (prop === 'Indicator') {
+                    $(currentEle).html($(".thVal").val().trim() + "<sup>" + $(".thFootnotes").val().trim() + "</sup>");
+                }
                 currentEle = null;
             });
         }
@@ -459,9 +473,8 @@
     });
 </script>
 
-
+@if (ViewBag.PRCols != null){
 <script>
-
     $(function(){
         $('#the-node').contextMenu({
             selector: 'td', 
@@ -519,6 +532,8 @@
 
                     }
                 },
+                insBExs: {name: "Insert Existing Indicator Below",
+                },
                 "foldDelete": {
                     "name": "Remove Indicator",
                     "items": {
@@ -531,7 +546,7 @@
                             },
                         }
                     }
-                }
+                },
             }
         });
 
@@ -542,18 +557,24 @@
                 if (row.prev().attr("mapID")){
                     row.insertBefore(row.prev());
                     $.post("moveCoEMapUp",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear});
+                }else if (!row.prev().prev().hasClass("prHeaderFinal")){
+                    row.insertBefore(row.prev());
+                    $.post("moveCoEMapUp",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: -1});
                 }
             } else {
+                console.log(row.next());
                 if (row.next().attr("mapID")){
                     row.insertAfter(row.next());
                     $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear});
+                }else if (row.next().length !== 0){
+                    row.insertAfter(row.next());
+                    $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: 1});
                 }
             }
         });
     });
-    
-
 </script>
+}
 
 <style>
 .prHeader1

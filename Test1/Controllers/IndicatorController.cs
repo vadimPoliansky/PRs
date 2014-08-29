@@ -735,42 +735,127 @@ namespace IndInv.Controllers
             db.SaveChanges();
         }
 
-        public void moveCoEMapUp(Int16 mapID, Int16 fiscalYear)
+        public void moveCoEMapUp(Int16 mapID, Int16 fiscalYear, Int16? areaChange)
         {
             var moveMap = db.Indicator_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
             var currNum = moveMap.Number;
-            var newNum = db.Indicator_CoE_Maps.Where(x => x.Number < currNum && 
-                                                     x.CoE_ID == moveMap.CoE_ID && 
-                                                     x.Fiscal_Year == fiscalYear &&
-                                                     x.Indicator.Area_ID == moveMap.Indicator.Area_ID).Max(x => x.Number);
-            var replaceMap = db.Indicator_CoE_Maps.Where(x=> x.CoE_ID == moveMap.CoE_ID &&
-                                                         x.Fiscal_Year == fiscalYear &&
-                                                         x.Indicator.Area_ID == moveMap.Indicator.Area_ID).FirstOrDefault(x => x.Number == newNum);
 
-            moveMap.Number = newNum;
-            replaceMap.Number = currNum;
-            db.Entry(moveMap).State = EntityState.Modified;
-            db.Entry(replaceMap).State = EntityState.Modified;
-            db.SaveChanges();
+            if (!areaChange.HasValue)
+            {
+                var newNum = db.Indicator_CoE_Maps.Where(x => x.Number < currNum &&
+                                                         x.CoE_ID == moveMap.CoE_ID &&
+                                                         x.Fiscal_Year == fiscalYear &&
+                                                         x.Indicator.Area_ID == moveMap.Indicator.Area_ID).Max(x => x.Number);
+                var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                             x.Fiscal_Year == fiscalYear &&
+                                                             x.Indicator.Area_ID == moveMap.Indicator.Area_ID).FirstOrDefault(x => x.Number == newNum);
+
+                moveMap.Number = newNum;
+                replaceMap.Number = currNum;
+                db.Entry(moveMap).State = EntityState.Modified;
+                db.Entry(replaceMap).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            else
+            {
+                Int16 newNum;
+                Int16 replaceNum;
+
+                var newAreaSort = db.Areas.FirstOrDefault(x => x.Area_ID == moveMap.Indicator.Area_ID).Sort + areaChange;
+                var newArea = db.Areas.FirstOrDefault(x => x.Sort == newAreaSort).Area_ID;
+                if (newArea != null)
+                {
+
+                    var newMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                x.Fiscal_Year == fiscalYear &&
+                                                x.Indicator.Area_ID == newArea);
+                    if (newMap.Count() == 0)
+                    {
+                        newNum = moveMap.Number;
+                    }
+                    else
+                    {
+                        newNum = newMap.Max(x => x.Number);
+                        replaceNum = (Int16)(newNum + 1);
+
+                        var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                                        x.Fiscal_Year == fiscalYear &&
+                                                                        x.Indicator.Area_ID == newArea).FirstOrDefault(x => x.Number == newNum);
+                        replaceMap.Number = replaceNum;
+                        db.Entry(replaceMap).State = EntityState.Modified;
+                    }
+
+                    moveMap.Number = newNum;
+                    db.Entry(moveMap).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var moveIndicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == moveMap.Indicator_ID);
+                    moveIndicator.Area_ID = newArea;
+                    db.Entry(moveIndicator).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
         }
 
-        public void moveCoEMapDown(Int16 mapID, Int16 fiscalYear)
+        public void moveCoEMapDown(Int16 mapID, Int16 fiscalYear, Int16? areaChange)
         {
             var moveMap = db.Indicator_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
             var currNum = moveMap.Number;
-            var newNum = db.Indicator_CoE_Maps.Where(x => x.Number > currNum &&
-                                                     x.CoE_ID == moveMap.CoE_ID &&
-                                                     x.Fiscal_Year == fiscalYear &&
-                                                     x.Indicator.Area_ID == moveMap.Indicator.Area_ID).Min(x => x.Number);
-            var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
-                                                         x.Fiscal_Year == fiscalYear &&
-                                                         x.Indicator.Area_ID == moveMap.Indicator.Area_ID).FirstOrDefault(x => x.Number == newNum);
 
-            moveMap.Number = newNum;
-            replaceMap.Number = currNum;
-            db.Entry(moveMap).State = EntityState.Modified;
-            db.Entry(replaceMap).State = EntityState.Modified;
-            db.SaveChanges();
+            if (!areaChange.HasValue)
+            {
+                var newNum = db.Indicator_CoE_Maps.Where(x => x.Number > currNum &&
+                                                            x.CoE_ID == moveMap.CoE_ID &&
+                                                            x.Fiscal_Year == fiscalYear &&
+                                                            x.Indicator.Area_ID == moveMap.Indicator.Area_ID).Min(x => x.Number);
+                var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                                x.Fiscal_Year == fiscalYear &&
+                                                                x.Indicator.Area_ID == moveMap.Indicator.Area_ID).FirstOrDefault(x => x.Number == newNum);
+                moveMap.Number = newNum;
+                replaceMap.Number = currNum;
+                db.Entry(moveMap).State = EntityState.Modified;
+                db.Entry(replaceMap).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            else
+            {
+                Int16 newNum;
+                Int16 replaceNum;
+
+                var newAreaSort = db.Areas.FirstOrDefault(x => x.Area_ID == moveMap.Indicator.Area_ID).Sort + areaChange;
+                var newArea = db.Areas.FirstOrDefault(x => x.Sort == newAreaSort).Area_ID;
+                if (newArea != null)
+                {
+
+                    var newMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                x.Fiscal_Year == fiscalYear &&
+                                                x.Indicator.Area_ID == newArea);
+                    if (newMap.Count() == 0)
+                    {
+                        newNum = moveMap.Number;
+                    }
+                    else
+                    {
+                        newNum = newMap.Min(x => x.Number);
+                        replaceNum = (Int16)(newNum - 1);
+
+                        var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
+                                                                        x.Fiscal_Year == fiscalYear &&
+                                                                        x.Indicator.Area_ID == newArea).FirstOrDefault(x => x.Number == newNum);
+                        replaceMap.Number = replaceNum;
+                        db.Entry(replaceMap).State = EntityState.Modified;
+                    }
+
+                    moveMap.Number = newNum;
+                    db.Entry(moveMap).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var moveIndicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == moveMap.Indicator_ID);
+                    moveIndicator.Area_ID = newArea;
+                    db.Entry(moveIndicator).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
         }
 
         public ActionResult editCoEMaps(Int16 fiscalYear)
@@ -1156,6 +1241,12 @@ namespace IndInv.Controllers
             }
             return View();
         }
+        [HttpPost]
+        public void setFootnoteMaps(Int16 indicatorID, string footnoteStr)
+        {
+
+        }
+
 
         [HttpGet]
         public ActionResult getIndicatorList()
@@ -1205,7 +1296,7 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public JsonResult setValue(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, int fiscalYear)
+        public JsonResult setValue(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear)
         {
             var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
 
@@ -1213,13 +1304,37 @@ namespace IndInv.Controllers
             var property = type.GetProperty(updateProperty);
             property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
 
-            if (updateValueSup != "%NULL%")
+            if (updateProperty != "Indicator")
             {
-                var propertySup = indicator.GetType().GetProperty(updateProperty + "_Sup");
-                if (propertySup != null)
+                if (updateValueSup != "%NULL%")
                 {
-                    propertySup.SetValue(indicator, Convert.ChangeType(updateValueSup, property.PropertyType), null);
+                    var propertySup = indicator.GetType().GetProperty(updateProperty + "_Sup");
+                    if (propertySup != null)
+                    {
+                        propertySup.SetValue(indicator, Convert.ChangeType(updateValueSup, property.PropertyType), null);
+                    }
                 }
+            }
+            else
+            {
+                var footnotes = updateValueSup.Split(',');
+                foreach (var map in db.Indicator_Footnote_Maps.Where(x => x.Indicator_ID == indicatorID).ToList())
+                {
+                    db.Indicator_Footnote_Maps.Remove(map);
+                }
+                db.SaveChanges();
+                foreach (var footnote in footnotes)
+                {
+                    Int16 footnoteID = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote).Footnote_ID;
+                    var newMap = new Indicator_Footnote_Maps {
+                        Footnote_ID = footnoteID,
+                        Indicator_ID = indicatorID,
+                        Fiscal_Year = fiscalYear,
+                    };
+                    db.Indicator_Footnote_Maps.Add(newMap);
+                    db.SaveChanges();
+                }
+
             }
 
             if (ModelState.IsValid)
