@@ -13773,7 +13773,7 @@ value = mathMax(0, value); // don't set width or height below zero (#311)
         },
 
         /**
-        * Clip the graphs into the positive and negative coloured graphs
+        * Clip the graphs into the positive and negative Colored graphs
         */
         clipNeg: function () {
             var options = this.options,

@@ -80,7 +80,7 @@ namespace IndInv.Models.ViewModels
         public string Performance_Threshold { get; set; }
         public string Performance_Threshold_Sup { get; set; }
 
-        public Int16 Colour_ID { get; set; }
+        public Int16 Color_ID { get; set; }
         public string Custom_YTD { get; set; }
         public string Custom_Q1 { get; set; }
         public string Custom_Q2 { get; set; }

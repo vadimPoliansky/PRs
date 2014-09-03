@@ -34,7 +34,7 @@ namespace IndInv.Models.ViewModels
         public string FY_Performance_Threshold { get; set; }
         public string FY_Performance_Threshold_Sup { get; set; }
 
-        public Int16 FY_Colour_ID { get; set; }
+        public Int16 FY_Color_ID { get; set; }
         public string FY_Custom_YTD { get; set; }
         public string FY_Custom_Q1 { get; set; }
         public string FY_Custom_Q2 { get; set; }

@@ -7,7 +7,7 @@ using IndInv.Models;
 
 namespace IndInv.Helpers
 {
-    public class Colour
+    public class Color
     {
         public static String getNum(String str)
         {
@@ -42,7 +42,7 @@ namespace IndInv.Helpers
             return numStr;
         }
 
-        public static String getColour(String inStr, String inTarget, String inMonth, String inCustom, Int16 Colour_ID, Boolean isYTD, Indicators inIndicator)
+        public static String getColor(String inStr, String inTarget, String inMonth, String inCustom, Int16 Color_ID, Boolean isYTD, Indicators inIndicator)
         {
             string str;
             float outScore;
@@ -51,21 +51,21 @@ namespace IndInv.Helpers
             //                if (test == "MH&A ED revisits to own facility within 30 days (%)")
             //                    System.Diagnostics.Debugger.Break();
 
-            str = Colour.getNum(inStr);
+            str = Color.getNum(inStr);
             if (str == null) { return "cssWhite"; }
             if (float.TryParse(str, out outScore)) { }
             else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
             float score = outScore;
 
-            str = Colour.getNum(Target);
+            str = Color.getNum(Target);
             if (str == null) { return "cssWhite"; }
             if (float.TryParse(str, out outScore)) { }
             else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
             float targetScore = outScore;
 
-            if (Colour_ID == 3) { return inCustom; }
+            if (Color_ID == 3) { return inCustom; }
 
-            if (Colour_ID == 2)
+            if (Color_ID == 2)
             {
                 if (isYTD == false)
                 {

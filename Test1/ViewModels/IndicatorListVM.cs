@@ -9,5 +9,7 @@ namespace IndInv.Models.ViewModels
     {
         public Int16 Indicator_ID { get; set; }
         public string Indicator { get; set; }
+
+        public string Area { get; set; }
     }
 }

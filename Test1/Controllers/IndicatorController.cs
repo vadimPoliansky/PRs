@@ -1251,12 +1251,27 @@ namespace IndInv.Controllers
         [HttpGet]
         public ActionResult getIndicatorList()
         {
-            var viewModel = db.Indicators.Select(x => new IndicatorListViewModel
+            var viewModel = db.Indicators.OrderBy(x => x.Indicator).Select(x => new IndicatorListViewModel
             {
                 Indicator_ID = x.Indicator_ID,
                 Indicator = x.Indicator,
+                Area = x.Area.Area,
             }).ToList();
             return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult indicatorList()
+        {
+            var indexViewModel = new indexViewModel()
+            {
+                allIndicators = db.Indicators.Where(x => x.Indicator_CoE_Map.FirstOrDefault().CoE_ID > 10 && x.Indicator_CoE_Map.FirstOrDefault().CoE_ID < 20).ToList(),
+                allAnalysts = db.Analysts.ToList(),
+                allAreas = db.Areas.Where(x => x.Area_ID == 1 || x.Area_ID == 3 || x.Area_ID == 4 || x.Area_ID == 5).ToList(),
+                allCoEs = db.CoEs.Where(x => x.CoE_ID > 10 && x.CoE_ID < 20 && x.CoE_ID != 14).ToList(),
+                allFootnotes = db.Footnotes.ToList(),
+            };
+
+            return View(indexViewModel);
         }
 
         [HttpGet]
@@ -1268,6 +1283,16 @@ namespace IndInv.Controllers
             var propertySup = indicator.GetType().GetProperty(field + "_Sup");
             var value = (string)property.GetValue(indicator, null);
             var valueSup = "";
+
+            var area = indicator.Area_ID;
+            var colorProp = indicator.GetType().GetProperty(field + "_Color");
+            string color = "";
+            if (colorProp != null)
+            {
+                color = (string)colorProp.GetValue(indicator, null);
+            }
+
+
             if (propertySup != null)
             {
                 valueSup = (string)propertySup.GetValue(indicator, null);
@@ -1290,6 +1315,8 @@ namespace IndInv.Controllers
             {
                 Value = value,
                 Value_Sup = valueSup,
+                Area_ID = area,
+                Color = color,
             };
 
             return Json(viewModel, JsonRequestBehavior.AllowGet) ;
@@ -1325,14 +1352,18 @@ namespace IndInv.Controllers
                 db.SaveChanges();
                 foreach (var footnote in footnotes)
                 {
-                    Int16 footnoteID = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote).Footnote_ID;
-                    var newMap = new Indicator_Footnote_Maps {
-                        Footnote_ID = footnoteID,
-                        Indicator_ID = indicatorID,
-                        Fiscal_Year = fiscalYear,
-                    };
-                    db.Indicator_Footnote_Maps.Add(newMap);
-                    db.SaveChanges();
+                    if (footnote != "%NULL%")
+                    {
+                        Int16 footnoteID = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote).Footnote_ID;
+                        var newMap = new Indicator_Footnote_Maps
+                        {
+                            Footnote_ID = footnoteID,
+                            Indicator_ID = indicatorID,
+                            Fiscal_Year = fiscalYear,
+                        };
+                        db.Indicator_Footnote_Maps.Add(newMap);
+                        db.SaveChanges();
+                    }
                 }
 
             }
@@ -1418,7 +1449,7 @@ namespace IndInv.Controllers
                 FY_Performance_Threshold = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(x, null),
                 FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
-                FY_Colour_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Colour_ID").GetValue(x, null),
+                FY_Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
                 FY_Custom_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_YTD").GetValue(x, null),
                 FY_Custom_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q1").GetValue(x, null),
                 FY_Custom_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q2").GetValue(x, null),
@@ -1517,15 +1548,25 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public JsonResult newIndicatorAtPR(Int16 fiscalYear, Int16 areaID, Int16 coeID, Int16 indicatorID)
+        public JsonResult newIndicatorAtPR(Int16 fiscalYear, Int16 areaID, Int16 coeID, Int16 indicatorID, Int16? newIndicatorID)
         {
-            var newIndicator = new Indicators();
-            newIndicator.Area_ID = areaID;
-            newIndicator.Indicator = "";
-            db.Indicators.Add(newIndicator);
-            db.SaveChanges();
+            Indicators indicator = new Indicators();
+
+            if (newIndicatorID.HasValue)
+            {
+                indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == newIndicatorID);
+            }
+            else
+            {
+                indicator = new Indicators();
+                indicator.Area_ID = areaID;
+                indicator.Indicator = "";
+                db.Indicators.Add(indicator);
+                db.SaveChanges();
+            }
+
             var newMap = new Indicator_CoE_Maps();
-            newMap.Indicator_ID = newIndicator.Indicator_ID;
+            newMap.Indicator_ID = indicator.Indicator_ID;
 
             int number = 0;
             if (indicatorID != 0)
@@ -1546,7 +1587,7 @@ namespace IndInv.Controllers
             db.Indicator_CoE_Maps.Add(newMap);
             db.SaveChanges();
 
-            return Json(new {indicatorID = newIndicator.Indicator_ID, mapID = newMap.Map_ID}, JsonRequestBehavior.AllowGet);
+            return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Details(Int16 indicatorID, Int16 fiscalYear)
@@ -1605,7 +1646,7 @@ namespace IndInv.Controllers
                 Performance_Threshold = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(x, null),
                 Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
-                Colour_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Colour_ID").GetValue(x, null),
+                Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
                 Custom_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_YTD").GetValue(x, null),
                 Custom_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q1").GetValue(x, null),
                 Custom_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q2").GetValue(x, null),

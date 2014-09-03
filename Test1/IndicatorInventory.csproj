@@ -188,7 +188,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\Colour.cs" />
+    <Compile Include="Helpers\Color.cs" />
     <Compile Include="Helpers\FiscalYear.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\InventoryModels.cs">
@@ -231,6 +231,7 @@
     <Content Include="Images\logout.png" />
     <Content Include="Images\MountSinaiLogo.png" />
     <Content Include="Images\MountSinaiLogoB.png" />
+    <Content Include="Images\x.png" />
     <Content Include="lib\ClosedXML.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -843,6 +844,7 @@
     <Content Include="Views\Indicator\Details.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Views\Indicator\indicatorList.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
