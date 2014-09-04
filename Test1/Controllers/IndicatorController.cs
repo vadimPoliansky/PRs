@@ -164,6 +164,7 @@ namespace IndInv.Controllers
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = analystID,
+                allColors = db.Color_Types.ToList(),
             };
 
             return View(viewModel);
@@ -1247,6 +1248,12 @@ namespace IndInv.Controllers
 
         }
 
+        [HttpGet]
+        public ActionResult getColors()
+        {
+            List<Color_Types> allColors = db.Color_Types.ToList();
+            return Json(allColors, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpGet]
         public ActionResult getIndicatorList()
@@ -1404,6 +1411,60 @@ namespace IndInv.Controllers
 
         }
 
+        [HttpPost]
+        public void setCustomColor(Int16 indicatorID, string field, string color, Int16 fiscalYear)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+
+            var type = indicator.GetType();
+            var property = type.GetProperty(field + "_Custom_Color");
+            if (property != null)
+            {
+                property.SetValue(indicator, Convert.ChangeType(color, property.PropertyType), null);
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult changeColor(Int16 indicatorID, Int16 colorID, Int16 fiscalYear)
+        {
+                var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+                var field = FiscalYear.FYStrFull("FY_", fiscalYear);
+
+                var type = indicator.GetType();
+                var colorIDField = field + "Color_ID";
+                var property = type.GetProperty(colorIDField);
+
+            if (colorID != -1)
+            {
+                property.SetValue(indicator, Convert.ChangeType(colorID, property.PropertyType), null);
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            var propertyColorQ1 = type.GetProperty(field + "Q1_Color");
+            var colorQ1 = (string)propertyColorQ1.GetValue(indicator, null);
+            var propertyColorQ2 = type.GetProperty(field + "Q2_Color");
+            var colorQ2 = (string)propertyColorQ2.GetValue(indicator, null);
+            var propertyColorQ3 = type.GetProperty(field + "Q3_Color");
+            var colorQ3 = (string)propertyColorQ3.GetValue(indicator, null);
+            var propertyColorQ4 = type.GetProperty(field + "Q4_Color");
+            var colorQ4 = (string)propertyColorQ4.GetValue(indicator, null);
+            var propertyColorYTD = type.GetProperty(field + "YTD_Color");
+            var colorYTD = (string)propertyColorYTD.GetValue(indicator, null);
+
+            var viewModel = new colorViewModel()
+            {
+                Q1_Color = colorQ1,
+                Q2_Color = colorQ2,
+                Q3_Color = colorQ3,
+                Q4_Color = colorQ4,
+                YTD_Color = colorYTD,
+            };
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpGet]
         public ActionResult editInventory(String indicatorID, Int16? analystID, int fiscalYear)
         {
@@ -1450,11 +1511,11 @@ namespace IndInv.Controllers
                 FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
                 FY_Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
-                FY_Custom_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_YTD").GetValue(x, null),
-                FY_Custom_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q1").GetValue(x, null),
-                FY_Custom_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q2").GetValue(x, null),
-                FY_Custom_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q3").GetValue(x, null),
-                FY_Custom_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q4").GetValue(x, null),
+                FY_YTD_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Custom_Color").GetValue(x, null),
+                FY_Q1_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Custom_Color").GetValue(x, null),
+                FY_Q2_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Custom_Color").GetValue(x, null),
+                FY_Q3_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Custom_Color").GetValue(x, null),
+                FY_Q4_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Custom_Color").GetValue(x, null),
 
                 FY_Definition_Calculation = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Definition_Calculation").GetValue(x, null),
                 FY_Target_Rationale = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Rationale").GetValue(x, null),
@@ -1647,11 +1708,11 @@ namespace IndInv.Controllers
                 Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
                 Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
-                Custom_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_YTD").GetValue(x, null),
-                Custom_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q1").GetValue(x, null),
-                Custom_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q2").GetValue(x, null),
-                Custom_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q3").GetValue(x, null),
-                Custom_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Custom_Q4").GetValue(x, null),
+                Custom_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Custom_Color").GetValue(x, null),
+                Custom_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Custom_Color").GetValue(x, null),
+                Custom_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Custom_Color").GetValue(x, null),
+                Custom_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Custom_Color").GetValue(x, null),
+                Custom_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Custom_Color").GetValue(x, null),
 
                 Definition_Calculation = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Definition_Calculation").GetValue(x, null),
                 Target_Rationale = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Rationale").GetValue(x, null),

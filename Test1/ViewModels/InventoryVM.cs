@@ -35,11 +35,11 @@ namespace IndInv.Models.ViewModels
         public string FY_Performance_Threshold_Sup { get; set; }
 
         public Int16 FY_Color_ID { get; set; }
-        public string FY_Custom_YTD { get; set; }
-        public string FY_Custom_Q1 { get; set; }
-        public string FY_Custom_Q2 { get; set; }
-        public string FY_Custom_Q3 { get; set; }
-        public string FY_Custom_Q4 { get; set; }
+        public string FY_YTD_Custom_Color { get; set; }
+        public string FY_Q1_Custom_Color { get; set; }
+        public string FY_Q2_Custom_Color { get; set; }
+        public string FY_Q3_Custom_Color { get; set; }
+        public string FY_Q4_Custom_Color { get; set; }
 
         public string FY_Definition_Calculation { get; set; }
         public string FY_Target_Rationale { get; set; }

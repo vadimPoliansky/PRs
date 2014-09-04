@@ -63,7 +63,9 @@ namespace IndInv.Helpers
             else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
             float targetScore = outScore;
 
-            if (Color_ID == 3) { return inCustom; }
+            if (Color_ID == 0) { return "cssWhite"; }
+
+            if (Color_ID == 3) { return String.IsNullOrEmpty(inCustom) ? "cssWhite" : inCustom; }
 
             if (Color_ID == 2)
             {
@@ -83,7 +85,7 @@ namespace IndInv.Helpers
                         case "Jan": score *= 12 / 1; break;
                         case "Feb": score *= 12 / 2; break;
                         case "Mar": score *= 12 / 3; break;
-                        default: break;
+                        default: score *= 12 / 3; break;
                     }
                 }
                 else
