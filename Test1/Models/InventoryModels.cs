@@ -15,6 +15,7 @@ namespace IndInv.Models
         public Int16 Indicator_ID { get; set; }
         public Int16 Area_ID { get; set; }
         public Int16? Analyst_ID { get; set; }
+        public Int16? Format_ID { get; set; }
         [Display(Name = "Objectives/Metrics")]
         public string Indicator { get; set; }
         [Display(Name = "Indicator Type")]
@@ -132,6 +133,7 @@ namespace IndInv.Models
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual Areas Area { get; set; }
         public virtual ICollection<Indicator_Footnote_Maps> Indicator_Footnote_Map { get; set; }
+        public virtual Formats Format { get; set; }
     }
 
     public class CoEs
@@ -214,6 +216,15 @@ namespace IndInv.Models
         public Int16 Order { get; set; }
     }
 
+    public class Formats
+    {
+        [Key]
+        public Int16 Format_ID { get; set; }
+        public string Format_Type { get; set; }
+        public string Format_Code { get; set; }
+        public Int16 Order { get; set; }
+    }
+
     public class Color_Types
     {
         [Key]
@@ -228,6 +239,7 @@ namespace IndInv.Models
         public DbSet<Areas> Areas { get; set; }
         public DbSet<Footnotes> Footnotes { get; set; }
         public DbSet<Color_Types> Color_Types { get; set; }
+        public DbSet<Formats> Formats { get; set; }
 
         public DbSet<Indicator_CoE_Maps> Indicator_CoE_Maps { get; set; }
         public DbSet<Area_CoE_Maps> Area_CoE_Maps { get; set; }

@@ -1361,15 +1361,19 @@ namespace IndInv.Controllers
                 {
                     if (footnote != "%NULL%")
                     {
-                        Int16 footnoteID = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote).Footnote_ID;
-                        var newMap = new Indicator_Footnote_Maps
+                        Footnotes footnoteObj = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote.Trim());
+                        if (footnoteObj != null)
                         {
-                            Footnote_ID = footnoteID,
-                            Indicator_ID = indicatorID,
-                            Fiscal_Year = fiscalYear,
-                        };
-                        db.Indicator_Footnote_Maps.Add(newMap);
-                        db.SaveChanges();
+                            Int16 footnoteID = footnoteObj.Footnote_ID;
+                            var newMap = new Indicator_Footnote_Maps
+                            {
+                                Footnote_ID = footnoteID,
+                                Indicator_ID = indicatorID,
+                                Fiscal_Year = fiscalYear,
+                            };
+                            db.Indicator_Footnote_Maps.Add(newMap);
+                            db.SaveChanges();
+                        }
                     }
                 }
 
@@ -1409,6 +1413,62 @@ namespace IndInv.Controllers
             //    }
             //}
 
+        }
+
+        [HttpPost]
+        public void formatIndicator(Int16 indicatorID, Int16 formatID)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+            var fieldList = new List<string>();
+
+            var format = db.Formats.FirstOrDefault(x=>x.Format_ID == formatID).Format_Code;
+            if (format != null)
+            {
+
+                for (var fiscalYear = 1; fiscalYear < 99; fiscalYear++)
+                {
+                    fieldList.Clear();
+                    fieldList.Add(FiscalYear.FYStrFull("FY_3", fiscalYear));
+                    fieldList.Add(FiscalYear.FYStrFull("FY_2", fiscalYear));
+                    fieldList.Add(FiscalYear.FYStrFull("FY_1", fiscalYear));
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold");
+                    fieldList.Add(FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator");
+
+                    var type = indicator.GetType();
+
+                    var fieldTest = FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1";
+                    var propertyTest = type.GetProperty(fieldTest);
+                    if (propertyTest == null)
+                    {
+                        fiscalYear = 100;
+                    }
+                    else
+                    {
+                        foreach (var field in fieldList)
+                        {
+                            var property = type.GetProperty(field);
+                            if (property != null)
+                            {
+                                var num = Helpers.Color.getNum((string)property.GetValue(indicator, null));
+                                if (num != null)
+                                {
+                                    var currValue = float.Parse(num);
+                                    var formatedValue = currValue.ToString(format);
+                                    property.SetValue(indicator, Convert.ChangeType(formatedValue, property.PropertyType), null);
+                                    db.Entry(indicator).State = EntityState.Modified;
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         [HttpPost]

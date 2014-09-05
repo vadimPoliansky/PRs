@@ -397,6 +397,7 @@
     <Content Include="Scripts\list.min.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\modernizr.custom.js" />
+    <Content Include="Scripts\PIE.js" />
     <Content Include="Scripts\rem.min.js" />
     <Content Include="Scripts\tag-it.min.js" />
     <Content Include="Scripts\vendor\fastclick.js" />
