@@ -1058,6 +1058,18 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
+        public JsonResult getCoEs()
+        {
+            return Json(db.CoEs.Select(x => x.CoE).ToList(), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult getAnalysts()
+        {
+            return Json(db.Analysts.Select(x => x.First_Name).ToList(), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public JsonResult getAreaMap (Int16 mapID, Int16 fiscalYear)
         {
             var objectives = db.Area_CoE_Maps.Where(x=>x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Map_ID == mapID).Objective;
@@ -1545,7 +1557,9 @@ namespace IndInv.Controllers
             {
                 Indicator_ID = x.Indicator_ID,
                 Area_ID = x.Area_ID,
-                CoE = x.Indicator_CoE_Map.Count != 0 ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "",
+                CoE = x.Indicator_CoE_Map != null ?
+                        ( x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "" )
+                      : "",
                 Indicator = x.Indicator,
                 FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
                 FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),

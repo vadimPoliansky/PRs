@@ -13,6 +13,10 @@
     ViewBag.Buttons += "<div id='btn' class='btnSwitch' value=" + 0 + " parameter=analystID >" + "All" + "</div>";
     ViewBag.fiscalYear = Model.Fiscal_Year;
 }
+<div class="filter-bar">
+    <div class="filter filter-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
+    <div class="filter filter-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
+</div>
 
 <br />
 <br />
@@ -20,7 +24,7 @@
 <div class="block">
 @{var properties = ModelMetadataProviders.Current; ;
   var fiscalYear = Model.Fiscal_Year;}
-@foreach (var coe in Model.allCoEs)
+@foreach (var coe in Model.allCoEs.OrderBy(x=>x.CoE))
 {
     var footnotes = new List<Footnotes>();
     <div class="row" style="min-width:98%">
@@ -33,32 +37,32 @@
     </div>
     <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse; table-layout:fixed" runat="server" >
     <tr class="prheader-1">
-    <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-    <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
-    <td rowspan="1", colspan ="5", class=prheader "prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
-    <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
+        <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
     </tr>
 
     <tr class="prheader-2 prheader-Final">
-    <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
-    <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
-    <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
-    <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-    <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
     </tr>
     @{var numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
         <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-        <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
-            <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
-            @Html.DisplayFor(modelItem => area_map.Objective)
-        </td>
+            <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+                <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
+                @Html.DisplayFor(modelItem => area_map.Objective)
+            </td>
         </tr>
         string[,] oldColumns = null;
         foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
@@ -76,7 +80,7 @@
                 skip = true;
             }
             <tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
-            <td class="prtd-id" mapID="@map.Map_ID" >                
+                <td class="prtd-id" mapID="@map.Map_ID" >                
                     <a class="row-up"><i class="fa fa-sort-desc"></i></a>
                     @number
                     <a class="row-down"><i class="fa fa-sort-asc"></i></a>
@@ -255,6 +259,7 @@
 </div>
 
 <script src="../../Scripts/jquery-1.11.0.min.js"></script>
+<script src="~/Scripts/jquery.simplemodal.1.4.4.min.js"></script>
 <script type="text/javascript">
     var currentMousePos = { x: -1, y: -1 };
     $(document).mousemove(function(event) {
@@ -263,7 +268,6 @@
     });
 
     $(document).ready(function () {
-
         function formatIndicator(obj, formatID){
             var indicatorID = obj.attr('indicatorID');
             $.post('formatIndicator', {indicatorID: indicatorID, formatID: formatID}, function(data){
@@ -301,6 +305,8 @@
             });
         }
 
+        @if(ViewBag.PRCols != null){
+        <text>
         function addNewIndicator(obj, newIndicatorID){
             exist = (newIndicatorID !== null);
             var coeID = obj.closest( "tr" ).attr("coeID");
@@ -378,6 +384,8 @@
                 }
             });
         }
+        </text>
+        }
 
 
 
@@ -417,7 +425,6 @@
                 var value = data.Value || "";
                 updateNumVal(currentEle, value, mapID);
             });
-
         });
 
         $(".prarea").dblclick(function (e) {
@@ -747,7 +754,7 @@
                     }
                 },
 
-                separator2: "-----",
+/*                separator2: "-----",
 
                 "formatTest": {name: "FormatTest",
                     callback: function(key,options){
@@ -755,7 +762,7 @@
                         var obj = $(this);
                         formatIndicator(obj, formatID);
                     }
-                },
+                },*/
 
             }
         });
@@ -823,6 +830,53 @@
         $.fn.undrags = function(opt) {
             $(this).removeClass('draggable');
         };
+
+        $(document).on('click', '.filter', function(e){
+            var field = e.target.textContent;
+            if (field === "") {
+                field = e.target.nextSibling.textContent;
+            }
+            var htmlContent ="<div class='simplemodal-close' id='filter'>";
+            htmlContent += '<label><i class="fa fa-filter"></i><strong> Filter:</strong><label>';
+            var ajaxUrl = 'get' + field + 's';
+            $.get(ajaxUrl, function(data){
+                jQuery.each(data, function (i, value) {
+                    htmlContent += "<div class='filter-button' filterID ='" + value + "' field='" + field + "'>" + value + "</div>"
+                    //htmlContent += "<div class='filterItem'>" + value + "</div>"
+                });
+                htmlContent += "<div class='filter-button' filterID ='' field='" + field + "'><em>Clear</em></div>"
+                htmlContent += "</div>";
+                var posX = e.pageX , posY = e.pageY;
+                $(htmlContent).modal({
+                    position: [posY,posX],
+                    overlayClose:true,
+                    opacity:80,
+                    overlayCss: {backgroundColor:"#fff"},
+                });
+            });
+        });
+
+        $(".filter-button").on("click", function () {
+            var field = $(this).attr('field')
+            var name = $.trim($(this).attr('name'));
+            var id = $(this).attr('id');
+            var tags = $("#myTags").tagit("assignedTags");
+            if ($.inArray(name, tags) === -1) {
+                $(this).closest('li').addClass('filterCheck');
+                $("#myTags").tagit("createTag", name);
+                $('ul li:nth-last-child(2)').attr('id', id);
+                $('ul li:nth-last-child(2)').attr('field', field);
+                updateFilter(id, field);
+            } else {
+                $(this).parent().parent().removeClass('filterCheck');
+                $(this).removeClass('filterCheck');
+                $("#myTags").tagit("removeTagByLabel", name);
+                //updateFilterHide(id, field);
+            }
+            refreshView();
+        });
+
+
     });
 
 
@@ -830,6 +884,19 @@
 
 
 <style>
+
+    .filter-bar {
+        background-color:#0061a7;
+        border-bottom:1px solid rgb(89, 108, 139);
+        border-top:1px solid black;
+    }
+
+    .filter {
+        color:white;
+        display:inline;
+        font-size:medium;
+    }
+
     .add-indicator-panel {
         background-color:lightgray !important;
         border:1px solid black;
