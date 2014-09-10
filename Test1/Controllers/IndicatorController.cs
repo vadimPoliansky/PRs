@@ -569,16 +569,16 @@ namespace IndInv.Controllers
                     footnoteRow.Merge();
                     footnoteRow.Style.Font.FontSize = prFootnoteSize;
 
-                    Footnotes defaultFootnote = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == "*");
+                    /*Footnotes defaultFootnote = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == "*");
                     if (!footnotes.Contains(defaultFootnote))
                     {
                         footnotes.Add(defaultFootnote);
-                    }
+                    }*/
 
                     int cellLengthFootnote = 0;
                     if (ws.Name == wsPRName)
                     {
-                        foreach (var footnote in footnotes.OrderBy(x => x.Footnote_Symbol))
+                        foreach (var footnote in footnotes)
                         {
                             ws.Cell(currentRow, 1).RichText.AddText(footnote.Footnote_Symbol).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
                             ws.Cell(currentRow, 1).RichText.AddText(" " + footnote.Footnote + ";");
