@@ -26,6 +26,7 @@
   var fiscalYear = Model.Fiscal_Year;}
 @foreach (var coe in Model.allCoEs.OrderBy(x=>x.CoE))
 {
+    if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x=>x.Indicator.Analyst_ID == @Model.Analyst_ID) : true) {
     var footnotes = new List<Footnotes>();
     <div class="row" style="min-width:98%">
     <fieldset class="prBlock">
@@ -255,6 +256,7 @@
     </table>
     </fieldset>
     </div>
+    }
 }
 </div>
 
