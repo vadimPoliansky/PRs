@@ -9,11 +9,17 @@ using System.Web.Mvc;
 using IndInv.Models;
 using IndInv.Models.ViewModels;
 using IndInv.Helpers;
-using DocumentFormat.OpenXml;
+
+using TuesPechkin;
+using OfficeOpenXml;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ClosedXML.Excel;
 using SpreadsheetLight;
 using SpreadsheetLight.Drawing;
+using Spire.Xls;
+using Spire.Pdf;
+using Spire.Xls.Converter;
 
 namespace IndInv.Controllers
 {
@@ -205,7 +211,7 @@ namespace IndInv.Controllers
             var indentLength = 24;
             var firstIndentLength = 20;
             var innerIndentLength = 5;
-            var newLineHeight = 15;
+            var newLineHeight = 12.6;
 
             var defNote = "Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.";
 
@@ -216,14 +222,15 @@ namespace IndInv.Controllers
             var prRatiWidth = 50;
             var prCompWidth = 50;
 
-            var fitRatio = 3.77;
-            var fitHeight = 672;
-            var fitWidth = 178.18;
-            var fitAdjust = 1.325 * 0.1;
+            //var fitRatio = 3.77;
+            var fitRatio = 1.7;
             List<int> fitAdjustableRows = new List<int>();
 
             var prFootnoteCharsNewLine = 125;
             var prObjectivesCharsNewLine = 226;
+
+            //DELETE THIS
+            coeID = null;
 
             var allCoes = new List<CoEs>();
             if (coeID != 0 && coeID != null)
@@ -247,7 +254,7 @@ namespace IndInv.Controllers
 
                 foreach (var ws in wsList)
                 {
-                    var currentRow = 3;
+                    var currentRow = 4;
                     ws.Row(2).Height = 21;
                     int startRow;
                     int indicatorNumber = 1;
@@ -356,7 +363,7 @@ namespace IndInv.Controllers
                     {
                         var cellLengthObjective = 0;
                         var prArea = ws.Range(ws.Cell(currentRow, 1), ws.Cell(currentRow, maxCol));
-                        fitAdjustableRows.Add(currentRow);
+                        //fitAdjustableRows.Add(currentRow);
                         prArea.Merge();
                         prArea.Style.Fill.BackgroundColor = prAreaFill;
                         prArea.Style.Font.FontColor = prAreaFont;
@@ -428,6 +435,11 @@ namespace IndInv.Controllers
 
                             if (ws.Name == wsPRName)
                             {
+                                for (var i = 3; i <= 15; i++)
+                                {
+                                    ws.Column(i).Width = ws.Name == wsPRName ? prValueWidth : prDefWidth;
+                                }
+
                                 var obj = map.Indicator;
                                 var type = obj.GetType();
                                 string[,] columnIndicators = new string[,]{
@@ -549,17 +561,48 @@ namespace IndInv.Controllers
                             }
                             else if (ws.Name == wsDefName)
                             {
+                                ws.Column(3).Width = prDefWidth;
+                                ws.Column(4).Width = prRatiWidth;
+                                ws.Column(5).Width = prCompWidth;
+
                                 var obj = map.Indicator;
                                 var type = obj.GetType();
-                                ws.Cell(currentRow, currentCol).Value = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").GetValue(obj, null);
+
+                                string defn = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").GetValue(obj, null);
+                                string rationale = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").GetValue(obj, null);
+                                string comp = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").GetValue(obj, null);
+
+                                double maxLines = 1;
+                                double lines;
+
+                                if (defn != null)
+                                {
+                                    lines = defn.Length / ws.Column(currentCol).Width;
+                                    maxLines = maxLines < lines ? lines : maxLines;
+                                    ws.Cell(currentRow, currentCol).Value = defn;
+                                }
                                 ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                                 currentCol++;
-                                ws.Cell(currentRow, currentCol).Value = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").GetValue(obj, null);
+
+                                if (rationale != null)
+                                {
+                                    lines = rationale.Length / ws.Column(currentCol).Width;
+                                    maxLines = maxLines < lines ? lines : maxLines;
+                                    ws.Cell(currentRow, currentCol).Value = rationale;
+                                }
                                 ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                                 currentCol++;
-                                ws.Cell(currentRow, currentCol).Value = (string)type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").GetValue(obj, null);
+
+                                if (comp != null)
+                                {
+                                    lines = comp.Length / ws.Column(currentCol).Width;
+                                    maxLines = maxLines < lines ? lines : maxLines;
+                                    ws.Cell(currentRow, currentCol).Value = comp;
+                                }
                                 ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                                 currentCol++;
+
+                                ws.Row(currentRow).Height = newLineHeight*Math.Ceiling(maxLines);
                                 currentRow++;
                             }
                         }
@@ -612,51 +655,42 @@ namespace IndInv.Controllers
 
                     ws.Column(1).Width = prNumberWidth;
                     ws.Column(2).Width = prIndicatorWidth;
-                    if (ws.Name == wsPR.Name)
+                    footnotes.Clear();
+                    indicatorNumber = 1;
+
+                    var totalHeight = ExcelFunctions.getTotalHeight(ws,4);
+                    var totalWidth = ExcelFunctions.getTotalWidth(ws,1);
+                    var fitHeight = (int)(totalWidth / fitRatio);
+                    var fitWidth = (int)(totalHeight * fitRatio);
+
+                    if (ws.Name == "Def_WIH Obs") { System.Diagnostics.Debugger.Break(); }
+
+                    if (fitHeight > totalHeight)
                     {
-                        for (var i = 3; i <= 15; i++)
+                        var fitAddHeightTotal = (fitHeight - totalHeight);
+                        var fitAddHeightPerRow = fitAddHeightTotal / fitAdjustableRows.Count;
+                        foreach (var row in fitAdjustableRows)
                         {
-                            ws.Column(i).Width = ws.Name == wsPRName ? prValueWidth : prDefWidth;
+                            ws.Row(row).Height += fitAddHeightPerRow;
                         }
                     }
                     else
                     {
-                        ws.Column(3).Width = prDefWidth;
-                        ws.Column(4).Width = prRatiWidth;
-                        ws.Column(5).Width = prCompWidth;
+                        while ((fitWidth - totalWidth) /  fitWidth > 0.001 )
+                        {
+                            var fitAddWidthTotal = (fitWidth - totalWidth) / 10;
+                            var fitAddWidthPerRow = fitAddWidthTotal / (ws.LastColumnUsed().ColumnNumber() - 1);
+                            foreach (var col in ws.Columns(2, ws.LastColumnUsed().ColumnNumber()))
+                            {
+                                col.Width += fitAddWidthPerRow / 5.69;
+                            }
+                            ExcelFunctions.AutoFitWorksheet(ws, 2, 3, newLineHeight);
+                            totalHeight = ExcelFunctions.getTotalHeight(ws, 4);
+                            totalWidth = ExcelFunctions.getTotalWidth(ws, 1);
+                            fitHeight = (int)(totalWidth / fitRatio);
+                            fitWidth = (int)(totalHeight * fitRatio);
+                        }
                     }
-                    footnotes.Clear();
-                    indicatorNumber = 1;
-
-                    //var totalHeight = 0.0;
-                    //foreach (var row in ws.Rows(1, ws.LastRowUsed().RowNumber()))
-                    //{
-                    //    totalHeight += row.Height;
-                    //}
-                    //var totalWidth = 0.0;
-                    //foreach (var col in ws.Columns(1, ws.LastColumnUsed().ColumnNumber()))
-                    //{
-                    //    totalWidth += col.Width;
-                    //}
-                    //var totalRatio = totalHeight / totalWidth;
-                    //if (totalRatio > fitRatio)
-                    //{
-                    //    var fitAddWidthTotal = (totalHeight - fitHeight);
-                    //    var fitAddWidthPer = fitAddWidthTotal / (ws.LastRowUsed().RowNumber() - 1) / fitAdjust;
-                    //    foreach (var col in ws.Columns().Skip(1))
-                    //    {
-                    //        col.Width += fitAddWidthPer;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    var fitAddHeightTotal = -(totalHeight - fitHeight);
-                    //    var fitAddHeightPer = fitAddHeightTotal / ws.LastRowUsed().RowNumber() / fitAdjust;
-                    //    foreach (var row in ws.Rows().Skip(3))
-                    //    {
-                    //        row.Height += fitAddHeightPer;
-                    //    }
-                    //}
                 }
             }
 
@@ -683,6 +717,11 @@ namespace IndInv.Controllers
             {
                 postImageWb.SelectWorksheet(ws.Name);
 
+                for (int i = 1; i < 20; ++i)
+                {
+                    var a = postImageWb.GetRowHeight(i);
+                }
+
                 picLogo.SetPosition(0, 0);
                 picLogo.ResizeInPercentage(25, 25);
                 postImageWb.InsertPicture(picLogo);
@@ -693,10 +732,10 @@ namespace IndInv.Controllers
 
                 if (ws.Name.Substring(0, 3) != "Def")
                 {
-                    picTarget.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber(), ws.LastColumnUsed().ColumnNumber() + 1, -240, 1);
-                    picNA.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber(), ws.LastColumnUsed().ColumnNumber() + 1, -400, 1);
-                    picMonthly.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber(), ws.LastColumnUsed().ColumnNumber() + 1, -500, 1);
-                    picQuaterly.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber(), ws.LastColumnUsed().ColumnNumber() + 1, -490, 1);
+                    picTarget.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -240, 1);
+                    picNA.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -400, 1);
+                    picMonthly.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -500, 1);
+                    picQuaterly.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -490, 1);
 
                     picMonthly.ResizeInPercentage(70, 70);
                     picQuaterly.ResizeInPercentage(70, 70);
@@ -715,6 +754,8 @@ namespace IndInv.Controllers
             httpResponse.Clear();
             httpResponse.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.xlsx\"");
+            //httpResponse.ContentType = "application/pdf";
+            //httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
 
             // Flush the workbook to the Response.OutputStream
             using (MemoryStream memoryStream = new MemoryStream())
@@ -1900,3 +1941,4 @@ namespace IndInv.Controllers
         }
     }
 }
+

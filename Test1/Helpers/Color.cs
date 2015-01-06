@@ -48,9 +48,6 @@ namespace IndInv.Helpers
             float outScore;
             string Target = inTarget;
 
-            //                if (test == "MH&A ED revisits to own facility within 30 days (%)")
-            //                    System.Diagnostics.Debugger.Break();
-
             str = Color.getNum(inStr);
             if (str == null) { return "cssWhite"; }
             if (float.TryParse(str, out outScore)) { }
@@ -113,6 +110,34 @@ namespace IndInv.Helpers
                         default: numMonths += 3; break;
                     }
                     switch (inIndicator.FY_13_14_Q4_Sup)
+                    {
+                        case "Jan": numMonths += 1; break;
+                        case "Feb": numMonths += 2; break;
+                        case "Mar": numMonths += 3; break;
+                        default: numMonths += 3; break;
+                    }
+                    switch (inIndicator.FY_14_15_Q1_Sup)
+                    {
+                        case "Apr": numMonths += 1; break;
+                        case "May": numMonths += 2; break;
+                        case "Jun": numMonths += 3; break;
+                        default: numMonths += 3; break;
+                    }
+                    switch (inIndicator.FY_14_15_Q2_Sup)
+                    {
+                        case "Jul": numMonths += 1; break;
+                        case "Aug": numMonths += 2; break;
+                        case "Sep": numMonths += 3; break;
+                        default: numMonths += 3; break;
+                    }
+                    switch (inIndicator.FY_14_15_Q3_Sup)
+                    {
+                        case "Oct": numMonths += 1; break;
+                        case "Nov": numMonths += 2; break;
+                        case "Dec": numMonths += 3; break;
+                        default: numMonths += 3; break;
+                    }
+                    switch (inIndicator.FY_14_15_Q4_Sup)
                     {
                         case "Jan": numMonths += 1; break;
                         case "Feb": numMonths += 2; break;
