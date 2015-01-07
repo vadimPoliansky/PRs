@@ -131,7 +131,6 @@ C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\orderedList6.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\orderedList7.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\orderedList8.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\orderedList9.png
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\logo.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\logoOPEO.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\monthly.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\na.png
@@ -311,14 +310,7 @@ C:\AspNet\PRs\Test1\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
 C:\AspNet\PRs\Test1\obj\Debug\IndicatorInventory.csprojResolveAssemblyReference.cache
 C:\AspNet\PRs\Test1\obj\Debug\Indicator Inventory.dll
 C:\AspNet\PRs\Test1\obj\Debug\Indicator Inventory.pdb
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.Common.xml
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.Pdf.xml
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.XLS.xml
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.Common.dll
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.License.dll
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.Pdf.dll
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Spire.XLS.dll
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\EPPlus.dll
-C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\EPPlus.xml
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\obj\Debug\IndicatorInventory.csproj.ResolveComReference.cache
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\TuesPechkin.dll
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\logo.png
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\logo.png

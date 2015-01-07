@@ -11,15 +11,13 @@ using IndInv.Models.ViewModels;
 using IndInv.Helpers;
 
 using TuesPechkin;
-using OfficeOpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ClosedXML.Excel;
 using SpreadsheetLight;
 using SpreadsheetLight.Drawing;
-using Spire.Xls;
-using Spire.Pdf;
-using Spire.Xls.Converter;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace IndInv.Controllers
 {
@@ -176,6 +174,42 @@ namespace IndInv.Controllers
             return View(viewModel);
         }
 
+        public ActionResult viewPRSimple(Int16 fiscalYear, Int16? analystID)
+        {
+            var allMaps = new List<Indicator_CoE_Maps>();
+
+            if (analystID.HasValue)
+            {
+                allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
+            }
+            else
+            {
+                allMaps = db.Indicator_CoE_Maps.ToList();
+            }
+
+            ModelState.Clear();
+            var viewModel = new PRViewModel
+            {
+                //allCoEs = db.CoEs.ToList(),
+                allAnalysts = db.Analysts.ToList(),
+                allCoEs = db.CoEs.ToList(),
+                allMaps = allMaps,
+                allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                Fiscal_Year = fiscalYear,
+                Analyst_ID = analystID,
+                allColors = db.Color_Types.ToList(),
+            };
+
+            return View(viewModel);
+        }
+
+        [AllowAnonymous]
+        public ActionResult viewPRSimple_Header()
+        {
+            return View();
+
+        }
+
         public ActionResult viewPRExcel(Int16 fiscalYear, Int16? coeID)
         {
             ModelState.Clear();
@@ -208,9 +242,7 @@ namespace IndInv.Controllers
             var prHeightSeperator = 7.5;
 
             var prAreaObjectiveFontsize = 8;
-            var indentLength = 24;
-            var firstIndentLength = 20;
-            var innerIndentLength = 5;
+            var indentLength = 2;
             var newLineHeight = 12.6;
 
             var defNote = "Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.";
@@ -230,7 +262,7 @@ namespace IndInv.Controllers
             var prObjectivesCharsNewLine = 226;
 
             //DELETE THIS
-            coeID = null;
+            //coeID = null;
 
             var allCoes = new List<CoEs>();
             if (coeID != 0 && coeID != null)
@@ -373,8 +405,6 @@ namespace IndInv.Controllers
                         if (ws == wsPR)
                         {
                             var indent = new string('_', indentLength);
-                            var innerIndent = new string('_', innerIndentLength);
-                            var firstIndent = indent.Substring(0, firstIndentLength - areaMap.Area.Area.Length);
 
                             var stringSeperators = new string[] { "•" };
                             if (areaMap.Objective != null)
@@ -382,26 +412,10 @@ namespace IndInv.Controllers
                                 var objectives = areaMap.Objective.Split(stringSeperators, StringSplitOptions.None);
                                 for (var i = 1; i < objectives.Length; i++)
                                 {
-                                    if (i == 1)
-                                    {
-                                        prArea.FirstCell().RichText.AddText(firstIndent).SetFontColor(prAreaFill).SetFontSize(prAreaObjectiveFontsize);
-                                        cellLengthObjective += firstIndent.Length;
-                                    }
-                                    //var innerIndentAdj = new string('_', maxObjectiveLength < objectives[i].Length ? 0 : maxObjectiveLength - objectives[i].Length);
-                                    var innerIndentAdj = "";
-
-                                    cellLengthObjective += objectives[i].Length + innerIndent.Length + innerIndentAdj.Length;
-                                    if (cellLengthObjective > prObjectivesCharsNewLine)
-                                    {
-                                        prArea.FirstCell().RichText.AddNewLine();
-                                        ws.Row(currentRow).Height += newLineHeight;
-                                        //prArea.FirstCell().RichText.AddText(indent).FontColor = prAreaFill;
-                                        prArea.FirstCell().RichText.AddText(indent).SetFontColor(prAreaFill).SetFontSize(prAreaObjectiveFontsize);
-                                        cellLengthObjective = indent.Length;
-                                    }
-                                    prArea.FirstCell().RichText.AddText(innerIndent + innerIndentAdj).FontColor = prAreaFill;
+                                    prArea.FirstCell().RichText.AddNewLine();
+                                    ws.Row(currentRow).Height += newLineHeight;
+                                    prArea.FirstCell().RichText.AddText(indent).SetFontColor(prAreaFill).SetFontSize(prAreaObjectiveFontsize);
                                     prArea.FirstCell().RichText.AddText(" •" + objectives[i]).FontSize = prAreaObjectiveFontsize;
-                                    cellLengthObjective += objectives[i].Length;
                                 }
                             }
                         }
@@ -666,7 +680,7 @@ namespace IndInv.Controllers
                     if (ws.Name == "Def_WIH Obs") { System.Diagnostics.Debugger.Break(); }
 
                     if (fitHeight > totalHeight)
-                    {
+                    { 
                         var fitAddHeightTotal = (fitHeight - totalHeight);
                         var fitAddHeightPerRow = fitAddHeightTotal / fitAdjustableRows.Count;
                         foreach (var row in fitAdjustableRows)
@@ -696,6 +710,9 @@ namespace IndInv.Controllers
 
             MemoryStream preImage = new MemoryStream();
             wb.SaveAs(preImage);
+
+            //Aspose.Cells.Workbook test = new Aspose.Cells.Workbook(preImage);
+            //test.Save(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.pdf"), Aspose.Cells.SaveFormat.Pdf);
 
             MemoryStream postImage = new MemoryStream();
             SLDocument postImageWb = new SLDocument(preImage);
@@ -763,6 +780,45 @@ namespace IndInv.Controllers
                 postImageWb.SaveAs(memoryStream);
                 memoryStream.WriteTo(httpResponse.OutputStream);
                 memoryStream.Close();
+            }
+
+            var allMaps = new List<Indicator_CoE_Maps>();
+
+            allMaps = db.Indicator_CoE_Maps.ToList();
+
+            ModelState.Clear();
+
+            var viewModelT = new PRViewModel
+            {
+                //allCoEs = db.CoEs.ToList(),
+                allAnalysts = db.Analysts.ToList(),
+                allCoEs = db.CoEs.Where(x=>x.CoE_ID == db.CoEs.FirstOrDefault().CoE_ID).ToList(),
+                allMaps = allMaps,
+                allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                Fiscal_Year = fiscalYear,
+                Analyst_ID = null,
+                allColors = db.Color_Types.ToList(),
+            };
+
+            string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
+            var test = (this.RenderView("viewPRSimple", viewModelT));
+            string value = "<meta charset='UTF-8' />" + test;
+            using (var client = new WebClient())
+            {
+                NameValueCollection options = new NameValueCollection();
+                options.Add("apikey", apiKey);
+                options.Add("value", value);
+                options.Add("DisableJavascript", "true");
+                options.Add("Papersize", "Legal");
+                options.Add("UseLandscape", "true");
+                options.Add("Zoom", "1");
+                options.Add("MarginLeft", "1");
+                options.Add("MarginTop", "1");
+                options.Add("MarginBottomn", "1");
+                options.Add("MarginRight", "1");
+                //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
+                byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
+                System.IO.File.WriteAllBytes(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/test.pdf"), result);
             }
 
             httpResponse.End();
