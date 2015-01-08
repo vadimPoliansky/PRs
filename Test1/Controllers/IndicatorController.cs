@@ -36,12 +36,13 @@ namespace IndInv.Controllers
             {
                 fiscalYear = 2;
             }
-            var indexViewModel = new indexViewModel(){
+            var indexViewModel = new indexViewModel()
+            {
                 allIndicators = db.Indicators.Where(x => x.Indicator_CoE_Map.FirstOrDefault().CoE_ID > 10 && x.Indicator_CoE_Map.FirstOrDefault().CoE_ID < 20).ToList(),
                 allAnalysts = db.Analysts.ToList(),
                 allAreas = db.Areas.Where(x => x.Area_ID == 1 || x.Area_ID == 3 || x.Area_ID == 4 || x.Area_ID == 5).ToList(),
                 allCoEs = db.CoEs.Where(x => x.CoE_ID > 10 && x.CoE_ID < 20 && x.CoE_ID != 14).ToList(),
-                allFootnotes =db.Footnotes.ToList(),
+                allFootnotes = db.Footnotes.ToList(),
 
                 Fiscal_Year = fiscalYear.Value,
             };
@@ -52,8 +53,8 @@ namespace IndInv.Controllers
         [HttpPost]
         public ActionResult searchAdvanced(IList<searchViewModel> advancedSearch)
         {
-                TempData["search"] = advancedSearch.FirstOrDefault();
-                return Json(Url.Action("searchResults", "Indicator")); 
+            TempData["search"] = advancedSearch.FirstOrDefault();
+            return Json(Url.Action("searchResults", "Indicator"));
         }
 
         public ActionResult searchResults()
@@ -92,7 +93,7 @@ namespace IndInv.Controllers
                 }
                 indicatorList = indicatorList.Intersect(indicatorListCoE).ToList();
             }
-            
+
             List<Indicators> indicatorListAreas = new List<Indicators>();
             List<selectedAreas> searchAreas;
             searchAreas = advancedSearch.selectedAreas;
@@ -112,7 +113,7 @@ namespace IndInv.Controllers
             {
                 foreach (var type in searchTypes)
                 {
-                    indicatorListTypes.AddRange(db.Indicators.Where(s => s.Indicator_Type.Replace("/","").Replace("&","").Replace(" ","") == type.Indicator_Type).ToList());
+                    indicatorListTypes.AddRange(db.Indicators.Where(s => s.Indicator_Type.Replace("/", "").Replace("&", "").Replace(" ", "") == type.Indicator_Type).ToList());
                 }
                 indicatorList = indicatorList.Intersect(indicatorListTypes).ToList();
             }
@@ -134,10 +135,10 @@ namespace IndInv.Controllers
                 var viewModel = new indexViewModel
                 {
                     allIndicators = indicatorList.Distinct().ToList(),
-                    
-//                    allCoEs = db.CoEs.ToList(),
-//                    allAreas = db.Areas.ToList(),
-//                    allFootnotes = db.Footnotes.ToList()
+
+                    //                    allCoEs = db.CoEs.ToList(),
+                    //                    allAreas = db.Areas.ToList(),
+                    //                    allFootnotes = db.Footnotes.ToList()
                 };
                 return View(viewModel);
             }
@@ -151,7 +152,7 @@ namespace IndInv.Controllers
 
             if (analystID.HasValue)
             {
-                allMaps = db.Indicator_CoE_Maps.Where(x=>x.Indicator.Analyst_ID == analystID).ToList();
+                allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
             }
             else
             {
@@ -391,7 +392,7 @@ namespace IndInv.Controllers
                     currentRow += 2;
 
                     List<Footnotes> footnotes = new List<Footnotes>();
-                    foreach (var areaMap in coe.Area_CoE_Map.Where(x=>x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+                    foreach (var areaMap in coe.Area_CoE_Map.Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
                     {
                         var cellLengthObjective = 0;
                         var prArea = ws.Range(ws.Cell(currentRow, 1), ws.Cell(currentRow, maxCol));
@@ -616,7 +617,7 @@ namespace IndInv.Controllers
                                 ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                                 currentCol++;
 
-                                ws.Row(currentRow).Height = newLineHeight*Math.Ceiling(maxLines);
+                                ws.Row(currentRow).Height = newLineHeight * Math.Ceiling(maxLines);
                                 currentRow++;
                             }
                         }
@@ -672,15 +673,15 @@ namespace IndInv.Controllers
                     footnotes.Clear();
                     indicatorNumber = 1;
 
-                    var totalHeight = ExcelFunctions.getTotalHeight(ws,4);
-                    var totalWidth = ExcelFunctions.getTotalWidth(ws,1);
+                    var totalHeight = ExcelFunctions.getTotalHeight(ws, 4);
+                    var totalWidth = ExcelFunctions.getTotalWidth(ws, 1);
                     var fitHeight = (int)(totalWidth / fitRatio);
                     var fitWidth = (int)(totalHeight * fitRatio);
 
                     if (ws.Name == "Def_WIH Obs") { System.Diagnostics.Debugger.Break(); }
 
                     if (fitHeight > totalHeight)
-                    { 
+                    {
                         var fitAddHeightTotal = (fitHeight - totalHeight);
                         var fitAddHeightPerRow = fitAddHeightTotal / fitAdjustableRows.Count;
                         foreach (var row in fitAdjustableRows)
@@ -690,7 +691,7 @@ namespace IndInv.Controllers
                     }
                     else
                     {
-                        while ((fitWidth - totalWidth) /  fitWidth > 0.001 )
+                        while ((fitWidth - totalWidth) / fitWidth > 0.001)
                         {
                             var fitAddWidthTotal = (fitWidth - totalWidth) / 10;
                             var fitAddWidthPerRow = fitAddWidthTotal / (ws.LastColumnUsed().ColumnNumber() - 1);
@@ -783,16 +784,13 @@ namespace IndInv.Controllers
             }
 
             var allMaps = new List<Indicator_CoE_Maps>();
-
             allMaps = db.Indicator_CoE_Maps.ToList();
-
             ModelState.Clear();
-
             var viewModelT = new PRViewModel
             {
                 //allCoEs = db.CoEs.ToList(),
+                allCoEs = db.CoEs.Where(x => x.CoE_ID == db.CoEs.FirstOrDefault().CoE_ID).ToList(),
                 allAnalysts = db.Analysts.ToList(),
-                allCoEs = db.CoEs.Where(x=>x.CoE_ID == db.CoEs.FirstOrDefault().CoE_ID).ToList(),
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
@@ -831,6 +829,62 @@ namespace IndInv.Controllers
             var delMap = db.Indicator_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
             db.Entry(delMap).State = EntityState.Deleted;
             db.SaveChanges();
+        }
+
+        public void addNValues(Int16 indicatorID, Int16 fiscalYear)
+        {
+            var indicatorNValue = new Indicators (){
+                Indicator_N_Value = true,
+                Indicator_N_Value_ID = indicatorID
+            };
+            var indicatorNValueMap = new Indicator_CoE_Maps(){
+                Fiscal_Year = fiscalYear,
+                CoE_ID = 0,
+            };
+            if (!db.Indicator_CoE_Maps.Any(x => x.Indicator.Indicator_N_Value_ID == indicatorID && x.Fiscal_Year == fiscalYear)){
+                db.Indicators.Add(indicatorNValue);
+                db.SaveChanges();
+
+                ModelState.Clear();
+
+                indicatorNValueMap.Indicator_ID = indicatorNValue.Indicator_ID;
+                db.Indicator_CoE_Maps.Add(indicatorNValueMap);
+                db.SaveChanges();
+            }
+        }
+
+        public void unmergeCell(Int16 indicatorID, string startField, List<String> allFields)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+            var type = indicator.GetType();
+            bool start = false; 
+            foreach (var field in allFields)
+            {
+                var property = type.GetProperty(field);
+                try
+                {
+                    var value = (string)property.GetValue(indicator, null);
+                    if (start & value != "=")
+                    {
+                        db.Entry(indicator).State = EntityState.Modified;
+                        db.SaveChanges();
+                        break;
+                    }
+                    if (property.Name == startField)
+                    {
+                        start = true;
+                    }
+                    if (start & value == "=")
+                    {
+                        property.SetValue(indicator, "", null);
+                    }
+                }
+                catch (Exception)
+                {
+                    //intentional empty catch
+                    //if unable to convert to string we ignore the property and go to the next property
+                }
+            }
         }
 
         public void moveCoEMapUp(Int16 mapID, Int16 fiscalYear, Int16? areaChange)
@@ -962,7 +1016,7 @@ namespace IndInv.Controllers
             {
                 allIndicators = db.Indicators.ToList(),
                 allCoEs = db.CoEs.ToList(),
-                allMaps = db.Indicator_CoE_Maps.Where(x=>x.Fiscal_Year == fiscalYear).ToList(),
+                allMaps = db.Indicator_CoE_Maps.Where(x => x.Fiscal_Year == fiscalYear).ToList(),
                 fiscalYear = fiscalYear,
             };
             return View(viewModel);
@@ -1018,7 +1072,8 @@ namespace IndInv.Controllers
                     db.SaveChanges();
 
                     viewModel = new List<FootnotesViewModel>();
-                    var newViewModelItem = new FootnotesViewModel {
+                    var newViewModelItem = new FootnotesViewModel
+                    {
                         Footnote_ID = newFootnote.Footnote_ID,
                         Footnote = newFootnote.Footnote,
                         Footnote_Symbol = newFootnote.Footnote_Symbol,
@@ -1167,14 +1222,14 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
-        public JsonResult getAreaMap (Int16 mapID, Int16 fiscalYear)
+        public JsonResult getAreaMap(Int16 mapID, Int16 fiscalYear)
         {
-            var objectives = db.Area_CoE_Maps.Where(x=>x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Map_ID == mapID).Objective;
+            var objectives = db.Area_CoE_Maps.Where(x => x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Map_ID == mapID).Objective;
             return Json(objectives, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public void setAreaMap (Int16 mapID, string objective, Int16 fiscalYear)
+        public void setAreaMap(Int16 mapID, string objective, Int16 fiscalYear)
         {
             var map = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
             map.Objective = objective;
@@ -1186,10 +1241,10 @@ namespace IndInv.Controllers
             }
         }
 
-        public ActionResult editFootnoteMaps(Int16 fiscalYear,  Int16? indicatorID)
+        public ActionResult editFootnoteMaps(Int16 fiscalYear, Int16? indicatorID)
         {
             List<Indicator_Footnote_Maps> footnoteMaps = new List<Indicator_Footnote_Maps>();
-            foreach (var footnote in db.Indicator_Footnote_Maps.Where(x=>x.Fiscal_Year == fiscalYear).OrderBy(e => e.Map_ID).ToList())
+            foreach (var footnote in db.Indicator_Footnote_Maps.Where(x => x.Fiscal_Year == fiscalYear).OrderBy(e => e.Map_ID).ToList())
             {
                 footnoteMaps.Add(footnote);
             }
@@ -1197,7 +1252,7 @@ namespace IndInv.Controllers
             var allIndicator = new List<Indicators>();
             if (indicatorID.HasValue)
             {
-                allIndicator = db.Indicators.Where(x => x.Indicator_ID == indicatorID).OrderBy(x=>x.Indicator_ID).ToList();
+                allIndicator = db.Indicators.Where(x => x.Indicator_ID == indicatorID).OrderBy(x => x.Indicator_ID).ToList();
             }
             else
             {
@@ -1207,7 +1262,7 @@ namespace IndInv.Controllers
             var viewModel = allIndicator.Select(x => new Indicator_Footnote_MapsViewModel
             {
                 Indicator_ID = x.Indicator_ID,
-                Indicator= x.Indicator,
+                Indicator = x.Indicator,
                 Fiscal_Year = fiscalYear,
             }).ToList();
 
@@ -1331,10 +1386,10 @@ namespace IndInv.Controllers
                 {
                     db.Indicator_Footnote_Maps.Add(newMaps);
                     db.SaveChanges();
-                    var viewModel = new  
+                    var viewModel = new
                     {
                         Map_ID = newMaps.Map_ID,
-                        Footnote_ID  = newMaps.Footnote_ID ,
+                        Footnote_ID = newMaps.Footnote_ID,
                         Indicator_ID = newMaps.Indicator_ID,
                         State = "NewID"
                     };
@@ -1408,7 +1463,6 @@ namespace IndInv.Controllers
                 color = (string)colorProp.GetValue(indicator, null);
             }
 
-
             if (propertySup != null)
             {
                 valueSup = (string)propertySup.GetValue(indicator, null);
@@ -1435,7 +1489,7 @@ namespace IndInv.Controllers
                 Color = color,
             };
 
-            return Json(viewModel, JsonRequestBehavior.AllowGet) ;
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -1497,7 +1551,7 @@ namespace IndInv.Controllers
             var propertyColor = type.GetProperty(updateProperty + "_Color");
             if (propertyColor != null)
             {
-                var color = propertyColor.GetValue(indicator,null);
+                var color = propertyColor.GetValue(indicator, null);
                 return Json(color, JsonRequestBehavior.AllowGet);
             }
             else
@@ -1530,7 +1584,7 @@ namespace IndInv.Controllers
             var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
             var fieldList = new List<string>();
 
-            var format = db.Formats.FirstOrDefault(x=>x.Format_ID == formatID).Format_Code;
+            var format = db.Formats.FirstOrDefault(x => x.Format_ID == formatID).Format_Code;
             if (format != null)
             {
 
@@ -1598,12 +1652,12 @@ namespace IndInv.Controllers
         [HttpPost]
         public ActionResult changeColor(Int16 indicatorID, Int16 colorID, Int16 fiscalYear)
         {
-                var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
-                var field = FiscalYear.FYStrFull("FY_", fiscalYear);
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+            var field = FiscalYear.FYStrFull("FY_", fiscalYear);
 
-                var type = indicator.GetType();
-                var colorIDField = field + "Color_ID";
-                var property = type.GetProperty(colorIDField);
+            var type = indicator.GetType();
+            var colorIDField = field + "Color_ID";
+            var property = type.GetProperty(colorIDField);
 
             if (colorID != -1)
             {
@@ -1655,7 +1709,7 @@ namespace IndInv.Controllers
                 Indicator_ID = x.Indicator_ID,
                 Area_ID = x.Area_ID,
                 CoE = x.Indicator_CoE_Map != null ?
-                        ( x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "" )
+                        (x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "")
                       : "",
                 Indicator = x.Indicator,
                 FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
@@ -1718,7 +1772,7 @@ namespace IndInv.Controllers
             {
                 return View(viewModel);
             }
-            
+
         }
 
         [HttpPost]
@@ -1738,7 +1792,9 @@ namespace IndInv.Controllers
                 //indicator.Indicator_ID = updateValue;
                 db.Indicators.Add(indicator);
                 db.SaveChanges();
-            } else{
+            }
+            else
+            {
                 var property = indicator.GetType().GetProperty(updatePropertyFull);
                 property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
 
@@ -1825,7 +1881,7 @@ namespace IndInv.Controllers
         public ActionResult Details(Int16 indicatorID, Int16 fiscalYear)
         {
             var viewModelItems = new List<Indicators>();
-            viewModelItems = db.Indicators.Where(x=>x.Indicator_ID == indicatorID).ToList();
+            viewModelItems = db.Indicators.Where(x => x.Indicator_ID == indicatorID).ToList();
 
             var viewModel = viewModelItems.OrderBy(x => x.Indicator_ID).Select(x => new GraphViewModel
             {

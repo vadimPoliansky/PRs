@@ -20,6 +20,10 @@ namespace IndInv.Models
         public string Indicator { get; set; }
         [Display(Name = "Indicator Type")]
         public string Indicator_Type { get; set; }
+
+        public bool? Indicator_N_Value { get; set; }
+        public Int16? Indicator_N_Value_ID { get; set; }
+
         [Display(Name = "FY 10/11")]
         public string FY_10_11_YTD { get; set; }
         public string FY_10_11_YTD_Sup { get; set; }
@@ -29,7 +33,6 @@ namespace IndInv.Models
         [Display(Name = "FY 12/13")]
         public string FY_12_13_YTD { get; set; }
         public string FY_12_13_YTD_Sup { get; set; }
-
 
         [Display(Name = "Q1")]
         public string FY_13_14_Q1 { get; set; }
