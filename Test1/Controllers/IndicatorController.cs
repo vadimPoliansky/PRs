@@ -423,30 +423,68 @@ namespace IndInv.Controllers
 
                         currentRow++;
 
-                        foreach (var map in viewModel.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(areaMap.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+                        var allMaps = viewModel.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(areaMap.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
+                        var allNValues = new List<Indicator_CoE_Maps>();
+                        if (ws.Name == wsPRName)
+                        {
+                            allNValues = viewModel.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
+                        }
+                        var allMapsWithNValues = new List<Indicator_CoE_Maps>();
+                        foreach (var nValue in allNValues)
+                        {
+                            var indicatorIndex = allMaps.FirstOrDefault(x => x.Indicator_ID == nValue.Indicator.Indicator_N_Value_ID);
+                            if (indicatorIndex != null)
+                            {
+                                var position = allMaps.IndexOf(indicatorIndex);
+                                allMapsWithNValues.Add(indicatorIndex);
+                                allMaps.Insert(position + 1, nValue);
+                            }
+                        }
+                        foreach (var map in allMaps)
                         {
                             fitAdjustableRows.Add(currentRow);
                             currentCol = 1;
 
-                            ws.Cell(currentRow, currentCol).Value = indicatorNumber;
-                            indicatorNumber++;
-                            ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                            currentCol++;
-
-                            int j = 0;
-                            ws.Cell(currentRow, currentCol).Value = map.Indicator.Indicator;
-                            foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+                            int rowSpan = 1;
+                            if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
                             {
-                                if (!footnotes.Contains(footnote.Footnote)) { footnotes.Add(footnote.Footnote); }
-                                if (j != 0)
+                                if (allMapsWithNValues.Contains(map))
                                 {
-                                    ws.Cell(currentRow, currentCol).RichText.AddText(",").VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                                    rowSpan = 2;
+                                    ws.Range(ws.Cell(currentRow, currentCol), ws.Cell(currentRow + 1, currentCol)).Merge();
+                                    ws.Range(ws.Cell(currentRow, currentCol + 1), ws.Cell(currentRow + 1, currentCol + 1)).Merge();
                                 }
-                                ws.Cell(currentRow, currentCol).RichText.AddText(footnote.Footnote.Footnote_Symbol).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
-                                j++;
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorder = prBorderWidth;
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorderColor = prBorder;
+                                ws.Cell(currentRow, currentCol).Value = indicatorNumber;
+                                indicatorNumber++;
+                                ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                                currentCol++;
+
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorder = prBorderWidth;
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorderColor = prBorder;
+                                int j = 0;
+                                ws.Cell(currentRow, currentCol).Value = map.Indicator.Indicator;
+                                foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+                                {
+                                    if (!footnotes.Contains(footnote.Footnote)) { footnotes.Add(footnote.Footnote); }
+                                    if (j != 0)
+                                    {
+                                        ws.Cell(currentRow, currentCol).RichText.AddText(",").VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                                    }
+                                    ws.Cell(currentRow, currentCol).RichText.AddText(footnote.Footnote.Footnote_Symbol).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                                    j++;
+                                }
+                                ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+                                currentCol++;
                             }
-                            ws.Cell(currentRow, currentCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
-                            currentCol++;
+                            else
+                            {
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorder = prBorderWidth;
+                                ws.Cell(currentRow, currentCol).Style.Border.OutsideBorderColor = prBorder;
+                                currentCol += 2;
+                                rowSpan = 0;
+                            }
 
                             if (ws.Name == wsPRName)
                             {
@@ -460,54 +498,65 @@ namespace IndInv.Controllers
                                 string[,] columnIndicators = new string[,]{
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(obj,null),
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(obj,null),
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(obj,null),
+                                     "1",
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(obj,null),
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(obj,null),
+                                     "1"
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                     rowSpan.ToString()
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                    rowSpan.ToString()
                                     },
                                     {(string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(obj,null),
                                      (string)type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(obj,null),
-                                     ""
+                                     "",
+                                     rowSpan.ToString()
                                     },
                                 };
                                 var startCol = currentCol;
                                 int k = 1;
                                 for (var i = 0; i <= columnIndicators.GetUpperBound(0); i++)
                                 {
-                                    for (j = 0; j <= columnIndicators.GetUpperBound(1); j++)
+                                    for (var j = 0; j <= columnIndicators.GetUpperBound(1); j++)
                                     {
                                         if (columnIndicators[i, j] != null)
                                         {
@@ -533,43 +582,59 @@ namespace IndInv.Controllers
                                     }
                                     else if (columnIndicators[i, 0] != "=")
                                     {
-                                        var cell = ws.Cell(currentRow, currentCol + i);
-                                        string cellValue = "";
+                                        ws.Cell(currentRow, currentCol + i).Style.Border.OutsideBorder = prBorderWidth;
+                                        ws.Cell(currentRow, currentCol + i).Style.Border.OutsideBorderColor = prBorder;
+                                        if (columnIndicators[i, 3] != "0")
+                                        {
+                                            if (columnIndicators[i, 3] == "2") {
+                                                ws.Range(ws.Cell(currentRow, currentCol + i), ws.Cell(currentRow + 1, currentCol + i)).Merge();
+                                            }
+                                            if (allNValues.Contains(map))
+                                            {
+                                                ws.Cell(currentRow, currentCol + i).Style.Border.TopBorder = XLBorderStyleValues.None;
+                                            }
+                                            else if (allMapsWithNValues.Contains(map))
+                                            {
+                                                ws.Cell(currentRow, currentCol + i).Style.Border.BottomBorder = XLBorderStyleValues.None;
+                                            }
+                                            var cell = ws.Cell(currentRow, currentCol + i);
+                                            string cellValue = "";
 
-                                        if (columnIndicators[i, 0] != null)
-                                        {
-                                            cellValue = columnIndicators[i, 0].ToString();
-                                        }
+                                            if (columnIndicators[i, 0] != null)
+                                            {
+                                                cellValue = columnIndicators[i, 0].ToString();
+                                            }
 
-                                        if (cellValue.Contains("$"))
-                                        {
-                                        }
+                                            if (cellValue.Contains("$"))
+                                            {
+                                            }
 
-                                        cell.Value = "'" + cellValue;
-                                        if (columnIndicators[i, 1] != null)
-                                        {
-                                            cell.RichText.AddText(columnIndicators[i, 1]).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                                            cell.Value = "'" + cellValue;
+                                            if (columnIndicators[i, 1] != null)
+                                            {
+                                                cell.RichText.AddText(columnIndicators[i, 1]).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                                            }
+                                            switch (columnIndicators[i, 2])
+                                            {
+                                                case "cssWhite":
+                                                    cell.RichText.SetFontColor(XLColor.Black);
+                                                    cell.Style.Fill.BackgroundColor = XLColor.White;
+                                                    break;
+                                                case "cssGreen":
+                                                    cell.RichText.SetFontColor(XLColor.White);
+                                                    cell.Style.Fill.BackgroundColor = prGreen;
+                                                    break;
+                                                case "cssYellow":
+                                                    cell.RichText.SetFontColor(XLColor.Black);
+                                                    cell.Style.Fill.BackgroundColor = prYellow;
+                                                    break;
+                                                case "cssRed":
+                                                    cell.RichText.SetFontColor(XLColor.White);
+                                                    cell.Style.Fill.BackgroundColor = prRed;
+                                                    break;
+                                            }
+                                            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                                         }
-                                        switch (columnIndicators[i, 2])
-                                        {
-                                            case "cssWhite":
-                                                cell.RichText.SetFontColor(XLColor.Black);
-                                                cell.Style.Fill.BackgroundColor = XLColor.White;
-                                                break;
-                                            case "cssGreen":
-                                                cell.RichText.SetFontColor(XLColor.White);
-                                                cell.Style.Fill.BackgroundColor = prGreen;
-                                                break;
-                                            case "cssYellow":
-                                                cell.RichText.SetFontColor(XLColor.Black);
-                                                cell.Style.Fill.BackgroundColor = prYellow;
-                                                break;
-                                            case "cssRed":
-                                                cell.RichText.SetFontColor(XLColor.White);
-                                                cell.Style.Fill.BackgroundColor = prRed;
-                                                break;
-                                        }
-                                        cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                                     }
                                 }
                                 currentRow++;
@@ -658,8 +723,11 @@ namespace IndInv.Controllers
 
                     var pr = ws.Range(ws.Cell(startRow, 1), ws.Cell(currentRow - 1, maxCol));
 
-                    pr.Style.Border.InsideBorder = prBorderWidth;
-                    pr.Style.Border.InsideBorderColor = prBorder;
+                    if (pr.Worksheet.Name == wsDefName)
+                    {
+                        pr.Style.Border.InsideBorder = prBorderWidth;
+                        pr.Style.Border.InsideBorderColor = prBorder;
+                    }
                     pr.Style.Border.OutsideBorder = prBorderWidth;
                     pr.Style.Border.OutsideBorderColor = prBorder;
                     pr.Style.Font.FontSize = prFontSize;
@@ -783,15 +851,15 @@ namespace IndInv.Controllers
                 memoryStream.Close();
             }
 
-            var allMaps = new List<Indicator_CoE_Maps>();
-            allMaps = db.Indicator_CoE_Maps.ToList();
+            var TallMaps = new List<Indicator_CoE_Maps>();
+            TallMaps = db.Indicator_CoE_Maps.ToList();
             ModelState.Clear();
             var viewModelT = new PRViewModel
             {
                 //allCoEs = db.CoEs.ToList(),
                 allCoEs = db.CoEs.Where(x => x.CoE_ID == db.CoEs.FirstOrDefault().CoE_ID).ToList(),
                 allAnalysts = db.Analysts.ToList(),
-                allMaps = allMaps,
+                allMaps = TallMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = null,

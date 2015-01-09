@@ -71,12 +71,16 @@
         string[,] oldColumns = null;
         List<int> allColspans = new List<int>();
         var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
-        var allNValues = Model.allMaps.Where(x=>x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
-        foreach (var nValue in allNValues){
+        var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
+        var allMapsWithNValues = new List<Indicator_CoE_Maps>();
+        foreach (var nValue in allNValues)
+        {
             var indicatorIndex = allMaps.FirstOrDefault(x => x.Indicator_ID == nValue.Indicator.Indicator_N_Value_ID);
-            if (indicatorIndex != null){
-                var position = allMaps.IndexOf(indicatorIndex) + 1;
-                allMaps.Insert(position, nValue);
+            if (indicatorIndex != null)
+            {
+                var position = allMaps.IndexOf(indicatorIndex);
+                allMapsWithNValues.Add(indicatorIndex);
+                allMaps.Insert(position + 1, nValue);
             }
         }
         foreach (var map in allMaps)
@@ -93,16 +97,36 @@
                 number = null;
                 skip = true;
             }
-            <tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
-                <td class="prtd-id" mapID="@map.Map_ID" >                
-                    <a class="row-up"><i class="fa fa-sort-desc"></i></a>
-                    @number
-                    <a class="row-down"><i class="fa fa-sort-asc"></i></a>
+            int rowSpan;
+            if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
+            {
+                if (allMapsWithNValues.Contains(map))
+                {
+                    rowSpan = 2;
+                    @:<tr class='prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                }
+                else
+                {
+                    rowSpan = 1;
+                    @:<tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                }
+                <td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
+                <a class="row-up"><i class="fa fa-sort-desc"></i></a>
+                @number
+                <a class="row-down"><i class="fa fa-sort-asc"></i></a>
                 </td>
-            @{numCount++;}
-            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle
-            @{int j = 0;}
-            @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+                <td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle</td>
+            }
+            else if (allNValues.Contains(map))
+            {
+                rowSpan = 0;
+                @:<tr class='prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+            } else {
+                rowSpan = 1;   
+            }
+            numCount++;
+            int j = 0;
+            foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
             {
                 if (j != 0)
                 { Html.Raw(','); }
@@ -113,46 +137,44 @@
                     footnotes.Add(footnote.Footnote);
                 }
             }
-            @{  var indicator = map.Indicator;
-                var indicatorType = indicator.GetType();
-                //var format = indicator.Format.Format_Code;
-                string[,] columns = new string[,]{
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_3",fiscalYear)},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_2",fiscalYear)},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_1",fiscalYear)},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(indicator,null), 
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(indicator,null) + " Q1_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(indicator,null) + " Q2_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(indicator,null) + " Q3_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(indicator,null) + " Q4_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(indicator,null) + " YTD_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold"},
-                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
-                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator"},
-                };
-                ViewBag.PRCols = columns;
-                if (!skip)
-                {
-                    oldColumns = columns;
-                }
+            var indicator = map.Indicator;
+            var indicatorType = indicator.GetType();
+            //var format = indicator.Format.Format_Code;
+            string[,] columns = new string[,]{
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_3",fiscalYear), "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_2",fiscalYear), "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_1",fiscalYear), "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(indicator,null), 
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(indicator,null) + " Q1_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1", "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(indicator,null) + " Q2_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2", "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(indicator,null) + " Q3_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3", "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(indicator,null) + " Q4_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4", "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(indicator,null) + " YTD_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD", "1"},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", rowSpan.ToString()},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", rowSpan.ToString()},
+                {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
+                    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", rowSpan.ToString()},
+            };
+            ViewBag.PRCols = columns;
+            if (!skip)
+            {
+                oldColumns = columns;
             }
-            </td>
-            @for (int i = 0; i <= columns.GetUpperBound(0); i++)
+            for (int i = 0; i <= columns.GetUpperBound(0); i++)
             {
                 if (!allFields.Contains(columns[i, 3]))
                 {
@@ -176,10 +198,14 @@
                 {
                     var tdClass = columns[i, 2];
                     if (skip) { tdClass = oldColumns[i, 2]; };
-                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="@Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                    if (allNValues.Contains(map)) { tdClass = "prtd"; };
+                    if (columns[i, 4] != "0")
+                    {
+                        <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="@Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                    }
                 }
             }
-            </tr>
+            @:</tr>
         }
     }
     </table>
@@ -856,22 +882,44 @@
         $(document).on('click', '.row-up,.row-down', function(){
             var row = $(this).parents("tr:first");
             var mapID = row.attr("mapID");
+            var nValueRow;
+            if ($(row).children("td:first").attr('rowspan') == 2)
+            {
+                console.log("tesT");
+                nValueRow = row.next(); 
+            }
             if ($(this).is(".row-up")) {
+                var areaChange;
                 if (row.prev().attr("mapID")){
-                    row.insertBefore(row.prev());
-                    $.post("moveCoEMapUp",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear});
+                    areaChange = null;
                 }else if (!row.prev().prev().hasClass("prheader-Final")){
-                    row.insertBefore(row.prev());
-                    $.post("moveCoEMapUp",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: -1});
+                    areaChange = -1;
                 }
+                var intoRow;
+                if (row.prev().hasClass('prrow-isNValue')){
+                    intoRow = row.prev().prev();
+                } else {
+                    intoRow = row.prev();
+                }
+                row.insertBefore(intoRow);
+                if (nValueRow != null) { nValueRow.insertAfter(row); }
+                $.post("moveCoEMapUp",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: areaChange});
             } else {
+                var areaChange;
                 if (row.next().attr("mapID")){
-                    row.insertAfter(row.next());
-                    $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear});
+                   areaChange= null;
                 }else if (row.next().length !== 0){
-                    row.insertAfter(row.next());
-                    $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: 1});
+                    areaChange= -1;
                 }
+                if (row.next().hasClass('prrow-hasNValue') || row.next().hasClass('prrow-isNValue')){
+                    intoRow = row.next().next();
+                } else {
+                    intoRow = row.next();
+                }
+                console.log(intoRow);
+                row.insertAfter(intoRow);
+                if (nValueRow != null) { nValueRow.insertAfter(row); }
+                $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: areaChange});
             }
         });
 
@@ -1237,6 +1285,13 @@
         table tr:nth-of-type(2n) {
             background: none;
         }
+
+    .prrow-hasNValue > td {
+        border-bottom:0px none;
+    }
+    .prrow-isNValue > td {
+        border-top:0px none;
+    }
 
     input[type="text"], textarea {
         width: 100%;
