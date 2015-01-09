@@ -1,0 +1,563 @@
+﻿@using IndInv.Helpers
+@model IndInv.Models.ViewModels.PRViewModel
+@using IndInv.Models
+@using System.Globalization
+
+@{
+    ViewBag.Title = "Performance Reports";
+    Layout = null;
+}
+
+@{var properties = ModelMetadataProviders.Current; ;
+  var fiscalYear = Model.Fiscal_Year;}
+@foreach (var coe in Model.allCoEs.OrderBy(x=>x.CoE))
+{
+    if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x=>x.Indicator.Analyst_ID == @Model.Analyst_ID) : true) {
+    var footnotes = new List<Footnotes>();
+    <div class="row" style="min-width:100%">
+    <table id="tbl_@coe.CoE_Abbr" cellspacing="1" class="PR" border="1" runat="server" >
+    <tr class="prrow-CoETitle">
+        <td colspan="2"></td>
+        <td class="prtd-CoETitle" colspan="8">@coe.CoE</td>
+        <td colspan="3"></td>
+    </tr>
+    <tr class="prrow-seperator">
+        <td colspan="13"></td>
+    </tr>
+    <tr class="prheader-1">
+        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
+        <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
+    </tr>
+
+    <tr class="prheader-2 prheader-Final">
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
+        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
+    </tr>
+    @{var numCount = 1;}
+    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+    {
+        <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+            <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+                <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
+                @Html.DisplayFor(modelItem => area_map.Objective)
+            </td>
+        </tr>
+        string[,] oldColumns = null;
+        foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+        {
+            var indicatorTitle = ""; int? number = numCount; var skip = false;
+            if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+            {
+                indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+                number = numCount;
+            }
+            else
+            {
+                numCount--;
+                number = null;
+                skip = true;
+            }
+            <tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                <td class="prtd-id" mapID="@map.Map_ID" >                
+                    <a class="row-up"><i class="fa fa-sort-desc"></i></a>
+                    @number
+                    <a class="row-down"><i class="fa fa-sort-asc"></i></a>
+                </td>
+            @{numCount++;}
+            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle
+            @{int j = 0;}
+            @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+            {   
+                if (j != 0)
+                { Html.Raw(','); }
+                <sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
+                j++;
+                if (!footnotes.Contains(footnote.Footnote)){footnotes.Add(footnote.Footnote);}
+            }
+            @{  var indicator = map.Indicator;
+                var indicatorType = indicator.GetType();
+                //var format = indicator.Format.Format_Code;
+                string[,] columns = new string[,]{
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_3",fiscalYear)},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_2",fiscalYear)},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_1",fiscalYear)},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(indicator,null), 
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(indicator,null) + " Q1_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(indicator,null) + " Q2_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(indicator,null) + " Q3_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(indicator,null) + " Q4_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(indicator,null) + " YTD_Color", FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
+                     (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), "prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator"},
+                };
+                ViewBag.PRCols = columns;
+                if (!skip)
+                {
+                    oldColumns = columns;
+                }
+            }
+            </td>
+            @for (int i = 0; i <= columns.GetUpperBound(0); i++)
+            {
+                int colSpan = 1;
+                if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+                {
+                    int k = 1;
+                    while (columns[i + k, 0] == "=")
+                    {
+                        colSpan++;
+                        k++;
+                    }
+                }
+                else { colSpan = 1; };
+                if (columns[i, 0] != "=")
+                {
+                    var tdClass = columns[i, 2];
+                    if (skip) { tdClass = oldColumns[i, 2]; };
+                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="@Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                }
+            }
+            </tr>
+        }
+    }
+    </table>
+    <div class="footnotes">
+        @foreach(var footnote in footnotes){
+            <small>@footnote.Footnote_Symbol, @footnote.Footnote</small><br />
+        }
+        <br />
+    </div>
+
+    <table id="tbl" class="PRDef" border="1" runat="server" >
+    <tr class="prheader-1">
+    <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+    <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
+    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
+    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
+    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
+    </tr>
+
+    @{numCount = 1;}
+    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+    {
+        <tr class="prrow" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+        <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+            <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
+            @Html.DisplayFor(modelItem => area_map.Objective)
+        </td>
+        </tr>
+        string[,] oldColumns = null;
+        foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+        {
+            var indicatorTitle = ""; int? number = numCount; var skip = false;
+            if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+            {
+                indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+                number = numCount;
+            }
+            else
+            {
+                numCount--;
+                number = null;
+                skip = true;
+            }
+            <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" style="background-color:White">
+            <td class="prtd-id-def" style="min-width:1%;" >@number</td>
+            @{numCount++;}
+            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
+            <sup>
+            @{int j = 0;}
+            @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+            {
+                if (j != 0)
+                { Html.Raw(","); }
+                Html.DisplayFor(modelItem => footnote.Footnote.Footnote_Symbol);
+                j++;
+            }
+            </sup>
+            @{  var indicator = map.Indicator;
+                var indicatorType = indicator.GetType();
+                string[,] columns = new string[,]{
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
+                     "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
+                     "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale"},
+                    {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
+                     "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"},
+                };
+                if (!skip)
+                {
+                    oldColumns = columns;
+                }
+                ViewBag.PRColsDefs = columns;
+            }
+            </td>
+            @for (int i = 0; i <= columns.GetUpperBound(0); i++)
+            {
+                int colSpan = 1;
+                if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+                {
+                    int k = 1;
+                    while (columns[i + k, 0] == "=")
+                    {
+                        colSpan++;
+                        k++;
+                    }
+                }
+                else { colSpan = 1; };
+                if (columns[i, 0] != "=")
+                {
+                    var tdClass = columns[i, 2];
+                    if (skip) { tdClass = oldColumns[i, 2]; };
+                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class=@Html.Raw(tdClass)>@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                }
+            }
+            </tr>
+        }
+    }
+    </table>
+    </div>
+    }
+}
+
+<style>
+
+    .filter-bar {
+        background-color:#0061a7;
+        border-bottom:1px solid rgb(89, 108, 139);
+        border-top:1px solid black;
+    }
+
+    .filter {
+        color:white;
+        display:inline;
+        font-size:medium;
+    }
+
+    .add-indicator-panel {
+        background-color:lightgray !important;
+        border:1px solid black;
+        padding:0;
+        margin:0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border: 1px solid black;
+        padding: 0px;
+        background-color: red;
+        height:300px;
+        margin:0px;
+    }
+    .add-indicator-panel-header {
+        background-color: rgb(51,51,51);
+        padding:5px;
+        margin-bottom:0px;
+        color:white;
+    }
+        .add-indicator-panel-header::before {
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f067";
+            color:white;
+            padding-right:5px;
+            padding-right:5px;
+        }
+    .add-indicator-panel-close {
+        color:white;
+        float:right;
+    }
+    .search {
+        margin:0px !Important;
+    }
+    .add-indicator-list {
+        height:219px;
+        overflow-y:scroll;
+        overflow-x:hidden;
+    }
+    .add-indicator-item-title {
+        font-weight:bold;
+        display:inline;
+    }
+    .add-indicator-item {
+        font-size:small;
+        display:block;
+        width:100% !important;
+        text-align:left !important;
+        padding:5px;
+    }
+        .add-indicator-item::before {
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f0da";
+            color:black;
+            padding-right:5px;
+        }
+    .clicked {
+        background:#4cff00;
+    }
+    .included {
+        background:#ff6a00;
+    }
+    .new-map {
+        display:none;
+    }
+    .newrow > *:not(.cssGreen):not(.cssYellow):not(.cssRed)  {
+        background-color:lightblue !important;
+    }
+
+    .prrow tr {
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+    }
+    .prrow:hover {
+        box-shadow: 0 0 10px rgba(81, 203, 238, 1);
+        padding: 3px 0px 3px 3px;
+        margin: 5px 1px 3px 0px;
+        border: 1px solid rgba(81, 203, 238, 1);
+    }
+
+    .pr-edit-textarea {
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+    }
+    .pr-edit-textarea:hover {
+        box-shadow: 0 0 10px rgba(255, 106, 0, 1);;
+        padding: 3px 0px 3px 3px;
+        margin: 5px 1px 3px 0px;
+        border: 1px solid rgba(255, 106, 0, 1);
+    }
+
+    .prrow-CoETitle > td {
+        background-color:Navy;
+        border:none !important;
+        color:white;
+        font-size:2em;
+    }
+    .prrow-Seperator > td {
+        border-left:1px solid white !important;
+        border-right:1px solid white  !important;
+    }
+
+    .prheader-1 {
+        border-color:black !important;
+        font-size: 11px;
+        background-color: Navy;
+        color: White;
+        text-align: center;
+        padding: 0px;
+    }
+
+    .prheader-2 {
+        border-color:black !important;
+        font-size: 11px;
+        background-color: White;
+        color: Black;
+        text-align: center;
+        padding: 0px;
+    }
+
+    .prarea {
+        font-size: 11px;
+        background-color: Silver;
+        text-align: justify;
+        color: Black;
+        padding: 5px;
+    }
+
+    table {
+        width:100%;
+        height:80%;
+    }
+
+    
+    table, th, td {
+        border: 1pt solid black;
+        border-collapse:collapse;
+        white-space: normal;
+        page-break-inside:avoid;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+        table tr:nth-of-type(2n) {
+            background: none;
+        }
+
+    .prtd-id {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        min-width: 1%;
+        padding: 0px 2px 0px 2px;
+        min-width:1%;
+    }
+
+    .prtd-title {
+        font-size: 11px;
+        background-color: White;
+        text-align: justify;
+        color: Black;
+        min-width: 20% !important;
+        max-width: 20% !important;
+        word-wrap: break-word;
+        padding: 0px 2px 0px 2px;
+    }
+
+    .prtd-id-def {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        min-width: 1% !important;
+        max-width: 1% !important;
+        padding: 0px 2px 0px 2px;
+    }
+
+    .prtd-titleDef {
+        font-size: 11px;
+        background-color: White;
+        text-align: justify;
+        color: Black;
+        min-width: 5.5% !important;
+        max-width: 5.5% !important;
+        word-wrap: break-word;
+        padding: 0px 2px 0px 2px;
+    }
+
+    .prtd {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        min-width: 6.5%;
+        max-width: 15%;
+        padding: 0px;
+    }
+
+    .prtdDef {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        min-width: 6.5%;
+        max-width: 15%;
+        padding: 0px;
+    }
+
+    html > .prtd {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        width: 6.5%;
+        width: 15%;
+        padding: 0px;
+    }
+
+    .footnotes {
+        page-break-after:always;
+    }
+
+    .cssRed {
+        font-size: 11px;
+        background-color: Red;
+        text-align: center;
+        color: White;
+        min-width: 6.5%;
+        padding: 0px;
+    }
+
+    .cssGreen {
+        font-size: 11px;
+        background-color: Green;
+        text-align: center;
+        color: White;
+        min-width: 6.5%;
+        padding: 0px;
+    }
+
+    .cssYellow {
+        font-size: 11px;
+        background-color: Yellow;
+        text-align: center;
+        color: Black;
+        min-width: 6.5%;
+        padding: 0px;
+    }
+
+    .cssWhite {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        min-width: 6.5%;
+        padding: 0px;
+    }
+
+    .inventoryEdit {
+        padding: 0 0 0 0;
+        margin: 0 0 0 0;
+    }
+
+    .textBox1 {
+        font-size: 11px;
+        width: inherit;
+        padding: 0 0 0 0;
+        margin: 0 0 0 0;
+        border: 0;
+        background-color: transparent;
+        color: inherit;
+    }
+
+    input[type="text"], textarea {
+        width: 100%;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        background-color: lightgray;
+    }
+
+    .newrow, .newrow-td, .thVal, .thVal2 {
+        padding: 0 0 0 0 !important;
+        margin: 0 0 0 0 !important;
+    }
+
+    .newrow-text {
+        margin: 0 0 0 0 !important;
+    }
+
+    }
+</style>
+
