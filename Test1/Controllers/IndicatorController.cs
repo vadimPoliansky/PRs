@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,14 +9,13 @@ using IndInv.Models;
 using IndInv.Models.ViewModels;
 using IndInv.Helpers;
 
-using TuesPechkin;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
 using ClosedXML.Excel;
 using SpreadsheetLight;
 using SpreadsheetLight.Drawing;
 using System.Net;
 using System.Collections.Specialized;
+using iTextSharp.text;
+
 
 namespace IndInv.Controllers
 {
@@ -164,7 +162,7 @@ namespace IndInv.Controllers
             {
                 //allCoEs = db.CoEs.ToList(),
                 allAnalysts = db.Analysts.ToList(),
-                allCoEs = db.CoEs.ToList(),
+                allCoEs = db.CoEs.Where(x=>x.CoE_ID != 0).ToList(),
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
@@ -851,23 +849,46 @@ namespace IndInv.Controllers
                 memoryStream.Close();
             }
 
-            var TallMaps = new List<Indicator_CoE_Maps>();
-            TallMaps = db.Indicator_CoE_Maps.ToList();
+            httpResponse.End();
+
+            return View(viewModel);
+        }
+
+        public ActionResult viewPRPdf(Int16 fiscalYear, Int16? coeID)
+        {
+            var allCoEs = db.CoEs.ToList();
+            if (coeID != 0 && coeID != null)
+            {
+                allCoEs = allCoEs.Where(x => x.CoE_ID == coeID).ToList();
+            }
+            else
+            {
+                allCoEs = allCoEs.Where(x => x.CoE_ID != 0).ToList();
+            }
+
+            var allMaps = new List<Indicator_CoE_Maps>();
+            allMaps = db.Indicator_CoE_Maps.ToList();
             ModelState.Clear();
-            var viewModelT = new PRViewModel
+            var viewModel = new PRViewModel
             {
                 //allCoEs = db.CoEs.ToList(),
-                allCoEs = db.CoEs.Where(x => x.CoE_ID == db.CoEs.FirstOrDefault().CoE_ID).ToList(),
+                allCoEs = allCoEs,
                 allAnalysts = db.Analysts.ToList(),
-                allMaps = TallMaps,
+                allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = null,
                 allColors = db.Color_Types.ToList(),
             };
 
+            HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
+            httpResponse.Clear();
+            httpResponse.ContentType = "application/pdf";
+            httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
+
+            MemoryStream memoryStream = new MemoryStream();
             string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
-            var test = (this.RenderView("viewPRSimple", viewModelT));
+            var test = (this.RenderView("viewPRSimple", viewModel));
             string value = "<meta charset='UTF-8' />" + test;
             using (var client = new WebClient())
             {
@@ -884,9 +905,64 @@ namespace IndInv.Controllers
                 options.Add("MarginRight", "1");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
                 byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
-                System.IO.File.WriteAllBytes(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/test.pdf"), result);
+                //httpResponse.BinaryWrite(result);
+                memoryStream.Write(result, 0, result.Length);
             }
 
+            string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.png");
+            Image logo = Image.GetInstance(picPath);
+            string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+            string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
+            string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
+            string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
+            string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
+
+            var pdfDocument  = new iTextSharp.text.Document();
+            var outStream = new MemoryStream();
+            var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
+            
+            pdfDocument.Open();
+            var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
+            var stamper = new iTextSharp.text.pdf.PdfStamper(reader, outStream, '1',true);
+
+            for (var page = 1; page <= reader.NumberOfPages; page++)
+            {
+                var pdfContentByte = stamper.GetOverContent(page);
+                pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
+                pdfDocument.NewPage();
+                var importedPage = writer.GetImportedPage(reader, page);
+                var pageRotation = reader.GetPageRotation(page);
+                var pageWidth = reader.GetPageSizeWithRotation(page).Width;
+                var pageHeight = reader.GetPageSizeWithRotation(page).Height;
+                switch (pageRotation)
+                {
+                    case 0:
+                        writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+                        break;
+
+                    case 90:
+                        writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
+                        break;
+
+                    case 180:
+                        writer.DirectContent.AddTemplate(
+                            importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
+                        break;
+
+                    case 270:
+                        writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
+                        break;
+                }
+                pdfDocument.SetPageSize(pdfDocument.PageSize);
+                logo.SetAbsolutePosition(10,10);
+                pdfContentByte.AddImage(logo);
+            }
+
+            writer.CloseStream = false;
+            pdfDocument.Close();
+
+            outStream.WriteTo(httpResponse.OutputStream);
+            outStream.Close();
             httpResponse.End();
 
             return View(viewModel);

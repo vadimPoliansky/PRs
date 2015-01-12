@@ -314,3 +314,4 @@ C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\obj\Debug\IndicatorInventory.csproj
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\TuesPechkin.dll
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\logo.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\logo.png
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\itextsharp.dll

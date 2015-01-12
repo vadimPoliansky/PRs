@@ -306,6 +306,16 @@
             window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
         });
 
+        $(".btnPDF").click(function (e) {
+            var coeID = e.target.attributes.getNamedItem('coeID').value
+            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
+            var coeIDFilter;
+            if (coeID != 0) {
+                coeIDFilter = "&coeID=" + coeID;
+            }
+            window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
+        });
+
         $('#editFootnotes').click(function () {
             window.open('editFootnotes', 'Footnotes', "width=400,height=500");
         });

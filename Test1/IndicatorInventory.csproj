@@ -48,6 +48,10 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\..\..\Downloads\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=4.1.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="SpreadsheetLight">
       <HintPath>..\..\..\spreadsheetlight\SpreadsheetLight.dll</HintPath>
@@ -336,6 +340,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\DocumentFormat.OpenXml.xml" />
+    <Content Include="lib\itextsharp.dll" />
+    <Content Include="lib\PdfSharp.dll" />
     <Content Include="lib\SpreadsheetLight.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
