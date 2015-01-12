@@ -923,11 +923,9 @@ namespace IndInv.Controllers
             
             pdfDocument.Open();
             var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
-            var stamper = new iTextSharp.text.pdf.PdfStamper(reader, outStream, '1',true);
 
             for (var page = 1; page <= reader.NumberOfPages; page++)
             {
-                var pdfContentByte = stamper.GetOverContent(page);
                 pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
                 pdfDocument.NewPage();
                 var importedPage = writer.GetImportedPage(reader, page);
@@ -954,8 +952,9 @@ namespace IndInv.Controllers
                         break;
                 }
                 pdfDocument.SetPageSize(pdfDocument.PageSize);
-                logo.SetAbsolutePosition(10,10);
-                pdfContentByte.AddImage(logo);
+                logo.Alignment = Element.ALIGN_CENTER;
+                logo.SetAbsolutePosition(0,0);
+                writer.DirectContent.AddImage(logo);
             }
 
             writer.CloseStream = false;
