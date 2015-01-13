@@ -1392,7 +1392,7 @@ namespace IndInv.Controllers
         [HttpGet]
         public JsonResult getCoEs()
         {
-            return Json(db.CoEs.Select(x => x.CoE).ToList(), JsonRequestBehavior.AllowGet);
+            return Json(db.CoEs.OrderBy(x => x.CoE).Where(x => x.CoE_ID != 0).Select(x => x.CoE).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

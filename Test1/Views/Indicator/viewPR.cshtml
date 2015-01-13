@@ -584,10 +584,10 @@
                         $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thFootnotes").val()) + "</sup>");
                     }
                 }
-
-
                 currentEle = null;
+                $('body').unbind("click");
             });
+            
         }
 
         function updateObjVal(currentEle, mapID, value) {
@@ -624,6 +624,7 @@
                 });
                 $(currentEle).html("<b>" + area.attr("area") + " </b><br/>" +$.trim($(".thVal").val()));
                 currentEle = null;
+                $('body').unbind("click")
             });
         };
 
@@ -664,6 +665,7 @@
                 });
                 $(currentEle).html($.trim($(".thVal").val()));
                 currentEle = null;
+                $('body').unbind("click");
             });
         };
 
