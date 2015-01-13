@@ -902,10 +902,10 @@ namespace IndInv.Controllers
                 options.Add("PageSize", "Legal");
                 options.Add("UseLandscape", "true");
                 options.Add("Zoom", "1");
-                options.Add("MarginLeft", "1");
+                options.Add("MarginLeft", "2");
                 options.Add("MarginTop", "10");
                 options.Add("MarginBottomn", "1");
-                options.Add("MarginRight", "1");
+                options.Add("MarginRight", "2");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
                 byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
                 //httpResponse.BinaryWrite(result);
@@ -961,19 +961,19 @@ namespace IndInv.Controllers
 
                 logo.Alignment = Element.ALIGN_CENTER;
                 logo.ScalePercent(15,15);
-                logo.SetAbsolutePosition(0,reader.GetPageSizeWithRotation(page).Height-logo.ScaledHeight);
+                logo.SetAbsolutePosition(5,reader.GetPageSizeWithRotation(page).Height-logo.ScaledHeight);
                 writer.DirectContent.AddImage(logo);
 
                 logoOPEO.Alignment = Element.ALIGN_CENTER;
                 logoOPEO.ScalePercent(20, 20);
-                logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
+                logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
                 writer.DirectContent.AddImage(logoOPEO);
 
                 if (page == 1)
                 {
                     footer.Alignment = Element.ALIGN_CENTER;
                     footer.ScalePercent(45, 45);
-                    footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 7, 5);
+                    footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 5);
                     writer.DirectContent.AddImage(footer);
                 }
             }
