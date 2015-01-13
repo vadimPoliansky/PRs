@@ -111,9 +111,9 @@
                     @:<tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
                 }
                 <td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
-                <a class="row-up"><i class="fa fa-sort-desc"></i></a>
+                <a class="row-up"><i class="fa fa-sort-asc"></i></a>
                 @number
-                <a class="row-down"><i class="fa fa-sort-asc"></i></a>
+                <a class="row-down"><i class="fa fa-sort-desc"></i></a>
                 </td>
                 <td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle</td>
             }
@@ -382,7 +382,7 @@
                       htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
                   }}
                 @{var htmlExist = "";
-                  htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-desc'></i></a>#<a class='row-down'><i class='fa fa-sort-asc'></i></a></td>";
+                  htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
                   htmlExist += "<td class='newrow-td prtd-title' field='Indicator'></td>";
                   for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
                   {
@@ -799,10 +799,39 @@
                 },
 
                 "addNValues": {
-                    name: "Add N Values to Indicator",
+                    name: "Add N Values to this Indicator",
                     callback: function(key,options){
-                        var indicatorID = $(this).attr("indicatorID");
-                        $.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear });
+                        var clickRow = $(this).closest('tr');
+                        if (!$(this).closest('table').hasClass('PRDef')){
+                            var indicatorID = $(this).attr("indicatorID");
+
+                            @{var htmlNValue = "";
+                            htmlNValue += "<td></td>";
+                            htmlNValue += "<td></td>";
+                            for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+                            {
+                                htmlNValue += "<td class='newrow-td prtd' field='" + ViewBag.PRCols[i, 3] + "'></td>";
+                            }}
+
+                            $.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
+                                var html = "@Html.Raw(htmlNValue)";
+                                clickRow.closest('tr').addClass('prrow-hasNValue');
+                                clickRow.closest('tr').after("<tr class='newrow-NValue prrow prrow-isNValue' indicatorID='" + returnedData.indicatorID + "' mapID = '" + returnedData.mapID + "' coeID = '" + returnedData.coeID + "'>" + html + "<tr");
+                                $.each($('.newrow-td'),function(index, obj){
+                                    var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
+                                    $(obj).attr('indicatorID', indicatorID);
+                                    var field = $(obj).attr("field");
+                                    $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
+                                        if (data.Value != null && data.Value_Sup != null){
+                                            $(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
+                                        }
+                                        $(obj).removeClass("newrow-td");
+                                    });
+                                });
+                            });
+                        } else {
+                           
+                        }
                     }
                 },
 
@@ -811,8 +840,13 @@
                     "items": {
                         "foldDelete": {"name": "Remove From This PR",
                             callback: function(key, options){
+                                if ($(this).closest( "tr" ).hasClass("prrow-isNValue")){
+                                    $(this).closest( "tr" ).prev().children().attr('rowspan',1);
+                                }
+                                if ($(this).closest( "tr" ).hasClass("prrow-hasNValue")){
+                                    $(this).closest( "tr" ).next().remove();
+                                }
                                 var mapID = $(this).closest( "tr" ).attr("mapID");
-                                //$(this).closest( "tr" ).remove();
                                 $('tr[mapID="' + mapID + '"]').remove()
                                 $.post('deleteCoEMaps', { mapID : mapID});
                             },
@@ -908,7 +942,7 @@
                 if (row.next().attr("mapID")){
                    areaChange= null;
                 }else if (row.next().length !== 0){
-                    areaChange= -1;
+                    areaChange= 1;
                 }
                 if (row.next().hasClass('prrow-hasNValue') || row.next().hasClass('prrow-isNValue')){
                     intoRow = row.next().next();
@@ -994,6 +1028,7 @@
             var name = $.trim($(this).attr('name'));
             var id = $(this).attr('id');
             var tags = $("#myTags").tagit("assignedTags");
+
             if ($.inArray(name, tags) === -1) {
                 $(this).closest('li').addClass('filterCheck');
                 $("#myTags").tagit("createTag", name);
@@ -1127,7 +1162,7 @@
         -o-transition: all 0.30s ease-in-out;
     }
     .pr-edit-textarea:hover {
-        box-shadow: 0 0 10px rgba(255, 106, 0, 1);;
+        box-shadow: 0 0 10px rgba(255, 106, 0, 1);
         padding: 3px 0px 3px 3px;
         margin: 5px 1px 3px 0px;
         border: 1px solid rgba(255, 106, 0, 1);
@@ -1283,6 +1318,7 @@
     }
     .prrow-isNValue > td {
         border-top:0px none;
+        height:20px;
     }
 
     input[type="text"], textarea {
@@ -1324,12 +1360,12 @@
         }
 
         .btnPDF::before {
-                float:left;
-                font-family: FontAwesome;
-                /*font-size:large;*/
-                content: "\f1c1";
-                color:black;
-                padding-right:5px;
-                padding-right:5px;
-            }
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f1c1";
+            color:black;
+            padding-right:5px;
+            padding-right:5px;
+        }
 </style>

@@ -48,6 +48,11 @@ namespace IndInv.Helpers
             float outScore;
             string Target = inTarget;
 
+            if (Color_ID == 3)
+            {
+                return String.IsNullOrEmpty(inCustom) ? "cssWhite" : inCustom;
+            }
+
             str = Color.getNum(inStr);
             if (str == null) { return "cssWhite"; }
             if (float.TryParse(str, out outScore)) { }
@@ -61,8 +66,6 @@ namespace IndInv.Helpers
             float targetScore = outScore;
 
             if (Color_ID == 0) { return "cssWhite"; }
-
-            if (Color_ID == 3) { return String.IsNullOrEmpty(inCustom) ? "cssWhite" : inCustom; }
 
             if (Color_ID == 2)
             {

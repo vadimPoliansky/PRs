@@ -973,7 +973,7 @@ namespace IndInv.Controllers
                 {
                     footer.Alignment = Element.ALIGN_CENTER;
                     footer.ScalePercent(45, 45);
-                    footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 5);
+                    footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 10);
                     writer.DirectContent.AddImage(footer);
                 }
             }
@@ -995,26 +995,32 @@ namespace IndInv.Controllers
             db.SaveChanges();
         }
 
-        public void addNValues(Int16 indicatorID, Int16 fiscalYear)
+        public JsonResult addNValues(Int16 indicatorID, Int16 fiscalYear)
         {
-            var indicatorNValue = new Indicators (){
-                Indicator_N_Value = true,
-                Indicator_N_Value_ID = indicatorID
-            };
+            var indicatorNValue = db.Indicators.FirstOrDefault(x => x.Indicator_N_Value == true && x.Indicator_N_Value_ID == indicatorID);
+            if (indicatorNValue == null)
+            {
+                indicatorNValue = new Indicators()
+                {
+                    Indicator_N_Value = true,
+                    Indicator_N_Value_ID = indicatorID
+                };
+                db.Indicators.Add(indicatorNValue);
+                db.SaveChanges();
+                ModelState.Clear();
+            }
             var indicatorNValueMap = new Indicator_CoE_Maps(){
                 Fiscal_Year = fiscalYear,
                 CoE_ID = 0,
             };
-            if (!db.Indicator_CoE_Maps.Any(x => x.Indicator.Indicator_N_Value_ID == indicatorID && x.Fiscal_Year == fiscalYear)){
-                db.Indicators.Add(indicatorNValue);
-                db.SaveChanges();
-
-                ModelState.Clear();
-
+            if (!db.Indicator_CoE_Maps.Any(x => x.Indicator.Indicator_N_Value_ID == indicatorID && x.Fiscal_Year == fiscalYear))
+            {
                 indicatorNValueMap.Indicator_ID = indicatorNValue.Indicator_ID;
                 db.Indicator_CoE_Maps.Add(indicatorNValueMap);
                 db.SaveChanges();
             }
+
+            return Json(new { indicatorID = indicatorNValue.Indicator_ID, mapID = indicatorNValueMap.Map_ID, coeID = indicatorNValueMap.CoE_ID, areaID = indicatorNValueMap.Indicator.Area_ID }, JsonRequestBehavior.AllowGet);
         }
 
         public void unmergeCell(Int16 indicatorID, string startField, List<String> allFields)
@@ -1092,7 +1098,7 @@ namespace IndInv.Controllers
                     else
                     {
                         newNum = newMap.Max(x => x.Number);
-                        replaceNum = (Int16)(newNum + 1);
+                        replaceNum = (Int16)(newNum - 1);
 
                         var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
                                                                         x.Fiscal_Year == fiscalYear &&
@@ -1153,7 +1159,7 @@ namespace IndInv.Controllers
                     else
                     {
                         newNum = newMap.Min(x => x.Number);
-                        replaceNum = (Int16)(newNum - 1);
+                        replaceNum = (Int16)(newNum + 1);
 
                         var replaceMap = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == moveMap.CoE_ID &&
                                                                         x.Fiscal_Year == fiscalYear &&

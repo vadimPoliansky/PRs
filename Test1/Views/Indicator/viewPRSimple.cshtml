@@ -150,13 +150,23 @@
     <div class="footnotes">
         @{var l=0;
         foreach(var footnote in Model.allFootnotes.Where(x=>x.Footnote_ID != 7 && x.Footnote_ID != 6)){
+            footnotes.Remove(footnote);
             if (l % 2 == 0 && l != 0){ 
                 @:<br />
             }
             <small>@footnote.Footnote_Symbol, @footnote.Footnote; </small>
             l++;
+        }
+        foreach (var footnote in footnotes){
+            <small>@footnote.Footnote_Symbol, @footnote.Footnote; </small><br />
         }}
         <br />
+    </div>
+    <div class="footer-left-pg1">
+        Page 1 of 2
+    </div>
+    <div class="footer-right-pg1">
+        Generated on: @DateTime.Now.ToString("M/d/yyyy");
     </div>
 
     <table class="tbl_Def" id="tblDef_@coe.CoE_Abbr.Replace(" ","_")" class="PRDef" border="1" runat="server" >
@@ -247,6 +257,13 @@
         }
     }
     </table>
+    <div class="disclaimer">Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.</div>
+    <div class="footer-left-pg2">
+        Page 2 of 2
+    </div>
+    <div class="footer-right-pg2">
+        Generated on: @DateTime.Now.ToString("M/d/yyyy");
+    </div>
     </div>
     }
 }
@@ -485,6 +502,21 @@
     }
 
     .footnotes {
+        
+    }
+
+    .disclaimer {
+        font-size:10px;
+    }
+
+    .footer-left-pg1, .footer-left-pg2 {
+        font-size:10px;
+        left:-5px;
+    }
+    .footer-right-pg1, .footer-right-pg2 {
+        float:right;
+        font-size:10px;
+        right:-5px;
         page-break-after:always;
     }
 
@@ -562,11 +594,8 @@
             var area = $(".prarea");
             var prHeader = $(".prheader");
             var title = $(".prrow-CoETitle");
-            console.log(ele.width());
             if (ele.width() / ele.height() < setRatio) {
                 while (ele.width() / ele.height() < setRatio) {
-                    console.log(ele.width() / ele.height());
-                    console.log(ele.css('font-size'));
                     var fontSize = parseInt(ele.css('font-size')) * 0.98;
                     ele.css('font-size', fontSize );
                     area.css('font-size', fontSize * 0.8);
@@ -576,8 +605,6 @@
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
-                    console.log(ele.width() / ele.height());
-                    console.log(ele.css('font-size'));
                     var fontSize = parseInt(ele.css('font-size')) * 1.1;
                     ele.css('font-size', fontSize );
                     area.css('font-size', fontSize * 0.8);
@@ -586,13 +613,12 @@
                     ele.css('height', maxHeight);
                 }
             }
-            console.log(ele.height());
         }
     })(jQuery);
 
     $(document).ready(function () {
-        $(".tbl_PR").first().textfill(2.3, "95%");
-        $(".tbl_Def").first().textfill(2.3, "100%");
+        $(".tbl_PR").first().textfill(2.3, "94%");
+        $(".tbl_Def").first().textfill(2.3, "96%");
     });
 </script>
 <style></style>
