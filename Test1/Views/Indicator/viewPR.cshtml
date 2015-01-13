@@ -806,11 +806,13 @@
                             var indicatorID = $(this).attr("indicatorID");
 
                             @{var htmlNValue = "";
-                            htmlNValue += "<td></td>";
-                            htmlNValue += "<td></td>";
-                            for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-                            {
-                                htmlNValue += "<td class='newrow-td prtd' field='" + ViewBag.PRCols[i, 3] + "'></td>";
+                            if (ViewBag.PRCols != null){
+                                htmlNValue += "<td></td>";
+                                htmlNValue += "<td></td>";
+                                for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+                                {
+                                    htmlNValue += "<td class='newrow-td prtd' field='" + ViewBag.PRCols[i, 3] + "'></td>";
+                                }
                             }}
 
                             $.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
@@ -1255,7 +1257,7 @@
 
     .cssRed {
         font-size: 11px;
-        background-color: Red;
+        background-color: rgb(255, 0, 0);
         text-align: center;
         color: White;
         padding: 0px;
@@ -1263,7 +1265,7 @@
 
     .cssGreen {
         font-size: 11px;
-        background-color: Green;
+        background-color: rgb(0, 118, 53);
         text-align: center;
         color: White;
         padding: 0px;
@@ -1271,7 +1273,7 @@
 
     .cssYellow {
         font-size: 11px;
-        background-color: Yellow;
+        background-color: rgb(255, 192, 0);
         text-align: center;
         color: Black;
         padding: 0px;

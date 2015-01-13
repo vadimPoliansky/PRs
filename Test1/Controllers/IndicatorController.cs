@@ -145,7 +145,7 @@ namespace IndInv.Controllers
             return View();
         }
 
-        public ActionResult viewPR(Int16 fiscalYear, Int16? analystID)
+        public ActionResult viewPR(Int16 fiscalYear, Int16? analystID, Int16? coeID)
         {
             var allMaps = new List<Indicator_CoE_Maps>();
 
@@ -158,12 +158,22 @@ namespace IndInv.Controllers
                 allMaps = db.Indicator_CoE_Maps.ToList();
             }
 
+            var allCoEs = new List<CoEs>();
+            if (coeID.HasValue)
+            {
+                allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+            }
+            else
+            {
+                allCoEs = db.CoEs.ToList();
+            }
+
             ModelState.Clear();
             var viewModel = new PRViewModel
             {
                 //allCoEs = db.CoEs.ToList(),
                 allAnalysts = db.Analysts.ToList(),
-                allCoEs = db.CoEs.Where(x=>x.CoE_ID != 0).ToList(),
+                allCoEs = allCoEs,
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
                 Fiscal_Year = fiscalYear,
