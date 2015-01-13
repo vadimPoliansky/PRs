@@ -12,6 +12,7 @@ namespace IndInv.Models.ViewModels
         public List<Indicator_CoE_Maps> allMaps { get; set; }
         public List<Indicator_Footnote_Maps> allFootnoteMaps { get; set; }
         public List<Color_Types> allColors { get; set; }
+        public List<Footnotes> allFootnotes { get; set; }
 
         public Int16 Fiscal_Year { get; set; }
         public Int16? Analyst_ID { get; set; }

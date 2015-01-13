@@ -31,7 +31,6 @@
     if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
     {
         var footnotes = new List<Footnotes>();
-    <div class="row" style="min-width:98%">
     <fieldset class="prBlock">
     <div class="large-11 columns">
         <h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
@@ -40,7 +39,7 @@
         <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='btnExcel'>View Excel</div>
         <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='btnPDF'>View PDF</div>
     </div>
-    <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse; table-layout:fixed" runat="server" >
+    <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse; runat="server" >
     <tr class="prheader-1">
         <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
         <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
@@ -202,7 +201,7 @@
                     if (allNValues.Contains(map)) { tdClass = "prtd"; };
                     if (columns[i, 4] != "0")
                     {
-                        <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="@Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                        <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
                     }
                 }
             }
@@ -216,7 +215,7 @@
     }
     <br />
 
-    <table id="tbl" class="PRDef" border="1" style="border-collapse:collapse; table-layout:fixed" runat="server" >
+    <table id="tbl" class="PRDef" border="1" style="border-collapse:collapse; runat="server" >
     <tr class="prheader-1">
     <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
     <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
@@ -297,7 +296,7 @@
                 {
                     var tdClass = columns[i, 2];
                     if (skip) { tdClass = oldColumns[i, 2]; };
-                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class=@Html.Raw(tdClass)>@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
+                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
                 }
             }
             </tr>
@@ -305,7 +304,6 @@
     }
     </table>
     </fieldset>
-    </div>
     }
 }
 </div>
@@ -1133,7 +1131,7 @@
 
     .prheader-1 {
         font-size: 11px;
-        background-color: Navy;
+        background-color: rgb(0,51,102);
         color: White;
         text-align: center;
         padding: 0px;
@@ -1202,28 +1200,17 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 6.5%;
-        max-width: 15%;
+        min-width: 75px;
         padding: 0px;
     }
 
     .prtdDef {
         font-size: 11px;
         background-color: White;
-        text-align: center;
+        text-align: left;
         color: Black;
-        min-width: 6.5%;
+        min-width: 75px;
         max-width: 15%;
-        padding: 0px;
-    }
-
-    html > .prtd {
-        font-size: 11px;
-        background-color: White;
-        text-align: center;
-        color: Black;
-        width: 6.5%;
-        width: 15%;
         padding: 0px;
     }
 
@@ -1232,7 +1219,6 @@
         background-color: Red;
         text-align: center;
         color: White;
-        min-width: 6.5%;
         padding: 0px;
     }
 
@@ -1241,7 +1227,6 @@
         background-color: Green;
         text-align: center;
         color: White;
-        min-width: 6.5%;
         padding: 0px;
     }
 
@@ -1250,7 +1235,6 @@
         background-color: Yellow;
         text-align: center;
         color: Black;
-        min-width: 6.5%;
         padding: 0px;
     }
 
@@ -1259,7 +1243,6 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 6.5%;
         padding: 0px;
     }
 
@@ -1276,6 +1259,10 @@
         border: 0;
         background-color: transparent;
         color: inherit;
+    }
+
+    table {
+        width:100%;
     }
 
     table, th, td {
@@ -1311,5 +1298,34 @@
         margin: 0 0 0 0 !important;
     }
 
+    .btnExcel, .btnPDF {
+        font-size:0.5em;
     }
+
+    .btnExcel, .btnPDF {
+        box-shadow: 0 0 1px rgba(81, 203, 238, 1);
+        padding: 3px 0px 3px 3px;
+        margin: 5px 1px 3px 0px;
+        border: 1px solid rgba(81, 203, 238, 1);
+    }
+
+        .btnExcel::before {
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f1c3";
+            color:black;
+            padding-right:5px;
+            padding-right:5px;
+        }
+
+        .btnPDF::before {
+                float:left;
+                font-family: FontAwesome;
+                /*font-size:large;*/
+                content: "\f1c1";
+                color:black;
+                padding-right:5px;
+                padding-right:5px;
+            }
 </style>

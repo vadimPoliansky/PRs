@@ -15,6 +15,7 @@ using SpreadsheetLight.Drawing;
 using System.Net;
 using System.Collections.Specialized;
 using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 
 namespace IndInv.Controllers
@@ -194,6 +195,7 @@ namespace IndInv.Controllers
                 allCoEs = db.CoEs.ToList(),
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                allFootnotes = db.Footnotes.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = analystID,
                 allColors = db.Color_Types.ToList(),
@@ -876,6 +878,7 @@ namespace IndInv.Controllers
                 allAnalysts = db.Analysts.ToList(),
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                allFootnotes = db.Footnotes.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = null,
                 allColors = db.Color_Types.ToList(),
@@ -895,12 +898,12 @@ namespace IndInv.Controllers
                 NameValueCollection options = new NameValueCollection();
                 options.Add("apikey", apiKey);
                 options.Add("value", value);
-                options.Add("DisableJavascript", "true");
-                options.Add("Papersize", "Legal");
+                options.Add("DisableJavascript", "false");
+                options.Add("PageSize", "Legal");
                 options.Add("UseLandscape", "true");
                 options.Add("Zoom", "1");
                 options.Add("MarginLeft", "1");
-                options.Add("MarginTop", "1");
+                options.Add("MarginTop", "10");
                 options.Add("MarginBottomn", "1");
                 options.Add("MarginRight", "1");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
@@ -912,6 +915,9 @@ namespace IndInv.Controllers
             string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.png");
             Image logo = Image.GetInstance(picPath);
             string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+            Image logoOPEO = Image.GetInstance(picPathOPEO);
+            string footerPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/footer.png");
+            Image footer = Image.GetInstance(footerPath);
             string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
             string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
             string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
@@ -952,9 +958,24 @@ namespace IndInv.Controllers
                         break;
                 }
                 pdfDocument.SetPageSize(pdfDocument.PageSize);
+
                 logo.Alignment = Element.ALIGN_CENTER;
-                logo.SetAbsolutePosition(0,0);
+                logo.ScalePercent(15,15);
+                logo.SetAbsolutePosition(0,reader.GetPageSizeWithRotation(page).Height-logo.ScaledHeight);
                 writer.DirectContent.AddImage(logo);
+
+                logoOPEO.Alignment = Element.ALIGN_CENTER;
+                logoOPEO.ScalePercent(20, 20);
+                logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
+                writer.DirectContent.AddImage(logoOPEO);
+
+                if (page == 1)
+                {
+                    footer.Alignment = Element.ALIGN_CENTER;
+                    footer.ScalePercent(45, 45);
+                    footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 7, 5);
+                    writer.DirectContent.AddImage(footer);
+                }
             }
 
             writer.CloseStream = false;
