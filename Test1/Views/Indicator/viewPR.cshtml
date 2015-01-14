@@ -20,7 +20,6 @@
 
 <br />
 <br />
-
 <div class="block">
 @{var properties = ModelMetadataProviders.Current; ;
   var fiscalYear = Model.Fiscal_Year;
@@ -307,8 +306,11 @@
     }
 }
 </div>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+    if (!window.jQuery) document.write('<script type="text/javascript" src="../../Scripts/jquery-1.11.0.min.js"><\/script>');
+</script>
 
-<script src="../../Scripts/jquery-1.11.0.min.js"></script>
 <script src="~/Scripts/jquery.simplemodal.1.4.4.min.js"></script>
 <script type="text/javascript">
     var currentMousePos = { x: -1, y: -1 };
