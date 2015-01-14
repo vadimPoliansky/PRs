@@ -30,12 +30,14 @@
     {
         var footnotes = new List<Footnotes>();
     <fieldset class="prBlock">
-    <div class="large-11 columns">
+    <div class="large-10 columns" style="padding:0">
         <h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
     </div>
-    <div class="large-1 columns">
-        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='btnExcel'>View Excel</div>
-        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='btnPDF'>View PDF</div>
+    <div class="large-1 columns" style="padding:0">
+        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='export-button export-Excel'>View Excel</div>
+    </div>
+    <div class="large-1 columns" style="padding:0">
+        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='export-button export-PDF'>View PDF</div>
     </div>
     <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse; runat="server" >
     <tr class="prheader-1">
@@ -1016,7 +1018,7 @@
             var ajaxUrl = 'get' + field + 's';
             $.get(ajaxUrl, function(data){
                 jQuery.each(data, function (i, value) {
-                    htmlContent += "<div class='menu-dropdown-button' filterID ='" + value + "' field='" + field + "'>" + value + "</div>"
+                    htmlContent += "<div class='menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
                 });
                 htmlContent += "</div>";
                 //var posX = e.pageX , posY = e.pageY;
@@ -1037,25 +1039,31 @@
             });
         });
 
-        $(".filter-button").on("click", function () {
+        $(document).on('click', '.menu-dropdown-button', function(e){
+            console.log("sf");
             var field = $(this).attr('field')
-            var name = $.trim($(this).attr('name'));
             var id = $(this).attr('id');
-            var tags = $("#myTags").tagit("assignedTags");
+            window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+        });
 
-            if ($.inArray(name, tags) === -1) {
-                $(this).closest('li').addClass('filterCheck');
-                $("#myTags").tagit("createTag", name);
-                $('ul li:nth-last-child(2)').attr('id', id);
-                $('ul li:nth-last-child(2)').attr('field', field);
-                updateFilter(id, field);
-            } else {
-                $(this).parent().parent().removeClass('filterCheck');
-                $(this).removeClass('filterCheck');
-                $("#myTags").tagit("removeTagByLabel", name);
-                //updateFilterHide(id, field);
+        $(".export-excel").click(function (e) {
+            var coeID = e.target.attributes.getNamedItem('coeID').value
+            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
+            var coeIDFilter;
+            if (coeID != 0) {
+                coeIDFilter = "&coeID=" + coeID;
             }
-            refreshView();
+            window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
+        });
+
+        $(".export-pdf").click(function (e) {
+            var coeID = e.target.attributes.getNamedItem('coeID').value
+            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
+            var coeIDFilter;
+            if (coeID != 0) {
+                coeIDFilter = "&coeID=" + coeID;
+            }
+            window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
         });
 
 
@@ -1230,8 +1238,7 @@
         background-color: White;
         text-align: justify;
         color: Black;
-        min-width: 5.5% !important;
-        max-width: 5.5% !important;
+        min-width: 20% !important;
         word-wrap: break-word;
         padding: 0px 2px 0px 2px;
     }
@@ -1340,18 +1347,15 @@
         margin: 0 0 0 0 !important;
     }
 
-    .btnExcel, .btnPDF {
+    .export-button {
         font-size:0.5em;
-    }
-
-    .btnExcel, .btnPDF {
         box-shadow: 0 0 1px rgba(81, 203, 238, 1);
         padding: 3px 0px 3px 3px;
         margin: 5px 1px 3px 0px;
         border: 1px solid rgba(81, 203, 238, 1);
     }
 
-        .btnExcel::before {
+        .export-Excel::before {
             float:left;
             font-family: FontAwesome;
             /*font-size:large;*/
@@ -1361,7 +1365,7 @@
             padding-right:5px;
         }
 
-        .btnPDF::before {
+        .export-PDF::before {
             float:left;
             font-family: FontAwesome;
             /*font-size:large;*/
@@ -1391,6 +1395,7 @@
         background-color:#0061a7;
         border-bottom:2px solid rgb(0,51,102);
         border-top:1px solid black;
+        padding-left: 17px;
     }
 
     .menu-button {

@@ -1392,13 +1392,13 @@ namespace IndInv.Controllers
         [HttpGet]
         public JsonResult getCoEs()
         {
-            return Json(db.CoEs.OrderBy(x => x.CoE).Where(x => x.CoE_ID != 0).Select(x => x.CoE).ToList(), JsonRequestBehavior.AllowGet);
+            return Json(db.CoEs.OrderBy(x => x.CoE).Where(x => x.CoE_ID != 0).Select(x => new { x.CoE_ID, x.CoE }).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         public JsonResult getAnalysts()
         {
-            return Json(db.Analysts.Select(x => x.First_Name).ToList(), JsonRequestBehavior.AllowGet);
+            return Json(db.Analysts.Select(x => new { x.Analyst_ID, Analyst = x.First_Name }).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
