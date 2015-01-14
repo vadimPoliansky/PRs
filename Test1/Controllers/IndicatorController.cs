@@ -165,7 +165,7 @@ namespace IndInv.Controllers
             }
             else
             {
-                allCoEs = db.CoEs.ToList();
+                allCoEs = db.CoEs.Where(x=>x.CoE_ID != 0).ToList();
             }
 
             ModelState.Clear();
@@ -176,6 +176,8 @@ namespace IndInv.Controllers
                 allCoEs = allCoEs,
                 allMaps = allMaps,
                 allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                allFootnotes = db.Footnotes.ToList(),
+                allAreas = db.Areas.ToList(),
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = analystID,
                 allColors = db.Color_Types.ToList(),

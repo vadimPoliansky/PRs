@@ -18,8 +18,73 @@
     <div class="menu-button menu-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
 </div>
 
+<div class="container">
+    <!-- Push Wrapper -->
+    <div class="mp-pusher" id="mp-pusher">
 
-<div class="block">
+        <nav id="menuFilter3D" class="mp-menu">
+            <div class="mp-level">
+            <h2 class="backBtnMain mp-back"><i class="fa fa-times backBtnMain mp-back"></i>Filter by:</h2>
+            <ul>
+                <li>
+                    <a href="#"><i class="fa fa-filter"></i>CoE</a>
+                    <div class="mp-level">
+                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by CoE:</h2>
+                        <ul class="doubleList">
+                            @foreach (var coe in Model.allCoEs)
+                            {
+                                <li>
+                                    <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i> @coe.CoE_Abbr </a></small>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
+                    <div class="mp-level">
+                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Quadrant:</h2>
+                        <ul>
+                            @foreach (var area in Model.allAreas)
+                            {
+                                <li>
+                                    <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i> @area.Area</a></small>
+                                </li>
+                    }
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-filter"></i>Type</a>
+                    <div class="mp-level">
+                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Type:</h2>
+                        <ul>
+                            @foreach (var footnote in Model.allFootnotes)
+                            {
+                                <li>
+                                    <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i> @footnote.Footnote</a></small>
+                                </li>
+                    }
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+                </div>
+        </nav>
+
+
+        <div class="scroller">
+            <div class="scroller-inner">
+                <div id="pushList">
+                    <input class="search" id="search_input" name="Search" type="search" placeholder="Search" />
+                    <a><span id="trigger" class="filterExpand menu-trigger"><i class="fa fa-filter fa-2x"></i></span></a>
+
+                    <div class="inner-wrap">
+
+                        <ul id="myTags" class="tagList">
+                        </ul>
+<ul class="list">
+        <div class="block">
 @{var properties = ModelMetadataProviders.Current; ;
   var fiscalYear = Model.Fiscal_Year;
   var allFields = new List<string>();
@@ -62,7 +127,7 @@
     @{var numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
-        <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+        <tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
             <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
                 <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
                 @Html.DisplayFor(modelItem => area_map.Objective)
@@ -103,12 +168,16 @@
                 if (allMapsWithNValues.Contains(map))
                 {
                     rowSpan = 2;
-                    @:<tr class='prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                    @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                { @:footnoteID-@footnote.Footnote_ID 
+                                } prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">>
                 }
                 else
                 {
                     rowSpan = 1;
-                    @:<tr class='prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                    @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                { @:footnoteID-@footnote.Footnote_ID 
+                                } prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">>
                 }
                 <td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
                 <a class="row-up"><i class="fa fa-sort-asc"></i></a>
@@ -120,7 +189,9 @@
             else if (allNValues.Contains(map))
             {
                 rowSpan = 0;
-                @:<tr class='prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID">
+                @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                { @:footnoteID-@footnote.Footnote_ID 
+                                } prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">
             } else {
                 rowSpan = 1;   
             }
@@ -227,7 +298,7 @@
     @{numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
-        <tr class="prrow" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+        <tr class="prrow prrow-area" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
         <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
             <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
             @Html.DisplayFor(modelItem => area_map.Objective)
@@ -248,7 +319,9 @@
                 number = null;
                 skip = true;
             }
-            <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" style="background-color:White">
+            <tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                { @:footnoteID-@footnote.Footnote_ID 
+                                } prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
             <td class="prtd-id-def" style="min-width:1%;" >@number</td>
             @{numCount++;}
             <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
@@ -306,8 +379,74 @@
     </fieldset>
     }
 }
+
+    </ul>
+    </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /pusher -->
+</div><!-- /container -->
+    
+    <div id="menuFilter">
+    <nav>
+        <h2 class="backBtnMain"><i class="fa fa-times backBtnMain"></i>Filter by:</h2>
+        <ul>
+            <li>
+                <a href="#"><i class="fa fa-filter"></i>CoE</a>
+                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by CoE:</h2>
+                <ul class="doubleList">
+                    @foreach (var coe in Model.allCoEs)
+                    {
+                        <li>
+                            <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i> @coe.CoE_Abbr </a></small>
+                        </li>
+                    }
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
+                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by Quadrant:</h2>
+                <ul>
+                    @foreach (var area in Model.allAreas)
+                    {
+                        <li>
+                            <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i> @area.Area</a></small>
+                        </li>
+                    }
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-filter"></i>Type</a>
+                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by Type:</h2>
+                <ul>
+                    @foreach (var footnote in Model.allFootnotes)
+                    {
+                        <li>
+                            <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i> @footnote.Footnote</a></small>
+                        </li>
+                    }
+                </ul>
+            </li>
+        </ul>
+    </nav>
 </div>
+
+<div class="overlay"></div>
+<div class="backToTop"><i class="fa fa-arrow-up"></i></div>
+
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/../../Scripts/jquery-ui-1.8.20.min.js" ></script>
+<script src="~/Scripts/tag-it.min.js"></script>
+
+<link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
+<script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
+
+<script type="text/javascript" src="~/Scripts/classie.js"></script>
+<script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 <script type="text/javascript">
     if (!window.jQuery) document.write('<script type="text/javascript" src="../../Scripts/jquery-1.11.0.min.js"><\/script>');
 </script>
@@ -693,7 +832,7 @@
                         var coeID = clickedRow.attr("coeID");
                         var newDiv = "<div class='add-indicator-panel'>"
                         newDiv += "<div class='add-indicator-panel-header'>Add Existing Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
-                        newDiv += "<input class='search' id='search_input' name='Search' type='search' placeholder='Search' />"
+                        newDiv += "<input class='search' id='search_input_Indicator' name='Search' type='search' placeholder='Search' />"
                         $.get('getIndicatorList', function (data) {
                             newDiv += "<div class='add-indicator-list'><ul>"
                             var indicatorList = $("[coeid='" + coeID + "'] > .prtd-title").map(function(){return Number($(this).attr("indicatorid"));}).get();
@@ -720,7 +859,7 @@
                             //$(clickedRow).after(newDiv);
                             //$(newDiv).fadeIn("slow");
 
-                            $('#search_input').on('keyup change search click', function () {
+                            $('#search_input_Indicator').on('keyup change search click', function () {
                                 var valThis = $(this).val().toLowerCase();
                                 if (valThis == "") {
                                     $('.add-indicator-item').removeClass('textFiltered');
@@ -1072,6 +1211,183 @@
 
 </script>
 
+<script type="text/javascript">
+
+    if (!$("html").hasClass("lt-ie9")) {
+        new mlPushMenu(document.getElementById('menuFilter3D'), document.getElementById('trigger'));
+    }
+
+    $(document).ready(function ($) {
+
+        $(".overlay").hide()
+
+        if ($("html").hasClass("lt-ie9")) {
+            $('#menuFilter').multilevelpushmenu({
+                fullCollapse: true,
+                menuHeight: $(window).height(),
+                collapsed: true,
+                menuWidth: '30%',
+                onExpandMenuStart: function () {
+                    $(".overlay").fadeIn("fast");
+                },
+                onCollapseMenuStart: function () {
+                    if ($('#menuFilter').multilevelpushmenu('activemenu').attr('data-level') == 0) {
+                        $(".overlay").fadeOut("fast");
+                    }
+                },
+            });
+
+            $('.backItemClass').remove();
+
+            $('.backBtn').on('click', function () {
+                $('#menuFilter').multilevelpushmenu('collapse', 0)
+            });
+
+            $('.backBtnMain').on('click', function () {
+                $('#menuFilter').multilevelpushmenu('collapse')
+            });
+
+            $('.filterExpand').click(function () {
+                $('#menuFilter').multilevelpushmenu('expand');
+            });
+
+            $('#menuFilter').multilevelpushmenu('redraw');
+        }
+
+        var hidden = false;
+
+        var delay = (function(){
+            var timer = 0;
+            return function(callback, ms){
+                clearTimeout (timer);
+                timer = setTimeout(callback, ms);
+            };
+        })();
+        $('#search_input').on('keyup change search click', function () {
+            delay(function(value){
+                var valThis = $('#search_input').val().toLowerCase();
+                if (valThis == "") {
+                    $(".blockFilter").removeClass('textFiltered');
+                } else {
+                    //$('.blockFilter > li > .row > .titleColumn > .title').each(function () {
+                    $('.blockFilter > .prtd-title, .blockFilter > .prtd-titleDef').each(function () {
+                        var text = $(this).text().toLowerCase();
+                        var listItems;
+                        if (text.indexOf(valThis) >= 0) {
+                            $(this).closest(".blockFilter").removeClass('textFiltered');
+                        } else {
+                            $(this).closest(".blockFilter").addClass('textFiltered');
+                        }
+                    });
+                };
+                refreshView();
+            }, 500);
+        });
+
+
+        $("#myTags").tagit({
+            onTagClicked: function (event, ui) {
+                $("#myTags").tagit("removeTagByLabel", ui.tagLabel);
+            },
+            beforeTagRemoved: function (event, ui) {
+                var field = ui.tag.attr('field');
+                var id = ui.tag.attr('id');
+                updateFilterHide(id, field);
+                $(".filterMenuItem[id='" + id + "'][field='" + field + "']").closest('li').removeClass('filterCheck');
+                refreshView();
+            },
+            afterTagRemoved: function (event, ui) {
+                if ($("#myTags").tagit("assignedTags").length === 0) {
+                    $.each(filterClassList, function(index, value){
+                        $("." + value).removeClass(value);
+                    });
+                    hidden=false;
+                    refreshView();
+                }
+            },
+        });
+
+        $(".filterMenuItem").on("click", function () {
+            var field = $(this).attr('field')
+            var name = $.trim($(this).attr('name'));
+            var id = $(this).attr('id');
+            var tags = $("#myTags").tagit("assignedTags");
+            if ($.inArray(name, tags) === -1) {
+                $(this).closest('li').addClass('filterCheck');
+                $("#myTags").tagit("createTag", name);
+                $('ul li:nth-last-child(2)').attr('id', id);
+                $('ul li:nth-last-child(2)').attr('field', field);
+                updateFilter(id, field);
+            } else {
+                $(this).parent().parent().removeClass('filterCheck');
+                $(this).removeClass('filterCheck');
+                $("#myTags").tagit("removeTagByLabel", name);
+                //updateFilterHide(id, field);
+            }
+            refreshView();
+        });
+
+        var filterClassList = [];
+        function updateFilter(id, field) {
+            var filterClass = "filtered-" + field;
+            if( $("." + filterClass).length == 0 ){
+                $('.blockFilter').addClass(filterClass);
+            }
+            $('.' + field + "-" + id).removeClass(filterClass);
+            if ($.inArray(filterClass, filterClassList) === -1) {
+                filterClassList.push(filterClass);
+            };
+        }
+        function updateFilterHide(id, field) {
+            var filterClass = "filtered-" + field;
+            $('.' + field + "-" + id).addClass(filterClass);
+            if ($('.blockFilter').length == $('.' + filterClass).length) {
+                $('.blockFilter').removeClass(filterClass);
+            }
+        }
+
+        function refreshView() {
+            $('.blockFilter').show();
+            $.each(filterClassList, function(index, value){
+                $("." + value).hide();
+            });
+            $('.textFiltered').hide();
+            $.each($('table'), function(index, value) {
+                var visibleRows = $(this).find('> tbody > tr').filter(function(){
+                    return $(this).css('display') != 'none' && $(this).hasClass('blockFilter');
+                }).length;
+                if (visibleRows !== 0) { $(this).closest('.prBlock').show();}
+                else { $(this).closest('.prBlock').hide(); }
+
+                @foreach(var area in Model.allAreas){
+                <text>
+                var visibleAreaRows = $(this).find('> tbody > tr').filter(function(){
+                    return $(this).css('display') != 'none' && $(this).hasClass('blockFilter') && $(this).attr('areaid') == @area.Area_ID;
+                }).length;
+                if (visibleAreaRows !== 0) { $(this).find(' > tbody > .prrow-area[areaID="@area.Area_ID"]').show();}
+                else { $(this).find(' > tbody > .prrow-area[areaID="@area.Area_ID"]').hide(); }
+                </text>
+                }
+            });
+        }
+
+        var offset = 220;
+        var duration = 500;
+        jQuery(window).scroll(function() {
+            if (jQuery(this).scrollTop() > offset) {
+                jQuery('.backToTop').fadeIn(duration);
+            } else {
+                jQuery('.backToTop').fadeOut(duration);
+            }
+        });
+    
+        jQuery('.backToTop').click(function(event) {
+            event.preventDefault();
+            jQuery('html, body').animate({scrollTop: 0}, duration);
+            return false;
+        })
+    });
+ </script>
 
 <style>
     .block {
@@ -1405,4 +1721,297 @@
         margin:0px 3px;
         padding: 3px;
     }
+</style>
+
+<style>
+
+
+    .container {
+        overflow: visible;
+        height:100%;
+    }
+    .scroller {
+        overflow-y:visible;
+    }
+
+    #menuFilter {
+        display:none;
+    }
+    .lt-ie9 #menuFilter {
+        display:block;
+    }
+
+    .lt-ie9 .mp-menu {
+        visibility:hidden;
+    }
+    .lt-ie9 .scroller {
+        position:absolute;
+        top:0px;
+        left:0px;
+        width:100%;
+        /*margin-left:-300px;*/
+    }
+    .lt-ie9 .fa-rotate-90 {
+        padding-right:10px;
+        margin-top:10px;
+        background:none;
+        vertical-align:central;
+    }
+
+    .mp-menu ul li > a {
+        padding:9px;
+        font-size:1.5em;
+        font-family:'Open Sans Condensed', sans-serif;
+        color:#0094ff;
+        line-height:1em;
+    }
+        .mp-menu ul li > a::after {
+            font-size:1em;
+            padding-right:9.6px;
+            color:#0094ff;
+            float:left;
+            font-family: FontAwesome;
+            content: "\f104";
+            font-weight:normal;
+            font-style:normal;
+        }
+
+    .mp-menu a{
+        font-size: 1.5em;
+        padding: 4px 0px 4px 15px;
+        display: block;
+    }
+
+    h2 > .fa-times, a > .fa-filter {
+        float:right;
+    }
+
+    .area {
+        font-weight:300;
+        color:rgb(128, 128, 128);
+        display:block;
+        margin-left:9px;
+    }
+    .coe {
+        font-weight:800;
+    }
+    .title {
+        
+    }
+    
+    .blockContent {
+        padding:5px;
+        max-width:900px !important;
+        display:block;
+    }
+        .blockContent:hover {
+            background-color:#0081de;
+            color:rgb(255, 255, 255) !important;
+        }
+    .titleColumn {
+        text-align:right;
+    }
+
+    .backToTop {
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        text-decoration: none;
+        color: #000000;
+        background-color: rgba(135, 135, 135, 0.50);
+        font-size: 12px;
+        padding: 1em;
+        display: none;
+    }
+
+    .backToTop:hover {    
+        background-color: rgba(135, 135, 135, 0.50);
+    }
+
+    .left-off-canvas-menu {
+        height: 100%;
+    }
+
+    .list {
+        margin:0px;
+        font-size:0;
+        
+    }
+
+
+    #myTags {
+        width:100%;
+    }
+
+    .tagit-choice {
+        background-color:#FFF0B3;
+        padding:15px;
+        width:100%;
+    }
+    .tagit-choice:first-child {
+        margin-top:3px;
+    }
+    .tagit-label {
+        color:black;
+        font-weight:bold;
+    }
+    .text-icon {
+        float:right;
+        position:relative;
+        top:-10px;
+        font-size:xx-large;
+        color:black;
+    }
+
+    .doubleList {
+        -moz-column-count: 2;
+        -moz-column-gap: 0px;
+        -webkit-column-count: 2;
+        -webkit-column-gap: 0px;
+        column-count: 2;
+        column-gap: 0px;
+    }
+    .tagList {
+        -moz-column-count: 1;
+        -moz-column-gap: 0px;
+        -webkit-column-count: 1;
+        -webkit-column-gap: 0px;
+        column-count: 1;
+        column-gap: 0px;
+        list-style-type: none;
+        padding:0; margin:0;
+    }
+
+    .search {
+        float:left;
+        background-image: url(http://www.levenmetwater.nl/static/global/images/icon-search.png);
+        background-position: 10px center;
+        background-repeat: no-repeat;
+        margin: 0px !important;
+        width: 100%;
+        height: 40px;
+        padding: 10px 45px 10px 10px !important;
+        text-indent: 20px;
+        -webkit-transition: all 0.2s;
+        -moz-transition: all 2s;
+        transition: all 0.2s;
+        border:none;
+    }
+    .lt-ie9 .search {
+        padding-left:30px !important;
+    }
+        .search:focus {
+            background-position: -20px center;
+            text-indent: 20px;
+        }
+
+        .search::-webkit-search-cancel-button{
+            position:relative;
+            right:25px;
+  
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius:0px;
+        }
+            .search::-webkit-search-cancel-button::before {
+                font-family: FontAwesome;
+                font-size:large;
+                content: "\f057";
+                color:black;
+
+            }
+
+    .filterExpand {
+        color:white;
+        position:relative;
+        top:-37px;
+        padding: 5px 0 0px 15px;
+        float: right;
+        width: 50px;
+        margin: 0px !important;
+        font-size: small;
+        height: 37px !important;
+        overflow: hidden !important;
+        vertical-align: middle;
+        background-color: #0094ff;
+    }
+
+
+    #menuFilter .multilevelpushmenu_wrapper h2, #menuFilter3D h2 {
+	    font-size: medium !important;
+	    line-height: 1em;
+	    font-weight: lighter;
+        margin-top:0;
+	    color: white;
+        height:50px;
+	    padding: 1em .4em .4em .4em;
+        background-color: #0094ff;
+        font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+    }
+
+    #menuFilter .levelHolderClass, .mp-level {
+        background-color:white !important;
+        color:white;
+    }
+
+    /*#menuFilter li:hover {
+        background-color:#54c5ff !important;
+        border:0 !important;
+    }*/
+
+
+    #menuFilter li {
+        border:0 !important;
+        padding:0;
+    }
+
+    #menuFilter .multilevelpushmenu_wrapper a {
+        color:#0094ff !important;
+        border:0 !important;
+        padding:9px;
+    }
+
+    .doubleList li:hover {
+    }
+
+    .backItemClass {
+        background-color:white !important;
+        color:#0094ff !important;
+        border:0px !important;
+    }
+        .backItemClass a {
+            font-size: medium !important;
+        }
+        /*.backItemClass:hover {
+            background-color:#54c5ff !important;
+        }*/
+
+     .filterCheck::before {
+        float:right;
+        font-family: FontAwesome;
+        /*font-size:large;*/
+        content: "\f00c";
+        color:white;
+        padding-right:5px;
+    }
+
+    .filterCheck {
+        background-color:#4cff00 !important;
+        color:white !important; 
+    }
+
+    /*#menuFilter .filterCheck:hover {
+        background-color:#a3ff7c !important;
+    }*/
+
+    .ui-autocomplete-input {
+        visibility:hidden !important;
+    }
+
+    .inner-wrap {
+        position:absolute;
+        top:37px;
+    }
+
 </style>
