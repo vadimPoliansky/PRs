@@ -13,13 +13,12 @@
     ViewBag.Buttons += "<div id='btn' class='btnSwitch' value=" + 0 + " parameter=analystID >" + "All" + "</div>";
     ViewBag.fiscalYear = Model.Fiscal_Year;
 }
-<div class="filter-bar">
-    <div class="filter filter-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
-    <div class="filter filter-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
+<div class="menu-bar">
+    <div class="menu-button menu-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
+    <div class="menu-button menu-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
 </div>
 
-<br />
-<br />
+
 <div class="block">
 @{var properties = ModelMetadataProviders.Current; ;
   var fiscalYear = Model.Fiscal_Year;
@@ -1004,28 +1003,39 @@
             $(this).removeClass('draggable');
         };
 
-        $(document).on('click', '.filter', function(e){
+        menuItems.push(coeList);
+        console.log(menuItems);
+        $(document).on('click', '.menu-button', function(e){
             var field = e.target.textContent;
             if (field === "") {
                 field = e.target.nextSibling.textContent;
             }
-            var htmlContent ="<div class='simplemodal-close' id='filter'>";
-            htmlContent += '<label><i class="fa fa-filter"></i><strong> Filter:</strong><label>';
+
+            var buttonEle = $(this);
+            var menuBar = $(e.target.closest('.menu-bar'));
+            var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
+            var htmlContent ="<div class='simplemodal' id='menu-dropdown'>";
             var ajaxUrl = 'get' + field + 's';
             $.get(ajaxUrl, function(data){
                 jQuery.each(data, function (i, value) {
-                    htmlContent += "<div class='filter-button' filterID ='" + value + "' field='" + field + "'>" + value + "</div>"
-                    //htmlContent += "<div class='filterItem'>" + value + "</div>"
+                    htmlContent += "<div class='menu-dropdown-button' filterID ='" + value + "' field='" + field + "'>" + value + "</div>"
                 });
-                htmlContent += "<div class='filter-button' filterID ='' field='" + field + "'><em>Clear</em></div>"
                 htmlContent += "</div>";
-                var posX = e.pageX , posY = e.pageY;
+                //var posX = e.pageX , posY = e.pageY;
                 $(htmlContent).modal({
+                    closeHTML:"",
                     position: [posY,posX],
+                    minWidth: 200,
                     overlayClose:true,
                     opacity:80,
-                    overlayCss: {backgroundColor:"#fff"},
+                    overlayCss: {},
+                    onClose: function() {
+                        buttonEle.removeClass('menu-button-pressed')
+                        $.modal.close();
+                    },
                 });
+                $('#simplemodal-container').css('height', 'auto');
+                buttonEle.addClass('menu-button-pressed');
             });
         });
 
@@ -1059,21 +1069,9 @@
 
 <style>
     .block {
-        margin:100px !important;
+        margin:0px 100px !important;
     }
 
-
-    .filter-bar {
-        background-color:#0061a7;
-        border-bottom:1px solid rgb(89, 108, 139);
-        border-top:1px solid black;
-    }
-
-    .filter {
-        color:white;
-        display:inline;
-        font-size:medium;
-    }
 
     .add-indicator-panel {
         background-color:lightgray !important;
@@ -1374,4 +1372,34 @@
             padding-right:5px;
             padding-right:5px;
         }
+
+
+    .simplemodal-container {
+        background-color: rgb(2, 69, 137);
+        border: 0px 2px 2px 0px;
+
+    }
+    .menu-dropdown-button {
+        margin: 5px;
+        color:white;
+        font-size:0.75em;
+    }
+    .menu-button-pressed {
+        background-color: rgb(2, 69, 137);
+
+    }
+
+    .menu-bar {
+        background-color:#0061a7;
+        border-bottom:2px solid rgb(0,51,102);
+        border-top:1px solid black;
+    }
+
+    .menu-button {
+        color:white;
+        display:inline;
+        font-size:medium;
+        margin:0px 3px;
+        padding: 3px;
+    }
 </style>
