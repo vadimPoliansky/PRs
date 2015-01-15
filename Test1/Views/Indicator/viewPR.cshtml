@@ -438,8 +438,9 @@
 <div class="overlay"></div>
 <div class="backToTop"><i class="fa fa-arrow-up"></i></div>
 
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/../../Scripts/jquery-ui-1.8.20.min.js" ></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
 <script src="~/Scripts/tag-it.min.js"></script>
 
 <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
@@ -715,16 +716,10 @@
                     error: function (request){
                     }
                 });
-                if ($.trim($('.thVal').val()) === "="){
-                    var colSpan = currentEle.prev().attr('colSpan')
-                    currentEle.prev().attr('colSpan', parseInt(colSpan) + 1 );
-                    currentEle.remove();
-                } else {
-                    if (prop !== 'Indicator'){
-                        $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thVal2").val()) + "</sup>");
-                    } else if (prop === 'Indicator') {
-                        $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thFootnotes").val()) + "</sup>");
-                    }
+                if (prop !== 'Indicator'){
+                    $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thVal2").val()) + "</sup>");
+                } else if (prop === 'Indicator') {
+                    $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thFootnotes").val()) + "</sup>");
                 }
                 currentEle = null;
                 $('body').unbind("click");
@@ -902,43 +897,82 @@
                     }
                 },
 
-                "unmerge":{
-                    name: "Unmerge cell",
+                "merge":{
+                    name: "Merge cells",
                     callback: function(key, options){
-                        var cell = $(this);
-                        var oldColspan = cell.attr('colspan');
-                        var indicatorID = cell.attr('indicatorID');
-                        var startField = cell.attr('field');
-                        var allFields = [];
-                        var allFieldClasses = [];
-                        var startFieldIndex;
-                        @foreach (var field in allFields)
+                        var cells = $(".to-merge");
+                        $.each(cells,function(index,value){
+                            currentEle = $(this);
+
+                            var indicatorID = currentEle.closest( "tr" ).attr("indicatorID");
+                            var field =currentEle.attr("field");
+                            var parameters = {
+                                indicatorID: indicatorID,
+                                updateProperty: field,
+                                updateValue: "=",
+                                updateValueSup: "%NULL%",
+                                fiscalYear: @Model.Fiscal_Year
+                            };
+                            $.ajax({
+                                url: 'setValue',
+                                type: 'POST',
+                                data: JSON.stringify(parameters),
+                                contentType: 'application/json; charset=utf-8',
+                                async:false,
+                                success: function (result) {
+                                },
+                                error: function (request){
+                                }
+                            }); 
+
+                            var colSpan = parseInt(currentEle.prev().attr('colSpan'))
+                            var owncolSpan = parseInt(currentEle.attr('colSpan'))
+                            currentEle.prev().attr('colSpan', colSpan + owncolSpan );
+                            currentEle.remove();
+                        });
+                    }
+                },
+
+                "unmerge":{
+                    name: "Unmerge cells",
+                    callback: function(key, options){
+                        var selectedCells = $('.ui-selected');
+                        $.each(selectedCells,function(index,value){
+                            var cell = $(this);
+                            var oldColspan = cell.attr('colspan');
+                            var indicatorID = cell.attr('indicatorID');
+                            var startField = cell.attr('field');
+                            var allFields = [];
+                            var allFieldClasses = [];
+                            var startFieldIndex;
+                            @foreach (var field in allFields)
                         {
                             @:allFields.push('@field');   
-                        }
-                        @foreach (var fieldClass in allFieldClasses)
+                                                                                }
+                            @foreach (var fieldClass in allFieldClasses)
                         {
                             @:allFieldClasses.push('@fieldClass');   
-                        }
-                        jQuery.each(allFields, function(index, item){
-                            if (item === startField){
-                                startFieldIndex = index;
+                                                                                }
+                            jQuery.each(allFields, function(index, item){
+                                if (item === startField){
+                                    startFieldIndex = index;
+                                }
+                            });
+                            var parameters = { indicatorID: indicatorID, startField: startField, allFields: allFields}
+                            $.ajax({
+                                type:"POST",
+                                url: "unmergeCell",
+                                data: parameters,
+                                traditional: true,
+                            });
+                            for(i = oldColspan - 1; i > 0; i--){
+                                cell.attr('colspan','1');
+                                console.log('<td align="center", indicatorID="' & indicatorID & '", field="' & allFields[startFieldIndex + i + 1] & '", colspan="1", class="' & allFieldClasses[startFieldIndex + i + 1] & '")></td>');
+                                cell.after(
+                                    '<td align="center", indicatorID="' + indicatorID + '", field="' + allFields[startFieldIndex + i] +'", colspan="1", class="prtd ' + allFieldClasses[startFieldIndex + i] + ' ui-selectee")></td>'
+                                );
                             }
                         });
-                        var parameters = { indicatorID: indicatorID, startField: startField, allFields: allFields}
-                        $.ajax({
-                            type:"POST",
-                            url: "unmergeCell",
-                            data: parameters,
-                            traditional: true,
-                        });
-                        for(i = oldColspan - 1; i > 0; i--){
-                            cell.attr('colspan','1');
-                            console.log('<td align="center", indicatorID="' & indicatorID & '", field="' & allFields[startFieldIndex + i + 1] & '", colspan="1", class="' & allFieldClasses[startFieldIndex + i + 1] & '")></td>');
-                            cell.after(
-                                '<td align="center", indicatorID="' + indicatorID + '", field="' + allFields[startFieldIndex + i] +'", colspan="1", class="' + allFieldClasses[startFieldIndex + i] + '")></td>'
-                            );
-                        }
                     }
                 },
 
@@ -1389,7 +1423,87 @@
     });
  </script>
 
+<script>
+    var selectedSum =0;
+    var selectedAverage =0;
+    var selectedN =0;
+    $('table').selectable({
+        filter: ".prtd",
+        cancel: '.prarea, .prtd, .prtd-title',
+        start: function(event, ui){
+            selectedSum =0;
+            selectedAverage =0;
+            selectedN =0;
+        },
+        selected: function(event, ui){
+            var cell = $(ui.selected);
+            var cellHtml = cell.html();
+            var num = cell.html().match(/^[+-]?\d+(\.\d+)?$/);
+            //var num = cell.html()
+            if (!isNaN(num)){
+                console.log(num);
+                selectedN +=1
+                selectedSum += num;
+                selectedAverage = selectedSum / selectedN;
+                console.log(selectedSum + " " + selectedN + " " + selectedAverage);
+            }
+            if(cell.prev().hasClass("ui-selected")){
+                cell.addClass("to-merge");
+                
+            }
+        },
+        unselected: function(event, ui) {
+            var cell = $(ui.unselected);
+            console.log(cell);
+            cell.removeClass("to-merge");
+        }
+    });
+
+    $('.ui-selected').click(function() {
+        $(this)
+          .removeClass('ui-selected')
+          .parents('.ui-selectable')
+          .trigger('selectablestop');
+
+        // you might also want to trigger selectablestop.
+    });
+
+    $('tbody').sortable({
+        items: "> .prrow:not(.prrow-area)",
+        handle: ".prtd-id",
+
+        stop: function(event, io){
+            var tbody = $(this);
+            var rows = tbody.find("> .prrow:not(.prrow-area)");
+            var newOrder = [];
+            var areaIDs = [];
+            $.each(rows, function(index, value){
+                var row = $(this);
+                var mapID = row.attr('mapID');
+                var areaID = row.prevAll('.prrow-area:first').attr('areaID');
+                newOrder.push(mapID);
+                areaIDs.push(areaID);
+            });
+            $.ajax({
+                type:"POST",
+                url: "setNewOrder",
+                data: {newOrder: newOrder, areaIDs: areaIDs},
+                traditional: true,
+            });
+        }
+    });
+    
+    $( document ).tooltip({
+        items: ".ui-selected",
+        content: function(){
+            return "Sum: " + selectedSum + "<br>" + "Average: " + selectedAverage + "<br>" + "N: " + selectedN;
+        }
+    });
+</script>
+
 <style>
+
+
     .block {
         margin:0px 100px !important;
     }
@@ -1720,6 +1834,14 @@
         font-size:medium;
         margin:0px 3px;
         padding: 3px;
+    }
+
+    .ui-selecting {
+        outline:1px solid #ff6a00;
+    }
+
+    .ui-selected {
+        outline:1px solid red;
     }
 </style>
 

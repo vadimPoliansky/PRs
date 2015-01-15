@@ -1069,6 +1069,21 @@ namespace IndInv.Controllers
             }
         }
 
+        public void setNewORder(List<Int16> newOrder, Int16[] areaIDs)
+        {
+            Int16 i = 1;
+            foreach (var mapID in newOrder)
+            {
+                var areaID = areaIDs[i - 1];
+                var map = db.Indicator_CoE_Maps.FirstOrDefault(x=>x.Map_ID == mapID);
+                map.Number = i;
+                map.Indicator.Area_ID = areaID;
+                db.Entry(map).State = EntityState.Modified;
+                i++;
+            }
+            db.SaveChanges();
+        }
+
         public void moveCoEMapUp(Int16 mapID, Int16 fiscalYear, Int16? areaChange)
         {
             var moveMap = db.Indicator_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
