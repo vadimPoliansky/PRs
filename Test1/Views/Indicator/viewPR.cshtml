@@ -14,62 +14,62 @@
     ViewBag.fiscalYear = Model.Fiscal_Year;
 }
 <div class="menu-bar">
-    <div class="menu-button menu-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
-    <div class="menu-button menu-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
+    <div class="menu-title">browse by:</div>
+    <div class="menu-hover menu-button menu-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
+    <div class="menu-hover menu-button menu-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
 </div>
 
 <div class="container">
-    <!-- Push Wrapper -->
     <div class="mp-pusher" id="mp-pusher">
 
         <nav id="menuFilter3D" class="mp-menu">
             <div class="mp-level">
-            <h2 class="backBtnMain mp-back"><i class="fa fa-times backBtnMain mp-back"></i>Filter by:</h2>
-            <ul>
-                <li>
-                    <a href="#"><i class="fa fa-filter"></i>CoE</a>
-                    <div class="mp-level">
-                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by CoE:</h2>
-                        <ul class="doubleList">
-                            @foreach (var coe in Model.allCoEs)
-                            {
-                                <li>
-                                    <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i> @coe.CoE_Abbr </a></small>
-                                </li>
+                <h2 class="backBtnMain mp-back"><i class="fa fa-times backBtnMain mp-back"></i>Filter by:</h2>
+                <ul>
+                    <li>
+                        <a href="#"><i class="fa fa-filter"></i>CoE</a>
+                        <div class="mp-level">
+                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by CoE:</h2>
+                            <ul class="doubleList">
+                                @foreach (var coe in Model.allCoEs)
+                                {
+                                    <li>
+                                        <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i>@coe.CoE_Abbr </a></small>
+                                    </li>
                             }
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
-                    <div class="mp-level">
-                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Quadrant:</h2>
-                        <ul>
-                            @foreach (var area in Model.allAreas)
-                            {
-                                <li>
-                                    <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i> @area.Area</a></small>
-                                </li>
-                    }
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-filter"></i>Type</a>
-                    <div class="mp-level">
-                        <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Type:</h2>
-                        <ul>
-                            @foreach (var footnote in Model.allFootnotes)
-                            {
-                                <li>
-                                    <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i> @footnote.Footnote</a></small>
-                                </li>
-                    }
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-                </div>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
+                        <div class="mp-level">
+                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Quadrant:</h2>
+                            <ul>
+                                @foreach (var area in Model.allAreas)
+                                {
+                                    <li>
+                                        <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i>@area.Area</a></small>
+                                    </li>
+                            }
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-filter"></i>Type</a>
+                        <div class="mp-level">
+                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Type:</h2>
+                            <ul>
+                                @foreach (var footnote in Model.allFootnotes)
+                                {
+                                    <li>
+                                        <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i>@footnote.Footnote</a></small>
+                                    </li>
+                            }
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
 
@@ -83,56 +83,58 @@
 
                         <ul id="myTags" class="tagList">
                         </ul>
-<ul class="list">
-        <div class="block">
-@{var properties = ModelMetadataProviders.Current; ;
-  var fiscalYear = Model.Fiscal_Year;
-  var allFields = new List<string>();
-  var allFieldClasses = new List<string>();}
-@foreach (var coe in Model.allCoEs.OrderBy(x => x.CoE))
-{
-    if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
-    {
-        var footnotes = new List<Footnotes>();
-    <fieldset class="prBlock">
-    <div class="large-10 columns" style="padding:0">
-        <h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
-    </div>
-    <div class="large-1 columns" style="padding:0">
-        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='export-button export-Excel'>View Excel</div>
-    </div>
-    <div class="large-1 columns" style="padding:0">
-        <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" id='btn' class='export-button export-PDF'>View PDF</div>
-    </div>
-    <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse; runat="server" >
-    <tr class="prheader-1">
-        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
-        <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
-    </tr>
+                        <ul class="list">
+                            <div class="block">
+                                @{var properties = ModelMetadataProviders.Current;
+                                  var fiscalYear = Model.Fiscal_Year;
+                                  var allFields = new List<string>();
+                                  var allFieldClasses = new List<string>();
+                                }
+                                @foreach (var coe in Model.allCoEs.OrderBy(x => x.CoE))
+                                {
+                                    if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
+                                    {
+                                        var footnotes = new List<Footnotes>();
+                                    <fieldset class="prBlock">
+                                        <div class="large-10 columns" style="padding: 0">
+                                            <h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
+                                        </div>
+                                        <div class="large-1 columns" style="padding: 0">
+                                            <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-Excel menu-hover'>View Excel</div>
+                                        </div>
+                                        <div class="large-1 columns" style="padding: 0">
+                                            <div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-PDF menu-hover'>View PDF</div>
+                                        </div>
+                                        <table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse" runat="server" >
+                                            <tr class="prheader-1">
+                                                <td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+                                                <td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
+                                                <td rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
+                                                <td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
+                                            </tr>
 
-    <tr class="prheader-2 prheader-Final">
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
-    </tr>
-    @{var numCount = 1;}
-    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
-    {
-        <tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-            <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
-                <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
-                @Html.DisplayFor(modelItem => area_map.Objective)
-            </td>
-        </tr>
+                                            <tr class="prheader-2 prheader-Final">
+                                                <td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
+                                                <td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
+                                                <td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
+                                                <td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
+                                                <td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
+                                            </tr>
+                                            @{var numCount = 1;}
+                                            @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+                                            {
+                                                <tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+                                                    <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+                                                        <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
+                                                        <br />
+                                                        @Html.DisplayFor(modelItem => area_map.Objective)
+                                                    </td>
+                                                </tr>
         string[,] oldColumns = null;
         List<int> allColspans = new List<int>();
         var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
@@ -168,17 +170,17 @@
                 if (allMapsWithNValues.Contains(map))
                 {
                     rowSpan = 2;
-                    @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                { @:footnoteID-@footnote.Footnote_ID 
+                                                @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                                                                                                    { @:footnoteID-@footnote.Footnote_ID
                                 } prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">>
-                }
+                                                                }
                 else
                 {
                     rowSpan = 1;
-                    @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                { @:footnoteID-@footnote.Footnote_ID 
+                                                @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                                                                                                    { @:footnoteID-@footnote.Footnote_ID
                                 } prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">>
-                }
+                                                }
                 <td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
                 <a class="row-up"><i class="fa fa-sort-asc"></i></a>
                 @number
@@ -189,11 +191,13 @@
             else if (allNValues.Contains(map))
             {
                 rowSpan = 0;
-                @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                { @:footnoteID-@footnote.Footnote_ID 
+                                                @:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                                                                                                    { @:footnoteID-@footnote.Footnote_ID
                                 } prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">
-            } else {
-                rowSpan = 1;   
+                                                }
+            else
+            {
+                rowSpan = 1;
             }
             numCount++;
             int j = 0;
@@ -277,33 +281,34 @@
                 }
             }
             @:</tr>
-        }
+                                                    }
     }
-    </table>
-    @foreach (var footnote in footnotes)
-    {
-        <small>@footnote.Footnote_Symbol, @footnote.Footnote</small><br />
+</table>
+                                        @foreach (var footnote in footnotes)
+                                        {
+                                            <small>@footnote.Footnote_Symbol, @footnote.Footnote</small><br />
     }
-    <br />
+                                        <br />
 
-    <table id="tbl" class="PRDef" border="1" style="border-collapse:collapse; runat="server" >
-    <tr class="prheader-1">
-    <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-    <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
-    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
-    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
-    </tr>
+                                        <table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
+                                            <tr class="prheader-1">
+                                                <td rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+                                                <td rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
+                                                <td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
+                                                <td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
+                                                <td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
+                                            </tr>
 
-    @{numCount = 1;}
-    @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
-    {
-        <tr class="prrow prrow-area" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-        <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
-            <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
-            @Html.DisplayFor(modelItem => area_map.Objective)
-        </td>
-        </tr>
+                                            @{numCount = 1;}
+                                            @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
+                                            {
+                                                <tr class="prrow prrow-area" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+                                                    <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+                                                        <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
+                                                        <br />
+                                                        @Html.DisplayFor(modelItem => area_map.Objective)
+                                                    </td>
+                                                </tr>
         string[,] oldColumns = null;
         foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
         {
@@ -319,25 +324,25 @@
                 number = null;
                 skip = true;
             }
-            <tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                { @:footnoteID-@footnote.Footnote_ID 
+                                                <tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                                                                                                  { @:footnoteID-@footnote.Footnote_ID 
                                 } prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
-            <td class="prtd-id-def" style="min-width:1%;" >@number</td>
-            @{numCount++;}
-            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
-            <sup>
-            @{int j = 0;}
-            @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
-            {
-                if (j != 0)
-                { Html.Raw(","); }
-                Html.DisplayFor(modelItem => footnote.Footnote.Footnote_Symbol);
-                j++;
-            }
-            </sup>
-            @{  var indicator = map.Indicator;
-                var indicatorType = indicator.GetType();
-                string[,] columns = new string[,]{
+                                                    <td class="prtd-id-def" style="min-width: 1%;">@number</td>
+                                                    @{numCount++;}
+                                                    <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
+                                                        <sup>
+                                                            @{int j = 0;}
+                                                            @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+                                                            {
+                                                                if (j != 0)
+                                                                { Html.Raw(","); }
+                                                                Html.DisplayFor(modelItem => footnote.Footnote.Footnote_Symbol);
+                                                                j++;
+                                                            }
+                                                        </sup>
+                                                        @{  var indicator = map.Indicator;
+                                                            var indicatorType = indicator.GetType();
+                                                            string[,] columns = new string[,]{
                     {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
                      "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation"},
                     {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
@@ -345,49 +350,49 @@
                     {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
                      "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"},
                 };
-                if (!skip)
-                {
-                    oldColumns = columns;
+                                                            if (!skip)
+                                                            {
+                                                                oldColumns = columns;
+                                                            }
+                                                            ViewBag.PRColsDefs = columns;
+                                                        }
+                                                    </td>
+                                                    @for (int i = 0; i <= columns.GetUpperBound(0); i++)
+                                                    {
+                                                        int colSpan = 1;
+                                                        if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+                                                        {
+                                                            int k = 1;
+                                                            while (columns[i + k, 0] == "=")
+                                                            {
+                                                                colSpan++;
+                                                                k++;
+                                                            }
+                                                        }
+                                                        else { colSpan = 1; };
+                                                        if (columns[i, 0] != "=")
+                                                        {
+                                                            var tdClass = columns[i, 2];
+                                                            if (skip) { tdClass = oldColumns[i, 2]; };
+                                                        <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
                 }
-                ViewBag.PRColsDefs = columns;
             }
-            </td>
-            @for (int i = 0; i <= columns.GetUpperBound(0); i++)
-            {
-                int colSpan = 1;
-                if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
-                {
-                    int k = 1;
-                    while (columns[i + k, 0] == "=")
-                    {
-                        colSpan++;
-                        k++;
-                    }
-                }
-                else { colSpan = 1; };
-                if (columns[i, 0] != "=")
-                {
-                    var tdClass = columns[i, 2];
-                    if (skip) { tdClass = oldColumns[i, 2]; };
-                    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
-                }
-            }
-            </tr>
+                                                </tr>
         }
     }
-    </table>
-    </fieldset>
+                                        </table>
+                                    </fieldset>
     }
 }
-
-    </ul>
-    </div>
-                        </div>
+                            </div>
+                        </ul>
                     </div>
+                </div>
             </div>
         </div>
-
     </div>
+
+
     <!-- /pusher -->
 </div><!-- /container -->
     
@@ -1151,13 +1156,14 @@
             }
 
             var buttonEle = $(this);
-            var menuBar = $(e.target.closest('.menu-bar'));
+            var menuBar =  $(this).closest('.menu-bar');
             var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
             var htmlContent ="<div class='simplemodal' id='menu-dropdown'>";
             var ajaxUrl = 'get' + field + 's';
             $.get(ajaxUrl, function(data){
+                htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
                 jQuery.each(data, function (i, value) {
-                    htmlContent += "<div class='menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
+                    htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
                 });
                 htmlContent += "</div>";
                 //var posX = e.pageX , posY = e.pageY;
@@ -1182,7 +1188,11 @@
             console.log("sf");
             var field = $(this).attr('field')
             var id = $(this).attr('id');
-            window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            if (id !== null){
+                window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            } else {
+                window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+            }
         });
 
         $(".export-excel").click(function (e) {
@@ -1662,9 +1672,14 @@
     .newrow-text {
         margin: 0 0 0 0 !important;
     }
-
+    .list {
+        margin:0px;
+        font-size:1px;
+        color:white;
+    }
     .export-button {
-        font-size:0.5em;
+        font-size:medium !important;
+        color:black;
         box-shadow: 0 0 1px rgba(81, 203, 238, 1);
         padding: 3px 0px 3px 3px;
         margin: 5px 1px 3px 0px;
@@ -1697,8 +1712,12 @@
         border: 0px 2px 2px 0px;
 
     }
+    .menu-title {
+        color:white;
+        font-size:0.75em;
+    }
     .menu-dropdown-button {
-        margin: 5px;
+        padding: 5px;
         color:white;
         font-size:0.75em;
     }
@@ -1712,7 +1731,10 @@
         border-bottom:2px solid rgb(0,51,102);
         border-top:1px solid black;
         padding-left: 17px;
+        line-height:30px;
     }
+
+
 
     .menu-button {
         color:white;
@@ -1721,6 +1743,14 @@
         margin:0px 3px;
         padding: 3px;
     }
+
+    .menu-hover:hover {
+        background-color:#ff6a00;
+    }
+    .menu-hover:active {
+        background-color:red;
+    }
+
 </style>
 
 <style>
@@ -1830,12 +1860,6 @@
 
     .left-off-canvas-menu {
         height: 100%;
-    }
-
-    .list {
-        margin:0px;
-        font-size:0;
-        
     }
 
 
