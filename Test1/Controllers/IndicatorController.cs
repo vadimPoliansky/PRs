@@ -162,6 +162,7 @@ namespace IndInv.Controllers
             if (coeID.HasValue)
             {
                 allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+                allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
             }
             else
             {
