@@ -420,6 +420,7 @@
     <Content Include="Scripts\PIE.js" />
     <Content Include="Scripts\rem.min.js" />
     <Content Include="Scripts\tag-it.min.js" />
+    <Content Include="Scripts\undomanager.js" />
     <Content Include="Scripts\vendor\fastclick.js" />
     <Content Include="Scripts\vendor\jquery.cookie.js" />
     <Content Include="Scripts\vendor\jquery.js" />
