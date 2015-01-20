@@ -820,7 +820,8 @@
     	    removeIndicator(obj);
     	    undoManager.add({
     	        undo: function() {
-    	            deletedRow.insertAfter(prevObj.closest('tr'));
+    	            //deletedRow.insertAfter(prevObj.closest('tr'));
+    	            prevObj.closest('tr').after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
     	            addNewIndicator(prevObj, indicatorID);
     	        },
     	        redo: function(){
