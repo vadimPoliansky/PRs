@@ -2057,7 +2057,7 @@ namespace IndInv.Controllers
             int number = 0;
             if (indicatorID != 0)
             {
-                number = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == x.Fiscal_Year).FirstOrDefault(x => x.Indicator_ID == indicatorID).Number + 1;
+                number = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Indicator_ID == indicatorID).Number + 1;
             }
             newMap.Number = (Int16)number;
 

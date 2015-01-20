@@ -816,6 +816,18 @@
     			}
     		});
     	};
+    	removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
+    	    removeIndicator(obj);
+    	    undoManager.add({
+    	        undo: function() {
+    	            deletedRow.insertAfter(prevObj.closest('tr'));
+    	            addNewIndicator(prevObj, indicatorID);
+    	        },
+    	        redo: function(){
+    	            removeIndicator(obj);
+    	        }
+    	    });
+    	};
     	updateValUndoable = function(currentEle, value, value2, indicatorID, field, oldValue){
     		updateVal(currentEle, value, value2, indicatorID, field, oldValue);
     		undoManager.add({
@@ -838,7 +850,6 @@
     			}
     		});
     	};
-
     	sortUndoable = function(tbody, oldOrder, newOrder){
     		undoManager.add({
     			undo: function(){
@@ -853,7 +864,6 @@
     			}
     		});
     	};
-
     	mergeUndoable = function(toMerge, unmergeCells){
     		console.log(toMerge);
     		merge(toMerge);
@@ -867,7 +877,6 @@
     			}
     		});
     	};
-
     	unmergeUndoable = function( toUnmerge, toMerge){
     		unmerge(toUnmerge);
     		undoManager.add({
@@ -879,8 +888,7 @@
     			}
     		});
     	};
-
-    	addNValuesUndoable = function(clickedCell){
+    	addValuesUndoable = function(clickedCell){
     		addNValues(clickedCell);
     		undoManager.add({
     			undo: function(){
@@ -1227,8 +1235,10 @@
                     "items": {
                         "foldDelete": {"name": "Remove From This PR",
                         	callback: function(key, options){
-                        		var cell = $(this);
-                        		removeIndicator( cell );
+                        	    var cell = $(this);
+                                var prevCell = $(this).closest('tr').prev().first()
+                        	    var indicatorID = $(this).attr('indicatorID');
+                        	    removeIndicatorUndoable( cell, prevCell, cell.closest('tr'), indicatorID );
                             },
                         }
                     }
