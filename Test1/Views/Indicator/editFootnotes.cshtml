@@ -1,22 +1,19 @@
 ﻿@using IndInv.Helpers
 @using IndInv.Models
 @using System.Globalization
-<script src="../../Scripts/jquery-1.11.0.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
-<script type='text/javascript' src="http://wurfljs.com/wurfl.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
 @model IList<IndInv.Models.ViewModels.FootnotesViewModel>
 @using IndInv.Models
 @{
     ViewBag.Title = "Edit Indicator Inventory";
+
 }
 
 <br />
-<div class="row">
-    <div class="large-8 columns">
         <div id="dataTable"></div>
-    </div>
-</div>
+
 <script type="text/javascript">
 
     var maxed = false
@@ -26,15 +23,8 @@
         , $window = $(window)
         , $example1 = $('#dataTable');
 
-    var calculateSize = function () {
-        var offset = $example1.offset();
-        availableWidth = $window.width() - offset.left + $window.scrollLeft();
-        availableHeight = $window.height() - offset.top + $window.scrollTop();
-    };
-    $window.on('resize', calculateSize);
-
     var values = @Html.Raw(Json.Encode(Model));
-    
+
     $example1 .handsontable({
         data: values,
         startRows: 1,
@@ -45,30 +35,19 @@
         strechW: 'all',
         scrollH: 'auto',
         scrollV: 'auto',
-        width: function () {
-            if (maxed && availableWidth === void 0) {
-                calculateSize();
-            }
-            return maxed  ?  availableWidth *0.98 : 300;
-        },
-        height: function () {
-            if (maxed && availableHeight === void 0) {
-                calculateSize();
-            }
-        return maxed  ?  availableHeight*0.98: 300;
-        },
+        width: 700,
+        height: 500,
         fixedRowsTop: 0,
         fixedColumnsLeft: 1,
-        manualColumnResize: true,
-        minSpareRows: 0,
         contextMenu: true,
+        colWidths: [70, 600],
         colHeaders: [
-            "Footnote",
-            "Footnote Text",
+            "Symbol",
+            "Text",
         ],
         columns: [
-            {data:"Footnote_Symbol"},
-            {data:"Footnote"},
+            {data: 'Footnote_Symbol'},
+            {data: 'Footnote'}
         ],
         afterChange: function (change, source) {
             if (source === 'loadData') {

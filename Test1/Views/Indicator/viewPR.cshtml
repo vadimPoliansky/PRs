@@ -14,9 +14,9 @@
     ViewBag.fiscalYear = Model.Fiscal_Year;
 }
 <div class="menu-bar">
-    <div class="menu-title">browse by:</div>
-    <div class="menu-hover menu-button menu-coe" field="coe"><i class="fa fa-filter"></i>CoE</div>
-    <div class="menu-hover menu-button menu-analyst" field="analyst"><i class="fa fa-filter"></i>Analyst</div>
+    <div class="menu-hover menu-button menu-open menu-coe" field="coe"><i class="fa fa-folder-open-o"></i>CoE</div>
+    <div class="menu-hover menu-button menu-open menu-analyst" field="analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+    <div class="menu-hover menu-button menu-edit-footnotes" field="coe"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
 </div>
 
 <div class="container">
@@ -152,6 +152,8 @@
 												}
 												foreach (var map in allMaps)
 												{
+													var indicator = map.Indicator;
+													var indicatorType = indicator.GetType();
 													var indicatorTitle = ""; int? number = numCount; var skip = false;
 													if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
 													{
@@ -165,19 +167,20 @@
 														skip = true;
 													}
 													int rowSpan;
+													var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
 													if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
 													{
 														if (allMapsWithNValues.Contains(map))
 														{
 															rowSpan = 2;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID 
-															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">
+															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
 														}
 														else
 														{
 															rowSpan = 1;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
-															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">
+															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
 														}
 														<td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
 														<a class="row-up"><i class="fa fa-sort-asc"></i></a>
@@ -203,15 +206,13 @@
 													{
 														rowSpan = 0;
 														@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
-														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID">
+														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
 													}
-												   else
-												   {
-													   rowSpan = 1;
-												   }
-												   numCount++;
-													var indicator = map.Indicator;
-													var indicatorType = indicator.GetType();
+													else
+													{
+														rowSpan = 1;
+													}
+													numCount++;
 													//var format = indicator.Format.Format_Code;
 													string[,] columns = new string[,]{
 													{
@@ -219,7 +220,7 @@
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null),
 														"prtd", 
 														FiscalYear.FYStrFull("FY_3",fiscalYear), 
-														"1"
+														"1",
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
@@ -541,6 +542,11 @@
             $.post('formatIndicator', {indicatorID: indicatorID, formatID: formatID}, function(data){
             });
         }
+		
+
+        removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
+        	removeIndicator(obj);
+        };
 
         function changeColor(obj, colorID){
             var indicatorID = obj.attr('indicatorID');
@@ -559,19 +565,44 @@
                 });
             });
         }
+    	function changeColorUndoable(obj, colorID, oldColorID){
+    		changeColor(obj, colorID);
+    		undoManager.add({
+    			undo: function() {
+    				changeColor(obj, oldColorID);
+    			},
+    			redo: function(){
+    				changeColor(obj, colorID);
+    			}
+    		});
+    	}
 
-        function setCustomColor(obj, color){
-            var indicatorID = obj.attr('indicatorID');
-            var field = obj.attr('field');
-            $.post('setCustomColor', {indicatorID: indicatorID, field: field, color: color, fiscalYear: @fiscalYear }, function(data){
-                var classes = $(obj).attr('class').split(" ").filter(function(c) {
-                    return c.lastIndexOf("css", 0) !== 0;
-                });
-                obj.attr('class', $.trim(classes.join(" ")));
-                $(obj).addClass(color);
-                changeColor(obj, 3);
-            });
-        }
+    	function setCustomColor(obj, color){
+    		var indicatorID = obj.attr('indicatorID');
+    		var field = obj.attr('field');
+    		$.post('setCustomColor', {indicatorID: indicatorID, field: field, color: color, fiscalYear: @fiscalYear }, function(data){
+    			var classes = $(obj).attr('class').split(" ").filter(function(c) {
+    				return c.lastIndexOf("css", 0) !== 0;
+    			});
+    			obj.attr('class', $.trim(classes.join(" ")));
+    			$(obj).addClass(color);
+    			var oldColorID = $(obj).closest('tr').attr('colorID');
+    			if (oldColorID !== "3"){
+    				changeColorUndoable(obj, 3, oldColorID);
+    			}
+    		})
+    	}
+    	function setCustomColorUndoable(obj, color, oldColor){
+    		setCustomColor(obj, color);
+    		undoManager.add({
+    			undo: function() {
+    				setCustomColor(obj, oldColor);
+    			},
+    			redo: function(){
+    				setCustomColor(obj, color);
+    			}
+    		})
+    	}
 
         @if (ViewBag.PRCols != null)
         {
@@ -601,16 +632,16 @@
                   }}
                 @{var htmlExist = "";
                   htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-                  htmlExist += "<td class='newrow-td prtd-title' field='Indicator'></td>";
+                  htmlExist += "<td colspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
                   for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
                   {
-                      htmlExist += "<td class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "' field='" + ViewBag.PRCols[i, 3] + "'></td>";
+					  htmlExist += "<td colspan='1' class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "' field='" + ViewBag.PRCols[i, 3] + "'></td>";
                   }}
                 htmlColumns = "@Html.Raw(html)";
                 htmlColumnsDef = "@Html.Raw(htmlDef)";
                 htmlExistColumns = "@Html.Raw(htmlExist)";
                 if (!exist){
-                    clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "'>" + (!definitions ? htmlColumns : htmlColumnsDef));
+                    clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
                     $(".newrow-text").on('change keyup paste',function(e){
                         var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
                         var field = $(this).attr("field");
@@ -638,10 +669,10 @@
                     $('.justClicked').removeClass('justClicked');
                     if (returnedData.newAreaID == areaID){
                         var newMap = $('.new-map');
-                        newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "'>" + htmlExistColumns);
+                        newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "'>" + htmlExistColumns);
                     } else if (returnedData.newAreaID != 0) {
                         correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
-                        correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "'>" + htmlExistColumns);
+                        correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "'>" + htmlExistColumns);
                     }
                     var newrowTds = $('.newrow-td')
                     $.each(newrowTds,function(index, obj){
@@ -709,7 +740,6 @@
     			var colSpan = parseInt(currentEle.prev().attr('colSpan'))
     			var owncolSpan = parseInt(currentEle.attr('colSpan'))
     			currentEle.prev().attr('colSpan', colSpan + owncolSpan );
-    			//currentEle.remove();
     			currentEle.hide();
     		});
     	};
@@ -746,9 +776,6 @@
                         	});
                         	for(i = oldColspan - 1; i > 0; i--){
                         		cell.attr('colspan','1');
-                        		//cell.after(
-                                //    '<td align="center", indicatorID="' + indicatorID + '", field="' + allFields[startFieldIndex + i] +'", colspan="1", class="prtd ' + allFieldClasses[startFieldIndex + i] + ' ui-selectee")></td>'
-                        		//);
                         		cell.nextAll().eq(i-1).show();
                         	}
                         });
@@ -787,6 +814,194 @@
                 });
 			}
     	}
+
+    	$(document).on('dblclick','.prtd, .prtd-title, .cssGreen, .cssRed, .cssWhite, .cssYellow', function (e) {
+    		var indicatorID = e.target.attributes.getNamedItem('indicatorID');
+    		var field = e.target.attributes.getNamedItem('field');
+    		var currentEle = $(this);
+    		var oldValue = $(this).text();
+    		e.stopPropagation();
+
+    		$.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
+    			var value = data.Value || "";
+    			var value2 = data.Value_Sup || "";
+    			updateVal(currentEle, value, value2, indicatorID.value, field.value);
+    		});
+
+		});
+    	function updateVal(currentEle, value, valueSup, indicatorID, field) {
+    		$(currentEle).html('<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" field="' + field +
+                                    '" value="' + value + 
+                                    '" class="thVal pr-edit-textarea" rows="1">' + value +
+                                    '</textarea>' +
+                                '<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" field="' + field +
+                                    '" value="' + valueSup + 
+                                    '" class="thVal2 pr-edit-textarea" rows="1">' + valueSup +
+                                    '</textarea>' +
+                                '<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" value="' + valueSup + 
+                                    '" class="thFootnotes pr-edit-textarea" rows="1">' + valueSup +
+                                    '</textarea>'
+                                );
+    		if (field === "Indicator"){
+    			$('.thVal2').hide();
+    			$('.thFootnotes').show();
+    			$('.thButton').show();
+    		} else {
+    			$('.thVal2').show();
+    			$('.thFootnotes').hide();
+    			$('.thButton').hide();
+    		}
+    		$(".thVal").focus();
+
+    		$('body').unbind("click").click(function (evt) {
+    			var updateValue = $.trim($('.thVal').val());
+    			var updateValueSup = field !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val())
+    			endEditUndoable(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, valueSup);
+    		});
+    		$(document).on('keypress', '.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)', function (evt) {
+    			if (evt.which == 13) {
+    				var evt = {target: "none"};
+    				var updateValue = $.trim($('.thVal').val());
+    				var updateValueSup = field !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val())
+    				endEditUndoable(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, valueSup);
+    			};
+    		});
+    	}
+    	endEdit = function(evt, currentEle, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup){
+    		if (evt !== null){
+    			if (evt.target.id == "newEdit" || evt.target.id == "newEdit2" || evt.target.id == "editFootnotes") return;
+    		}
+    		var colorElement = $(currentEle);
+    		var parameters = {
+    			indicatorID: indicatorID,
+    			updateProperty: field,
+    			updateValue: updateValue,
+    			updateValueSup: updateValueSup,
+    			fiscalYear: @Model.Fiscal_Year,
+    		};
+    		$.ajax({
+    			url: 'setValue',
+    			type: 'POST',
+    			data: JSON.stringify(parameters),
+    			contentType: 'application/json; charset=utf-8',
+    			success: function (result) {
+    				changeColor(colorElement, -1)
+    			},
+    			error: function (request){
+    			}
+    		});
+    		$(currentEle).html(updateValue + "<sup>" + updateValueSup + "</sup>");
+    		currentEle = null;
+    		$('body').unbind("click");
+    	}
+
+
+    	$(".prtdDef").dblclick(function (e) {
+    		var indicatorID = e.target.attributes.getNamedItem('indicatorID');
+    		var field = e.target.attributes.getNamedItem('field');
+    		var currentEle = $(this);
+    		e.stopPropagation();
+
+    		$.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
+    			var value = data.Value || "";
+    			updateDefVal(currentEle, value, indicatorID.value, field.value);
+    		});
+    	});
+    	function updateDefVal(currentEle, value, indicatorID, field) {
+    		$(currentEle).html('<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" field="' + field +
+                                    '" value="' + value + 
+                                    '" class="thVal thVal-Def pr-edit-textarea" rows="1">' + value +
+                                    '</textarea>'
+                              );
+    		$(".thVal").focus();
+
+    		$('body').unbind("click").click(function (evt) {
+    			var updateValue = $.trim($('.thVal').val());
+    			endEditDefUndoable(evt, currentEle, indicatorID, field, updateValue, value);
+    		});
+    		$(document).on('keypress', '.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)', function (evt) {
+    			if (evt.which == 13) {
+    				var evt = {target: "none"};
+    				var updateValue = $.trim($('.thVal').val());
+    				endEditDefUndoable(evt, currentEle, indicatorID, field, updateValue, value);
+    			};
+    		});
+    	};
+    	function endEditDef(evt, currentEle, indicatorID, field, updateValue, value){
+    		if (evt.target.id == "newEdit") return;
+    		var colorElement = $(currentEle);
+    		var parameters = {
+    			indicatorID: indicatorID,
+    			updateProperty: field,
+    			updateValue: updateValue,
+    			updateValueSup: "%NULL%",
+    			fiscalYear: @Model.Fiscal_Year,
+    		};
+			$.ajax({
+				url: 'setValue',
+				type: 'POST',
+				data: JSON.stringify(parameters),
+				contentType: 'application/json; charset=utf-8',
+				success: function (result) {
+				},
+				error: function (request){
+				}
+			});
+			$(currentEle).html(updateValue);
+			currentEle = null;
+			$('body').unbind("click");
+		}
+
+    	$(".prarea").dblclick(function (e) {
+    		var mapID = e.target.attributes.getNamedItem('mapID');
+    		var currentEle = $(this);
+    		e.stopPropagation();
+            
+    		$.get('getAreaMap', { mapID: mapID.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
+    			updateObjVal(currentEle, mapID.value, data);
+    		});
+    	});
+    	function updateObjVal(currentEle, mapID, value) {
+    		$(currentEle).html('<textarea id="newEdit" mapID ="' + mapID + 
+                                    '" value="' + value + 
+                                    '" class="thVal thVal-Obj pr-edit-textarea" rows="4">' + value +
+                                    '</textarea>'
+                                );
+    		$(".thVal").focus();
+
+    		$('body').unbind("click").click(function (evt) {
+    			var objective = $.trim($(".thVal").val());
+    			endEditObjUndoable(evt, currentEle, mapID, objective, value);
+    		});
+    	};
+    	endEditObj = function (evt, currentEle, mapID, objective, value) {
+    		if (evt !== null){
+    			if (evt.target.id == "newEdit") return;
+    		}
+    		var area = $(currentEle);
+    		var parameters = {
+    			mapID: mapID,
+    			objective: objective,
+    			fiscalYear: @Model.Fiscal_Year,
+        	};
+        	$.ajax({
+        		url: 'setAreaMap',
+        		type: 'POST',
+        		data: JSON.stringify(parameters),
+        		contentType: 'application/json; charset=utf-8',
+        		success: function (result) {
+        		},
+        		error: function (request){
+        		}
+        	});
+        	$(currentEle).html("<b>" + area.attr("area") + " </b><br/>" + objective);
+        	currentEle = null;
+        	$('body').unbind("click")
+        };
 		
     	undoManager = new UndoManager();
     	$.ctrl = function(key, callback, args) {
@@ -813,11 +1028,15 @@
     	});
 
 
-    	addNewIndicatorUndoable = function(obj, indicatorID){
+    	addNewIndicatorUndoable = function(obj, indicatorID, existing){
     		addNewIndicator(obj, indicatorID);
     		undoManager.add({
     			undo: function(){
-    				var removeObj = obj.closest('tr').next().first();
+    				if (existing){
+    					var removeObj = $('.newrow').first();
+    				} else {
+    					var removeObj = obj.closest('tr').next().first();
+    				}
     				removeIndicator(removeObj, indicatorID);
     			},
     			redo: function (){
@@ -834,55 +1053,50 @@
     	            addNewIndicator(prevObj, indicatorID, true);
     	        },
     	        redo: function(){
-    	            removeIndicator(obj);
+    	        	removeIndicator(prevObj.closest('tr').next().first());
     	        }
     	    });
     	};
-    	updateValUndoable = function(currentEle, value, value2, indicatorID, field, oldValue){
-    		updateVal(currentEle, value, value2, indicatorID, field, oldValue);
+    	endEditUndoable = function(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2){
+    		endEdit(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2);
     		undoManager.add({
     			undo: function(){
-    				updateVal(currentEle, oldValue, value2, indicatorID, field, "%UNDO%");
+    				endEdit(evt, currentEle, indicatorID, field, value, value2, updateValue, updateValueSup);
     			},
     			redo: function(){
-    				updateVal(currentEle, value, value2, indicatorID, field, oldValue);
+    				endEdit(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2);
     			}
     		});
     	};
-    	updateObjValUndoable = function(currentEle, mapID, value, oldValue){
-    		updateObjVal(currentEle, mapID, value, oldValue);
+    	endEditDefUndoable = function(evt, currentEle, indicatorID, field, updateValue, value){
+    		endEditDef(evt, currentEle, indicatorID, field, updateValue, value);
     		undoManager.add({
     			undo: function(){
-    				updateObjVal(currentEle, mapID, value, "%UNDO%");
+    				endEditDef(evt, currentEle, indicatorID, field, value, updateValue);
     			},
     			redo: function(){
-    				updateObjVal(currentEle, mapID, value, oldValue);
+    				endEditDef(evt, currentEle, indicatorID, field, updateValue, value);
     			}
     		});
     	};
-    	sortUndoable = function(tbody, oldOrder, newOrder){
+    	endEditObjUndoable = function(evt, currentEle, mapID, objective, value){
+    		endEditObj(evt, currentEle, mapID, objective, value);
     		undoManager.add({
     			undo: function(){
-    				$.each(oldOrder, function(index,value){
-    					$(tbody).append($(this));
-    				});
+    				endEditObj(evt, currentEle, mapID, value, objective);;
     			},
     			redo: function(){
-    				$.each(newOrder, function(index,value){
-    					$(tbody).append($(this));
-    				});
+    				endEditObj(evt, currentEle, mapID, objective, value);;
     			}
     		});
     	};
     	mergeUndoable = function(toMerge, unmergeCells){
-    		console.log(toMerge);
     		merge(toMerge);
     		undoManager.add({
     			undo: function(){
     				unmerge(unmergeCells);
     			},
     			redo: function(){
-    				console.log(toMerge);
     				merge(toMerge);
     			}
     		});
@@ -898,7 +1112,7 @@
     			}
     		});
     	};
-    	addValuesUndoable = function(clickedCell){
+    	addNValuesUndoable = function(clickedCell){
     		addNValues(clickedCell);
     		undoManager.add({
     			undo: function(){
@@ -912,219 +1126,7 @@
     		});
     	}
 
-
-        $(document).on('dblclick','.prtd, .prtd-title, .cssGreen, .cssRed, .cssWhite, .cssYellow', function (e) {
-            var indicatorID = e.target.attributes.getNamedItem('indicatorID');
-            var field = e.target.attributes.getNamedItem('field');
-            var currentEle = $(this);
-            var oldValue = $(this).text();
-            e.stopPropagation();
-
-            $.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-                var value = data.Value || "";
-                var value2 = data.Value_Sup || "";
-                updateValUndoable(currentEle, value, value2, indicatorID, field, oldValue);
-            });
-
-        });
-
-        $(".prtdDef").dblclick(function (e) {
-            var indicatorID = e.target.attributes.getNamedItem('indicatorID');
-            var field = e.target.attributes.getNamedItem('field');
-            var currentEle = $(this);
-            e.stopPropagation();
-
-            $.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-                var value = data.Value || "";
-                updateDefVal(currentEle, value, indicatorID, field);
-            });
-
-        });
-
-        $(".prtd-id").dblclick(function (e) {
-            var mapID = e.target.attributes.getNamedItem('mapID');
-            var currentEle = $(this);
-            e.stopPropagation();
-
-            $.get('getIndicatorNumber', { mapID: mapID.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-                var value = data.Value || "";
-                updateNumVal(currentEle, value, mapID);
-            });
-        });
-
-        $(".prarea").dblclick(function (e) {
-            var mapID = e.target.attributes.getNamedItem('mapID');
-            var currentEle = $(this);
-            e.stopPropagation();
-            
-            $.get('getAreaMap', { mapID: mapID.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-                updateObjValUndoable(currentEle, mapID, data);
-            });
-        });
-
-    	function updateVal(currentEle, value, value2, indicatorID, field, oldValue) {
-            $(currentEle).html('<textarea id="newEdit" indicatorID ="' + indicatorID.value + 
-                                    '" field="' + field.value +
-                                    '" value="' + value + 
-                                    '" class="thVal pr-edit-textarea" rows="1">' + value +
-                                    '</textarea>' +
-                                '<textarea id="newEdit" indicatorID ="' + indicatorID.value + 
-                                    '" field="' + field.value +
-                                    '" value="' + value2 + 
-                                    '" class="thVal2 pr-edit-textarea" rows="1">' + value2 +
-                                    '</textarea>' +
-                                '<textarea id="newEdit" indicatorID ="' + indicatorID.value + 
-                                    '" value="' + value2 + 
-                                    '" class="thFootnotes pr-edit-textarea" rows="1">' + value2 +
-                                    '</textarea>'
-                                );
-            if (field.value === "Indicator"){
-                $('.thVal2').hide();
-                $('.thFootnotes').show();
-                $('.thButton').show();
-            } else {
-                $('.thVal2').show();
-                $('.thFootnotes').hide();
-                $('.thButton').hide();
-            }
-            $(".thVal").focus();
-            $(".thVal").keyup(function (event) {
-                if (event.keyCode == 13) {
-                }
-            });
-
-            $('body').unbind("click").click(function (evt) {
-            	endEdit(evt, currentEle);
-            });
-            $(document).on('keypress', '.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)', function (evt) {
-                if (evt.which == 13) {
-                    var evt = {target: "none"};
-                    endEdit(evt, currentEle);
-                };
-            });
-            if(oldValue === "%UNDO%") {endEdit(null, currentEle);}
-
-            endEdit = function(evt, currentEle){
-            	if (evt !== null){
-            		if (evt.target.id == "newEdit" || evt.target.id == "newEdit2" || evt.target.id == "editFootnotes") return;
-            	}
-            	var colorElement = $(currentEle);
-                var prop = $('.thVal').attr('field');
-                var parameters = {
-                    indicatorID: $('.thVal').attr('indicatorID'),
-                    updateProperty: prop,
-                    updateValue: $.trim($('.thVal').val()),
-                    updateValueSup: prop !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val()),
-                    fiscalYear: @Model.Fiscal_Year,
-                };
-                $.ajax({
-                    url: 'setValue',
-                    type: 'POST',
-                    data: JSON.stringify(parameters),
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (result) {
-                        changeColor(colorElement, -1)
-                    },
-                    error: function (request){
-                    }
-                });
-                if (prop !== 'Indicator'){
-                    $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thVal2").val()) + "</sup>");
-                } else if (prop === 'Indicator') {
-                    $(currentEle).html($.trim($(".thVal").val()) + "<sup>" + $.trim($(".thFootnotes").val()) + "</sup>");
-                }
-                currentEle = null;
-                $('body').unbind("click");
-            }
-        }
-
-        function updateObjVal(currentEle, mapID, value, oldValue) {
-            $(currentEle).html('<textarea id="newEdit" mapID ="' + mapID.value + 
-                                    '" value="' + value + 
-                                    '" class="thVal thVal-Obj pr-edit-textarea" rows="4">' + value +
-                                    '</textarea>'
-                                );
-            $(".thVal").focus();
-            $(".thVal").keyup(function (event) {
-                if (event.keyCode == 13) {
-                    //$(currentEle).html($(".thVal").val().trim());
-                }
-            });
-            $('body').unbind("click").click(function(evt){
-            	endEdit(evt, currentEle);
-            });
-            if(oldValue === "%UNDO%") {endEdit(null, currentEle);}
-
-            endEdit = function (evt, currentEle) {
-            	if (evt !== null){
-            		if (evt.target.id == "newEdit") return;
-            	}
-                var area = $(currentEle);
-                //var indicatorID = document.getElementById('newEdit').getAttribute('indica
-                var parameters = {
-                    mapID: mapID.value,
-                    objective:$.trim($(".thVal").val()),
-                    fiscalYear: @Model.Fiscal_Year,
-                };
-                $.ajax({
-                    url: 'setAreaMap',
-                    type: 'POST',
-                    data: JSON.stringify(parameters),
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (result) {
-                    },
-                    error: function (request){
-                    }
-                });
-                $(currentEle).html("<b>" + area.attr("area") + " </b><br/>" +$.trim($(".thVal").val()));
-                currentEle = null;
-                $('body').unbind("click")
-            };
-        };
-
-        function updateDefVal(currentEle, value, indicatorID, field) {
-            $(currentEle).html('<textarea id="newEdit" indicatorID ="' + indicatorID.value + 
-                                    '" field="' + field.value +
-                                    '" value="' + value + 
-                                    '" class="thVal thVal-Def pr-edit-textarea" rows="1">' + value +
-                                    '</textarea>'
-                              );
-            $(".thVal").focus();
-            $(".thVal").keyup(function (event) {
-                if (event.keyCode == 13) {
-                    //$(currentEle).html($(".thVal").val().trim());
-                }
-            });
-
-            $('body').unbind("click").click(function (evt) {
-                if (evt.target.id == "newEdit") return;
-                var colorElement = $(currentEle);
-                //var indicatorID = document.getElementById('newEdit').getAttribute('indica
-                var parameters = {
-                    indicatorID: $('.thVal').attr('indicatorID'),
-                    updateProperty: $('.thVal').attr('field'),
-                    updateValue: $.trim($('.thVal').val()),
-                    updateValueSup: "%NULL%",
-                    fiscalYear: @Model.Fiscal_Year,
-                };
-                $.ajax({
-                    url: 'setValue',
-                    type: 'POST',
-                    data: JSON.stringify(parameters),
-                    contentType: 'application/json; charset=utf-8',
-                    success: function (result) {
-                    },
-                    error: function (request){
-                    }
-                });
-                $(currentEle).html($.trim($(".thVal").val()));
-                currentEle = null;
-                $('body').unbind("click");
-            });
-        };
-
-
-        $('#the-node').contextMenu({
+		$('#the-node').contextMenu({
             selector: 'td', 
             callback: function(key, options) {
             },
@@ -1196,7 +1198,7 @@
                                 if (!$(this).hasClass('included')){
                                     if (!$(this).hasClass('clicked')){
                                         $(this).addClass('justClicked');
-                                        addNewIndicator(clickedObj, indicatorID);
+                                        addNewIndicatorUndoable(clickedObj, indicatorID, true);
                                     } else {
                                         $(this).removeClass('clicked');
                                         var mapID = $(this).attr('mapID')
@@ -1204,7 +1206,6 @@
                                         $('.newrow[indicatorid="' + indicatorID + '"]').remove();
                                     }
                                 }
-                                sortable();
                             });
                         });
                     }
@@ -1225,7 +1226,6 @@
                     	var mergedCells = [];
                     	$.each(toUnmerge.nextAll(), function(index,value){
                     		var cell = $(this);
-                    		console.log(cell);
                     		if (! cell.is(":visible")) mergedCells.push(cell);
                     		if (cell.is(":visible")) false;
                     	});
@@ -1267,7 +1267,8 @@
                                 callback:function(key, options){
                                     var obj = $(this);
                                     var colorID= @color.Color_ID;
-                                    changeColor(obj, colorID);
+                                	var oldColorID = $(this).closest('tr').attr('colorID');
+                                	changeColorUndoable(obj, colorID, oldColorID);
                                 },
                             },
                         </text>
@@ -1281,21 +1282,30 @@
                     callback: function(key, options){
                         var color = "cssGreen";
                         var obj = $(this)
-                        setCustomColor(obj, color);
+                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+                        	return v.indexOf('css') === 0;
+                        })[0];
+                        setCustomColorUndoable(obj, color, oldColor);
                     }
                 },
                 "setYellow": {name: "Color Cell Yellow",
                     callback: function(key, options){
                         var color = "cssYellow";
                         var obj = $(this)
-                        setCustomColor(obj, color);
+                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+                        	return v.indexOf('css') === 0;
+                        })[0];
+                        setCustomColorUndoable(obj, color, oldColor);
                     }
                 },
                 "setRed": {name: "Color Cell Red",
                     callback: function(key, options){
                         var color = "cssRed";
                         var obj = $(this)
-                        setCustomColor(obj, color);
+                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+                        	return v.indexOf('css') === 0;
+                        })[0];
+                        setCustomColorUndoable(obj, color, oldColor);
                     }
                 },
 
@@ -1396,7 +1406,12 @@
             $(this).removeClass('draggable');
         };
 
-        $(document).on('click', '.menu-button', function(e){
+        $(document).on('click', '.menu-edit-footnotes', function(e){
+        	e.preventDefault();
+        	window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
+        });
+
+        $(document).on('click', '.menu-open', function(e){
             var field = e.target.textContent;
             if (field === "") {
                 field = e.target.nextSibling.textContent;
@@ -1702,38 +1717,59 @@
         // you might also want to trigger selectablestop.
     });
 
-    var oldOrder;
+    var oldRows;
     var sortable = $('tbody').sortable({
         items: "> .prrow:not(.prrow-area)",
         handle: ".prtd-id",
 		
         start: function(event, ui){
         	var tbody = $(this);
-        	oldOrder = tbody.find("> tr:not(.ui-sortable-placeholder)");
+        	oldRows = tbody.find("> tr:not(.ui-sortable-placeholder)");
         },
 
         stop: function(event, io){
-            var tbody = $(this);
-            var rows = tbody.find("> .prrow:not(.prrow-area)");
-            var newOrder = [];
-            var areaIDs = [];
-            $.each(rows, function(index, value){
-                var row = $(this);
-                var mapID = row.attr('mapID');
-                var areaID = row.prevAll('.prrow-area:first').attr('areaID');
-                newOrder.push(mapID);
-                areaIDs.push(areaID);
-            });
-            $.ajax({
-                type:"POST",
-                url: "setNewOrder",
-                data: {newOrder: newOrder, areaIDs: areaIDs},
-                traditional: true,
-            });
-            newOrder = tbody.find("> tr");
-            sortUndoable(tbody, oldOrder, newOrder);
+        	var tbody = $(this);
+        	var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
+        	sortUndoable(tbody, rows, oldRows);
         }
     });
+
+    sort = function(rows){
+    	var order = [];
+    	var areaIDs = [];
+    	$.each(rows, function(index, value){
+    		var row = $(this);
+    		if (row.hasClass('prrow') && !row.hasClass('prrow-area')){
+    			var mapID = row.attr('mapID');
+    			var areaID = row.prevAll('.prrow-area:first').attr('areaID');
+    			order.push(mapID);
+    			areaIDs.push(areaID);
+    		}
+    	});
+    	$.ajax({
+    		type:"POST",
+    		url: "setNewOrder",
+    		data: {newOrder: order, areaIDs: areaIDs},
+    		traditional: true,
+    	});
+    };
+    sortUndoable = function(tbody, rows, oldRows){
+    	sort(rows);
+    	undoManager.add({
+    		undo: function(){
+    			$.each(oldRows, function(index,value){
+    				$(tbody).append($(this));
+    			});
+    			sort(oldRows);
+    		},
+    		redo: function(){
+    			$.each(rows, function(index,value){
+    				$(tbody).append($(this));
+    			});
+    			sort(rows);
+    		}
+    	});
+    };
 </script>
 
 <style>

@@ -3840,7 +3840,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.propToColCache = {};
     var columns = this.instance.getSettings().columns;
     if (columns) {
-      for (i = 0, ilen = columns.length; i < ilen; i++) {
+    	for (i = 0, ilen = columns.length; i < ilen; i++) {
         this.colToPropCache[i] = columns[i].data;
         this.propToColCache[columns[i].data] = i;
       }

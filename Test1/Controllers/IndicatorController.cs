@@ -1413,6 +1413,12 @@ namespace IndInv.Controllers
             return Json(db.CoEs.OrderBy(x => x.CoE).Where(x => x.CoE_ID != 0).Select(x => new { x.CoE_ID, x.CoE }).ToList(), JsonRequestBehavior.AllowGet);
         }
 
+		[HttpGet]
+		public ActionResult getFootnotes()
+		{
+			return Json(db.Footnotes.OrderBy(x => x.Footnote_Symbol).Select(x => new { Footnote_ID = x.Footnote_ID, Footnote = x.Footnote, Footnote_Symbol = x.Footnote_Symbol }).ToList(), JsonRequestBehavior.AllowGet);
+		}
+
         [HttpGet]
         public JsonResult getAnalysts()
         {
@@ -2073,7 +2079,9 @@ namespace IndInv.Controllers
             db.Indicator_CoE_Maps.Add(newMap);
             db.SaveChanges();
 
-            return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID }, JsonRequestBehavior.AllowGet);
+			var colorID = (Int16)newMap.Indicator.GetType().GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(newMap.Indicator, null);
+
+            return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID, colorID = colorID}, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Details(Int16 indicatorID, Int16 fiscalYear)

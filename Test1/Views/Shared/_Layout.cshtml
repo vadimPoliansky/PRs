@@ -297,25 +297,6 @@
             return href.replace(tmpRegex, '$1' + newVal);
         }
 
-        $('#editFootnotes').click(function () {
-            window.open('editFootnotes', 'Footnotes', "width=400,height=500");
-        });
-
-        $("#viewPR").click(function () {
-            window.location.href = "viewPR?fiscalYear=" + @ViewBag.fiscalYear;
-        });
-
-        $("#editInventory").click(function () {
-            window.location.href = "editInventory?fiscalYear=" + @ViewBag.fiscalYear;
-        });
-
-        $("#editFootnoteMaps").click(function () {
-            window.location.href = "editFootnoteMaps?fiscalYear=" + @ViewBag.fiscalYear;
-        });
-
-        $("#edit").click(function () {
-            window.location.href = "edit?fiscalYear=" + @ViewBag.fiscalYear;
-        });
     });
 </script>
 
@@ -860,8 +841,10 @@ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4c000000,endCol
         }
     }*/
 
-    .row {
-        max-width: 900px !important;
-        min-width: 50px !important;
-    }
+	textArea {
+		background:red !important;
+		width:1000px !important;
+		overflow:hidden !important;
+		display:block !important;
+	}
 </style>
