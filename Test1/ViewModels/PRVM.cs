@@ -12,6 +12,8 @@ namespace IndInv.Models.ViewModels
         public List<Indicator_CoE_Maps> allMaps { get; set; }
         public List<Indicator_Footnote_Maps> allFootnoteMaps { get; set; }
         public List<Color_Types> allColors { get; set; }
+        public List<Color_Directions> allDirections { get; set; }
+        public List<Color_Thresholds> allThresholds { get; set; }
         public List<Footnotes> allFootnotes { get; set; }
         public List<Areas> allAreas { get; set; }
 

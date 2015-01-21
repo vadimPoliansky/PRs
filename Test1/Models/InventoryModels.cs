@@ -59,6 +59,8 @@ namespace IndInv.Models
         public string FY_13_14_Performance_Threshold { get; set; }
         public string FY_13_14_Performance_Threshold_Sup { get; set; }
         public Int16 FY_13_14_Color_ID { get; set; }
+        public Int16 FY_13_14_Threshold_ID { get; set; }
+        public Int16 FY_13_14_Direction_ID { get; set; }
         public string FY_13_14_YTD_Custom_Color { get; set; }
         public string FY_13_14_Q1_Custom_Color { get; set; }
         public string FY_13_14_Q2_Custom_Color { get; set; }
@@ -77,11 +79,11 @@ namespace IndInv.Models
         [Display(Name = "OPEO Lead")]
         public string FY_13_14_OPEO_Lead { get; set; }
 
-        public virtual string FY_13_14_Q1_Color { get { return Color.getColor(FY_13_14_Q1, FY_13_14_Target, FY_13_14_Q1_Sup, FY_13_14_Q1_Custom_Color, FY_13_14_Color_ID, false, this); } }
-        public virtual string FY_13_14_Q2_Color { get { return Color.getColor(FY_13_14_Q2, FY_13_14_Target, FY_13_14_Q2_Sup, FY_13_14_Q2_Custom_Color, FY_13_14_Color_ID, false, this); } }
-        public virtual string FY_13_14_Q3_Color { get { return Color.getColor(FY_13_14_Q3, FY_13_14_Target, FY_13_14_Q3_Sup, FY_13_14_Q3_Custom_Color, FY_13_14_Color_ID, false, this); } }
-        public virtual string FY_13_14_Q4_Color { get { return Color.getColor(FY_13_14_Q4, FY_13_14_Target, FY_13_14_Q4_Sup, FY_13_14_Q4_Custom_Color, FY_13_14_Color_ID, false, this); } }
-        public virtual string FY_13_14_YTD_Color { get { return Color.getColor(FY_13_14_YTD, FY_13_14_Target, FY_13_14_YTD, FY_13_14_YTD_Custom_Color, FY_13_14_Color_ID, true, this); } }
+        public virtual string FY_13_14_Q1_Color { get { return Color.getColor(FY_13_14_Q1, FY_13_14_Target, FY_13_14_Q1_Sup, FY_13_14_Q1_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
+        public virtual string FY_13_14_Q2_Color { get { return Color.getColor(FY_13_14_Q2, FY_13_14_Target, FY_13_14_Q2_Sup, FY_13_14_Q2_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
+        public virtual string FY_13_14_Q3_Color { get { return Color.getColor(FY_13_14_Q3, FY_13_14_Target, FY_13_14_Q3_Sup, FY_13_14_Q3_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
+        public virtual string FY_13_14_Q4_Color { get { return Color.getColor(FY_13_14_Q4, FY_13_14_Target, FY_13_14_Q4_Sup, FY_13_14_Q4_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
+        public virtual string FY_13_14_YTD_Color { get { return Color.getColor(FY_13_14_YTD, FY_13_14_Target, FY_13_14_YTD, FY_13_14_YTD_Custom_Color, FY_13_14_Color_ID, true, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
 
 
 
@@ -110,6 +112,8 @@ namespace IndInv.Models
         public string FY_14_15_Performance_Threshold { get; set; }
         public string FY_14_15_Performance_Threshold_Sup { get; set; }
         public Int16 FY_14_15_Color_ID { get; set; }
+        public Int16 FY_14_15_Threshold_ID { get; set; }
+        public Int16 FY_14_15_Direction_ID { get; set; }
         public string FY_14_15_YTD_Custom_Color { get; set; }
         public string FY_14_15_Q1_Custom_Color { get; set; }
         public string FY_14_15_Q2_Custom_Color { get; set; }
@@ -128,11 +132,11 @@ namespace IndInv.Models
         [Display(Name = "OPEO Lead")]
         public string FY_14_15_OPEO_Lead { get; set; }
 
-        public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_13_14_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this); } }
-        public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_13_14_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this); } }
-        public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this); } }
-        public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this); } }
-        public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this); } }
+        public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_13_14_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
+        public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_13_14_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
+        public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
+        public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
+        public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
 
 
 
@@ -238,6 +242,20 @@ namespace IndInv.Models
         public String Color_Type { get; set; }
     }
 
+    public class Color_Directions
+    {
+        [Key]
+        public Int16 Direction_ID { get; set; }
+        public String Direction { get; set; }
+    }
+
+    public class Color_Thresholds
+    {
+        [Key]
+        public Int16 Threshold_ID { get; set; }
+        public String Threshold { get; set; }
+    }
+
     public class InventoryDBContext : DbContext
     {
         public DbSet<Indicators> Indicators { get; set; }
@@ -245,6 +263,8 @@ namespace IndInv.Models
         public DbSet<Areas> Areas { get; set; }
         public DbSet<Footnotes> Footnotes { get; set; }
         public DbSet<Color_Types> Color_Types { get; set; }
+        public DbSet<Color_Thresholds> Color_Thresholds { get; set; }
+        public DbSet<Color_Directions> Color_Directions { get; set; }
         public DbSet<Formats> Formats { get; set; }
 
         public DbSet<Indicator_CoE_Maps> Indicator_CoE_Maps { get; set; }

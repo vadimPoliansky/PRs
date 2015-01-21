@@ -182,6 +182,8 @@ namespace IndInv.Controllers
                 Fiscal_Year = fiscalYear,
                 Analyst_ID = analystID,
                 allColors = db.Color_Types.ToList(),
+                allDirections = db.Color_Directions.ToList(),
+                allThresholds = db.Color_Thresholds.ToList(),
             };
 
             return View(viewModel);
@@ -1624,6 +1626,20 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
+        public ActionResult getColorDirections()
+        {
+            List<Color_Directions> allDirections = db.Color_Directions.ToList();
+            return Json(allDirections, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult getColorThreshold()
+        {
+            List<Color_Thresholds> allThresholds = db.Color_Thresholds.ToList();
+            return Json(allThresholds, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public ActionResult getIndicatorList()
         {
             var viewModel = db.Indicators.OrderBy(x => x.Indicator).Select(x => new IndicatorListViewModel
@@ -1866,6 +1882,82 @@ namespace IndInv.Controllers
             if (colorID != -1)
             {
                 property.SetValue(indicator, Convert.ChangeType(colorID, property.PropertyType), null);
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            var propertyColorQ1 = type.GetProperty(field + "Q1_Color");
+            var colorQ1 = (string)propertyColorQ1.GetValue(indicator, null);
+            var propertyColorQ2 = type.GetProperty(field + "Q2_Color");
+            var colorQ2 = (string)propertyColorQ2.GetValue(indicator, null);
+            var propertyColorQ3 = type.GetProperty(field + "Q3_Color");
+            var colorQ3 = (string)propertyColorQ3.GetValue(indicator, null);
+            var propertyColorQ4 = type.GetProperty(field + "Q4_Color");
+            var colorQ4 = (string)propertyColorQ4.GetValue(indicator, null);
+            var propertyColorYTD = type.GetProperty(field + "YTD_Color");
+            var colorYTD = (string)propertyColorYTD.GetValue(indicator, null);
+
+            var viewModel = new colorViewModel()
+            {
+                Q1_Color = colorQ1,
+                Q2_Color = colorQ2,
+                Q3_Color = colorQ3,
+                Q4_Color = colorQ4,
+                YTD_Color = colorYTD,
+            };
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult changeThreshold(Int16 indicatorID, Int16 thresholdID, Int16 fiscalYear)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+            var field = FiscalYear.FYStrFull("FY_", fiscalYear);
+
+            var type = indicator.GetType();
+            var thresholdIDField = field + "Threshold_ID";
+            var property = type.GetProperty(thresholdIDField);
+
+            if (thresholdID != -1)
+            {
+                property.SetValue(indicator, Convert.ChangeType(thresholdID, property.PropertyType), null);
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            var propertyColorQ1 = type.GetProperty(field + "Q1_Color");
+            var colorQ1 = (string)propertyColorQ1.GetValue(indicator, null);
+            var propertyColorQ2 = type.GetProperty(field + "Q2_Color");
+            var colorQ2 = (string)propertyColorQ2.GetValue(indicator, null);
+            var propertyColorQ3 = type.GetProperty(field + "Q3_Color");
+            var colorQ3 = (string)propertyColorQ3.GetValue(indicator, null);
+            var propertyColorQ4 = type.GetProperty(field + "Q4_Color");
+            var colorQ4 = (string)propertyColorQ4.GetValue(indicator, null);
+            var propertyColorYTD = type.GetProperty(field + "YTD_Color");
+            var colorYTD = (string)propertyColorYTD.GetValue(indicator, null);
+
+            var viewModel = new colorViewModel()
+            {
+                Q1_Color = colorQ1,
+                Q2_Color = colorQ2,
+                Q3_Color = colorQ3,
+                Q4_Color = colorQ4,
+                YTD_Color = colorYTD,
+            };
+            return Json(viewModel, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult changeDirection(Int16 indicatorID, Int16 directionID, Int16 fiscalYear)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+            var field = FiscalYear.FYStrFull("FY_", fiscalYear);
+
+            var type = indicator.GetType();
+            var directionIDField = field + "Direction_ID";
+            var property = type.GetProperty(directionIDField);
+
+            if (directionID != -1)
+            {
+                property.SetValue(indicator, Convert.ChangeType(directionID, property.PropertyType), null);
                 db.Entry(indicator).State = EntityState.Modified;
                 db.SaveChanges();
             }

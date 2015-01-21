@@ -42,16 +42,41 @@ namespace IndInv.Helpers
             return numStr;
         }
 
-        public static String getColor(String inStr, String inTarget, String inMonth, String inCustom, Int16 Color_ID, Boolean isYTD, Indicators inIndicator)
+        public static String getColor(String inStr, String inTarget, String inMonth, String inCustom, Int16 Color_ID, Boolean isYTD, Indicators inIndicator, Int16? Threshold_ID, Int16? Direction_ID)
         {
             string str;
             float outScore;
             string Target = inTarget;
 
+            double threshold_high = 1.1;
+            double threshold_low = 0.9;
+            if (Threshold_ID == 2)
+            {
+                threshold_high = 1.01;
+                threshold_low = 0.99;
+            }
+
+            if (Direction_ID == 2)
+
             if (Color_ID == 3)
             {
                 return String.IsNullOrEmpty(inCustom) ? "cssWhite" : inCustom;
             }
+
+            var direction = ">";
+            if (Direction_ID == 2)
+            {
+                direction = "≥";
+            }
+            else if (Direction_ID == 3)
+            {
+                direction = "<";
+            }
+            else if (Direction_ID == 4)
+            {
+                direction = "≤";
+            }
+            
 
             str = Color.getNum(inStr);
             if (str == null) { return "cssWhite"; }
@@ -153,7 +178,7 @@ namespace IndInv.Helpers
 
             if (Target != null)
             {
-                if (Target.IndexOf("≤") != -1)
+                if (direction == "≤")
                 {
                     if (score <= targetScore)
                     {
@@ -161,7 +186,7 @@ namespace IndInv.Helpers
                     }
                     else
                     {
-                        if (score <= targetScore * 1.1)
+                        if (score <= targetScore * threshold_high)
                         {
                             return "cssYellow";
                         }
@@ -171,7 +196,7 @@ namespace IndInv.Helpers
                         }
                     }
                 }
-                else if (Target.IndexOf("<") != -1)
+                else if (direction == "<")
                 {
                     if (score < targetScore)
                     {
@@ -179,7 +204,7 @@ namespace IndInv.Helpers
                     }
                     else
                     {
-                        if (score < targetScore * 1.1)
+                        if (score < targetScore * threshold_high)
                         {
                             return "cssYellow";
                         }
@@ -189,7 +214,7 @@ namespace IndInv.Helpers
                         }
                     }
                 }
-                else if (Target.IndexOf(">") != -1)
+                else if (direction == ">")
                 {
                     if (score > targetScore)
                     {
@@ -197,7 +222,7 @@ namespace IndInv.Helpers
                     }
                     else
                     {
-                        if (score > targetScore * 0.9)
+                        if (score > targetScore * threshold_low)
                         {
                             return "cssYellow";
                         }
@@ -215,7 +240,7 @@ namespace IndInv.Helpers
                     }
                     else
                     {
-                        if (score >= targetScore * 0.9)
+                        if (score >= targetScore * threshold_low)
                         {
                             return "cssYellow";
                         }

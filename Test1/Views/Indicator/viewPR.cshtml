@@ -14,9 +14,22 @@
     ViewBag.fiscalYear = Model.Fiscal_Year;
 }
 <div class="menu-bar">
-    <div class="menu-hover menu-button menu-open menu-coe" field="coe"><i class="fa fa-folder-open-o"></i>CoE</div>
-    <div class="menu-hover menu-button menu-open menu-analyst" field="analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
-    <div class="menu-hover menu-button menu-edit-footnotes" field="coe"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+    <div class="row header-row">
+        <div class="large-6 columns">
+            <div class="menu-hover menu-button menu-open menu-coe" field="coe"><i class="fa fa-folder-open-o"></i>CoE</div>
+            <div class="menu-hover menu-button menu-open menu-analyst" field="analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+            <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+            <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+        </div>
+        <div class="large-6 columns">
+            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+                <div class="calc-title">Sum:<div class ="calc calc-sum"></div></div><div class="calc-title">Average:<div class ="calc calc-avg"></div></div><div class="calc-title">Count:<div class ="calc calc-n"></div></div>
 </div>
 
 <div class="container">
@@ -168,19 +181,21 @@
 													}
 													int rowSpan;
 													var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
+                                                    var directionID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Direction_ID").GetValue(indicator, null);
+                                                    var thresholdID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Threshold_ID").GetValue(indicator, null);
 													if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
 													{
 														if (allMapsWithNValues.Contains(map))
 														{
 															rowSpan = 2;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID 
-															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
+															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
 														}
 														else
 														{
 															rowSpan = 1;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
-															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
+															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
 														}
 														<td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
 														<a class="row-up"><i class="fa fa-sort-asc"></i></a>
@@ -206,7 +221,7 @@
 													{
 														rowSpan = 0;
 														@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
-														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID">
+														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
 													}
 													else
 													{
@@ -338,16 +353,24 @@
 											    }
 											}
 										</table>
-										<div class="footnotes">
-										@{var l = 0;}
-										@foreach (var footnote in footnotes)
-										{
-											@:@footnote.Footnote_Symbol. @footnote.Footnote  
-											l++;
-											if (l % 2 == 0)
-											{ <br />}
-										}
+                                        <div class="row pr-footer-row">
+                                            <div class="large-6 columns">
+									            <div class="footnotes">
+									                @{var l = 0;}
+									                @foreach (var footnote in footnotes)
+									                {
+										                @:@footnote.Footnote_Symbol. @footnote.Footnote  
+										                l++;
+										                if (l % 2 == 0)
+										                { <br />}
+									                }
+                                                </div>
+                                            </div>
+                                            <div class="large-6 columns">
+                                                <img class="pr-footer-image" src="~/Images/quaterly.png" width="8%"/><img class="pr-footer-image" src="~/Images/target.png" width="30%" /><img class="pr-footer-image" src="~/Images/na.png" width="15%"/>
+                                            </div>
 										<br />
+                                        </div>
 
 										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
 											<tr class="prheader-1">
@@ -543,10 +566,82 @@
             });
         }
 		
+        $(document).on('click', '.export-Excel', function(e){
+            var coeID = e.target.attributes.getNamedItem('coeID').value
+            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
+            var coeIDFilter;
+            if (coeID != 0) {
+                coeIDFilter = "&coeID=" + coeID;
+            }
+            window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
+        });
+        $(document).on('click', '.export-PDF', function(e){
+            console.log("test");
+            var coeID = e.target.attributes.getNamedItem('coeID').value
+            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
+            var coeIDFilter;
+            if (coeID != 0) {
+                coeIDFilter = "&coeID=" + coeID;
+            }
+            window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
+        });
 
-        removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
-        	removeIndicator(obj);
-        };
+        function changeDirection(obj, directionID){
+            var indicatorID = obj.attr('indicatorID');
+            var clickedObjs = obj.closest("tr").children();
+            $.post('changeDirection',{indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }, function(data){
+                $.each(clickedObjs, function(index,obj){
+                    var classes = obj.className.split(" ").filter(function(c) {
+                        return c.lastIndexOf("css", 0) !== 0;
+                    });
+                    obj.className = $.trim(classes.join(" "));
+                    $.each(classes, function(index, c){
+                        if (c.indexOf("Color") !== -1){
+                            $(obj).addClass(data[c]);
+                        }
+                    });
+                });
+            });
+        }
+        function changeDirectionUndoable(obj, directionID, oldDirectionID){
+            changeDirection(obj, directionID);
+            undoManager.add({
+                undo: function() {
+                    changeDirection(obj, oldDirectionID);
+                },
+                redo: function(){
+                    changeDirection(obj, directionID);
+                }
+            });
+        }
+        function changeThreshold(obj, thresholdID){
+            var indicatorID = obj.attr('indicatorID');
+            var clickedObjs = obj.closest("tr").children();
+            $.post('changeThreshold',{indicatorID: indicatorID, thresholdID: thresholdID, fiscalYear:@fiscalYear }, function(data){
+                $.each(clickedObjs, function(index,obj){
+                    var classes = obj.className.split(" ").filter(function(c) {
+                        return c.lastIndexOf("css", 0) !== 0;
+                    });
+                    obj.className = $.trim(classes.join(" "));
+                    $.each(classes, function(index, c){
+                        if (c.indexOf("Color") !== -1){
+                            $(obj).addClass(data[c]);
+                        }
+                    });
+                });
+            });
+        }
+        function changeThresholdUndoable(obj, thresholdID, oldThresholdID){
+            changeThreshold(obj, thresholdID);
+            undoManager.add({
+                undo: function() {
+                    changeThreshold(obj, oldThresholdID);
+                },
+                redo: function(){
+                    changeThreshold(obj, thresholdID);
+                }
+            });
+        }
 
         function changeColor(obj, colorID){
             var indicatorID = obj.attr('indicatorID');
@@ -641,7 +736,7 @@
                 htmlColumnsDef = "@Html.Raw(htmlDef)";
                 htmlExistColumns = "@Html.Raw(htmlExist)";
                 if (!exist){
-                    clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
+                    clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
                     $(".newrow-text").on('change keyup paste',function(e){
                         var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
                         var field = $(this).attr("field");
@@ -669,10 +764,10 @@
                     $('.justClicked').removeClass('justClicked');
                     if (returnedData.newAreaID == areaID){
                         var newMap = $('.new-map');
-                        newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "'>" + htmlExistColumns);
+                        newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "'>" + htmlExistColumns);
                     } else if (returnedData.newAreaID != 0) {
                         correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
-                        correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "'>" + htmlExistColumns);
+                        correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "'>" + htmlExistColumns);
                     }
                     var newrowTds = $('.newrow-td')
                     $.each(newrowTds,function(index, obj){
@@ -699,6 +794,9 @@
         </text>
         }
 
+        removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
+            removeIndicator(obj);
+        };
     	function removeIndicator(obj){
     		if (obj.closest( "tr" ).hasClass("prrow-isNValue")){
     			obj.closest( "tr" ).prev().children().attr('rowspan',1);
@@ -1275,6 +1373,44 @@
                         }
                     },
                 },
+                "directionsSettings": {
+                    "name": "Color Direction",
+                    "items": {
+                        @foreach (var direction in Model.allDirections)
+                        {
+                        <text>
+                        "Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
+                            className: 'color-choice',
+                            callback:function(key, options){
+                                var obj = $(this);
+                                var directionID= @direction.Direction_ID;
+                                    var oldDirectionID = $(this).closest('tr').attr('directionID');
+                                    changeDirectionUndoable(obj, directionID, oldDirectionID);
+                                },
+                        },
+                        </text>
+                        }
+                    },
+                },
+                "thresholdSettings": {
+                    "name": "Color Threshold",
+                    "items": {
+                        @foreach (var threshold in Model.allThresholds)
+                        {
+                        <text>
+                        "Threshold_@threshold.Threshold_ID" : { "name": "Change to @threshold.Threshold",
+                            className: 'color-choice',
+                            callback:function(key, options){
+                                var obj = $(this);
+                                var thresholdID= @threshold.Threshold_ID;
+                                var oldThresholdID = $(this).closest('tr').attr('thresholdID');
+                                changeThresholdUndoable(obj, thresholdID, oldThresholdID);
+                            },
+                        },
+                        </text>
+                        }
+                    },
+                },
 
                 separator2: "-----",
 
@@ -1321,7 +1457,7 @@
 
             }
         });
-
+        @*
         $(document).on('click', '.row-up,.row-down', function(){
             var row = $(this).parents("tr:first");
             var mapID = row.attr("mapID");
@@ -1362,7 +1498,7 @@
                 if (nValueRow != null) { nValueRow.insertAfter(row); }
                 $.post("moveCoEMapDown",{mapID: mapID, fiscalYear: @ViewBag.fiscalYear, areaChange: areaChange});
             }
-        });
+        });*@
 
         $.fn.drags = function(opt) {
             opt = $.extend({handle:"",cursor:"move"}, opt);
@@ -1406,6 +1542,17 @@
             $(this).removeClass('draggable');
         };
 
+        $(document).on('click', '.menu-refresh', function(e){
+            location.reload();
+        });
+
+        $(document).on('click', '.menu-undo', function(e){
+            undoManager.undo();
+        });
+        $(document).on('click', '.menu-redo', function(e){
+            undoManager.redo();
+        });
+
         $(document).on('click', '.menu-edit-footnotes', function(e){
         	e.preventDefault();
         	window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
@@ -1446,6 +1593,33 @@
             });
         });
 
+        $(document).on('click', '.menu-insert-symbol', function(e){
+            var buttonEle = $(this);
+            var menuBar =  $(this).closest('.menu-bar');
+            var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
+            var htmlContent ="<div class='simplemodal' id='menu-dropdown'>";
+            htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + Symbol + "'>All</div>"
+            jQuery.each(data, function (i, value) {
+                htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
+            });
+            htmlContent += "</div>";
+            //var posX = e.pageX , posY = e.pageY;
+            $(htmlContent).modal({
+                closeHTML:"",
+                position: [posY,posX],
+                minWidth: 200,
+                overlayClose:true,
+                opacity:80,
+                overlayCss: {},
+                onClose: function() {
+                    buttonEle.removeClass('menu-button-pressed')
+                    $.modal.close();
+                },
+            });
+            $('#simplemodal-container').css('height', 'auto');
+            buttonEle.addClass('menu-button-pressed');
+        });
+
         $(document).on('click', '.menu-dropdown-button', function(e){
             var field = $(this).attr('field')
             var id = $(this).attr('id');
@@ -1456,25 +1630,7 @@
             }
         });
 
-        $(".export-excel").click(function (e) {
-            var coeID = e.target.attributes.getNamedItem('coeID').value
-            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
-            var coeIDFilter;
-            if (coeID != 0) {
-                coeIDFilter = "&coeID=" + coeID;
-            }
-            window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
-        });
 
-        $(".export-pdf").click(function (e) {
-            var coeID = e.target.attributes.getNamedItem('coeID').value
-            var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
-            var coeIDFilter;
-            if (coeID != 0) {
-                coeIDFilter = "&coeID=" + coeID;
-            }
-            window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
-        });
 
 
     });
@@ -1673,6 +1829,7 @@
         	selectedSum =0;
         	selectedAverage =0;
         	selectedN =0;
+        	calcRefresh();
         },
         selected: function(event, ui){
             var cell = $(ui.selected);
@@ -1689,6 +1846,7 @@
             } else {
             	cell.addClass("to-merge-start");
             }
+            calcRefresh();
         },
         unselect: function(event, ui){
         	$('.ui-selectee').removeClass("to-merge");
@@ -1696,6 +1854,7 @@
             selectedSum =0;
             selectedAverage =0;
             selectedN =0;
+            calcRefresh();
         }
     });
     
@@ -1707,15 +1866,23 @@
             $(cell).addClass('ui-selected');
             var ui = {selected: cell};
             selected(null, ui);
+            calcRefresh();
         }else{
             $('.ui-selectee')
               .removeClass('ui-selected').removeClass("to-merge")
               .parents('.ui-selectable')
               .trigger('selectablestop')
             unselect();
+            calcRefresh();
         }
         // you might also want to trigger selectablestop.
     });
+    calcRefresh = function(){
+        $('.calc-sum').html(selectedSum);
+        $('.calc-avg').html(selectedAverage);
+        $('.calc-n').html(selectedN);
+    };
+
 
     var oldRows;
     var sortable = $('tbody').sortable({
@@ -1773,10 +1940,24 @@
 </script>
 
 <style>
-
-
     .block {
         margin:0px 100px !important;
+    }
+
+    .pr-footer-row {
+        width:100%;
+        max-width:100%;
+        margin:0px;
+        margin-bottom:20px;
+    }
+    .header-row, footer-row {
+        width:100%;
+        max-width:100%;
+        margin:0px;
+    }
+
+    .pr-footer-image{
+        float:right;
     }
 
 
@@ -2015,6 +2196,7 @@
 
     table {
         width:100%;
+        margin:0 !important;
     }
 
     table, th, td {
@@ -2089,6 +2271,30 @@
         border: 0px 2px 2px 0px;
 
     }
+
+
+    .footer {
+        background-color:#0061a7;
+        border-bottom:2px solid rgb(0,51,102);
+        border-top:1px solid black;
+        padding-left: 17px;
+        line-height:7px;
+        position: fixed; 
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 24px;
+        z-index:100;
+        text-align:right;
+}
+    .calc-title, .calc {
+        color:white;
+        display:inline;
+        font-size:small;
+        margin:0px 3px;
+        padding: 3px;
+    }
+
     .menu-title {
         color:white;
         font-size:0.75em;
@@ -2100,7 +2306,6 @@
     }
     .menu-button-pressed {
         background-color: rgb(2, 69, 137);
-
     }
 
     .menu-bar {
@@ -2126,6 +2331,11 @@
         font-size:medium;
         margin:0px 3px;
         padding: 3px;
+    }
+
+
+    .menu-refresh {
+        float:right;
     }
 
     .ui-selecting {
