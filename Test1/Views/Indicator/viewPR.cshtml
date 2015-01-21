@@ -840,8 +840,8 @@
     		$.post('deleteCoEMaps', { mapID : mapID});
     	};
 
-    	merge = function(toMerge){
-    		var cells = toMerge;
+    	merge = function(cells){
+    		var i = 0;
     		$.each(cells,function(index,value){
     			currentEle = $(this);
 
@@ -866,10 +866,14 @@
     				}
     			}); 
 
-    			var colSpan = parseInt(currentEle.prev().attr('colSpan'))
+    			colSpanCell = currentEle.prevAll('.to-merge-start');
+    			colSpan = parseInt(colSpanCell.attr('colSpan'));
+
     			var owncolSpan = parseInt(currentEle.attr('colSpan'))
-    			currentEle.prev().attr('colSpan', colSpan + owncolSpan );
+    			colSpanCell.attr('colSpan', colSpan + owncolSpan );
+    			currentEle.html("");
     			currentEle.hide();
+    			i++;
     		});
     	};
 
@@ -1839,7 +1843,7 @@
                 selectedSum += num;
                 selectedAverage = selectedSum / selectedN;
             }
-            if(cell.prev().hasClass("ui-selected")){
+            if(cell.prevAll(':visible').first().hasClass("ui-selected")){
             	cell.addClass("to-merge");
             } else {
             	cell.addClass("to-merge-start");
