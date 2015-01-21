@@ -351,9 +351,11 @@
     </Content>
     <Content Include="PdfSharp.dll" />
     <Content Include="Scripts\classie.js" />
+    <Content Include="Scripts\colResizable-1.5.min.js" />
     <Content Include="Scripts\excanvas.js" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\highcharts.src.js" />
+    <Content Include="Scripts\jquery.simplemodal.1.4.3.min.js" />
     <Content Include="Scripts\mlpushmenu.css" />
     <Content Include="Scripts\foundation.min.js" />
     <Content Include="Scripts\foundation\foundation.abide.js" />

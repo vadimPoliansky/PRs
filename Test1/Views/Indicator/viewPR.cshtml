@@ -16,8 +16,8 @@
 <div class="menu-bar">
     <div class="row header-row">
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-open menu-coe" field="coe"><i class="fa fa-folder-open-o"></i>CoE</div>
-            <div class="menu-hover menu-button menu-open menu-analyst" field="analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
+            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
             <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
@@ -546,12 +546,13 @@
 
 <script type="text/javascript" src="~/Scripts/classie.js"></script>
 <script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
+<script src="~/Scripts/colResizable-1.5.min.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
+
 <script type="text/javascript">
     if (!window.jQuery) document.write('<script type="text/javascript" src="../../Scripts/jquery-1.11.0.min.js"><\/script>');
 </script>
 
-<script src="~/Scripts/jquery.simplemodal.1.4.4.min.js"></script>
 <script type="text/javascript">
     var currentMousePos = { x: -1, y: -1 };
     $(document).mousemove(function(event) {
@@ -560,6 +561,37 @@
     });
 
     $(document).ready(function () {
+
+    	if (!Array.prototype.filter)
+    	{
+    		Array.prototype.filter = function(fun)
+    		{
+    			"use strict";
+
+    			if (this === void 0 || this === null)
+    				throw new TypeError();
+
+    			var t = Object(this);
+    			var len = t.length >>> 0;
+    			if (typeof fun !== "function")
+    				throw new TypeError();
+
+    			var res = [];
+    			var thisp = arguments[1];
+    			for (var i = 0; i < len; i++)
+    			{
+    				if (i in t)
+    				{
+    					var val = t[i]; 
+    					if (fun.call(thisp, val, i, t))
+    						res.push(val);
+    				}
+    			}
+
+    			return res;
+    		};
+    	}
+
         function formatIndicator(obj, formatID){
             var indicatorID = obj.attr('indicatorID');
             $.post('formatIndicator', {indicatorID: indicatorID, formatID: formatID}, function(data){
@@ -576,7 +608,6 @@
             window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
         });
         $(document).on('click', '.export-PDF', function(e){
-            console.log("test");
             var coeID = e.target.attributes.getNamedItem('coeID').value
             var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
             var coeIDFilter;
@@ -647,7 +678,7 @@
             var indicatorID = obj.attr('indicatorID');
             var clickedObjs = obj.closest("tr").children();
             $.post('changeColor',{indicatorID: indicatorID, colorID: colorID, fiscalYear:@fiscalYear }, function(data){
-                $.each(clickedObjs, function(index,obj){
+            	$.each(clickedObjs, function(index,obj){
                     var classes = obj.className.split(" ").filter(function(c) {
                         return c.lastIndexOf("css", 0) !== 0;
                     });
@@ -1559,15 +1590,11 @@
         });
 
         $(document).on('click', '.menu-open', function(e){
-            var field = e.target.textContent;
-            if (field === "") {
-                field = e.target.nextSibling.textContent;
-            }
-
+        	var field = $(this).attr('field');
             var buttonEle = $(this);
             var menuBar =  $(this).closest('.menu-bar');
             var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
-            var htmlContent ="<div class='simplemodal' id='menu-dropdown'>";
+            var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
             var ajaxUrl = 'get' + field + 's';
             $.get(ajaxUrl, function(data){
                 htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
@@ -1575,49 +1602,20 @@
                     htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
                 });
                 htmlContent += "</div>";
-                //var posX = e.pageX , posY = e.pageY;
-                $(htmlContent).modal({
-                    closeHTML:"",
-                    position: [posY,posX],
-                    minWidth: 200,
-                    overlayClose:true,
-                    opacity:80,
-                    overlayCss: {},
-                    onClose: function() {
-                        buttonEle.removeClass('menu-button-pressed')
-                        $.modal.close();
-                    },
+                $('.block').after(htmlContent);
+                $('.menu-dropdown').hide();
+                $('.menu-dropdown').slideDown('slow');
+                $('.menu-dropdown').css({
+                	left:  posX,
+                	top:   posY-115+$("#pushobjLazy").scrollTop()
                 });
-                $('#simplemodal-container').css('height', 'auto');
+                $('body').unbind("click").click(function (evt) {
+                	$('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
+                	$('.menu-dropdown').remove()
+                	buttonEle.removeClass('menu-button-pressed');
+                });
                 buttonEle.addClass('menu-button-pressed');
             });
-        });
-
-        $(document).on('click', '.menu-insert-symbol', function(e){
-            var buttonEle = $(this);
-            var menuBar =  $(this).closest('.menu-bar');
-            var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
-            var htmlContent ="<div class='simplemodal' id='menu-dropdown'>";
-            htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + Symbol + "'>All</div>"
-            jQuery.each(data, function (i, value) {
-                htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
-            });
-            htmlContent += "</div>";
-            //var posX = e.pageX , posY = e.pageY;
-            $(htmlContent).modal({
-                closeHTML:"",
-                position: [posY,posX],
-                minWidth: 200,
-                overlayClose:true,
-                opacity:80,
-                overlayCss: {},
-                onClose: function() {
-                    buttonEle.removeClass('menu-button-pressed')
-                    $.modal.close();
-                },
-            });
-            $('#simplemodal-container').css('height', 'auto');
-            buttonEle.addClass('menu-button-pressed');
         });
 
         $(document).on('click', '.menu-dropdown-button', function(e){
@@ -2266,13 +2264,6 @@
         }
 
 
-    .simplemodal-container {
-        background-color: rgb(2, 69, 137);
-        border: 0px 2px 2px 0px;
-
-    }
-
-
     .footer {
         background-color:#0061a7;
         border-bottom:2px solid rgb(0,51,102);
@@ -2283,9 +2274,11 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 24px;
+        height: 42px;
         z-index:100;
         text-align:right;
+		width:100%;
+		margin:-18px;
 }
     .calc-title, .calc {
         color:white;
@@ -2294,7 +2287,12 @@
         margin:0px 3px;
         padding: 3px;
     }
-
+	
+	.menu-dropdown {
+        background-color: rgb(2, 69, 137);
+        border: 0px 2px 2px 0px;
+		position: absolute;
+    }
     .menu-title {
         color:white;
         font-size:0.75em;
