@@ -994,7 +994,7 @@
     			var updateValueSup = field !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val())
     			endEditUndoable(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, valueSup);
     		});
-    		$(document).on('keypress', '.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)', function (evt) {
+    		$('.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)').unbind('keypress').keypress(function (evt) {
     			if (evt.which == 13) {
     				var evt = {target: "none"};
     				var updateValue = $.trim($('.thVal').val());
@@ -1007,6 +1007,7 @@
     		if (evt !== null){
     			if (evt.target.id == "newEdit" || evt.target.id == "newEdit2" || evt.target.id == "editFootnotes") return;
     		}
+    		console.log(currentEle);
     		var colorElement = $(currentEle);
     		var parameters = {
     			indicatorID: indicatorID,
@@ -1056,7 +1057,7 @@
     			var updateValue = $.trim($('.thVal').val());
     			endEditDefUndoable(evt, currentEle, indicatorID, field, updateValue, value);
     		});
-    		$(document).on('keypress', '.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)', function (evt) {
+    		$('.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)').unbind('keypress').keypress(function (evt) {
     			if (evt.which == 13) {
     				var evt = {target: "none"};
     				var updateValue = $.trim($('.thVal').val());
