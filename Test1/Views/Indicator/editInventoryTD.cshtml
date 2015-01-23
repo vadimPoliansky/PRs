@@ -337,7 +337,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd"><input class="prInput @Html.Raw(cls)" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/><div class="tdValue">@Html.Raw(columns[i, 0])</div></td>
+																<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)"><input class="prInput @Html.Raw(cls)" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/><div class="tdValue">@Html.Raw(columns[i, 0])</div></td>
 															}
 														} else {
 															var cls = columns[i, 2];
@@ -345,7 +345,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd"><input class="prInput @Html.Raw(cls)" value="" oldvalue=""/><div class="tdValue"></div></td>
+																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)"><input class="prInput @Html.Raw(cls)" value="" oldvalue=""/><div class="tdValue"></div></td>
 															}
 														}
 													}
@@ -758,7 +758,7 @@
     			$(obj).addClass(color);
     			var oldColorID = $(obj).closest('tr').attr('colorID');
     			if (oldColorID !== "3"){
-    				changeColorUndoable(obj, 3, oldColorID);
+    				changeColorUndoable(obj, 1, oldColorID);
     			}
     		})
     	}
