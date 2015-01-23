@@ -189,6 +189,50 @@ namespace IndInv.Controllers
             return View(viewModel);
         }
 
+		public ActionResult EditInventoryTD(Int16 fiscalYear, Int16? analystID, Int16? coeID)
+		{
+			var allMaps = new List<Indicator_CoE_Maps>();
+
+			if (analystID.HasValue)
+			{
+				allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
+			}
+			else
+			{
+				allMaps = db.Indicator_CoE_Maps.ToList();
+			}
+
+			var allCoEs = new List<CoEs>();
+			if (coeID.HasValue)
+			{
+				allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+				allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
+			}
+			else
+			{
+				allCoEs = db.CoEs.Where(x => x.CoE_ID != 0).ToList();
+			}
+
+			ModelState.Clear();
+			var viewModel = new PRViewModel
+			{
+				//allCoEs = db.CoEs.ToList(),
+				allAnalysts = db.Analysts.ToList(),
+				allCoEs = allCoEs,
+				allMaps = allMaps,
+				allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+				allFootnotes = db.Footnotes.ToList(),
+				allAreas = db.Areas.ToList(),
+				Fiscal_Year = fiscalYear,
+				Analyst_ID = analystID,
+				allColors = db.Color_Types.ToList(),
+				allDirections = db.Color_Directions.ToList(),
+				allThresholds = db.Color_Thresholds.ToList(),
+			};
+
+			return View(viewModel);
+		}
+
         public ActionResult viewPRSimple(Int16 fiscalYear, Int16? analystID)
         {
             var allMaps = new List<Indicator_CoE_Maps>();

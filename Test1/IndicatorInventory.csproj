@@ -872,6 +872,7 @@
     <Content Include="Views\Indicator\indicatorList.cshtml" />
     <Content Include="Views\Indicator\viewPRSimple.cshtml" />
     <Content Include="Views\Indicator\viewPRSimple_Header.cshtml" />
+    <Content Include="Views\Indicator\editInventoryTD.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
