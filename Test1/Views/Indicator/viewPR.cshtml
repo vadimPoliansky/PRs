@@ -136,7 +136,7 @@
 												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
 												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
 												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
+												<td rowspan="1" class="prheader prheader-2">YTD</td>
 											</tr>
 											@{var numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
@@ -183,19 +183,21 @@
 													var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
                                                     var directionID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Direction_ID").GetValue(indicator, null);
                                                     var thresholdID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Threshold_ID").GetValue(indicator, null);
+													var formatStr = indicator.Format != null ? indicator.Format.Format_Code : "";
+													var formatID = indicator.Format_ID != null ? indicator.Format_ID.ToString() : "";
 													if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
 													{
 														if (allMapsWithNValues.Contains(map))
 														{
 															rowSpan = 2;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID 
-															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
+															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 														}
 														else
 														{
 															rowSpan = 1;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
-															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
+															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 														}
 														<td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
 														<a class="row-up"><i class="fa fa-sort-asc"></i></a>
@@ -556,6 +558,7 @@
 <script type="text/javascript" src="~/Scripts/classie.js"></script>
 <script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
 <script type="text/javascript">
     if (!window.jQuery) document.write('<script type="text/javascript" src="../../Scripts/jquery-1.11.0.min.js"><\/script>');
@@ -728,6 +731,64 @@
                 }
             });
         }
+
+        function changeFormat(obj, formatID){
+        	var indicatorID = obj.attr('indicatorID');
+        	var clickedObjs = obj.closest("tr").children();
+        	$.post('changeFormat',{indicatorID: indicatorID, formatID: formatID}, function(data){
+        		var formatStr = data.formatStr;
+        		$.each(clickedObjs, function(index,obj){
+        			var cell = $(this).children('.pr-input-val').first();
+        			var cellSup = $(this).children('.pr-input-sup').first();
+        			if (cell.length > 0){
+        				var value = cell.val()
+        				var formatedValue = value;
+        				if (value !== ""){ 
+        					var isString = isNaN(parseInt(value.replace('$','')));
+        					if (!isString){
+        						value = value.replace(/[^\d\.\-]/g, "");
+        						formatedValue = numeral(value).format(formatStr);
+        					}
+        					console.log(formatedValue);
+        					cell.val(formatedValue);
+        					cell.parent().children('.tdValue').html(formatedValue+ "<sup>" + cellSup.val() + "</sup>");
+        					cell.parent().parent().attr('formatID',formatID);
+        					cell.parent().parent().attr('formatStr',formatStr);
+
+        					var field = cell.parent().attr("field");
+        					var parameters = {
+        						indicatorID: indicatorID,
+        						updateProperty: field,
+        						updateValue: formatedValue,
+        						updateValueSup: "%NULL%",
+        						fiscalYear: @Model.Fiscal_Year
+        						};
+        					$.ajax({
+        						url: 'setValue',
+        						type: 'POST',
+        						data: JSON.stringify(parameters),
+        						contentType: 'application/json; charset=utf-8',
+        						async:false,
+        						success: function (result) {
+        						},
+        						error: function (request){
+        						}
+        					}); 
+        				}}
+        		});
+        	});
+		}
+        function changeFormatUndoable(obj, formatID, oldFormatID){
+    		changeFormat(obj, formatID);
+    		undoManager.add({
+    			undo: function() {
+    				changeFormat(obj, oldFormatID);
+    			},
+    			redo: function(){
+    				changeFormat(obj, formatID);
+    			}
+    		});
+    	}
 
         function changeColor(obj, colorID){
             var indicatorID = obj.attr('indicatorID');
@@ -1007,8 +1068,10 @@
     		element.children('.pr-input').hide();
     		element.children('.tdValue').show();
     	}
-    	$(document).on('dblclick','.cssGreen, .cssRed, .cssWhite, .cssYellow, .prtdDef, .prtd-titleDef', function (e) {
-    		updateVal($(this));
+    	$(document).on('dblclick','.prtd, .cssGreen, .cssRed, .cssWhite, .cssYellow, .prtdDef, .prtd-titleDef', function (e) {
+    		if (!$(e.target).hasClass('pr-input')){
+    			updateVal($(this));
+    		}
     	});
     	function updateVal(element, sup) {
     		var inputEl = element.children('.pr-input');
@@ -1086,7 +1149,6 @@
     				            updateVal(newTD);
     				        }
     						break;
- 
     						// down arrow
     				    case 38:
     				        if (focusEl.hasClass('pr-input-def') && caretPos === 0){
@@ -1119,34 +1181,47 @@
     		if (e.keyCode === 17 || e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
     			return;
     		}
-    		if (e.keyCode == 46 || e.keyCode == 45 || e.keyCode == 36 || e.keyCode == 35 || e.keyCode == 33 || e.keyCode == 34){
+    		if (e.keyCode == 45 || e.keyCode == 36 || e.keyCode == 35 || e.keyCode == 33 || e.keyCode == 34){
                 return
     		}
     		var currentEle = $(this).parent().children('.pr-input').first();
     		var currentEleSup = $(this).parent().children('.pr-input-sup').first();
+    		var formatStr = $(this).parent().parent().attr('formatStr');
+
     		var updateValue = currentEle.val();
+    		var isString = isNaN(parseInt(updateValue.replace('$','')));
+    		if (!isString){
+    			var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
+    		}
+
     		var updateValueSup = currentEleSup.val();
     		var oldValue = currentEle.attr('oldvalue')
     		var oldValueSup = currentEleSup.attr('oldvalue')
     		var indicatorID = currentEle.parent().attr('indicatorID');
     		var field  = currentEle.parent().attr('field');
-    		endEditUndoable(currentEle, currentEleSup, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup);
+    		endEditUndoable(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false);
     	});
 
-    	endEditUndoable = function(currentEle, currentEleSup, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup){
-    	    endEdit(currentEle, currentEleSup, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup);
+    	endEditUndoable = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
+    		endEdit(currentEle, currentEleSup, formatStr ,indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false);
     		undoManager.add({
     			undo: function(){
-    			    endEdit(currentEle, currentEleSup, indicatorID, field, oldValue, oldValueSup, updateValue, updateValueSup);
+    				endEdit(currentEle, currentEleSup, formatStr, indicatorID, field, oldValue, oldValueSup, updateValue, updateValueSup, true);
     			},
     			redo: function(){
-    			    endEdit(currentEle, currentEleSup, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup);
+    				endEdit(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, true);
     			}
     		});
     	};
 
-    	endEdit = function(currentEle, currentEleSup, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup){
+    	endEdit = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
     		currentEle.attr('oldValue', updateValue);
+    		var isString = isNaN(parseInt(updateValue.replace('$','')));
+    		if (!isString){
+    			if (formatStr !== ""){
+    				updateValue = numeral(updateValue).format(formatStr);
+    			}
+    		}
     		var colorElement = $(currentEle).parent();
     		if (currentEleSup != null){
     		    currentEleSup.attr('oldValue', updateValueSup);
@@ -1169,7 +1244,9 @@
     			error: function (request){
     			}
     		});
-    		currentEle.val(updateValue);
+    		if (update){
+    			currentEle.val(updateValue);
+    		}
     		currentEle.parent().children('.tdValue').html(updateValue + "<sup>" + updateValueSup + "</sup>");
     	}
         /////////////////////////////////////////////////////////////
@@ -1429,7 +1506,19 @@
     			}
     		});
     	}
+    	$('#the-node2').contextMenu({
+    		selector: 'th',
+    		callback: function(key, options){
+    		},
 
+    		items: {
+    			"hide": {name:"Hide Columns",
+    				callback: function(key, options){
+						//$('#tbl_Inventory').
+    				}
+    			}
+    		}
+    	});
 		$('#the-node').contextMenu({
             selector: 'td', 
             callback: function(key, options) {
@@ -1651,15 +1740,27 @@
                     }
                 },
 
-/*                separator2: "-----",
+                separator3: "-----",
 
-                "formatTest": {name: "FormatTest",
-                    callback: function(key,options){
-                        var formatID = 2;
-                        var obj = $(this);
-                        formatIndicator(obj, formatID);
-                    }
-                },*/
+                "formatSettings": {
+                	"name": "Format Type",
+                	"items": {
+                        @foreach (var format in Model.allFormats.OrderBy(x=>x.Order))
+                        {
+                        <text>
+                    	"Color_@format.Format_ID" : { "name": "Change to @format.Format_Type",
+                    		className: 'color-choice',
+                    		callback:function(key, options){
+                    			var obj = $(this);
+                    			var formatID= @format.Format_ID;
+                    			var oldFormatID = $(this).closest('tr').attr('formatID');
+                                changeFormatUndoable(obj, formatID, oldFormatID);
+                                },
+                        },
+                    	</text>
+                        }
+                    },
+                },
 
             }
         });
@@ -1990,6 +2091,7 @@
  </script>
 
 <script>
+
     Number.prototype.countDecimals = function () {
         if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
         return this.toString().split(".")[1].length || 0; 
@@ -2539,11 +2641,11 @@
     }
 
     .ui-selecting {
-        outline:1px solid #ff6a00;
+        outline:2px solid #ff6a00;
     }
 
     .ui-selected {
-        outline:1px solid red;
+        outline:2px solid red;
     }
     .menu-hover:hover {
         background-color:#ff6a00;

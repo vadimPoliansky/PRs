@@ -360,6 +360,7 @@
     <Content Include="Scripts\jquery.fixedheadertable.css" />
     <Content Include="Scripts\jquery.fixedheadertable.min.js" />
     <Content Include="Scripts\jquery.simplemodal.1.4.3.min.js" />
+    <Content Include="Scripts\jquery.ui.selectableTable.js" />
     <Content Include="Scripts\mlpushmenu.css" />
     <Content Include="Scripts\foundation.min.js" />
     <Content Include="Scripts\foundation\foundation.abide.js" />

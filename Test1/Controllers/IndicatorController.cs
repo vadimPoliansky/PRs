@@ -184,6 +184,7 @@ namespace IndInv.Controllers
                 allColors = db.Color_Types.ToList(),
                 allDirections = db.Color_Directions.ToList(),
                 allThresholds = db.Color_Thresholds.ToList(),
+				allFormats = db.Formats.ToList()
             };
 
             return View(viewModel);
@@ -228,6 +229,7 @@ namespace IndInv.Controllers
 				allColors = db.Color_Types.ToList(),
 				allDirections = db.Color_Directions.ToList(),
 				allThresholds = db.Color_Thresholds.ToList(),
+				allFormats = db.Formats.ToList()
 			};
 
 			return View(viewModel);
@@ -272,6 +274,7 @@ namespace IndInv.Controllers
                 allColors = db.Color_Types.ToList(),
                 allDirections = db.Color_Directions.ToList(),
                 allThresholds = db.Color_Thresholds.ToList(),
+				allFormats = db.Formats.ToList()
             };
 
             return View(viewModel);
@@ -2005,6 +2008,18 @@ namespace IndInv.Controllers
                 db.SaveChanges();
             }
         }
+
+		[HttpPost]
+		public ActionResult changeFormat(Int16 indicatorID, Int16 formatID)
+		{
+			var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+			indicator.Format_ID = formatID;
+			db.Entry(indicator).State = EntityState.Modified;
+			db.SaveChanges();
+
+			var formatStr = db.Formats.FirstOrDefault(x=>x.Format_ID == formatID).Format_Code;
+			return Json(new { formatStr = formatStr }, JsonRequestBehavior.AllowGet);
+		}
 
         [HttpPost]
         public ActionResult changeColor(Int16 indicatorID, Int16 colorID, Int16 fiscalYear)

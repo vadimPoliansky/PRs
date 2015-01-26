@@ -16,6 +16,7 @@ namespace IndInv.Models.ViewModels
         public List<Color_Thresholds> allThresholds { get; set; }
         public List<Footnotes> allFootnotes { get; set; }
         public List<Areas> allAreas { get; set; }
+		public List<Formats> allFormats { get; set; }
 
         public Int16 Fiscal_Year { get; set; }
         public Int16? Analyst_ID { get; set; }

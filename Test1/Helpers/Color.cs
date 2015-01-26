@@ -11,6 +11,10 @@ namespace IndInv.Helpers
     {
         public static String getNum(String str)
         {
+			Regex r = new Regex("^[a-zA-Z]*$");
+			if(str.Length > 0 && r.IsMatch(str[0].ToString())){
+				return null;
+			};
             if (str == null) { return null; }
             int n;
             int minPos, maxPos;
