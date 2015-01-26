@@ -1990,9 +1990,14 @@
  </script>
 
 <script>
+    Number.prototype.countDecimals = function () {
+        if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+        return this.toString().split(".")[1].length || 0; 
+    }
     var selectedSum =0;
     var selectedAverage =0;
     var selectedN =0;
+    var selectedDec =0;
     var selectObj = $('table').selectable({
         filter: ".prtd",
         distance: 1,
@@ -2002,11 +2007,11 @@
         	selectedSum =0;
         	selectedAverage =0;
         	selectedN =0;
+        	selectedDec =0;
         	calcRefresh();
         },
         selected: function(event, ui){
             var cell = $(ui.selected).children('.tdValue');
-            console.log(cell);
             var cellHtml = cell.html();
             var num = parseFloat(cell.html());
             //var num = cell.html()
@@ -2014,11 +2019,14 @@
                 selectedN +=1
                 selectedSum += num;
                 selectedAverage = selectedSum / selectedN;
+                if (num.countDecimals() > selectedDec){
+                    selectedDec = num.countDecimals();
+                }
             }
-            if(cell.prevAll(':visible').first().hasClass("ui-selected")){
-            	cell.addClass("to-merge");
+            if(cell.parent().prevAll(':visible').first().hasClass("ui-selected")){
+            	cell.parent().addClass("to-merge");
             } else {
-            	cell.addClass("to-merge-start");
+            	cell.parent().addClass("to-merge-start");
             }
             calcRefresh();
         },
@@ -2028,6 +2036,7 @@
             selectedSum =0;
             selectedAverage =0;
             selectedN =0;
+            selectedDec =0;
             calcRefresh();
         }
     });
@@ -2052,8 +2061,8 @@
         // you might also want to trigger selectablestop.
     });
     calcRefresh = function(){
-        $('.calc-sum').html(selectedSum);
-        $('.calc-avg').html(selectedAverage);
+        $('.calc-sum').html(selectedSum.toFixed(selectedDec));
+        $('.calc-avg').html(selectedAverage.toFixed(selectedDec));
         $('.calc-n').html(selectedN);
     };
 

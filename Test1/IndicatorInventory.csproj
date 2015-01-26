@@ -564,7 +564,7 @@
     <Content Include="Views\Indicator\edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Indicator\viewPR.cshtml" />
+    <Content Include="Views\Indicator\editInventoryTD.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Indicator\editInventory.cshtml" />
@@ -876,7 +876,7 @@
     <Content Include="Views\Indicator\indicatorList.cshtml" />
     <Content Include="Views\Indicator\viewPRSimple.cshtml" />
     <Content Include="Views\Indicator\viewPRSimple_Header.cshtml" />
-    <Content Include="Views\Indicator\editInventoryTD.cshtml" />
+    <Content Include="Views\Indicator\viewPR.cshtml" />
     <Content Include="Views\Indicator\editInventoryTD2.cshtml" />
   </ItemGroup>
   <ItemGroup>
