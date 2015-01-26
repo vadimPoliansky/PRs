@@ -55,6 +55,10 @@ namespace IndInv.Models
         [Display(Name = "Comparator")]
         public string FY_13_14_Comparator { get; set; }
         public string FY_13_14_Comparator_Sup { get; set; }
+        public string FY_13_14_Comparator_Q1 { get; set; }
+        public string FY_13_14_Comparator_Q2 { get; set; }
+        public string FY_13_14_Comparator_Q3 { get; set; }
+        public string FY_13_14_Comparator_Q4 { get; set; }
         [Display(Name = "Performance Threshold")]
         public string FY_13_14_Performance_Threshold { get; set; }
         public string FY_13_14_Performance_Threshold_Sup { get; set; }
@@ -108,6 +112,10 @@ namespace IndInv.Models
         [Display(Name = "Comparator")]
         public string FY_14_15_Comparator { get; set; }
         public string FY_14_15_Comparator_Sup { get; set; }
+        public string FY_14_15_Comparator_Q1 { get; set; }
+        public string FY_14_15_Comparator_Q2 { get; set; }
+        public string FY_14_15_Comparator_Q3 { get; set; }
+        public string FY_14_15_Comparator_Q4 { get; set; }
         [Display(Name = "Performance Threshold")]
         public string FY_14_15_Performance_Threshold { get; set; }
         public string FY_14_15_Performance_Threshold_Sup { get; set; }
@@ -137,8 +145,6 @@ namespace IndInv.Models
         public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
         public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
         public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
-
-
 
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual Areas Area { get; set; }

@@ -29,7 +29,7 @@
 </div>
 
 <div class="footer">
-                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+                <div class="calc-title">Sum:<div class ="calc calc-sum"></div></div><div class="calc-title">Average:<div class ="calc calc-avg"></div></div><div class="calc-title">Count:<div class ="calc calc-n"></div></div>
 </div>
 
 <div class="container">
@@ -233,21 +233,21 @@
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null),
-														"", 
+														"prtd", 
 														FiscalYear.FYStrFull("FY_3",fiscalYear), 
 														"1",
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(indicator,null), 
-														"", 
+														"prtd", 
 														FiscalYear.FYStrFull("FY_2",fiscalYear),
 														"1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(indicator,null),
-														"", 
+														"prtd", 
 														FiscalYear.FYStrFull("FY_1",fiscalYear), 
 														"1"
 													},
@@ -289,19 +289,19 @@
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), 
-														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
+														"prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
 														rowSpan.ToString()
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), 
-														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
+														"prtd", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
 														rowSpan.ToString()
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
-														"", 
+														"prtd", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 														rowSpan.ToString()
 													}};
@@ -332,20 +332,20 @@
 														allColspans.Add(colSpan);
 														if (columns[i, 0] != "=")
 														{
-															var cls = columns[i, 2];
-															if (skip) { cls = oldColumns[i, 2]; };
-															if (allNValues.Contains(map)) { cls = "prtd"; };
+															var tdClass = columns[i, 2];
+															if (skip) { tdClass = oldColumns[i, 2]; };
+															if (allNValues.Contains(map)) { tdClass = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)"><input class="prInput @Html.Raw(cls)" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/><div class="tdValue">@Html.Raw(columns[i, 0])</div></td>
+																<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
 															}
 														} else {
-															var cls = columns[i, 2];
-															if (skip) { cls = oldColumns[i, 2]; };
-															if (allNValues.Contains(map)) { cls = "prtd"; };
+															var tdClass = columns[i, 2];
+															if (skip) { tdClass = oldColumns[i, 2]; };
+															if (allNValues.Contains(map)) { tdClass = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)"><input class="prInput @Html.Raw(cls)" value="" oldvalue=""/><div class="tdValue"></div></td>
+																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(tdClass)"></td>
 															}
 														}
 													}
@@ -540,8 +540,10 @@
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
 
 <script src="~/Scripts/tag-it.min.js"></script>
+
 <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
 <script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
+
 <script type="text/javascript" src="~/Scripts/classie.js"></script>
 <script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
@@ -558,53 +560,6 @@
     });
 
     $(document).ready(function () {
-
-    	function getInputSelection(el) {
-    		var start = 0, end = 0, normalizedValue, range,
-				textInputRange, len, endRange;
-
-    		if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-    			start = el.selectionStart;
-    			end = el.selectionEnd;
-    		} else {
-    			range = document.selection.createRange();
-
-    			if (range && range.parentElement() == el) {
-    				len = el.value.length;
-    				normalizedValue = el.value.replace(/\r\n/g, "\n");
-
-    				// Create a working TextRange that lives only in the input
-    				textInputRange = el.createTextRange();
-    				textInputRange.moveToBookmark(range.getBookmark());
-
-    				// Check if the start and end of the selection are at the very end
-    				// of the input, since moveStart/moveEnd doesn't return what we want
-    				// in those cases
-    				endRange = el.createTextRange();
-    				endRange.collapse(false);
-
-    				if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
-    					start = end = len;
-    				} else {
-    					start = -textInputRange.moveStart("character", -len);
-    					start += normalizedValue.slice(0, start).split("\n").length - 1;
-
-    					if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
-    						end = len;
-    					} else {
-    						end = -textInputRange.moveEnd("character", -len);
-    						end += normalizedValue.slice(0, end).split("\n").length - 1;
-    					}
-    				}
-    			}
-    		}
-
-    		return {
-    			start: start,
-    			end: end
-    		};
-    	}
-
 
     	if (!Array.prototype.filter)
     	{
@@ -758,7 +713,7 @@
     			$(obj).addClass(color);
     			var oldColorID = $(obj).closest('tr').attr('colorID');
     			if (oldColorID !== "3"){
-    				changeColorUndoable(obj, 1, oldColorID);
+    				changeColorUndoable(obj, 3, oldColorID);
     			}
     		})
     	}
@@ -823,7 +778,7 @@
                             fiscalYear: @Model.Fiscal_Year,
                         };
                         $.ajax({
-                            url: 'setValue',
+                            url: 'setValueOld',
                             type: 'POST',
                             data: JSON.stringify(parameters),
                             contentType: 'application/json; charset=utf-8',
@@ -899,7 +854,7 @@
     				fiscalYear: @Model.Fiscal_Year
     				};
     			$.ajax({
-    				url: 'setValue',
+    				url: 'setValueOld',
     				type: 'POST',
     				data: JSON.stringify(parameters),
     				contentType: 'application/json; charset=utf-8',
@@ -931,31 +886,31 @@
     			var allFields = [];
     			var allFieldClasses = [];
     			var startFieldIndex;
-                @foreach (var field in allFields)
-				{
-					@:allFields.push('@field');   
-                }
-                @foreach (var fieldClass in allFieldClasses)
-				{
-					@:allFieldClasses.push('@fieldClass');   
-                }
-                jQuery.each(allFields, function(index, item){
-                    if (item === startField){
-                        startFieldIndex = index;
-                    }
-                });
-                var parameters = { indicatorID: indicatorID, startField: startField, allFields: allFields}
-                $.ajax({
-                    type:"POST",
-                    url: "unmergeCell",
-                    data: parameters,
-                    traditional: true,
-                });
-                for(i = oldColspan - 1; i > 0; i--){
-                    cell.attr('colspan','1');
-                    cell.nextAll().eq(i-1).show();
-                }
-            });
+                            @foreach (var field in allFields)
+							{
+								@:allFields.push('@field');   
+                        	}
+                            @foreach (var fieldClass in allFieldClasses)
+							{
+								@:allFieldClasses.push('@fieldClass');   
+                            }
+                        	jQuery.each(allFields, function(index, item){
+                        		if (item === startField){
+                        			startFieldIndex = index;
+                        		}
+                        	});
+                        	var parameters = { indicatorID: indicatorID, startField: startField, allFields: allFields}
+                        	$.ajax({
+                        		type:"POST",
+                        		url: "unmergeCell",
+                        		data: parameters,
+                        		traditional: true,
+                        	});
+                        	for(i = oldColspan - 1; i > 0; i--){
+                        		cell.attr('colspan','1');
+                        		cell.nextAll().eq(i-1).show();
+                        	}
+                        });
     	}
 
     	addNValues = function(clickedCell){
@@ -992,139 +947,76 @@
 			}
     	}
 
-    	tdToInput = function(element){
-    		element.children('input').hide();
-    		element.children('.tdValue').show();
-    	}
     	$(document).on('dblclick','.prtd, .prtd-title, .cssGreen, .cssRed, .cssWhite, .cssYellow', function (e) {
-    		updateVal($(this));
-    	});
-    	function updateVal(element) {
-    		var inputEl = element.children('input');
-    		inputEl.show();
-    		inputEl.focus();
-    		var tdEl = element.children('.tdValue');
-    		tdEl.hide();
-    		$('body').unbind("click").click(function (evt) {
-    			if (evt !== null){
-    				if (!$(evt.target).hasClass('prInput')){
-    					tdToInput(element);
-    				};
-    			}
+    		var indicatorID = e.target.attributes.getNamedItem('indicatorID');
+    		var field = e.target.attributes.getNamedItem('field');
+    		var currentEle = $(this);
+    		var oldValue = $(this).text();
+    		e.stopPropagation();
+
+    		$.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
+    			var value = data.Value || "";
+    			var value2 = data.Value_Sup || "";
+    			updateVal(currentEle, value, value2, indicatorID.value, field.value);
     		});
-    		$('input').unbind('keypress').keypress(function (evt) {
+
+		});
+    	function updateVal(currentEle, value, valueSup, indicatorID, field) {
+    		$(currentEle).html('<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" field="' + field +
+                                    '" value="' + value + 
+                                    '" class="thVal pr-edit-textarea" rows="1">' + value +
+                                    '</textarea>' +
+                                '<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" field="' + field +
+                                    '" value="' + valueSup + 
+                                    '" class="thVal2 pr-edit-textarea" rows="1">' + valueSup +
+                                    '</textarea>' +
+                                '<textarea id="newEdit" indicatorID ="' + indicatorID + 
+                                    '" value="' + valueSup + 
+                                    '" class="thFootnotes pr-edit-textarea" rows="1">' + valueSup +
+                                    '</textarea>'
+                                );
+    		if (field === "Indicator"){
+    			$('.thVal2').hide();
+    			$('.thFootnotes').show();
+    			$('.thButton').show();
+    		} else {
+    			$('.thVal2').show();
+    			$('.thFootnotes').hide();
+    			$('.thButton').hide();
+    		}
+    		$(".thVal").focus();
+
+    		$('body').unbind("click").click(function (evt) {
+    			var updateValue = $.trim($('.thVal').val());
+    			var updateValueSup = field !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val())
+    			endEditUndoable(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, valueSup);
+    		});
+    		$('.pr-edit-textarea:not(.thVal-Def):not(.thVal-Obj)').unbind('keypress').keypress(function (evt) {
     			if (evt.which == 13) {
-    				tdToInput(element);
-    			} else {
-    				var newTD;
-    				var caretPos = getInputSelection(inputEl[0]).start;
-    				var textLen = inputEl.val().length;
-    				switch(evt.keyCode)
-    				{
-    					// left arrow
-    					case 37:
-    						if (caretPos === 1 || caretPos === 0){
-    							newTD = $(this).parent().prevAll(':visible.prtd').first();
-    							if (newTD.length === 0){
-    								break;
-    							}
-    							tdToInput(element);
-    							updateVal(newTD);
-    						}
-    						break;
-    						// right arrow
-    					case 39:
-    						if (caretPos === textLen){
-    							newTD = $(this).parent().nextAll(':visible.prtd').first();
-    							if (newTD.length === 0){
-    								break;
-    							}
-    							tdToInput(element);
-    							updateVal(newTD);
-    						}
-    						break;
-    						// up arrow
-    					case 40:
-    						newTD = $(this).parent()
-									.parent()
-									.nextAll(':not(".prrow-area")').first()
-									.children('td')
-									.eq($(this).parent().index())
-									.first()
-									.focus();
-    						if (newTD.length === 0){
-    							break;
-    						}
-    						tdToInput(element);
-    						updateVal(newTD);
-    						break;
- 
-    						// down arrow
-    					case 38:
-    						newTD = $(this).parent()
-									.parent()
-									.prevAll(':not(".prrow-area")').first()
-									.children('td')
-									.eq($(this).parent().index())
-									.first()
-									.focus();
-    						if (newTD.length === 0){
-    							break;
-    						}
-    						tdToInput(element);
-    						updateVal(newTD);
-    						break;
-    				}
+    				var evt = {target: "none"};
+    				var updateValue = $.trim($('.thVal').val());
+    				var updateValueSup = field !== 'Indicator' ? $.trim($('.thVal2').val()) : $.trim($('.thFootnotes').val())
+    				endEditUndoable(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, valueSup);
     			};
     		});
     	}
-
-    	$('.prInput').on('keyup',function(e){
-    		if (e.ctrlKey && e.keyCode === 89){
-    			return;
+    	endEdit = function(evt, currentEle, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup){
+    		if (evt !== null){
+    			if (evt.target.id == "newEdit" || evt.target.id == "newEdit2" || evt.target.id == "editFootnotes") return;
     		}
-    		if (e.ctrlKey && e.keyCode === 90){
-    			return;
-    		}
-    		if (e.keyCode === 17 || e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
-    			return;
-    		}
-    		var currentEle = $(this);
-    		var updateValue = $.trim(currentEle.val());
-    		var oldValue = currentEle.attr('oldvalue')
-    		var indicatorID = currentEle.parent().attr('indicatorID');
-    		var field  = currentEle.parent().attr('field');
-    		endEditUndoable(currentEle, indicatorID, field, updateValue, oldValue);
-    	});
-
-    	endEditUndoable = function(currentEle, indicatorID, field, updateValue, oldValue){
-    		endEdit(currentEle, indicatorID, field, updateValue, oldValue);
-    		undoManager.add({
-    			undo: function(){
-    				endEdit(currentEle, indicatorID, field, oldValue, updateValue);
-    			},
-    			redo: function(){
-    				endEdit(currentEle, indicatorID, field, updateValue, oldValue);
-    			}
-    		});
-    	};
-
-    	endEdit = function(currentEle, indicatorID, field, updateValue, oldValue){
-    		if (currentEle.hasClass('prInput')){
-    			currentEle.attr('oldValue', updateValue);
-    			var colorElement = $(currentEle).parent();
-    		} else {
-    			var colorElement = $(currentEle);
-    		}
+    		console.log(currentEle);
+    		var colorElement = $(currentEle);
     		var parameters = {
     			indicatorID: indicatorID,
     			updateProperty: field,
     			updateValue: updateValue,
-    			updateValueSup: null,
+    			updateValueSup: updateValueSup,
     			fiscalYear: @Model.Fiscal_Year,
     		};
     		$.ajax({
-    			url: 'setValue',
+    			url: 'setValueOld',
     			type: 'POST',
     			data: JSON.stringify(parameters),
     			contentType: 'application/json; charset=utf-8',
@@ -1134,8 +1026,9 @@
     			error: function (request){
     			}
     		});
-    		currentEle.val(updateValue);
-    		currentEle.parent().children('.tdValue').html(updateValue);
+    		$(currentEle).html(updateValue + "<sup>" + updateValueSup + "</sup>");
+    		currentEle = null;
+    		$('body').unbind("click");
     	}
 
 
@@ -1182,7 +1075,7 @@
     			fiscalYear: @Model.Fiscal_Year,
     		};
 			$.ajax({
-				url: 'setValue',
+				url: 'setValueOld',
 				type: 'POST',
 				data: JSON.stringify(parameters),
 				contentType: 'application/json; charset=utf-8',
@@ -1297,7 +1190,17 @@
     	        }
     	    });
     	};
-
+    	endEditUndoable = function(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2){
+    		endEdit(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2);
+    		undoManager.add({
+    			undo: function(){
+    				endEdit(evt, currentEle, indicatorID, field, value, value2, updateValue, updateValueSup);
+    			},
+    			redo: function(){
+    				endEdit(evt, currentEle, indicatorID, field, updateValue, updateValueSup, value, value2);
+    			}
+    		});
+    	};
     	endEditDefUndoable = function(evt, currentEle, indicatorID, field, updateValue, value){
     		endEditDef(evt, currentEle, indicatorID, field, updateValue, value);
     		undoManager.add({
@@ -2236,17 +2139,6 @@
         padding: 0px;
     }
 
-	.prInput {
-		border:0;
-		height:100%;
-		width:100%;
-		display:none;
-		background-color:lightgray !important;
-		align-content:inherit;
-	}
-
-
-
     .prtdDef {
         font-size: 11px;
         background-color: White;
@@ -2312,7 +2204,6 @@
     table, th, td {
         border: 1px solid black;
         white-space: normal;
-		height:100%;
     }
 
         table tr:nth-of-type(2n) {
@@ -2442,7 +2333,6 @@
         font-size:medium;
         margin:0px 3px;
         padding: 3px;
-		float:left;
     }
 
 

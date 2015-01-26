@@ -353,8 +353,12 @@
     <Content Include="Scripts\classie.js" />
     <Content Include="Scripts\colResizable-1.5.min.js" />
     <Content Include="Scripts\excanvas.js" />
+    <Content Include="Scripts\fixed_table_rc.css" />
+    <Content Include="Scripts\fixed_table_rc.js" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\highcharts.src.js" />
+    <Content Include="Scripts\jquery.fixedheadertable.css" />
+    <Content Include="Scripts\jquery.fixedheadertable.min.js" />
     <Content Include="Scripts\jquery.simplemodal.1.4.3.min.js" />
     <Content Include="Scripts\mlpushmenu.css" />
     <Content Include="Scripts\foundation.min.js" />
@@ -873,6 +877,7 @@
     <Content Include="Views\Indicator\viewPRSimple.cshtml" />
     <Content Include="Views\Indicator\viewPRSimple_Header.cshtml" />
     <Content Include="Views\Indicator\editInventoryTD.cshtml" />
+    <Content Include="Views\Indicator\editInventoryTD2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

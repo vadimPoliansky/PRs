@@ -233,6 +233,50 @@ namespace IndInv.Controllers
 			return View(viewModel);
 		}
 
+        public ActionResult EditInventoryTD2(Int16 fiscalYear, Int16? analystID, Int16? coeID)
+        {
+            var allMaps = new List<Indicator_CoE_Maps>();
+
+            if (analystID.HasValue)
+            {
+                allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
+            }
+            else
+            {
+                allMaps = db.Indicator_CoE_Maps.ToList();
+            }
+
+            var allCoEs = new List<CoEs>();
+            if (coeID.HasValue)
+            {
+                allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+                allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
+            }
+            else
+            {
+                allCoEs = db.CoEs.Where(x => x.CoE_ID != 0).ToList();
+            }
+
+            ModelState.Clear();
+            var viewModel = new PRViewModel
+            {
+                //allCoEs = db.CoEs.ToList(),
+                allAnalysts = db.Analysts.ToList(),
+                allCoEs = allCoEs,
+                allMaps = allMaps,
+                allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+                allFootnotes = db.Footnotes.ToList(),
+                allAreas = db.Areas.ToList(),
+                Fiscal_Year = fiscalYear,
+                Analyst_ID = analystID,
+                allColors = db.Color_Types.ToList(),
+                allDirections = db.Color_Directions.ToList(),
+                allThresholds = db.Color_Thresholds.ToList(),
+            };
+
+            return View(viewModel);
+        }
+
         public ActionResult viewPRSimple(Int16 fiscalYear, Int16? analystID)
         {
             var allMaps = new List<Indicator_CoE_Maps>();
@@ -1765,6 +1809,73 @@ namespace IndInv.Controllers
             var property = type.GetProperty(updateProperty);
             property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
 
+            if (ModelState.IsValid)
+            {
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            var propertyColor = type.GetProperty(updateProperty + "_Color");
+            if (propertyColor != null)
+            {
+                var color = propertyColor.GetValue(indicator, null);
+                return Json(color, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json("", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult setValueFootnotes(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+
+            var footnotes = updateValueSup.Split(',');
+            foreach (var map in db.Indicator_Footnote_Maps.Where(x => x.Indicator_ID == indicatorID).ToList())
+            {
+                db.Indicator_Footnote_Maps.Remove(map);
+            }
+            db.SaveChanges();
+            foreach (var footnote in footnotes)
+            {
+                if (footnote != "%NULL%")
+                {
+                    Footnotes footnoteObj = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote.Trim());
+                    if (footnoteObj != null)
+                    {
+                        Int16 footnoteID = footnoteObj.Footnote_ID;
+                        var newMap = new Indicator_Footnote_Maps
+                        {
+                            Footnote_ID = footnoteID,
+                            Indicator_ID = indicatorID,
+                            Fiscal_Year = fiscalYear,
+                        };
+                        db.Indicator_Footnote_Maps.Add(newMap);
+                        db.SaveChanges();
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                db.Entry(indicator).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult setValueOld(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear)
+        {
+            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+
+            var type = indicator.GetType();
+            var property = type.GetProperty(updateProperty);
+            property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
+
             if (updateProperty != "Indicator")
             {
                 if (updateValueSup != "%NULL%")
@@ -1822,24 +1933,6 @@ namespace IndInv.Controllers
             {
                 return Json("", JsonRequestBehavior.AllowGet);
             }
-            //var indicatorID = indicatorChange[0].Indicator_ID;
-            //if (db.Indicators.Any(x => x.Indicator_ID == indicatorID ))
-            //{
-            //    if (ModelState.IsValid)
-            //    {
-            //        db.Entry(indicatorChange[0]).State = EntityState.Modified;
-            //        db.SaveChanges();
-            //    }
-            //} 
-            //else
-            //{
-            //    if (ModelState.IsValid)
-            //    {
-            //        db.Indicators.Add(indicatorChange[0]);
-            //        db.SaveChanges();
-            //    }
-            //}
-
         }
 
         [HttpPost]
