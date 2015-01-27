@@ -132,7 +132,7 @@
                                         <tbody>
 											@{string[,] oldColumns = null;
 											List<int> allColspans = new List<int>();
-											var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(x=>x.Indicator.Indicator_N_Value != true) .OrderBy(f => f.Number).ToList();
+											var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(x=>x.Indicator.Indicator_N_Value != true).OrderBy(f => f.Indicator_ID).ToList();
 											var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
 											var allMapsWithNValues = new List<Indicator_CoE_Maps>();
 											foreach (var nValue in allNValues)
@@ -145,7 +145,7 @@
 													allMaps.Insert(position + 1, nValue);
 												}
 											}
-											foreach (var map in allMaps.OrderBy(x=>x.Indicator_ID))
+											foreach (var map in allMaps)
 											{
 												var indicator = map.Indicator;
 												var indicatorType = indicator.GetType();
@@ -187,6 +187,7 @@
 													rowSpan = 0;
 													@:<tr class='blockFilter coeID-@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
 													} prrow prrow-isNValue'areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
+
 												}
 												else
 												{
@@ -1276,6 +1277,7 @@
                   {
                       htmlNValue += "<td></td>";
                       htmlNValue += "<td></td>";
+					  htmlNValue += "<td></td>";
                       for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
                       {
                           //htmlNValue += "<td class='newrow-td prtd' colSpan='1' field='" + ViewBag.PRCols[i, 3] + "'></td>";

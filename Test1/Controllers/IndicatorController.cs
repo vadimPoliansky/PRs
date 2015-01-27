@@ -259,6 +259,8 @@ namespace IndInv.Controllers
                 allCoEs = db.CoEs.Where(x => x.CoE_ID != 0).ToList();
             }
 
+			allMaps.AddRange(db.Indicator_CoE_Maps.Where(x => x.Indicator.Indicator_N_Value == true).ToList());
+
             ModelState.Clear();
             var viewModel = new PRViewModel
             {
