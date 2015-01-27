@@ -755,7 +755,6 @@
                                 value = value.replace(/[^\d\.\-]/g, "");
                                 formatedValue = numeral(value).format(formatStr);
                             }
-                            console.log(formatedValue);
                             cell.val(formatedValue);
                             cell.parent().children('.tdValue').html(formatedValue+ "<sup>" + cellSup.val() + "</sup>");
                             cell.parent().parent().attr('formatID',formatID);
@@ -1681,9 +1680,10 @@
                             callback:function(key, options){
                                 var obj = $(this);
                                 var colorID= @color.Color_ID;
-                                    var oldColorID = $(this).closest('tr').attr('colorID');
-                                    changeColorUndoable(obj, colorID, oldColorID);
-                                },
+                            	var oldColorID = $(this).closest('tr').attr('colorID');
+                            	console.log("G");
+                                changeColorUndoable(obj, colorID, oldColorID);
+                            },
                         },
                         </text>
                         }
@@ -1769,7 +1769,7 @@
                         @foreach (var format in Model.allFormats.OrderBy(x => x.Order))
                         {
                         <text>
-                	    "Color_@format.Format_ID" : { "name": "Change to @format.Format_Type",
+                	    "Format_@format.Format_ID" : { "name": "Change to @format.Format_Type",
                 	        className: 'color-choice',
                 	        callback:function(key, options){
                 	            var obj = $(this);
@@ -1919,9 +1919,17 @@
             var field = $(this).attr('field')
             var id = $(this).attr('id');
             if (id !== null){
-                window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	if (field === "CoE"){
+            		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	} else if (field === "Analyst"){
+            		window.location.href = "/indicator/editInventoryTD2?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	}
             } else {
-                window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+            	if (field === "CoE"){
+            		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+            	} else if (field === "Analyst"){
+            		window.location.href = "/indicator/editInventoryTD2?fiscalYear=@ViewBag.fiscalYear"
+            	}
             }
         });
 

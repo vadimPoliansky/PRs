@@ -181,85 +181,134 @@ namespace IndInv.Helpers
                 }
             }
 
-            if (Target != null)
-            {
-                if (direction == "≤")
-                {
-                    if (score <= targetScore)
-                    {
-                        return "cssGreen";
-                    }
-                    else
-                    {
-                        if (score <= targetScore * threshold_high)
-                        {
-                            return "cssYellow";
-                        }
-                        else
-                        {
-                            return "cssRed";
-                        }
-                    }
-                }
-                else if (direction == "<")
-                {
-                    if (score < targetScore)
-                    {
-                        return "cssGreen";
-                    }
-                    else
-                    {
-                        if (score < targetScore * threshold_high)
-                        {
-                            return "cssYellow";
-                        }
-                        else
-                        {
-                            return "cssRed";
-                        }
-                    }
-                }
-                else if (direction == ">")
-                {
-                    if (score > targetScore)
-                    {
-                        return "cssGreen";
-                    }
-                    else
-                    {
-                        if (score > targetScore * threshold_low)
-                        {
-                            return "cssYellow";
-                        }
-                        else
-                        {
-                            return "cssRed";
-                        }
-                    }
-                }
-                else
-                {
-                    if (score >= targetScore)
-                    {
-                        return "cssGreen";
-                    }
-                    else
-                    {
-                        if (score >= targetScore * threshold_low)
-                        {
-                            return "cssYellow";
-                        }
-                        else
-                        {
-                            return "cssRed";
-                        }
-                    }
-                }
-            }
-            else
-            {
-                return "cssWhite";
-            }
+			if (Color_ID != 4)
+			{
+				if (Target != null)
+				{
+					if (direction == "≤")
+					{
+						if (score <= targetScore)
+						{
+							return "cssGreen";
+						}
+						else
+						{
+							if (score <= targetScore * threshold_high)
+							{
+								return "cssYellow";
+							}
+							else
+							{
+								return "cssRed";
+							}
+						}
+					}
+					else if (direction == "<")
+					{
+						if (score < targetScore)
+						{
+							return "cssGreen";
+						}
+						else
+						{
+							if (score < targetScore * threshold_high)
+							{
+								return "cssYellow";
+							}
+							else
+							{
+								return "cssRed";
+							}
+						}
+					}
+					else if (direction == ">")
+					{
+						if (score > targetScore)
+						{
+							return "cssGreen";
+						}
+						else
+						{
+							if (score > targetScore * threshold_low)
+							{
+								return "cssYellow";
+							}
+							else
+							{
+								return "cssRed";
+							}
+						}
+					}
+					else
+					{
+						if (score >= targetScore)
+						{
+							return "cssGreen";
+						}
+						else
+						{
+							if (score >= targetScore * threshold_low)
+							{
+								return "cssYellow";
+							}
+							else
+							{
+								return "cssRed";
+							}
+						}
+					}
+				}
+				else
+				{
+					return "cssWhite";
+				}
+			}
+			else
+			{
+				if (Target != null)
+				{
+					if (direction == ">" || direction == "≥")
+					{
+						if (score < targetScore)
+						{
+							return "cssRed";
+						}
+						else if (score > targetScore * threshold_high)
+						{
+							return "cssGreen";
+						}
+						else if (score >= targetScore * threshold_high && score <= targetScore * (((threshold_high * 100) + 1) / 100))
+						{
+							return "cssYellow";
+						}
+						else
+						{
+							return "cssRed";
+						}
+					}
+					else
+					{
+						if (score > targetScore)
+						{
+							return "cssRed";
+						}
+						else if (score < targetScore * threshold_high)
+						{
+							return "cssGreen";
+						}
+						else if (score <= targetScore * threshold_high && score >= targetScore * (((threshold_high * 100) + 1) / 100))
+						{
+							return "cssYellow";
+						}
+						else
+						{
+							return "cssRed";
+						}
+					}
+				} else {
+					return "cssWhite";
+				}
+			}
         }
     }
 }
