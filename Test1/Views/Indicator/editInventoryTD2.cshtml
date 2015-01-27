@@ -106,31 +106,32 @@
 									<table id="tbl_Inventory" class="PR" border="1" style="border-collapse:collapse" runat="server" >
                                         <thead>
 										<tr class="prheader-1">
-											<th rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-id-column">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator_ID) </th>
+											<th rowspan="2" class="prheader prheader-1 pr-title-column">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
-											<th rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
+                                            <th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1")</th>
+											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2")</th>
+											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3")</th>
+											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4")</th>
+											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD")</th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
-                                            <th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
-										</tr>
-
-										<tr class="prheader-2 prheader-Final">
-											<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
-											<th rowspan="1" class="prheader prheader-2">YTD</th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
+                                            <th rowspan="2" class="prheader prheader-1">Comparator Q1</th>
+                                            <th rowspan="2" class="prheader prheader-1">Comparator Q2</th>
+                                            <th rowspan="2" class="prheader prheader-1">Comparator Q3</th>
+                                            <th rowspan="2" class="prheader prheader-1">Comparator Q4</th>
 										</tr>
                                         </thead>
                                         <tbody>
 											@{string[,] oldColumns = null;
 											List<int> allColspans = new List<int>();
-											var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).OrderBy(f => f.Number).ToList();
+											var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(x=>x.Indicator.Indicator_N_Value != true) .OrderBy(f => f.Number).ToList();
 											var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
 											var allMapsWithNValues = new List<Indicator_CoE_Maps>();
 											foreach (var nValue in allNValues)
@@ -174,7 +175,8 @@
 														@:<tr class='blockFilter coeID-@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
 														} prrow'areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID">
 													}
-													<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle</td>
+                                                    <td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator_ID" class="prtd-id pr-id-column">@indicator.Indicator_ID</td>
+													<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title pr-title-column">@indicatorTitle</td>
 												}
 												else if (allNValues.Contains(map))
 												{
@@ -186,7 +188,6 @@
 												{
 													rowSpan = 1;
 												}
-												//var format = indicator.Format.Format_Code;
 												string[,] columns = new string[,]{
 												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
@@ -268,21 +269,21 @@
                                                 {
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
 													"", 
-													"prtdDef",
+													"prtdDef, pr-def-column",
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation",
                                                     rowSpan.ToString()
 												},
 												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
 													"",
-													"prtdDef", 
+													"prtdDef, pr-def-column", 
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale",
                                                     rowSpan.ToString()
                                                 },
 												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
 													"", 
-													"prtdDef", 
+													"prtdDef, pr-def-column", 
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source",
                                                     rowSpan.ToString()
 												},
@@ -300,7 +301,7 @@
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Q2", 
 													rowSpan.ToString()
 												},
-																								{
+												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Q3").GetValue(indicator,null),
 													"",
 													"prtdCompBackUp", 
@@ -348,7 +349,7 @@
 														if (columns[i, 4] != "0")
 														{
 															<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="prtd @Html.Raw(cls)">
-																@if (cls != "prtdDef"){
+																@if (!cls.Contains("prtdDef")){
 																	<input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
 																	<input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
 																} else {
@@ -364,7 +365,7 @@
 														if (columns[i, 4] != "0")
 														{
 															<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)">
-																@if (cls != "prtdDef"){
+																@if (!cls.Contains("prtdDef")){
 																	<input class="pr-input pr-input-val" value="" oldvalue=""/>
 																	<input class="pr-input pr-input-sup" value="" oldvalue=""/>
 																} else {
@@ -648,7 +649,7 @@
     	},500);
 
     	var selectHeader = $('table > thead').selectable({
-    		fiter:'.prheader1'
+    		fiter:'.prheader'
     	})
 
     	$(document).mousedown(function(e){ 
@@ -1196,39 +1197,48 @@
             });
     	}
 
-    	addNValues = function(clickedCell){
-    		var clickRow = clickedCell.closest('tr');
-    		if (!clickedCell.closest('table').hasClass('PRDef')){
-    			var indicatorID = clickedCell.attr("indicatorID");
+        addNValues = function(clickedCell){
+            var clickRow = clickedCell.closest('tr');
+            if (!clickedCell.closest('table').hasClass('PRDef')){
+                var indicatorID = clickedCell.attr("indicatorID");
 
                 @{var htmlNValue = "";
-                if (ViewBag.PRCols != null){
-                    htmlNValue += "<td></td>";
-                    htmlNValue += "<td></td>";
-                    for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-                    {
-                        htmlNValue += "<td class='newrow-td prtd' colSpan='1' field='" + ViewBag.PRCols[i, 3] + "'></td>";
-                    }
-                }}
+                  if (ViewBag.PRCols != null)
+                  {
+                      htmlNValue += "<td></td>";
+                      htmlNValue += "<td></td>";
+                      for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+                      {
+                          //htmlNValue += "<td class='newrow-td prtd' colSpan='1' field='" + ViewBag.PRCols[i, 3] + "'></td>";
+                          htmlNValue += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd'>";
+                          htmlNValue += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
+                          htmlNValue += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
+                          htmlNValue += "<div class='tdValue'></div>";
+						  htmlNValue += "</td>";
+                      }
+                  }}
 
-			    $.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
-					var html = "@Html.Raw(htmlNValue)";
-                    clickRow.closest('tr').addClass('prrow-hasNValue');
-                    clickRow.closest('tr').after("<tr class='newrow-NValue prrow prrow-isNValue' indicatorID='" + returnedData.indicatorID + "' mapID = '" + returnedData.mapID + "' coeID = '" + returnedData.coeID + "'>" + html + "<tr");
-                    $.each($('.newrow-td'),function(index, obj){
-                        var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
-                        $(obj).attr('indicatorID', indicatorID);
-                        var field = $(obj).attr("field");
-                        $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
-                            if (data.Value != null && data.Value_Sup != null){
-                                $(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
-                            }
-                            $(obj).removeClass("newrow-td");
-                        });
-                    });
-                });
-			}
-    	}
+                $.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
+                    var html = "@Html.Raw(htmlNValue)";
+    		        clickRow.closest('tr').addClass('prrow-hasNValue');
+    		        clickRow.closest('tr').after("<tr class='newrow-NValue prrow prrow-isNValue' indicatorID='" + returnedData.indicatorID + "' mapID = '" + returnedData.mapID + "' coeID = '" + returnedData.coeID + "' formatID='' formatStr=''>" + html);
+    		        $.each($('.newrow-td'),function(index, obj){
+    		            var indicatorID = returnedData.indicatorID;
+    		            $(obj).attr('indicatorID', indicatorID);
+    		            var field = $(obj).attr("field");
+    		            $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
+			                if (data.Value != null && data.Value_Sup != null){
+			                    //$(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
+			                    $(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
+			                    $(obj).children('.pr-input-val').val(data.Value)
+			                    $(obj).children('.pr-input-sup').val(data.Value_Sup)
+			                }
+			                $(obj).removeClass("newrow-td");
+			            });
+			        });
+    		    });
+            }
+        }
 
     	tdToInput = function(element){
     		element.children('.pr-input').hide();
@@ -1344,7 +1354,7 @@
     		});
     	}
 
-    	$('.pr-input').on('keyup',function(e){
+    	$(document).on('keyup', '.pr-input',function(e){
     		if (e.ctrlKey && e.keyCode === 89){
     			return;
     		}
@@ -1568,7 +1578,23 @@
     			}
     		});
     	}
+    	$('#the-node2').contextMenu({
+    	    selector: 'th',
+    	    callback: function(key, options){
+    	    },
 
+    	    items: {
+    	        "hide": {name:"Hide Columns",
+    	            callback: function(key, options){
+    	                $.each($('th.ui-selected'), function(index,value){
+    	                    var index = $(this).index() + 1;
+    	                    $('table tbody tr td:nth-child(' + index + ')').addClass('hidden-column');
+    	                    $('table thead tr th:nth-child(' + index + ')').addClass('hidden-column');
+    	                });
+    	            }
+    	        }
+    	    }
+    	});
 
 		$('#the-node').contextMenu({
             selector: 'td', 
@@ -1781,6 +1807,7 @@
                             name: "Q4",
                             callback: function(key,options){
                                 var toSave = $(".ui-selected");
+                                saveCompUndoable(toSave, 4)
                                 $.each(toSave, function(index,value){
                                     var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
                                     var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
@@ -2349,12 +2376,12 @@
     table {
         width:200%;
         margin:0 !important;
+        table-layout:fixed;
     }
 
     table, th, td {
         border: 1px solid black;
         white-space: normal;
-		height:100%;
     }
 
         table tr:nth-of-type(2n) {
@@ -2491,12 +2518,18 @@
         float:right;
     }
 
-    .ui-selecting {
-        outline:1px solid #ff6a00;
+    td.ui-selecting {
+        outline:2px solid #ff6a00;
+    }
+    td.ui-selected {
+        outline:2px solid red;
     }
 
-    .ui-selected {
-        outline:1px solid red;
+    th.ui-selecting {
+        background-color:#ff6a00;
+    }
+    th.ui-selected {
+        background-color:#ff6a00;
     }
     .menu-hover:hover {
         background-color:#ff6a00;
@@ -2803,6 +2836,22 @@
     #pushobjLazy, .header, .container, .scroller, .scroller-inner, #pushList, .inner-wrap{
         height:100% !important;
         overflow:hidden !important;
+    }
+
+    .hidden-column {
+        overflow:hidden !important;
+        width:0px;
+        border:none;
+    }
+
+    .pr-def-column {
+        width:15%;
+    }
+    .pr-title-column {
+        width:7%;
+    }
+    .pr-id-column {
+        width:2%;
     }
 
 </style>

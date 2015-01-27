@@ -11,6 +11,7 @@ namespace IndInv.Helpers
     {
         public static String getNum(String str)
         {
+            if (str == null) { return null; }
 			Regex r = new Regex("^[a-zA-Z]*$");
 			if(str.Length > 0 && r.IsMatch(str[0].ToString())){
 				return null;
