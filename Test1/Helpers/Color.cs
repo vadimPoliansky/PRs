@@ -97,7 +97,7 @@ namespace IndInv.Helpers
 
             if (Color_ID == 0) { return "cssWhite"; }
 
-            if (Color_ID == 2)
+			if (Color_ID == 2 || Color_ID == 4)
             {
                 if (isYTD == false)
                 {
