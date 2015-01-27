@@ -1010,7 +1010,9 @@
 
     		    var owncolSpan = parseInt(currentEle.attr('colSpan'))
     		    colSpanCell.attr('colSpan', colSpan + owncolSpan );
-    		    currentEle.html("");
+    		    currentEle.children('.tdValue').html("");
+    		    currentEle.children('.pr-input-val').val("")
+    		    currentEle.children('.pr-input-sup').val("")
     		    currentEle.hide();
     		    i++;
     		});
@@ -1029,7 +1031,7 @@
                 @foreach (var field in allFields)
                 {
 					@:allFields.push('@field');   
-    		                    }
+				}
                 @foreach (var fieldClass in allFieldClasses)
                 {
 					@:allFieldClasses.push('@fieldClass');   
@@ -1106,6 +1108,7 @@
             }
         });
         function updateVal(element, sup) {
+        	var nValueColDiff = 2;
             var inputEl = element.children('.pr-input');
             inputEl.show();
             if (sup === true){
@@ -1166,12 +1169,26 @@
                             break;
                             // up arrow
                         case 40:
-                            if (focusEl.hasClass('pr-input-def') && caretPos === textLen){
-                                newTD = $(this).parent()
+                        	if (focusEl.hasClass('pr-input-def') && caretPos === textLen || !focusEl.hasClass('pr-input-def')){
+                        		var index = $(this).parent().index();
+                        		var oldTR = $(this).parent().parent();
+                        		var newTR = $(this).parent()
                                         .parent()
-                                        .nextAll(':not(".prrow-area")').first()
+                                        .nextAll(':not(".prrow-area")').first();
+                        		console.log(index);
+                        		console.log(newTR.children().length);
+                        		if (newTR.children().length + nValueColDiff - 1< index){
+                        			newTR= newTR.next();
+                        		}
+                        		if (oldTR.hasClass('prrow-isNValue')){
+                        			index += nValueColDiff;
+                        		}
+                        		if (newTR.hasClass('prrow-isNValue')){ 
+                        			index -= nValueColDiff;
+                        		};
+                        		newTD = newTR
                                         .children('td')
-                                        .eq($(this).parent().index())
+                                        .eq(index)
                                         .first()
                                         .focus();
                                 if (newTD.length === 0){
@@ -1183,12 +1200,24 @@
                             break;
                             // down arrow
                         case 38:
-                            if (focusEl.hasClass('pr-input-def') && caretPos === 0){
-                                newTD = $(this).parent()
-                                        .parent()
-                                        .prevAll(':not(".prrow-area")').first()
+                        	if (focusEl.hasClass('pr-input-def') && caretPos === 0 || !focusEl.hasClass('pr-input-def')){
+                        		var index = $(this).parent().index();
+                        		var oldTR = $(this).parent().parent();
+                        		var newTR = $(this).parent()
+										.parent()
+										.prevAll(':not(".prrow-area")').first();
+                        		if (newTR.children().length + nValueColDiff - 1 < index){
+                        			newTR=newTR.prev();
+                        		}
+                        		if (oldTR.hasClass('prrow-isNValue')){
+                        			index += nValueColDiff;
+                        		}
+                        		if (newTR.hasClass('prrow-isNValue')){ 
+                        			index -= nValueColDiff;
+                        		};
+								var newTD = newTR
                                         .children('td')
-                                        .eq($(this).parent().index())
+                                        .eq(index)
                                         .first()
                                         .focus();
                                 if (newTD.length === 0){
@@ -2145,8 +2174,7 @@
         selected: function(event, ui){
             var cell = $(ui.selected).children('.tdValue');
             var cellHtml = cell.html();
-            var num = parseFloat(cell.html());
-            //var num = cell.html()
+            var num = parseFloat(cell.html().replace('$','').replace(/[^\d\.\-]/g, ""));
             if (!isNaN(num)){
                 selectedN +=1
                 selectedSum += num;
