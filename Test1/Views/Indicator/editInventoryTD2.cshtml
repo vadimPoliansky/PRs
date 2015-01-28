@@ -109,24 +109,25 @@
                                             <th rowspan="2" class="prheader prheader-1 pr-id-column">ID</th>
 											<th rowspan="2" class="prheader prheader-1 pr-coe-column">CoE</th>
 											<th rowspan="2" class="prheader prheader-1 pr-title-column">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
-                                            <th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1")</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2")</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3")</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4")</th>
-											<th rowspan="1" class="prheader prheader-2">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD")</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+                                            <th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1")</th>
+											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2")</th>
+											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3")</th>
+											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4")</th>
+											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD")</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
                                             <th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
 											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
-                                            <th rowspan="2" class="prheader prheader-1">Comparator Q1</th>
-                                            <th rowspan="2" class="prheader prheader-1">Comparator Q2</th>
-                                            <th rowspan="2" class="prheader prheader-1">Comparator Q3</th>
-                                            <th rowspan="2" class="prheader prheader-1">Comparator Q4</th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q1</th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q2</th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q3</th>
+                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q4</th>
+											<th rowspan="2" class="prheader prheader-1 pr-td-column"></th>
 										</tr>
                                         </thead>
                                         <tbody>
@@ -185,7 +186,7 @@
 												else if (allNValues.Contains(map))
 												{
 													rowSpan = 0;
-													@:<tr class='blockFilter coeID-@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
+													@:<tr class='blockFilter coeID-@allMaps.FirstOrDefault(x=>x.Indicator_ID == map.Indicator.Indicator_N_Value_ID).CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
 													} prrow prrow-isNValue'areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 
 												}
@@ -319,6 +320,13 @@
 													"prtdCompBackUp", 
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Q4", 
 													rowSpan.ToString()
+												},
+												{
+													"",
+													"",
+													"",
+													"",
+													rowSpan.ToString(),
 												},
 												};
 												ViewBag.PRCols = columns;
@@ -1332,7 +1340,6 @@
     		var tdEl = element.children('.tdValue');
     		tdEl.hide();
     		selectObj.on( "selectablestart", function( event, ui ) {
-
     			tdToInput(element); 
     			selectObj.off( "selectablestart");
     		} );
@@ -1343,7 +1350,7 @@
     				};
     			}
     		});
-    		inputEl.unbind('keypress').keypress(function (evt) {
+    		inputEl.unbind("keydown").keydown(function (evt) {
     			if (evt.which == 13 || evt.keyCode == 27) {
     				tdToInput(element);
     			} else {
@@ -1356,6 +1363,7 @@
     					// left arrow
     					case 37:
     						if (caretPos === 0){
+    							
     							newTD = $(this).prevAll(':visible.pr-input-val').first();
     							if (newTD.length !== 0){
     								newTD.focus();
@@ -1396,12 +1404,13 @@
     							if (newTR.children().length + nValueColDiff - 1< index){
     								newTR= newTR.next();
     							}
-    							if (oldTR.hasClass('prrow-isNValue')){
+    							if (oldTR.hasClass('prrow-isNValue') && !oldTR.hasClass('newrow-NValue') ){
     								index += nValueColDiff;
     							}
-    							if (newTR.hasClass('prrow-isNValue')){ 
+    							if (newTR.hasClass('prrow-isNValue') && !newTR.hasClass('newrow-NValue') ){ 
     								index -= nValueColDiff;
     							};
+    							console.log(index);
     							newTD = newTR
                                         .children('td')
                                         .eq(index)
@@ -1425,10 +1434,10 @@
     							if (newTR.children().length + nValueColDiff - 1 < index){
     								newTR=newTR.prev();
     							}
-    							if (oldTR.hasClass('prrow-isNValue')){
+    							if (oldTR.hasClass('prrow-isNValue') && !oldTR.hasClass('newrow-NValue') ){ 
     								index += nValueColDiff;
     							}
-    							if (newTR.hasClass('prrow-isNValue')){ 
+    							if (newTR.hasClass('prrow-isNValue') && !newTR.hasClass('newrow-NValue') ){ 
     								index -= nValueColDiff;
     							};
     							var newTD = newTR
@@ -1720,8 +1729,10 @@
     	};
     	saveComparatorUndoable = function(elements, fields, fieldQs, values, oldValues){
     		saveComparator(elements, fields, fieldQs, values, oldValues);
+    		console.log("A");
     		undoManager.add({
     			undo: function(){
+    				console.log("B");
     				saveComparator(elements, fields, fieldQs, oldValues, values, true);
     			},
     			redo: function(){
@@ -1742,7 +1753,8 @@
     	        			toHide.push($(this));
     	        		}
     	        		$.each(toHide, function(index,value){
-    	                    var index = $(this).index() + 1;
+    	        			var index = $(this).index() + 1;
+    	        			console.log(index);
     	                    $('table tbody tr td:nth-child(' + index + ')').addClass('hidden-column');
     	                    $('table thead tr th:nth-child(' + index + ')').addClass('hidden-column');
     	                });
@@ -1798,27 +1810,6 @@
                             		elements.push($(this));
                             	});
                             	saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
-                                	@*$(this).first().parent().children('[field="' + field +'"]').addClass('comp-saved');
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').val(value);
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.tdValue').html(value);
-                                    var parameters = {
-                                        indicatorID: indicatorID,
-                                        updateProperty: fieldQ,
-                                        updateValue: value,
-                                        updateValueSup: "%NULL%",
-                                        fiscalYear: @Model.Fiscal_Year,
-                                    };
-                                    $.ajax({
-                                        url: 'setValue',
-                                        type: 'POST',
-                                        data: JSON.stringify(parameters),
-                                        contentType: 'application/json; charset=utf-8',
-                                        success: function (result) {
-                                        },
-                                        error: function (request){
-                                        }
-                                    }); 
-                                });*@
                             }
                         },
                         "toQ2": {
@@ -1828,32 +1819,24 @@
                             	if (toSave.length === 0){
                             		toSave.push($(this));
                             	}
-                                $.each(toSave, function(index,value){
-                                    var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
-                                    var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
-                                    var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q2";
-                                	var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
-                                	$(this).first().parent().children('[field="' + field +'"]').addClass('comp-saved');
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').val(value);
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.tdValue').html(value);
-                                    var parameters = {
-                                        indicatorID: indicatorID,
-                                        updateProperty: fieldQ,
-                                        updateValue: value,
-                                        updateValueSup: "%NULL%",
-                                        fiscalYear: @Model.Fiscal_Year,
-                                    };
-                                    $.ajax({
-                                        url: 'setValue',
-                                        type: 'POST',
-                                        data: JSON.stringify(parameters),
-                                        contentType: 'application/json; charset=utf-8',
-                                        success: function (result) {
-                                        },
-                                        error: function (request){
-                                        }
-                                    }); 
-                                });
+                            	var fields = [];
+                            	var fieldQs = [];
+                            	var values = [];
+                            	var oldValues = [];
+                            	var elements = [];
+                            	$.each(toSave, function(index,value){
+                            		var quarter = 2;
+                            		var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+                            		var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+                            		var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+                            		var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+                            		fields.push(field);
+                            		fieldQs.push(fieldQ);
+                            		values.push(value);
+                            		oldValues.push(Oldvalue);
+                            		elements.push($(this));
+                            	});
+                            	saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
                             }
                         },
                         "toQ3": {
@@ -1863,32 +1846,24 @@
                             	if (toSave.length === 0){
                             		toSave.push($(this));
                             	}
-                                $.each(toSave, function(index,value){
-                                    var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
-                                    var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
-                                    var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q3";
-                                	var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
-                                	$(this).first().parent().children('[field="' + field +'"]').addClass('comp-saved');
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').val(value);
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.tdValue').html(value);
-                                    var parameters = {
-                                        indicatorID: indicatorID,
-                                        updateProperty: fieldQ,
-                                        updateValue: value,
-                                        updateValueSup: "%NULL%",
-                                        fiscalYear: @Model.Fiscal_Year,
-                                    };
-                                    $.ajax({
-                                        url: 'setValue',
-                                        type: 'POST',
-                                        data: JSON.stringify(parameters),
-                                        contentType: 'application/json; charset=utf-8',
-                                        success: function (result) {
-                                        },
-                                        error: function (request){
-                                        }
-                                    }); 
-                                });
+                            	var fields = [];
+                            	var fieldQs = [];
+                            	var values = [];
+                            	var oldValues = [];
+                            	var elements = [];
+                            	$.each(toSave, function(index,value){
+                            		var quarter = 3;
+                            		var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+                            		var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+                            		var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+                            		var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+                            		fields.push(field);
+                            		fieldQs.push(fieldQ);
+                            		values.push(value);
+                            		oldValues.push(Oldvalue);
+                            		elements.push($(this));
+                            	});
+                            	saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
                             }
                         },
                         "toQ4": {
@@ -1898,32 +1873,24 @@
                             	if (toSave.length === 0){
                             		toSave.push($(this));
                             	}
-                                $.each(toSave, function(index,value){
-                                    var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
-                                    var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
-                                    var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q4";
-                                	var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
-                                	$(this).first().parent().children('[field="' + field +'"]').addClass('comp-saved');
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').val(value);
-                                	$(this).first().parent().children('[field="' + fieldQ +'"]').children('.tdValue').html(value);
-                                    var parameters = {
-                                        indicatorID: indicatorID,
-                                        updateProperty: fieldQ,
-                                        updateValue: value,
-                                        updateValueSup: "%NULL%",
-                                        fiscalYear: @Model.Fiscal_Year,
-                                    };
-                                    $.ajax({
-                                        url: 'setValue',
-                                        type: 'POST',
-                                        data: JSON.stringify(parameters),
-                                        contentType: 'application/json; charset=utf-8',
-                                        success: function (result) {
-                                        },
-                                        error: function (request){
-                                        }
-                                    }); 
-                                });
+                            	var fields = [];
+                            	var fieldQs = [];
+                            	var values = [];
+                            	var oldValues = [];
+                            	var elements = [];
+                            	$.each(toSave, function(index,value){
+                            		var quarter = 4;
+                            		var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+                            		var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+                            		var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+                            		var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+                            		fields.push(field);
+                            		fieldQs.push(fieldQ);
+                            		values.push(value);
+                            		oldValues.push(Oldvalue);
+                            		elements.push($(this));
+                            	});
+                            	saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
                             }
                         },
     	            }
@@ -2428,18 +2395,28 @@
         padding: 0px;
         width:3%;
     }
+
 	.pr-input {
         display:inline;
 		border:1px solid white;
-		height:100%;
-		width:50%;
+		height:100% !important;
+		width:50% !important;
 		display:none;
 		background-color:lightgray !important;
 		text-align:inherit;
         float:left;
 	}
     .pr-input-def {
-        width:100%;
+        width:100% !important;
+    }
+	
+	textarea {
+        width: 100% !important;
+		height:inherit !important;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        background-color: lightgray;
     }
 
     .prtdDef {
@@ -2499,7 +2476,7 @@
     }
 
     table {
-        width:200%;
+        width:300%;
         margin:0 !important;
         table-layout:fixed;
     }
@@ -2519,14 +2496,6 @@
     .prrow-isNValue > td {
         border-top:0px none;
         height:20px;
-    }
-
-    input[type="text"], textarea {
-        width: 100%;
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        background-color: lightgray;
     }
 
     .newrow, .newrow-td, .thVal, .thVal2 {
@@ -2607,6 +2576,12 @@
         padding: 5px;
         color:white;
         font-size:0.19em;
+    }
+	.lt-ie9 .menu-dropdown-button {
+        padding: 5px;
+		padding-top: 10px;
+        color:white;
+        font-size:1.1em;
     }
     .menu-button-pressed {
         background-color: rgb(2, 69, 137);
@@ -2963,23 +2938,24 @@
         overflow:hidden !important;
     }
 
-    .hidden-column {
-        overflow:hidden !important;
-        width:0px !important;
-        border:none;
-    }
-
     .pr-def-column {
-        width:15%;
+        width:12%;
     }
     .pr-title-column {
-        width:7%;
+        width:5%;
     }
     .pr-id-column {
         width:2%;
     }
 	.pr-coe-column {
         width:2%;
+    }
+
+
+	.hidden-column {
+        overflow:hidden !important;
+        width:1px !important;
+        border:none;
     }
 
 	.comp-saved {

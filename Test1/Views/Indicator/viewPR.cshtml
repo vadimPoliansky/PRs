@@ -799,14 +799,15 @@
             var indicatorID = obj.attr('indicatorID');
             var clickedObjs = obj.closest("tr").children();
             $.post('changeColor',{indicatorID: indicatorID, colorID: colorID, fiscalYear:@fiscalYear }, function(data){
-                $.each(clickedObjs, function(index,obj){
+            	$.each(clickedObjs, function(index,obj){
                     var classes = obj.className.split(" ").filter(function(c) {
                         return c.lastIndexOf("css", 0) !== 0;
                     });
                     obj.className = $.trim(classes.join(" "));
                     $.each(classes, function(index, c){
                         if (c.indexOf("Color") !== -1){
-                            $(obj).addClass(data[c]);
+                        	$(obj).addClass(data[c]);
+                        	$(obj).parent().attr('colorid',colorID);
                         }
                     });
                 });
@@ -834,6 +835,7 @@
     		    obj.attr('class', $.trim(classes.join(" ")));
     		    $(obj).addClass(color);
     		    var oldColorID = $(obj).closest('tr').attr('colorID');
+    		    console.log(oldColorID);
     		    if (oldColorID !== 3){
     		        changeColorUndoable(obj, 3, oldColorID);
     		    }
@@ -854,11 +856,16 @@
         @if (ViewBag.PRCols != null)
         {
         <text>
-        function addNewIndicator(obj, newIndicatorID, undo){
+        function addNewIndicator(obj, newIndicatorID, undo, returningObj){
             exist = (newIndicatorID !== null);
             var coeID = obj.closest( "tr" ).attr("coeID");
             var areaID = obj.closest( "tr" ).attr("areaID");
             var indicatorID = obj.attr("indicatorID") || obj.closest("tr").attr("indicatorID");
+            if (undo){
+            	indicatorID=obj.closest("table").find(".prtd").first().closest("tr").attr("indicatorID");
+            }
+            console.log(indicatorID);
+
             var clickedRow = obj.closest( "tr" );
             var definitions = obj.closest( "table" ).hasClass("PRDef");
             $.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
@@ -922,40 +929,44 @@
                     $('.justClicked').attr('mapid',returnedData.mapID);
                     $('.justClicked').addClass('clicked');
                     $('.justClicked').removeClass('justClicked');
-                    if (returnedData.newAreaID == areaID){
-                        var newMap = $('.new-map');
-                        newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
-                    } else if (returnedData.newAreaID != 0) {
-                        correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
-                        correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
-                    }
-                    var newrowTds = $('.newrow-td')
-                    $.each(newrowTds,function(index, obj){
-                        var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
-                        $(obj).attr('indicatorID', indicatorID);
-                        var field = $(obj).attr("field");
-                        $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
-                            var value = data.Value;
-                            if (value == null) value = "";
-                            var valueSup = data.Value_Sup;
-                            if (valueSup == null) valueSup = "";
-                            if (field !== 'Indicator'){
-                                $(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
-                                $(obj).children('.pr-input-val').val(data.Value)
-                                $(obj).children('.pr-input-sup').val(data.Value_Sup)
-                            } else {
-                                $(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
-                            }
-                            $(obj).addClass(data.Color);
-                            $(obj).removeClass("newrow-td");
-                        });
-                    });
-                    if (undo){
+                    if (!undo){
+                    	if (returnedData.newAreaID == areaID){
+                    		var newMap = $('.new-map');
+                    		newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
+                    	} else if (returnedData.newAreaID != 0) {
+                    		correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
+                    		correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
+                    	}
+
+                    	var newrowTds = $('.newrow-td')
+                    	$.each(newrowTds,function(index, obj){
+                    		var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
+                    		$(obj).attr('indicatorID', indicatorID);
+                    		var field = $(obj).attr("field");
+                    		$.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
+                    			var value = data.Value;
+                    			if (value == null) value = "";
+                    			var valueSup = data.Value_Sup;
+                    			if (valueSup == null) valueSup = "";
+                    			if (field !== 'Indicator'){
+                    				$(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
+                    				$(obj).children('.pr-input-val').val(data.Value)
+                    				$(obj).children('.pr-input-sup').val(data.Value_Sup)
+                    			} else {
+                    				$(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
+                    			}
+                    			$(obj).addClass(data.Color);
+                    			$(obj).removeClass("newrow-td");
+                    		});
+                    	});
+                    } else {
                         $('.new-map').remove()
                         clickedRow.next().removeClass('newrow');
                     }
                     var tbody = obj.closest('tbody');
                     var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
+                    returningObj.attr('mapID',returnedData.mapID);
+                    returningObj.show();
                     sortUndoable(tbody, rows, oldRows);
                 }
             });
@@ -975,7 +986,8 @@
                 obj.closest( "tr" ).next().remove();
             }
             var mapID = obj.closest( "tr" ).attr("mapID");
-            $('tr[mapID="' + mapID + '"]').remove()
+        	//$('tr[mapID="' + mapID + '"]').remove()
+            $('tr[mapID="' + mapID + '"]').hide();
             $.post('deleteCoEMaps', { mapID : mapID});
         };
 
@@ -1125,7 +1137,7 @@
                     };
                 }
             });
-            inputEl.unbind('keypress').keypress(function (evt) {
+            inputEl.unbind("keydown").keydown(function (evt) {
                 if (evt.which == 13 || evt.keyCode == 27) {
                     tdToInput(element);
                 } else {
@@ -1180,10 +1192,10 @@
                         		if (newTR.children().length + nValueColDiff - 1< index){
                         			newTR= newTR.next();
                         		}
-                        		if (oldTR.hasClass('prrow-isNValue')){
+                        		if (oldTR.hasClass('prrow-isNValue') && !oldTR.hasClass('newrow-NValue') ){ 
                         			index += nValueColDiff;
                         		}
-                        		if (newTR.hasClass('prrow-isNValue')){ 
+                        		if (newTR.hasClass('prrow-isNValue') && !newTR.hasClass('newrow-NValue') ){ 
                         			index -= nValueColDiff;
                         		};
                         		newTD = newTR
@@ -1209,10 +1221,10 @@
                         		if (newTR.children().length + nValueColDiff - 1 < index){
                         			newTR=newTR.prev();
                         		}
-                        		if (oldTR.hasClass('prrow-isNValue')){
+                        		if (oldTR.hasClass('prrow-isNValue') && !oldTR.hasClass('newrow-NValue') ){
                         			index += nValueColDiff;
                         		}
-                        		if (newTR.hasClass('prrow-isNValue')){ 
+                        		if (newTR.hasClass('prrow-isNValue') && !newTR.hasClass('newrow-NValue') ){ 
                         			index -= nValueColDiff;
                         		};
 								var newTD = newTR
@@ -1499,13 +1511,11 @@
         removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
             removeIndicator(obj);
             undoManager.add({
-                undo: function() {
-                    //deletedRow.insertAfter(prevObj.closest('tr'));
-                    prevObj.closest('tr').after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
-                    addNewIndicator(prevObj, indicatorID, true);
+            	undo: function() {
+            		addNewIndicator(prevObj, deletedRow.attr('indicatorID'), true, deletedRow);
                 },
                 redo: function(){
-                    removeIndicator(prevObj.closest('tr').next().first());
+                	removeIndicator(obj);
                 }
             });
         };
@@ -2428,6 +2438,7 @@
         text-align: justify;
         color: Black;
         padding: 5px;
+		width:100%;
     }
 
     .prtd-id {
@@ -2435,18 +2446,19 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 6.5%;
+        width:2%;
         padding: 0px 2px 0px 2px;
-        min-width:1%;
     }
+	.lt-ie9 .prtd-id {
+		width:3%;
+	}
 
     .prtd-title {
         font-size: 11px;
         background-color: White;
         text-align: justify;
         color: Black;
-        min-width: 20% !important;
-        max-width: 20% !important;
+		width: 15%;
         word-wrap: break-word;
         padding: 0px 2px 0px 2px;
     }
@@ -2456,8 +2468,7 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 0.05% !important;
-        max-width: 0.05% !important;
+        width:1%;
         padding: 0px 2px 0px 2px;
     }
 
@@ -2466,7 +2477,7 @@
         background-color: White;
         text-align: justify;
         color: Black;
-        width:6%;
+        width:15%;
         word-wrap: break-word;
         padding: 0px 2px 0px 2px;
     }
@@ -2484,8 +2495,8 @@
 	.pr-input {
         display:inline;
 		border:1px solid white;
-		height:100%;
-		width:50%;
+		height:100% !important;
+		width:50% !important;
 		display:none;
 		background-color:lightgray !important;
 		text-align:inherit;
@@ -2495,13 +2506,21 @@
         width:100%;
     }
 
+	textarea {
+        width: 100% !important;
+		height:inherit !important;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        background-color: lightgray;
+    }
+
     .prtdDef {
         font-size: 11px;
         background-color: White;
         text-align: left;
         color: Black;
-        min-width: 75px;
-        max-width: 15%;
+		width:30%;
         padding: 0px;
     }
 
@@ -2575,14 +2594,6 @@
         height:20px;
     }
 
-    input[type="text"], textarea {
-        width: 100%;
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        background-color: lightgray;
-    }
-
     .newrow, .newrow-td, .thVal, .thVal2 {
         padding: 0 0 0 0 !important;
         margin: 0 0 0 0 !important;
@@ -2601,7 +2612,7 @@
         box-shadow: 0 0 1px rgba(81, 203, 238, 1);
         padding: 3px 0px 3px 3px;
         margin: 5px 1px 3px 0px;
-        border: 1px solid rgba(81, 203, 238, 1);
+        border: 1px solid rgb(81, 203, 238);
     }
 
         .export-Excel::before {
@@ -2663,6 +2674,7 @@
         color:white;
         font-size:0.75em;
     }
+
     .menu-button-pressed {
         background-color: rgb(2, 69, 137);
     }
@@ -3001,5 +3013,8 @@
         position:absolute;
         top:37px;
     }
+	.lt-ie9 .prBlock {
+		padding:50px !important;
+	}
 
 </style>

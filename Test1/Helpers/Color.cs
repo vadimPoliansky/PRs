@@ -61,8 +61,6 @@ namespace IndInv.Helpers
                 threshold_low = 0.99;
             }
 
-            if (Direction_ID == 2)
-
             if (Color_ID == 3)
             {
                 return String.IsNullOrEmpty(inCustom) ? "cssWhite" : inCustom;

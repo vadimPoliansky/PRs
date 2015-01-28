@@ -2309,7 +2309,14 @@ namespace IndInv.Controllers
             int number = 0;
             if (indicatorID != 0)
             {
-                number = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Indicator_ID == indicatorID).Number + 1;
+				if (db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Indicator_ID == indicatorID) != null)
+				{
+					number = db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == fiscalYear).FirstOrDefault(x => x.Indicator_ID == indicatorID).Number + 1;
+				}
+				else
+				{
+					number = 0;
+				}
             }
             newMap.Number = (Int16)number;
 
