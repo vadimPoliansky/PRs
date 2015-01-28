@@ -535,6 +535,7 @@
     			var valThis = $('#search_input').val().toLowerCase();
     			if (valThis == "") {
     				$(".blockFilter").removeClass('textFiltered');
+    				$('.prrow-isNValue').removeClass('textFiltered');
     			} else {
     				//$('.blockFilter > li > .row > .titleColumn > .title').each(function () {
     				$('.blockFilter > .prtd-title, .blockFilter > .prtd-titleDef').each(function () {
@@ -546,6 +547,7 @@
     						$(this).closest(".blockFilter").addClass('textFiltered');
     					}
     				});
+    				$('.prrow-isNValue').addClass('textFiltered');
     			};
     			refreshView();
     		}, 500);
@@ -2178,7 +2180,10 @@
         	}
         });
 
-
+    	$('.overlay').on('click',function(e){
+    		$('#menuFilter').multilevelpushmenu('collapse')
+    		$(".overlay").fadeOut("fast");
+    	});
 
 
     });
@@ -2340,7 +2345,7 @@
         font-size: 11px;
         background-color: White;
         text-align: center;
-        color: Black;
+        color: black !important;
         min-width: 6.5%;
         padding: 0px 2px 0px 2px;
         min-width:1%;

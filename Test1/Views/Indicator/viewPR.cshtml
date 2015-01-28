@@ -2023,6 +2023,11 @@
             $('#menuFilter').multilevelpushmenu('redraw');
         }
 
+        $('.overlay').on('click',function(e){
+        	$('#menuFilter').multilevelpushmenu('collapse')
+        	$(".overlay").fadeOut("fast");
+        });
+
         var hidden = false;
 
         var delay = (function(){
