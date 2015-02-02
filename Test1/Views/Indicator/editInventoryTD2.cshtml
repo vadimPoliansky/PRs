@@ -106,28 +106,28 @@
 									<table id="tbl_Inventory" class="PR" border="1" style="border-collapse:collapse" runat="server" >
                                         <thead>
 										<tr class="prheader-1">
-                                            <th rowspan="2" class="prheader prheader-1 pr-id-column">ID</th>
-											<th rowspan="2" class="prheader prheader-1 pr-coe-column">CoE</th>
-											<th rowspan="2" class="prheader prheader-1 pr-title-column">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
-                                            <th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1")</th>
-											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2")</th>
-											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3")</th>
-											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4")</th>
-											<th rowspan="1" class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD")</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
-                                            <th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
-											<th rowspan="2" class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
-                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q1</th>
-                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q2</th>
-                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q3</th>
-                                            <th rowspan="2" class="prheader prheader-1 pr-td-column">Comparator Q4</th>
-											<th rowspan="2" class="prheader prheader-1 pr-td-column"></th>
+                                            <th  class="prheader prheader-1 pr-id-column">ID</th>
+											<th  class="prheader prheader-1 pr-coe-column">CoE</th>
+											<th  class="prheader prheader-1 pr-title-column">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+                                            <th  class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1")</th>
+											<th  class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2")</th>
+											<th  class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3")</th>
+											<th  class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4")</th>
+											<th  class="prheader prheader-2 pr-td-column">@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD")</th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+											<th  class="prheader prheader-1 pr-td-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+                                            <th  class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
+											<th  class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
+											<th  class="prheader prheader-1 pr-def-column">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
+                                            <th  class="prheader prheader-1 pr-td-column">Comparator Q1</th>
+                                            <th  class="prheader prheader-1 pr-td-column">Comparator Q2</th>
+                                            <th  class="prheader prheader-1 pr-td-column">Comparator Q3</th>
+                                            <th  class="prheader prheader-1 pr-td-column">Comparator Q4</th>
+											<th  class="prheader prheader-1 pr-td-column"></th>
 										</tr>
                                         </thead>
                                         <tbody>
@@ -747,7 +747,8 @@
     
     	var unselect = selectObj.selectable("option", "unselect");
     	var selected = selectObj.selectable("option", "selected");
-    	$('td.ui-selectee').click(function(e) {
+		/*
+    	$('#tbl_Inventory td.ui-selectee').click(function(e) {
     		if (e.ctrlKey && !$(this).hasClass('ui-selected')){
     			var cell = this;
     			$(cell).addClass('ui-selected');
@@ -762,8 +763,8 @@
     			unselect();
     			calcRefresh();
     		}
-    		// you might also want to trigger selectablestop.
-    	});
+    	});*/
+
     	calcRefresh = function(){
     		$('.calc-sum').html(selectedSum.toFixed(selectedDec));
     		$('.calc-avg').html(selectedAverage.toFixed(selectedDec));
@@ -1002,7 +1003,6 @@
     							value = value.replace(/[^\d\.\-]/g, "");
     							formatedValue = numeral(value).format(formatStr);
     						}
-    						console.log(formatedValue);
     						cell.val(formatedValue);
     						cell.parent().children('.tdValue').html(formatedValue+ "<sup>" + cellSup.val() + "</sup>");
     						cell.parent().parent().attr('formatID',formatID);
@@ -1325,7 +1325,7 @@
     		element.children('.pr-input').hide();
     		element.children('.tdValue').show();
     	}
-    	$(document).on('click','.prtd, .prtd-title, .cssGreen, .cssRed, .cssWhite, .cssYellow, .prtdDef, .prtd-titleDef', function (e) {
+    	$(document).on('click','table td.prtd', function (e) {
     		if (!$(e.target).hasClass('pr-input')){
     			updateVal($(this));
     		}
@@ -1412,7 +1412,6 @@
     							if (newTR.hasClass('prrow-isNValue') && !newTR.hasClass('newrow-NValue') ){ 
     								index -= nValueColDiff;
     							};
-    							console.log(index);
     							newTD = newTR
                                         .children('td')
                                         .eq(index)
@@ -1731,10 +1730,8 @@
     	};
     	saveComparatorUndoable = function(elements, fields, fieldQs, values, oldValues){
     		saveComparator(elements, fields, fieldQs, values, oldValues);
-    		console.log("A");
     		undoManager.add({
     			undo: function(){
-    				console.log("B");
     				saveComparator(elements, fields, fieldQs, oldValues, values, true);
     			},
     			redo: function(){
@@ -1756,7 +1753,6 @@
     	        		}
     	        		$.each(toHide, function(index,value){
     	        			var index = $(this).index() + 1;
-    	        			console.log(index);
     	                    $('table tbody tr td:nth-child(' + index + ')').addClass('hidden-column');
     	                    $('table thead tr th:nth-child(' + index + ')').addClass('hidden-column');
     	                });
@@ -2291,6 +2287,24 @@
         background-color:lightblue !important;
     }
 
+	table {
+		width:300%;
+        margin:0 !important;
+        table-layout:fixed;
+		display:block;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        white-space: normal;
+		display:block;
+    }
+
+		table tr {
+			height:20px;
+			line-height:20px;
+		}
+
     .prrow tr {
         -webkit-transition: all 0.30s ease-in-out;
         -moz-transition: all 0.30s ease-in-out;
@@ -2346,9 +2360,8 @@
         background-color: White;
         text-align: center;
         color: black !important;
-        min-width: 6.5%;
+        width:2%;
         padding: 0px 2px 0px 2px;
-        min-width:1%;
     }
 
     .prtd-title {
@@ -2357,7 +2370,7 @@
         text-align: justify;
         color: Black;
         word-wrap: break-word;
-        padding: 0px 2px 0px 2px;
+        padding: 2px 2px 2px 2px;
         width:7%;
     }
 
@@ -2480,20 +2493,6 @@
         color: inherit;
     }
 
-    table {
-        width:300%;
-        margin:0 !important;
-        table-layout:fixed;
-    }
-
-    table, th, td {
-        border: 1px solid black;
-        white-space: normal;
-    }
-
-        table tr:nth-of-type(2n) {
-            background: none;
-        }
 
     .prrow-hasNValue > td {
         border-bottom:0px none;
