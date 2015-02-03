@@ -22,7 +22,7 @@
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
             <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
         </div>
-        <div class="large-6 columns">
+        <div class="large-12 columns">
             <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
         </div>
     </div>
@@ -127,7 +127,6 @@
                                             <th  class="prheader prheader-1 pr-td-column">Comparator Q2</th>
                                             <th  class="prheader prheader-1 pr-td-column">Comparator Q3</th>
                                             <th  class="prheader prheader-1 pr-td-column">Comparator Q4</th>
-											<th  class="prheader prheader-1 pr-td-column"></th>
 										</tr>
                                         </thead>
                                         <tbody>
@@ -169,7 +168,7 @@
 												{
 													if (allMapsWithNValues.Contains(map))
 													{
-														rowSpan = 2;
+														rowSpan = 1;
 														@:<tr class='blockFilter coeID-@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID 
 														} prrow prrow-hasNValue' areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 													}
@@ -179,13 +178,10 @@
 														@:<tr class='blockFilter coeID-@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
 														} prrow'areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 													}
-                                                    <td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator_ID" class="prtd-id pr-id-column">@indicator.Indicator_ID</td>
-													<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="CoE" class="prtd-CoE pr-coe-column">@indicator.Indicator_CoE_Map.FirstOrDefault().CoE.CoE_Abbr</td>
-													<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title pr-title-column">@indicatorTitle</td>
 												}
 												else if (allNValues.Contains(map))
 												{
-													rowSpan = 0;
+													rowSpan = 1;
 													@:<tr class='blockFilter coeID-@allMaps.FirstOrDefault(x=>x.Indicator_ID == map.Indicator.Indicator_N_Value_ID).CoE_ID areaID-@map.Indicator.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map) { @:footnoteID-@footnote.Footnote_ID
 													} prrow prrow-isNValue'areaID="@map.Indicator.Area_ID" coeID="@map.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 
@@ -194,6 +190,9 @@
 												{
 													rowSpan = 1;
 												}
+												<td indicatorID="@map.Indicator_ID" field="Indicator_ID" class="prtd-id pr-id-column">@indicator.Indicator_ID</td>
+												<td indicatorID="@map.Indicator_ID" field="CoE" class="prtd-CoE pr-coe-column">@indicator.Indicator_CoE_Map.FirstOrDefault().CoE.CoE_Abbr</td>
+												<td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title pr-title-column">@indicatorTitle</td>
 												string[,] columns = new string[,]{
 												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
@@ -320,14 +319,7 @@
 													"prtdCompBackUp", 
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Q4", 
 													rowSpan.ToString()
-												},
-												{
-													"",
-													"",
-													"",
-													"",
-													rowSpan.ToString(),
-												},
+												}
 												};
 												ViewBag.PRCols = columns;
 												if (!skip)
@@ -361,7 +353,7 @@
 														if (allNValues.Contains(map)) { cls = "prtd"; };
 														if (columns[i, 4] != "0")
 														{
-															<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="prtd @Html.Raw(cls)">
+															<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" class="prtd @Html.Raw(cls)">
 																@if (!cls.Contains("prtdDef")){
 																	<input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
 																	<input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
@@ -377,7 +369,7 @@
 														if (allNValues.Contains(map)) { cls = "prtd"; };
 														if (columns[i, 4] != "0")
 														{
-															<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)">
+															<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", class="prtd @Html.Raw(cls)">
 																@if (!cls.Contains("prtdDef")){
 																	<input class="pr-input pr-input-val" value="" oldvalue=""/>
 																	<input class="pr-input pr-input-sup" value="" oldvalue=""/>
@@ -457,6 +449,10 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
 
+<link rel="stylesheet" href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" ></script>
+<script type="text/javascript" src="//cdn.datatables.net/fixedcolumns/3.0.0/js/dataTables.fixedColumns.min.js" ></script>
+
 <script src="~/Scripts/tag-it.min.js"></script>
 <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
 <script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
@@ -487,6 +483,21 @@
     	$('.block').height(blockHeight - 146);
     	blockHeight = $('.block').height();
     	$(".overlay").hide()
+
+    	var tbl_Inventory = $('#tbl_Inventory').DataTable({
+    		"scrollX": true,
+    		"scrollY": blockHeight - 111,
+    		"dom": 'tp',
+    		"aaSorting": [],
+    		"columnnDefs": [
+				{width:10, targets:0},
+				{width:50, targets:0},
+				{width:50, targets:0}
+			]
+    	});
+    	new $.fn.dataTable.FixedColumns( tbl_Inventory, {
+    		leftColumns: 3	
+    	});
 
     	if ($("html").hasClass("lt-ie9")) {
     		$('#menuFilter').multilevelpushmenu({
@@ -703,7 +714,7 @@
     	var selectObj = $('table').selectable({
     		filter: "td.prtd",
     		distance: 1,
-    		autoRefresh: false,
+    		//autoRefresh: false,
     		start: function(event, ui){
     			$('th.ui-selected').removeClass('ui-selected');
     			$('.ui-selectee').removeClass("to-merge");
@@ -757,7 +768,7 @@
     			calcRefresh();
     		}else{
     			$('.ui-selectee')
-				  .removeClass('ui-selected').removeClass("to-merge")
+				  .removeClass('ui-seldatatablesected').removeClass("to-merge")
 				  .parents('.ui-selectable')
 				  .trigger('selectablestop')
     			unselect();
@@ -2191,7 +2202,7 @@
     .block {
         margin:0px 0px !important;
         height:100%;
-        overflow:scroll;
+        overflow:visible;
     }
 
     .pr-footer-row {
@@ -2968,6 +2979,18 @@
         text-align: center;
         color: White;
         padding: 0px;
+	}
+
+	#tbl_Inventory_paginate {
+		font-size:0.2em;
+	}
+
+	[class*="column"] + [class*="column"]:last-child {
+		float:none !important;
+	}
+	.DTFC_LeftBodyLiner {
+		overflow-x: hidden !important;
+		padding-right: 1px;
 	}
 
 </style>
