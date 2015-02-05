@@ -352,13 +352,17 @@
     <Content Include="PdfSharp.dll" />
     <Content Include="Scripts\classie.js" />
     <Content Include="Scripts\colResizable-1.5.min.js" />
+    <Content Include="Scripts\ColumnFilterWidgets.css" />
+    <Content Include="Scripts\ColumnFilterWidgets.js" />
     <Content Include="Scripts\excanvas.js" />
     <Content Include="Scripts\fixed_table_rc.css" />
     <Content Include="Scripts\fixed_table_rc.js" />
+    <Content Include="Scripts\handsontable.0.12.4.full.min.js" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\highcharts.src.js" />
     <Content Include="Scripts\jquery.fixedheadertable.css" />
     <Content Include="Scripts\jquery.fixedheadertable.min.js" />
+    <Content Include="Scripts\jquery.handsontable.full.min.js" />
     <Content Include="Scripts\jquery.simplemodal.1.4.3.min.js" />
     <Content Include="Scripts\jquery.ui.selectableTable.js" />
     <Content Include="Scripts\mlpushmenu.css" />

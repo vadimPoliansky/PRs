@@ -2879,8 +2879,8 @@ Handsontable.TableView.prototype.maximumVisibleElementHeight = function (top) {
 (function(Handsontable){
   'use strict';
 
-  Handsontable.EditorManager = function(instance, priv, selection){
-    var that = this;
+  Handsontable.EditorManager = function (instance, priv, selection) {
+  	var that = this;
     var $document = $(document);
     var keyCodes = Handsontable.helper.keyCode;
 
@@ -2889,7 +2889,6 @@ Handsontable.TableView.prototype.maximumVisibleElementHeight = function (top) {
     var init = function () {
 
       function onKeyDown(event) {
-
         if (!instance.isListening()) {
           return;
         }
@@ -2908,6 +2907,7 @@ Handsontable.TableView.prototype.maximumVisibleElementHeight = function (top) {
 
             if (!activeEditor.isWaiting()) {
               if (!Handsontable.helper.isMetaKey(event.keyCode) && !ctrlDown) {
+
                 that.openEditor('');
                 event.stopPropagation(); //required by HandsontableEditor
                 return;
@@ -2950,11 +2950,10 @@ Handsontable.TableView.prototype.maximumVisibleElementHeight = function (top) {
                   event.stopPropagation(); //required by HandsontableEditor
                   break;
 
-                case keyCodes.ARROW_RIGHT:
+              	case keyCodes.ARROW_RIGHT:
                   if(that.isEditorOpened()  && !activeEditor.isWaiting()){
                     that.closeEditorAndSaveChanges(ctrlDown);
                   }
-
                   moveSelectionRight(event.shiftKey);
 
                   event.preventDefault();
@@ -4856,17 +4855,28 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     }
 
     switch (event.keyCode) {
+		/*ADDED: Modified to allow UP/DOWN in Text Area*/
       case keyCodes.ARROW_RIGHT:
         if (that.wtDom.getCaretPosition(that.TEXTAREA) !== that.TEXTAREA.value.length) {
           event.stopImmediatePropagation();
         }
         break;
+	  case keyCodes.ARROW_DOWN:
+    	if (that.wtDom.getCaretPosition(that.TEXTAREA) !== that.TEXTAREA.value.length) {
+    		event.stopImmediatePropagation();
+    	}
+    	break;
 
       case keyCodes.ARROW_LEFT: /* arrow left */
         if (that.wtDom.getCaretPosition(that.TEXTAREA) !== 0) {
           event.stopImmediatePropagation();
         }
         break;
+      case keyCodes.ARROW_UP:
+    	if (that.wtDom.getCaretPosition(that.TEXTAREA) !== 0) {
+    		event.stopImmediatePropagation();
+    	}
+    	break;
 
       case keyCodes.ENTER:
         var selected = that.instance.getSelected();
@@ -9191,7 +9201,8 @@ function Storage(prefix) {
 
     var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey;
 
-    if(ctrlDown){
+	/*ADDED: Removed internal undo*/
+    /*if(ctrlDown){
       if (event.keyCode === 89 || (event.shiftKey && event.keyCode === 90)) { //CTRL + Y or CTRL + SHIFT + Z
         instance.undoRedo.redo();
         event.stopImmediatePropagation();
@@ -9200,7 +9211,7 @@ function Storage(prefix) {
         instance.undoRedo.undo();
         event.stopImmediatePropagation();
       }
-    }
+    }*/
   }
 
   function onAfterChange(changes, source){
@@ -12390,6 +12401,9 @@ WalkontableTable.prototype.refreshStretching = function () {
   };
 
   var rowHeightFn = function (i, TD) {
+  	/*ADDED to fix height change issues!*/
+  	return 22;
+  	/*ADDED to fix height change issues!*/
     if (that.instance.getSetting('nativeScrollbars')) {
       return 20;
     }

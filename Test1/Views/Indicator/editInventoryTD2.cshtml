@@ -453,6 +453,9 @@
 <script type="text/javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" ></script>
 <script type="text/javascript" src="//cdn.datatables.net/fixedcolumns/3.0.0/js/dataTables.fixedColumns.min.js" ></script>
 
+<link href="~/Scripts/ColumnFilterWidgets.css" rel="stylesheet" />
+<script src="~/Scripts/ColumnFilterWidgets.js"></script>
+
 <script src="~/Scripts/tag-it.min.js"></script>
 <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
 <script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
@@ -487,13 +490,13 @@
     	var tbl_Inventory = $('#tbl_Inventory').DataTable({
     		"scrollX": true,
     		"scrollY": blockHeight - 111,
-    		"dom": 'tp',
+    		"sDom": 'W<"clear">lfrtip',
     		"aaSorting": [],
     		"columnnDefs": [
 				{width:10, targets:0},
 				{width:50, targets:0},
 				{width:50, targets:0}
-			]
+    		]
     	});
     	new $.fn.dataTable.FixedColumns( tbl_Inventory, {
     		leftColumns: 3	
@@ -1750,33 +1753,6 @@
     			}
     		});
     	};
-    	$('#the-node2').contextMenu({
-    	    selector: 'th',
-    	    callback: function(key, options){
-    	    },
-
-    	    items: {
-    	        "hide": {name:"Hide Columns",
-    	        	callback: function(key, options){
-    	        		toHide = $('th.ui-selected');
-    	        		if (toHide.length === 0){
-    	        			toHide.push($(this));
-    	        		}
-    	        		$.each(toHide, function(index,value){
-    	        			var index = $(this).index() + 1;
-    	                    $('table tbody tr td:nth-child(' + index + ')').addClass('hidden-column');
-    	                    $('table thead tr th:nth-child(' + index + ')').addClass('hidden-column');
-    	                });
-    	            }
-    	        },
-				"unhide": {name: "Unhide Columns",
-					callback: function(key, options){
-						$('.hidden-column').removeClass('hidden-column');
-						$('th.ui-selected').removeClass('ui-selected');
-    				}
-    			}
-    	    }
-    	});
 
 		$('#the-node').contextMenu({
             selector: 'td', 
@@ -2202,7 +2178,7 @@
     .block {
         margin:0px 0px !important;
         height:100%;
-        overflow:visible;
+        overflow:scroll;
     }
 
     .pr-footer-row {

@@ -3,8 +3,11 @@
 @using System.Globalization
 <script src="../../Scripts/jquery-1.11.0.min.js"></script>
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
+<script src="~/Scripts/undomanager.js"></script>
+<!--script src="~/Scripts/jquery.handsontable.full.min.js"></!--script-->
 <script type='text/javascript' src="http://wurfljs.com/wurfl.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
+
 @model IList<IndInv.Models.ViewModels.InventoryViewModel>
 @using IndInv.Models
 @{
@@ -30,469 +33,531 @@
 <label>Search<input id="searchgrid" type="text" /></label>
 </div>
 
-<style>.rowLong {padding-left:40px;}</style>
 
 <div class="rowLong">
     <div id="dataTable">
+	</div>
 </div>
 
 <script type="text/javascript">
 
-    $(document).on('input', '#mytxtBox', function () {
-        console.log($('#mytxtBox').val());
-    });
+	$(document).ready(function () {
 
-    function qcolor(instance, td, row, col, prop, value, cellProperties) {
-        switch(prop){
-            case "FY_Q1": quarter = "FY_Q1_Color"; break;
-            case "FY_Q2": quarter = "FY_Q2_Color"; break;
-            case "FY_Q3": quarter = "FY_Q3_Color"; break;
-            case "FY_Q4": quarter = "FY_Q4_Color"; break;
-            case "FY_YTD": quarter = "FY_YTD_Color"; break;
-        }
-        changedProp = $IndInv.handsontable("getDataAtRowProp",row, quarter)
-        Handsontable.renderers.TextRenderer.apply(this, arguments);
-        if (changedProp == "cssGreen"){
-            td.style.background = 'green';
-            td.style.color = 'white';
-        }
-        if (changedProp == "cssYellow"){
-            td.style.background = 'yellow';
-            td.style.color = 'black';
-        }
-        if (changedProp == "cssRed"){
-            td.style.background = 'red';
-            td.style.color = 'white';
-        }
-    }
+		$(document).on('input', '#mytxtBox', function () {
+			console.log($('#mytxtBox').val());
+		});
 
-    Handsontable.renderers.registerRenderer('qcolor', qcolor);
+		function qcolor(instance, td, row, col, prop, value, cellProperties) {
+			switch(prop){
+				case "FY_Q1": quarter = "FY_Q1_Color"; break;
+				case "FY_Q2": quarter = "FY_Q2_Color"; break;
+				case "FY_Q3": quarter = "FY_Q3_Color"; break;
+				case "FY_Q4": quarter = "FY_Q4_Color"; break;
+				case "FY_YTD": quarter = "FY_YTD_Color"; break;
+			}
+			changedProp = $IndInv.handsontable("getDataAtRowProp",row, quarter)
+			Handsontable.renderers.TextRenderer.apply(this, arguments);
+			if (changedProp == "cssGreen"){
+				td.style.background = 'green';
+				td.style.color = 'white';
+			}
+			if (changedProp == "cssYellow"){
+				td.style.background = 'yellow';
+				td.style.color = 'black';
+			}
+			if (changedProp == "cssRed"){
+				td.style.background = 'red';
+				td.style.color = 'white';
+			}
+		};
 
-    var maxed = false
-        , resizeTimeout
-        , availableWidth
-        , availableHeight
-        , $window = $(window)
-        , $IndInv = $('#dataTable');
+		function compSaved(instance, td, row, col, prop, value, cellProperties) {
+			Handsontable.TextCell.renderer.apply(this, arguments);
+			if (cellProperties.saved) {//check for new property change in the cell
+				$(td).addClass('compSaved'); //add the changeInput class to the actual td
+			}
+		};
 
-    var calculateSize = function () {
-        var offset = $IndInv.offset();
-        availableWidth = $window.width() - offset.left + $window.scrollLeft();
-        availableHeight = $window.height() - offset.top + $window.scrollTop();
-    };
-    $window.on('resize', calculateSize);
+		Handsontable.renderers.registerRenderer('qcolor', qcolor);
+		Handsontable.renderers.registerRenderer('compSaved', compSaved);
 
-    var values = @Html.Raw(Json.Encode(Model));
-    
-    $IndInv .handsontable({
-        clickBeginsEditing : WURFL.is_mobile? true:false,
-        data: values,
-        startRows: 1,
-        startCols: 1,
-        colHeaders: true,
-        strechH: 'all',
-        strechW: 'all',
-        scrollH: 'auto',
-        scrollV: 'auto',
-        colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100], 
-        width: function () {
-            if (maxed && availableWidth === void 0) {
-                calculateSize();
-            }
-            return maxed  ?  availableWidth *0.98 : 300;
-        },
-        height: function () {
-            if (maxed && availableHeight === void 0) {
-                calculateSize();
-            }
-            return maxed  ?  availableHeight*0.95: 300;
-        },
-        fixedRowsTop: 0,
-        fixedColumnsLeft: 2,
-        manualColumnResize: true,
-        minSpareRows: 0,
-        contextMenu: true,
-        rowHeaders: false,
-        colHeaders: [
-            "ID",
-            "Indicator",
-            "CoE",
-            "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-            "Sup",
-            "Target",
-            "Sup",
-            "Comparator",
-            "Sup",
-            "Performance_Threshold",
-            "Sup",
-            "color_ID",
-            "Custom_YTD",
-            "Custom_Q1",
-            "Custom_Q2",
-            "Custom_Q3",
-            "Custom_Q4",
-            "Definition_Calculation",
-            "Target_Rationale",
-            "Comparator_Source",
-            "Data_Source_MSH",
-            "Data_Source_Benchmark",
-            "OPEO_Lead"
-        ],
-        columns: [
-            {data:"Indicator_ID"},
-            {data:"Indicator"},
-            {data:"CoE"},
-            {data:"FY_3"},
-            {data:"FY_3_Sup"},
-            {data:"FY_2"},
-            {data:"FY_2_Sup"},
-            {data:"FY_1"},
-            {data:"FY_1_Sup"},
-            {data:"FY_Q1", renderer:"qcolor"},
-            {data:"FY_Q1_Sup"},
-            {data:"FY_Q2", renderer:"qcolor"},
-            {data:"FY_Q2_Sup"},
-            {data:"FY_Q3", renderer:"qcolor"},
-            {data:"FY_Q3_Sup"},
-            {data:"FY_Q4", renderer:"qcolor"},
-            {data:"FY_Q4_Sup"},
-            {data:"FY_YTD", renderer:"qcolor"},
-            {data:"FY_YTD_Sup"},
-            {data:"FY_Target"},
-            {data:"FY_Target_Sup"},
-            {data:"FY_Comparator"},
-            {data:"FY_Comparator_Sup"},
-            {data:"FY_Performance_Threshold"},
-            {data:"FY_Performance_Threshold_Sup"},
-            {data:"FY_Color_ID"},
-            {data:"FY_YTD_Custom_Color"},
-            {data:"FY_Q1_Custom_Color"},
-            {data:"FY_Q2_Custom_Color"},
-            {data:"FY_Q3_Custom_Color"},
-            {data:"FY_Q4_Custom_Color"},
-            {data:"FY_Definition_Calculation"},
-            {data:"FY_Target_Rationale"},
-            {data:"FY_Comparator_Source"},
-            {data:"FY_Data_Source_MSH"},
-            {data:"FY_Data_Source_Benchmark"},
-            {data:"FY_OPEO_Lead"}
-        ],
-        afterChange: function (change, source) {
-            if (source === 'loadData') {
-                return;
-            } else {
-                for (var i = 0; i< change.length; ++i){
-                    updateIndicator(change, i);
-                }
-            }
-        },
-        beforeRemoveRow : function (index, amount){
-            deleteIndicator(index);
-        }
-    });
+		var maxed = false
+			, resizeTimeout
+			, availableWidth
+			, availableHeight
+			, $window = $(window)
+			, $IndInv = $('#dataTable');
 
-    maxed = !maxed;
-    $IndInv.handsontable('render');
+		var calculateSize = function () {
+			var offset = $IndInv.offset();
+			availableWidth = $window.width() - offset.left + $window.scrollLeft();
+			availableHeight = $window.height() - offset.top + $window.scrollTop();
+		};
+		$window.on('resize', calculateSize);
 
-    function updateIndicator(change, i){
-        var changedRow = change[i][0]
-        var changedParameter = change[i][1];
-        var changedValue = change[i][3];
-        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
-            var parameters = {
-                indicatorID: $IndInv.handsontable('getDataAtCell',change[i][0],0),
-                updateProperty: changedParameter,
-                updateValue: changedValue,
-                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
-            };
-            $.ajax({
-                url: this.action,
-                type: 'POST',
-                data: JSON.stringify(parameters),
-                contentType: 'application/json; charset=utf-8',
-                success: function (result) {
-                    $.get('@Url.Action("/editInventory")', {indicatorID : $IndInv.handsontable('getDataAtCell',change[i][0],0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (data) {
-                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", data[0].Q1_Color);
-                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", data[0].Q2_Color);
-                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", data[0].Q3_Color);
-                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", data[0].Q4_Color);
-                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", data[0].YTD_Color);
-                    });
-                },
-                error: function (request){
-                }
-            });
-        }
-    }
+		var values = @Html.Raw(Json.Encode(Model));
 
-    function deleteIndicator(index){
-        var parameters = {
-            indicatorID: $IndInv.handsontable('getDataAtCell',index,0),
-        };
-        $.ajax({
-            url: 'deleteInventory',
-            type: 'POST',
-            data: JSON.stringify(parameters),
-            contentType: 'application/json; charset=utf-8',
-            success: function (result) {
-            },
-            error: function (request){
-            }
-        });
-    }  
+		$('#searchgrid').on('keyup', function (event) {
+			var value = ('' + this.value).toLowerCase(), row, col, r_len, c_len, td;
+			var example = $IndInv
+			var datasrch = jQuery.makeArray(values);
+			var searcharray = [];
+			if (value) {
+				for (row = 0, r_len = datasrch.length; row < r_len; row++) {
+					jQuery.each(datasrch[row], function (name, currValue) {
+						if(('' + currValue).toLowerCase().indexOf(value) > -1){
+							searcharray.push(datasrch[row]);
+							return false;
+						}
+					});
+				}
+				example.handsontable('loadData', searcharray);
+			}
+			else {
+				example.handsontable('loadData', values);
+			}
+		});
 
+		$IndInv .handsontable({
+			clickBeginsEditing : WURFL.is_mobile? true:false,
+			data: values,
+			startRows: 1,
+			startCols: 1,
+			colHeaders: true,
+			strechH: 'auto',
+			strechW: 'auto',
+			scrollH: 'auto',
+			scrollV: 'auto',
+			colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100], 
+			width: function () {
+				if (maxed && availableWidth === void 0) {
+					calculateSize();
+				}
+				return maxed  ?  availableWidth *0.98 : 300;
+			},
+			height: function () {
+				if (maxed && availableHeight === void 0) {
+					calculateSize();
+				}
+				return maxed  ?  availableHeight*0.95: 300;
+			},
+			fixedRowsTop: 0,
+			fixedColumnsLeft: 2,
+			manualColumnResize: true,
+			minSpareRows: 0,
+			contextMenu: false,
+			rowHeaders: false,
+			colHeaders: [
+				"ID",
+				"Indicator",
+				"CoE",
+				"@FiscalYear.FYStrFull("FY_3",fiscalYear)",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_2",fiscalYear)",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_1",fiscalYear)",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
+				"Sup",
+				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
+				"Sup",
+				"Target",
+				"Sup",
+				"Comparator",
+				"Sup",
+				"Performance_Threshold",
+				"Sup",
+				"color_ID",
+				"Custom_YTD",
+				"Custom_Q1",
+				"Custom_Q2",
+				"Custom_Q3",
+				"Custom_Q4",
+				"Definition_Calculation",
+				"Target_Rationale",
+				"Comparator_Source",
+				"Data_Source_MSH",
+				"Data_Source_Benchmark",
+				"OPEO_Lead"
+			],
+			columns: [
+				{data:"Indicator_ID"},
+				{data:"Indicator"},
+				{data:"CoE"},
+				{data:"FY_3"},
+				{data:"FY_3_Sup"},
+				{data:"FY_2"},
+				{data:"FY_2_Sup"},
+				{data:"FY_1"},
+				{data:"FY_1_Sup"},
+				{data:"FY_Q1", renderer:"qcolor"},
+				{data:"FY_Q1_Sup"},
+				{data:"FY_Q2", renderer:"qcolor"},
+				{data:"FY_Q2_Sup"},
+				{data:"FY_Q3", renderer:"qcolor"},
+				{data:"FY_Q3_Sup"},
+				{data:"FY_Q4", renderer:"qcolor"},
+				{data:"FY_Q4_Sup"},
+				{data:"FY_YTD", renderer:"qcolor"},
+				{data:"FY_YTD_Sup"},
+				{data:"FY_Target"},
+				{data:"FY_Target_Sup"},
+				{data:"FY_Comparator", renderer:"compSaved"},
+				{data:"FY_Comparator_Sup"},
+				{data:"FY_Performance_Threshold"},
+				{data:"FY_Performance_Threshold_Sup"},
+				{data:"FY_Color_ID"},
+				{data:"FY_YTD_Custom_Color"},
+				{data:"FY_Q1_Custom_Color"},
+				{data:"FY_Q2_Custom_Color"},
+				{data:"FY_Q3_Custom_Color"},
+				{data:"FY_Q4_Custom_Color"},
+				{data:"FY_Definition_Calculation"},
+				{data:"FY_Target_Rationale"},
+				{data:"FY_Comparator_Source"},
+				{data:"FY_Data_Source_MSH"},
+				{data:"FY_Data_Source_Benchmark"},
+				{data:"FY_OPEO_Lead"}
+			],
+			afterChange: function (change, source) {
+				if (source === 'loadData') {
+					return;
+				} else {
+					for (var i = 0; i< change.length; ++i){
+						updateIndicator(change, i);
+					}
+				}
+			},
+			beforeRemoveRow : function (index, amount){
+				deleteIndicator(index);
+			}
+		});
+
+		maxed = !maxed;
+		$IndInv.handsontable('render');
+
+		function updateIndicator(change, i){
+			var changedRow = change[i][0]
+			var changedParameter = change[i][1];
+			var changedValue = change[i][3];
+			if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
+				var parameters = {
+					indicatorID: $IndInv.handsontable('getDataAtCell',change[i][0],0),
+					updateProperty: changedParameter,
+					updateValue: changedValue,
+					fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
+				};
+				$.ajax({
+					url: this.action,
+					type: 'POST',
+					data: JSON.stringify(parameters),
+					contentType: 'application/json; charset=utf-8',
+					success: function (result) {
+						$.get('@Url.Action("/editInventory")', {indicatorID : $IndInv.handsontable('getDataAtCell',change[i][0],0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (data) {
+							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", data[0].Q1_Color);
+							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", data[0].Q2_Color);
+							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", data[0].Q3_Color);
+							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", data[0].Q4_Color);
+							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", data[0].YTD_Color);
+						});
+					},
+					error: function (request){
+					}
+				});
+			}
+		}
+
+		function deleteIndicator(index){
+			var parameters = {
+				indicatorID: $IndInv.handsontable('getDataAtCell',index,0),
+			};
+			$.ajax({
+				url: 'deleteInventory',
+				type: 'POST',
+				data: JSON.stringify(parameters),
+				contentType: 'application/json; charset=utf-8',
+				success: function (result) {
+				},
+				error: function (request){
+				}
+			});
+		}  
+
+		var selectedCellsRange;
+		$(document.body).on("contextmenu:focus", ".context-menu-item", function(e){ 
+			selectedCellsRange = $IndInv.handsontable("getSelected");
+		});
+
+		$('#the-node').contextMenu({
+			selector: 'td', 
+			callback: function(key, options) {
+				
+			},
+
+			items: {
+				"addNValues": {
+					name: "Add N Values to this Indicator",
+					callback: function(key,options){
+						var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+						var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+						addNValuesUndoable(row, indicatorID);
+					}
+				},
+
+				"saveComperatorValue":{
+					"name": "Save Comparator Value",
+					"items": {
+						"toQ1": {
+							name: "Q1",
+							callback: function(key,options){
+								var toSave = [];
+								for(var r = selectedCellsRange[0], fR = selectedCellsRange[2]; r <= fR; r++){
+									for(var c = selectedCellsRange[1], fC = selectedCellsRange[3]; c <= fC; c++){
+										toSave.push($IndInv.handsontable("getCell",r,c));
+									}
+								}
+								if (toSave.length === 0){
+									toSave.push($(this));
+								}
+								var fields = [];
+								var fieldQs = [];
+								var values = [];
+								var oldValues = [];
+								var elements = [];
+								$.each(toSave, function(index,value){
+									var col = $(this).parent().children().index($(this)) + $IndInv.handsontable("colOffset");
+									var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+									var quarter = 1;
+									var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+									var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+									var value = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator");
+									//var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+									var oldValue = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator_Q" + quarter);
+									//var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+									fields.push(field);
+									fieldQs.push(fieldQ);
+									values.push(value);
+									oldValues.push(oldValue);
+									//elements.push($(this));
+									elements.push($IndInv.handsontable("getCell",row,col));
+								});
+								saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
+							}
+						},
+						"toQ2": {
+							name: "Q2",
+							callback: function(key,options){
+								var toSave = $(".ui-selected");
+								if (toSave.length === 0){
+									toSave.push($(this));
+								}
+								var fields = [];
+								var fieldQs = [];
+								var values = [];
+								var oldValues = [];
+								var elements = [];
+								$.each(toSave, function(index,value){
+									var col = $(this).parent().children().index($(this)) + $IndInv.handsontable("colOffset");
+									var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+									var quarter = 2;
+									var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+									var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+									var value = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator");
+									//var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+									var oldValue = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator_Q" + quarter);
+									//var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+									fields.push(field);
+									fieldQs.push(fieldQ);
+									values.push(value);
+									oldValues.push(oldValue);
+									//elements.push($(this));
+									elements.push($IndInv.handsontable("getCell",row,col));
+								});
+								saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
+							}
+						},
+						"toQ3": {
+							name: "Q3",
+							callback: function(key,options){
+								var toSave = $(".ui-selected");
+								if (toSave.length === 0){
+									toSave.push($(this));
+								}
+								var fields = [];
+								var fieldQs = [];
+								var values = [];
+								var oldValues = [];
+								var elements = [];
+								$.each(toSave, function(index,value){
+									var col = $(this).parent().children().index($(this)) + $IndInv.handsontable("colOffset");
+									var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+									var quarter = 3;
+									var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+									var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+									var value = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator");
+									//var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+									var oldValue = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator_Q" + quarter);
+									//var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+									fields.push(field);
+									fieldQs.push(fieldQ);
+									values.push(value);
+									oldValues.push(oldValue);
+									//elements.push($(this));
+									elements.push($IndInv.handsontable("getCell",row,col));
+								});
+								saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
+							}
+						},
+						"toQ4": {
+							name: "Q4",
+							callback: function(key,options){
+								var toSave = $(".ui-selected");
+								if (toSave.length === 0){
+									toSave.push($(this));
+								}
+								var fields = [];
+								var fieldQs = [];
+								var values = [];
+								var oldValues = [];
+								var elements = [];
+								$.each(toSave, function(index,value){
+									var col = $(this).parent().children().index($(this)) + $IndInv.handsontable("colOffset");
+									var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+									var quarter = 4;
+									var field = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator";
+									var fieldQ = "@FiscalYear.FYStrFull("FY_", fiscalYear)" + "Comparator_Q" + quarter;
+									var value = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator");
+									//var value =  $(this).first().parent().children('[field="' + field +'"]').children('.pr-input').first().val();
+									var oldValue = $IndInv.handsontable("getDataAtRowProp",row, "FY_Comparator_Q" + quarter);
+									//var Oldvalue =  $(this).first().parent().children('[field="' + fieldQ +'"]').children('.pr-input').first().val();
+									fields.push(field);
+									fieldQs.push(fieldQ);
+									values.push(value);
+									oldValues.push(oldValue);
+									//elements.push($(this));
+									elements.push($IndInv.handsontable("getCell",row,col));
+								});
+								saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
+							}
+						},
+					}
+				},
+			}
+		});
+
+		saveComparatorUndoable = function(elements, fields, fieldQs, values, oldValues){
+			saveComparator(elements, fields, fieldQs, values, oldValues);
+			undoManager.add({
+				undo: function(){
+					saveComparator(elements, fields, fieldQs, oldValues, values, true);
+				},
+				redo: function(){
+					saveComparator(elements, fields, fieldQs, values, oldValues);
+				}
+			});
+		};
+		saveComparator =function(elements, fields, fieldQs, values, oldValues, undo){
+			$.each(elements, function(index,value){
+				var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+
+				var colComp = $IndInv.handsontable("propToCol",'FY_Comparator');
+				var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+				if (undo !== true){
+					//$(this).first().parent().children('[field="' + fields[index] +'"]').addClass('comp-saved');
+					$IndInv.handsontable("getCellMeta",row,colComp).saved=true;
+				} else {
+					$IndInv.handsontable("getCellMeta",row,colComp).saved=false;
+				}
+				$IndInv.handsontable("render");
+
+				var parameters = {
+					indicatorID: indicatorID,
+					updateProperty: fieldQs[index],
+					updateValue: values[index],
+					updateValueSup: "%NULL%",
+					fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
+    			};
+    			$.ajax({
+    				url: 'setValue',
+    				type: 'POST',
+    				data: JSON.stringify(parameters),
+    				contentType: 'application/json; charset=utf-8',
+    				success: function (result) {
+    				},
+    				error: function (request){
+    				}
+    			});
+    		});
+		};
+
+		addNValuesUndoable = function(row, indicatorID){
+			addNValues(row, indicatorID);
+			undoManager.add({
+				undo: function(){
+					var removeObj = clickedCell.closest('tr').next().first();
+					var indicatorID = removeObj.attr('indicatorID');
+					removeIndicator(removeObj, indicatorID);
+				},
+				redo: function(){
+					addNValues(row, indicatorID);
+				}
+			});
+		};
+		addNValues = function(row, indicatorID){
+			$IndInv.handsontable('alter','insert_row', row + 1);
+			$IndInv.handsontable('render');
+			$.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
+				var indicatorID_N = returnedData.indicatorID;
+				$IndInv.handsontable("setDataAtCell",row,1,indicatorID_N);
+				var cols = $IndInv.handsontable("getDataAtRow",row + 1);
+				$.each(cols,function(index, obj){
+					var field = index;
+					console.log(field);
+    				$.get('getValue', { indicatorID: indicatorID_N, field:field, fiscalYear: '@fiscalYear' }, function(data){
+    					if (data.Value != null && data.Value_Sup != null){
+    						$IndInv.handsontable("setDataAtRowProp",row,field,indicatorID_N);
+    					}
+    				});
+    			});
+    		});
+		}
+
+		undoManager = new UndoManager();
+		$.ctrl = function(key, callback, args) {
+			var isCtrl = false;
+			$(document).on('keydown',function(e) {
+				if(!args) args=[]; // IE barks when args is null
+        
+				if(e.ctrlKey) isCtrl = true;
+				if(e.keyCode == key.charCodeAt(0) && isCtrl) {
+					callback.apply(this, args);
+					return false;
+				}
+			}).keyup(function(e) {
+				if(e.ctrlKey) isCtrl = false;
+			});        
+		};
+
+		$.ctrl("Z", function(){
+			undoManager.undo();
+		});
+
+		$.ctrl("Y", function(){
+			undoManager.redo();
+		});
+	});
 </script>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#searchgrid').on('keyup', function (event) {
-            var value = ('' + this.value).toLowerCase(), row, col, r_len, c_len, td;
-            var example = $IndInv
-            var datasrch = jQuery.makeArray(values);
-            var searcharray = [];
-            if (value) {
-                for (row = 0, r_len = datasrch.length; row < r_len; row++) {
-                    jQuery.each(datasrch[row], function (name, currValue) {
-                        if(('' + currValue).toLowerCase().indexOf(value) > -1){
-                            searcharray.push(datasrch[row]);
-                            return false;
-                        }
-                    });
-                }
-                example.handsontable('loadData', searcharray);
-            }
-            else {
-                example.handsontable('loadData', values);
-            }
-        });
-
-        var table = $IndInv.handsontable('getInstance');
-
-        $('#showValue').on('click', function () {
-            table.updateSettings({
-                colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100], 
-                colHeaders: [
-                    "ID",
-                    "Indicator",
-                    "CoE",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-                    "Sup",
-                ],
-                columns: [
-                    {data:"Indicator_ID"},
-                    {data:"Indicator"},
-                    {data:"CoE"},
-
-                    {data:"FY_Q1", renderer:"qcolor"},
-                    {data:"FY_Q1_Sup"},
-                    {data:"FY_Q2", renderer:"qcolor"},
-                    {data:"FY_Q2_Sup"},
-                    {data:"FY_Q3", renderer:"qcolor"},
-                    {data:"FY_Q3_Sup"},
-                    {data:"FY_Q4", renderer:"qcolor"},
-                    {data:"FY_Q4_Sup"},
-                    {data:"FY_YTD", renderer:"qcolor"},
-                    {data:"FY_YTD_Sup"},
-                ],
-            });
-        });
-
-        $('#showTarget').on('click', function () {
-            table.updateSettings({
-                colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100], 
-                colHeaders: [
-                    "ID",
-                    "Indicator",
-                    "CoE",
-                    "Target",
-                    "Sup",
-                    "Comparator",
-                    "Sup",
-                    "Performance_Threshold",
-                    "Sup",
-                ],
-                columns: [
-                    {data:"Indicator_ID"},
-                    {data:"Indicator"},
-                    {data:"CoE"},
-                    {data:"FY_Target"},
-                    {data:"FY_Target_Sup"},
-                    {data:"FY_Comparator"},
-                    {data:"FY_Comparator_Sup"},
-                    {data:"FY_Performance_Threshold"},
-                    {data:"FY_Performance_Threshold_Sup"},
-                ],
-            });
-        });
-
-        $('#showDefinition').on('click', function () {
-            table.updateSettings({
-                colWidths: [50, 250, 150, 500,500,500,100,100,100,100,100,100,100],
-                colHeaders: [
-                    "ID",
-                    "Indicator",
-                    "CoE",
-                    "Definition_Calculation",
-                    "Target_Rationale",
-                    "Comparator_Source",
-                    "Data_Source_MSH",
-                    "Data_Source_Benchmark",
-                    "OPEO_Lead"
-                ],
-                columns: [
-                    {data:"Indicator_ID"},
-                    {data:"Indicator"},
-                    {data:"CoE"},
-                    {data:"FY_Definition_Calculation"},
-                    {data:"FY_Target_Rationale"},
-                    {data:"FY_Comparator_Source"},
-                    {data:"FY_Data_Source_MSH"},
-                    {data:"FY_Data_Source_Benchmark"},
-                    {data:"FY_OPEO_Lead"}
-                ],
-            });
-        });
-
-        $('#showColor').on('click', function () {
-            table.updateSettings({
-                strechH: 'last',
-                colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100], 
-                colHeaders: [
-                    "ID",
-                    "Indicator",
-                    "CoE",
-                    "Color_ID",
-                    "Custom_YTD",
-                    "Custom_Q1",
-                    "Custom_Q2",
-                    "Custom_Q3",
-                    "Custom_Q4",
-                ],
-                columns: [
-                    {data:"Indicator_ID"},
-                    {data:"Indicator"},
-                    {data:"CoE"},
-                    {data:"FY_Color_ID"},
-                    {data:"FY_YTD_Custom_Color"},
-                    {data:"FY_Q1_Custom_Color"},
-                    {data:"FY_Q2_Custom_Color"},
-                    {data:"FY_Q3_Custom_Color"},
-                    {data:"FY_Q4_Custom_Color"},
-                ],
-            });
-        });
-
-        $('#showAll').on('click', function () {
-            table.updateSettings({
-                colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100], 
-                colHeaders: [
-                    "ID",
-                    "Indicator",
-                    "CoE",
-                    "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-                    "Sup",
-                    "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-                    "Sup",
-                    "Target",
-                    "Target_Sup",
-                    "Comparator",
-                    "Comparator_Sup",
-                    "Performance_Threshold",
-                    "Performance_Threshold_Sup",
-                    "color_ID",
-                    "Custom_YTD",
-                    "Custom_Q1",
-                    "Custom_Q2",
-                    "Custom_Q3",
-                    "Custom_Q4",
-                    "Definition_Calculation",
-                    "Target_Rationale",
-                    "Comparator_Source",
-                    "Data_Source_MSH",
-                    "Data_Source_Benchmark",
-                    "OPEO_Lead"
-                ],
-                columns: [
-                    {data:"Indicator_ID"},
-                    {data:"Indicator"},
-                    {data:"CoE"},
-                    {data:"FY_3"},
-                    {data:"FY_3_Sup"},
-                    {data:"FY_2"},
-                    {data:"FY_2_Sup"},
-                    {data:"FY_1"},
-                    {data:"FY_1_Sup"},
-                    {data:"FY_Q1", renderer:"qcolor"},
-                    {data:"FY_Q1_Sup"},
-                    {data:"FY_Q2", renderer:"qcolor"},
-                    {data:"FY_Q2_Sup"},
-                    {data:"FY_Q3", renderer:"qcolor"},
-                    {data:"FY_Q3_Sup"},
-                    {data:"FY_Q4", renderer:"qcolor"},
-                    {data:"FY_Q4_Sup"},
-                    {data:"FY_YTD", renderer:"qcolor"},
-                    {data:"FY_YTD_Sup"},
-                    {data:"FY_Target"},
-                    {data:"FY_Target_Sup"},
-                    {data:"FY_Comparator"},
-                    {data:"FY_Comparator_Sup"},
-                    {data:"FY_Performance_Threshold"},
-                    {data:"FY_Performance_Threshold_Sup"},
-                    {data:"FY_color_ID"},
-                    {data:"FY_YTD_Custom_Color"},
-                    {data:"FY_Q1_Custom_Color"},
-                    {data:"FY_Q2_Custom_Color"},
-                    {data:"FY_Q3_Custom_Color"},
-                    {data:"FY_Q4_Custom_Color"},
-                    {data:"FY_Definition_Calculation"},
-                    {data:"FY_Target_Rationale"},
-                    {data:"FY_Comparator_Source"},
-                    {data:"FY_Data_Source_MSH"},
-                    {data:"FY_Data_Source_Benchmark"},
-                    {data:"FY_OPEO_Lead"}
-                ],
-            });
-        });
-
-    });
-</script>
-</div>
 
 <style>
+
+	.rowLong {padding-left:40px;}
 
     th {
     border-right:none !important;
@@ -510,5 +575,22 @@ font-size:medium!important;
     label {
         color:lightgray;
     }
+
+	#dataTable th, #dataTable td {
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space:nowrap !important;
+  }
+
+	.handsontableInput {
+		overflow-y:scroll !important;
+		font-size:0.5em;
+		resize:vertical !important;
+	}
+
+	.compSaved {
+		background-color: #0063FF !important;
+        color: White;
+	}
 
 </style>
