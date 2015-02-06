@@ -41,6 +41,77 @@
 
 <script type="text/javascript">
 
+	$.fn.drags = function(opt) {
+		opt = $.extend({handle:"",cursor:"move"}, opt);
+
+		if(opt.handle === "") {
+			var $el = this;
+		} else {
+			var $el = this.find(opt.handle);
+		}
+
+		return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+			if(opt.handle === "") {
+				var $drag = $(this).parent().addClass('draggable');
+			} else {
+				var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+			}
+			var z_idx = $drag.css('z-index'),
+				drg_h = $drag.outerHeight(),
+				drg_w = $drag.outerWidth(),
+				pos_y = $drag.offset().top + drg_h - e.pageY,
+				pos_x = $drag.offset().left + drg_w - e.pageX;
+			$drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+				$('.draggable').offset({
+					top:e.pageY + pos_y - drg_h,
+					left:e.pageX + pos_x - drg_w
+				}).on("mouseup", function() {
+					$(this).removeClass('draggable').css('z-index', z_idx);
+				});
+			});
+			e.preventDefault(); // disable selection
+		}).on("mouseup", function() {
+			if(opt.handle === "") {
+				$(this).removeClass('draggable');
+			} else {
+				$(this).removeClass('active-handle').parent().removeClass('draggable');
+			}
+		});
+	};
+
+	$.fn.undrags = function(opt) {
+		$(this).removeClass('draggable');
+	};
+
+	var currentMousePos = { x: -1, y: -1 };
+	$(document).mousemove(function(event) {
+		currentMousePos.x = event.pageX;
+		currentMousePos.y = event.pageY + $('#pushobjLazy').scrollTop();
+	});
+
+	if (!Array.prototype.indexOf)
+	{
+		Array.prototype.indexOf = function(elt /*, from*/)
+		{
+			var len = this.length >>> 0;
+
+			var from = Number(arguments[1]) || 0;
+			from = (from < 0)
+				 ? Math.ceil(from)
+				 : Math.floor(from);
+			if (from < 0)
+				from += len;
+
+			for (; from < len; from++)
+			{
+				if (from in this &&
+					this[from] === elt)
+					return from;
+			}
+			return -1;
+		};
+	}
+
 	$(document).ready(function () {
 
 		$(document).on('input', '#mytxtBox', function () {
@@ -97,25 +168,32 @@
 
 		var values = @Html.Raw(Json.Encode(Model));
 
+		var filterList = {
+			CoE: ['CoE']
+		}
 		$('#searchgrid').on('keyup', function (event) {
 			var value = ('' + this.value).toLowerCase(), row, col, r_len, c_len, td;
 			var example = $IndInv
 			var datasrch = jQuery.makeArray(values);
 			var searcharray = [];
-			if (value) {
-				for (row = 0, r_len = datasrch.length; row < r_len; row++) {
-					jQuery.each(datasrch[row], function (name, currValue) {
-						if(('' + currValue).toLowerCase().indexOf(value) > -1){
-							searcharray.push(datasrch[row]);
-							return false;
+			$.each(filterList, function(index,data){
+				var field = data[0];
+				for (var i=1, len=data.length; i<len; i++){
+					if (value) {
+						for (row = 0, r_len = datasrch.length; row < r_len; row++) {
+							//$.each(datasrch[row], function (name, currValue) {
+								if(('' + currValue).toLowerCase().indexOf(value) > -1){
+									searcharray.push(datasrch[row]);
+									return false;
+								}
+							//});
 						}
-					});
+						example.handsontable('loadData', searcharray);
+					} else {
+						example.handsontable('loadData', values);
+					}
 				}
-				example.handsontable('loadData', searcharray);
-			}
-			else {
-				example.handsontable('loadData', values);
-			}
+			});
 		});
 
 		$IndInv .handsontable({
@@ -292,6 +370,82 @@
 		var selectedCellsRange;
 		$(document.body).on("contextmenu:focus", ".context-menu-item", function(e){ 
 			selectedCellsRange = $IndInv.handsontable("getSelected");
+		});
+
+		$('#the-node2').contextMenu({
+			selector: 'th',
+			callback: function(key, options){
+			},
+			items: {
+				"test": {name:"test",
+					callback: function(key, options){
+						var filters = []
+						var field = $(this).children().children().first()[0].innerHTML;
+						$.each($IndInv.handsontable("getData"),function(index,data){
+							var filter = data[field];
+							if (filters.indexOf(filter) === -1){
+								filters.push(filter);
+							}
+						});
+
+						var newDiv = "<div class='filter-panel'>"
+						newDiv += "<div class='filter-panel-header'>Filter by: " + field + "<i class='filter-panel-close fa fa-times'></i></div>"
+						newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
+						newDiv += "<div class='filter-list'><div>"
+						$.each(filters, function(index,value){
+							newDiv += "<div class='filter-item'><div class='filter-title'>" + value + "</div></div>";
+						});
+						newDiv += "</div></div>"
+						newDiv += "</div>"
+						$('.header').after(newDiv);
+						$('.filter-panel').hide();
+						$('.filter-panel').slideDown('slow');
+						$('.filter-panel').css({
+							left:  currentMousePos.x,
+							top:   currentMousePos.y
+						});
+						$('.filter-panel-header').drags();
+
+						$('#search_filter').on('keyup change search click', function () {
+							var valThis = $(this).val().toLowerCase();
+							if (valThis == "") {
+								$('.filter-item').removeClass('textFiltered');
+							} else {
+								$('.filter-item').each(function () {
+									var text = $(this).text().toLowerCase();
+									var listItems;
+									if (text.indexOf(valThis) >= 0) {
+										$(this).removeClass('textFiltered');
+									} else {
+										$(this).addClass('textFiltered');
+									}
+								});
+							};
+							$('.filter-item').show();
+							$('.textFiltered').hide();
+						});
+
+						$('.filter-panel-close').on('click', function(){
+							$(this).closest('filter-panel').undrags();
+							$(this).closest('.filter-panel').slideUp('slow',function() { $(this).remove()});
+							$('.new-map').remove()
+						});
+
+						$('.filter-item').on('click', function(){
+							if (!$(this).hasClass('clicked')){
+								$(this).addClass('justClicked');
+								var filterItem = $(this).children()[0].innerHTML;
+								if (filterList[field].indexOf(filterItem) === -1){
+									filterList[field].push(filterItem);
+								}
+
+							} else {
+								$(this).removeClass('clicked');
+							}
+						});
+					}
+				},
+			}
 		});
 
 		$('#the-node').contextMenu({
@@ -514,17 +668,22 @@
 			$IndInv.handsontable('render');
 			$.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
 				var indicatorID_N = returnedData.indicatorID;
-				$IndInv.handsontable("setDataAtCell",row,1,indicatorID_N);
-				var cols = $IndInv.handsontable("getDataAtRow",row + 1);
+				var cols = $IndInv.handsontable("getDataAtRow",row  + 1);
 				$.each(cols,function(index, obj){
 					var field = index;
 					console.log(field);
-    				$.get('getValue', { indicatorID: indicatorID_N, field:field, fiscalYear: '@fiscalYear' }, function(data){
-    					if (data.Value != null && data.Value_Sup != null){
-    						$IndInv.handsontable("setDataAtRowProp",row,field,indicatorID_N);
-    					}
-    				});
-    			});
+					$.ajax({
+						url: 'getValue',
+						type: 'GET',
+						async: 'false',
+						data: { indicatorID: indicatorID_N, field:field, fiscalYear: '@fiscalYear', convertToFull: true },
+						contentType: 'application/json; charset=utf-8',
+						success: function (result) {
+							$IndInv.handsontable("setDataAtRowProp",row + 1,field,result.Value);
+						}
+					});
+				});
+				$IndInv.handsontable("setDataAtCell",row + 1,1,indicatorID_N);
     		});
 		}
 
@@ -593,4 +752,73 @@ font-size:medium!important;
         color: White;
 	}
 
+	.filter-panel {
+        background-color:lightgray !important;
+        border:1px solid black;
+        padding:0;
+        margin:0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border: 1px solid black;
+        padding: 0px;
+        background-color: red;
+        height:300px;
+        margin:0px;
+    }
+    .filter-panel-header {
+        background-color: rgb(51,51,51);
+        padding:5px;
+        margin-bottom:0px;
+        color:white;
+    }
+        .filter-panel-header::before {
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f067";
+            color:white;
+            padding-right:5px;
+            padding-right:5px;
+        }
+    .filter-panel-close {
+        color:white;
+        float:right;
+    }
+    .search {
+        margin:0px !Important;
+    }
+    .filter-list {
+		color:black;
+        height: 219px;
+        overflow-y:scroll;
+        overflow-x:hidden;
+		float:left;
+		width:100%;
+    }
+    .filter-item-title {
+        font-weight:bold;
+        display:inline;
+    }
+    .filter-item {
+        font-size:small;
+        display:block;
+        width:100% !important;
+        text-align:left !important;
+        padding:5px;
+    }
+        .filter-item::before {
+            float:left;
+            font-family: FontAwesome;
+            /*font-size:large;*/
+            content: "\f0da";
+            color:black;
+            padding-right:5px;
+        }
+    .clicked {
+        background:#4cff00;
+    }
+    .included {
+        background:#ff6a00;
+    }
 </style>

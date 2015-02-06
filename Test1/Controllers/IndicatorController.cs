@@ -1759,13 +1759,26 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
-        public ActionResult getValue(Int16 indicatorID, string field, Int16 fiscalYear)
+        public ActionResult getValue(Int16 indicatorID, string field, Int16 fiscalYear, bool? convertToFull)
         {
             var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
 
+			if (convertToFull.HasValue && convertToFull.Value)
+			{
+				field = FiscalYear.FYStrFull(field, fiscalYear);
+			}
+
             var property = indicator.GetType().GetProperty(field);
             var propertySup = indicator.GetType().GetProperty(field + "_Sup");
-            var value = (string)property.GetValue(indicator, null);
+			string value;
+			try
+			{
+				value = (string)property.GetValue(indicator, null);
+			}
+			catch
+			{
+				return null;
+			}
             var valueSup = "";
 
             var area = indicator.Area_ID;
