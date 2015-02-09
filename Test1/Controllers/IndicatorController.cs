@@ -2166,7 +2166,10 @@ namespace IndInv.Controllers
             {
                 viewModelItems = db.Indicators.ToList();
             }
-
+            if (indicatorID != null)
+            {
+                viewModelItems = viewModelItems.Where(x => x.Indicator_ID == Int16.Parse(indicatorID)).ToList();
+            }
             var viewModel = viewModelItems.OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
             {
                 Indicator_ID = x.Indicator_ID,
@@ -2218,6 +2221,8 @@ namespace IndInv.Controllers
                 FY_Q3_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(x, null),
                 FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
                 FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
+
+                Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 
                 Fiscal_Year = fiscalYear,
 

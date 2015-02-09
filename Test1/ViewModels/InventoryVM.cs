@@ -58,5 +58,7 @@ namespace IndInv.Models.ViewModels
         public int Fiscal_Year { get; set; }
 
         public List<Analysts> allAnalysts { get; set; }
+
+        public string Format_Code { get; set; }
     }
 }

@@ -7,6 +7,8 @@
 <!--script src="~/Scripts/jquery.handsontable.full.min.js"></!--script-->
 <script type='text/javascript' src="http://wurfljs.com/wurfl.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
+<script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
 @model IList<IndInv.Models.ViewModels.InventoryViewModel>
 @using IndInv.Models
@@ -115,7 +117,6 @@
 	$(document).ready(function () {
 
 		$(document).on('input', '#mytxtBox', function () {
-			console.log($('#mytxtBox').val());
 		});
 
 		function qcolor(instance, td, row, col, prop, value, cellProperties) {
@@ -168,33 +169,158 @@
 
 		var values = @Html.Raw(Json.Encode(Model));
 
-		var filterList = {
-			CoE: ['CoE']
+	    var filterListFull = {
+	        CoE: [],
+	    } 
+	    for (var i=1, len=values.length; i<len; i++){
+	        var filterItem = values[i]['CoE'];
+	        if (filterListFull['CoE'].indexOf(filterItem) === -1){
+	            filterListFull['CoE'].push(filterItem);
+	        }
+	    };
+
+		var filterListChose = {
+		    CoE: ['CoE'],
+            Indicator: ['Indicator','']
 		}
+		var delay = (function(){
+		    var timer = 0;
+		    return function(callback, ms){
+		        clearTimeout (timer);
+		        timer = setTimeout(callback, ms);
+		    };
+		})();
 		$('#searchgrid').on('keyup', function (event) {
-			var value = ('' + this.value).toLowerCase(), row, col, r_len, c_len, td;
-			var example = $IndInv
+		    var searchText = $(this).val().toLowerCase();
+		    filterListChose['Indicator'][1] = searchText;
+		    delay(function(){
+		        doFilter();
+		    }, 500);
+		});
+        var doFilter = function(){
 			var datasrch = jQuery.makeArray(values);
 			var searcharray = [];
-			$.each(filterList, function(index,data){
-				var field = data[0];
-				for (var i=1, len=data.length; i<len; i++){
-					if (value) {
-						for (row = 0, r_len = datasrch.length; row < r_len; row++) {
-							//$.each(datasrch[row], function (name, currValue) {
-								if(('' + currValue).toLowerCase().indexOf(value) > -1){
-									searcharray.push(datasrch[row]);
-									return false;
-								}
-							//});
-						}
-						example.handsontable('loadData', searcharray);
-					} else {
-						example.handsontable('loadData', values);
-					}
+			for (row = 0, r_len = datasrch.length; row < r_len; row++) {
+			    var condArr=[];
+			    $.each(filterListChose, function(index,data){
+                    console.log(data)
+                    var currCond = false;
+				    if (data.length === 1) {
+				        currCond = true;
+				    } else {
+				        for (var i=1, len=data.length; i<len; i++){
+				            var filterItem = data[i];
+				            var field = data[0];
+				            var currValue = datasrch[row][field];
+				            if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
+				                currCond = true;
+				            }
+				            /*if(currValue === filterItem){
+                                searcharray.push(datasrch[row]);
+                            }*/
+				        }
+				    }
+				    console.log(currCond)
+				    condArr.push(currCond);
+			    });
+			    console.log(condArr)
+				var allTrue = true;
+				for (var i =0, len = condArr.length; i<len;i++){
+				    if (condArr[i] !== true){
+				        allTrue = false;
+				    }
 				}
-			});
-		});
+				if (allTrue){
+				    searcharray.push(datasrch[row]);
+				}
+			};
+			if (searcharray.length !== 0){
+			    $IndInv.handsontable('loadData', searcharray);
+			} else {
+			    $IndInv.handsontable('loadData', values);
+			}
+        };
+
+        var colHeadersOrg = [
+            "ID",
+            "Indicator",
+            "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
+            "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_2",fiscalYear)",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_1",fiscalYear)",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
+            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
+            "Sup",
+            "Target",
+            "Sup",
+            "Comparator",
+            "Sup",
+            "Performance_Threshold",
+            "Sup",
+            "color_ID",
+            "Custom_YTD",
+            "Custom_Q1",
+            "Custom_Q2",
+            "Custom_Q3",
+            "Custom_Q4",
+            "Definition_Calculation",
+            "Target_Rationale",
+            "Comparator_Source",
+            "Data_Source_MSH",
+            "Data_Source_Benchmark",
+            "OPEO_Lead"
+        ];
+	    var columnsOrg = [
+            {data:"Indicator_ID"},
+            {data:"Indicator"},
+            {data:"CoE"},
+            {data:"FY_3"},
+            {data:"FY_3_Sup"},
+            {data:"FY_2"},
+            {data:"FY_2_Sup"},
+            {data:"FY_1"},
+            {data:"FY_1_Sup"},
+            {data:"FY_Q1", renderer:"qcolor"},
+            {data:"FY_Q1_Sup"},
+            {data:"FY_Q2", renderer:"qcolor"},
+            {data:"FY_Q2_Sup"},
+            {data:"FY_Q3", renderer:"qcolor"},
+            {data:"FY_Q3_Sup"},
+            {data:"FY_Q4", renderer:"qcolor"},
+            {data:"FY_Q4_Sup"},
+            {data:"FY_YTD", renderer:"qcolor"},
+            {data:"FY_YTD_Sup"},
+            {data:"FY_Target"},
+            {data:"FY_Target_Sup"},
+            {data:"FY_Comparator", renderer:"compSaved"},
+            {data:"FY_Comparator_Sup"},
+            {data:"FY_Performance_Threshold"},
+            {data:"FY_Performance_Threshold_Sup"},
+            {data:"FY_Color_ID"},
+            {data:"FY_YTD_Custom_Color"},
+            {data:"FY_Q1_Custom_Color"},
+            {data:"FY_Q2_Custom_Color"},
+            {data:"FY_Q3_Custom_Color"},
+            {data:"FY_Q4_Custom_Color"},
+            {data:"FY_Definition_Calculation"},
+            {data:"FY_Target_Rationale"},
+            {data:"FY_Comparator_Source"},
+            {data:"FY_Data_Source_MSH"},
+            {data:"FY_Data_Source_Benchmark"},
+            {data:"FY_OPEO_Lead"}
+	    ];
+	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100];
+	    var changesOld = [];
 
 		$IndInv .handsontable({
 			clickBeginsEditing : WURFL.is_mobile? true:false,
@@ -206,7 +332,6 @@
 			strechW: 'auto',
 			scrollH: 'auto',
 			scrollV: 'auto',
-			colWidths: [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100], 
 			width: function () {
 				if (maxed && availableWidth === void 0) {
 					calculateSize();
@@ -225,84 +350,9 @@
 			minSpareRows: 0,
 			contextMenu: false,
 			rowHeaders: false,
-			colHeaders: [
-				"ID",
-				"Indicator",
-				"CoE",
-				"@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-				"Sup",
-				"@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-				"Sup",
-				"Target",
-				"Sup",
-				"Comparator",
-				"Sup",
-				"Performance_Threshold",
-				"Sup",
-				"color_ID",
-				"Custom_YTD",
-				"Custom_Q1",
-				"Custom_Q2",
-				"Custom_Q3",
-				"Custom_Q4",
-				"Definition_Calculation",
-				"Target_Rationale",
-				"Comparator_Source",
-				"Data_Source_MSH",
-				"Data_Source_Benchmark",
-				"OPEO_Lead"
-			],
-			columns: [
-				{data:"Indicator_ID"},
-				{data:"Indicator"},
-				{data:"CoE"},
-				{data:"FY_3"},
-				{data:"FY_3_Sup"},
-				{data:"FY_2"},
-				{data:"FY_2_Sup"},
-				{data:"FY_1"},
-				{data:"FY_1_Sup"},
-				{data:"FY_Q1", renderer:"qcolor"},
-				{data:"FY_Q1_Sup"},
-				{data:"FY_Q2", renderer:"qcolor"},
-				{data:"FY_Q2_Sup"},
-				{data:"FY_Q3", renderer:"qcolor"},
-				{data:"FY_Q3_Sup"},
-				{data:"FY_Q4", renderer:"qcolor"},
-				{data:"FY_Q4_Sup"},
-				{data:"FY_YTD", renderer:"qcolor"},
-				{data:"FY_YTD_Sup"},
-				{data:"FY_Target"},
-				{data:"FY_Target_Sup"},
-				{data:"FY_Comparator", renderer:"compSaved"},
-				{data:"FY_Comparator_Sup"},
-				{data:"FY_Performance_Threshold"},
-				{data:"FY_Performance_Threshold_Sup"},
-				{data:"FY_Color_ID"},
-				{data:"FY_YTD_Custom_Color"},
-				{data:"FY_Q1_Custom_Color"},
-				{data:"FY_Q2_Custom_Color"},
-				{data:"FY_Q3_Custom_Color"},
-				{data:"FY_Q4_Custom_Color"},
-				{data:"FY_Definition_Calculation"},
-				{data:"FY_Target_Rationale"},
-				{data:"FY_Comparator_Source"},
-				{data:"FY_Data_Source_MSH"},
-				{data:"FY_Data_Source_Benchmark"},
-				{data:"FY_OPEO_Lead"}
-			],
+			colHeaders: colHeadersOrg,
+			columns: columnsOrg,
+            colWidths : colWidthsOrg,
 			afterChange: function (change, source) {
 				if (source === 'loadData') {
 					return;
@@ -312,6 +362,25 @@
 					}
 				}
 			},
+			afterChange: function (change, source) {
+			    if (source === 'loadData' || source === 'set' || change === null) {
+			        return;
+			    } else {
+			        var changes = [];
+			        var changesOld = [];
+			        changes = change;
+			        for(var i =0, len = changes.length; i<len; i++){
+			            var currChange = changes[i];
+			            var currChangeOld = [];
+			            currChangeOld.push(currChange[0]);
+			            currChangeOld.push(currChange[1]);
+			            currChangeOld.push(currChange[3]);
+			            currChangeOld.push(currChange[2]);
+			            changesOld.push(currChangeOld);
+			        }
+			        updateIndicatorUndoable(changes, changesOld);
+			    }
+			},
 			beforeRemoveRow : function (index, amount){
 				deleteIndicator(index);
 			}
@@ -320,35 +389,60 @@
 		maxed = !maxed;
 		$IndInv.handsontable('render');
 
-		function updateIndicator(change, i){
-			var changedRow = change[i][0]
-			var changedParameter = change[i][1];
-			var changedValue = change[i][3];
-			if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
-				var parameters = {
-					indicatorID: $IndInv.handsontable('getDataAtCell',change[i][0],0),
-					updateProperty: changedParameter,
-					updateValue: changedValue,
-					fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
-				};
-				$.ajax({
-					url: this.action,
-					type: 'POST',
-					data: JSON.stringify(parameters),
-					contentType: 'application/json; charset=utf-8',
-					success: function (result) {
-						$.get('@Url.Action("/editInventory")', {indicatorID : $IndInv.handsontable('getDataAtCell',change[i][0],0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (data) {
-							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", data[0].Q1_Color);
-							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", data[0].Q2_Color);
-							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", data[0].Q3_Color);
-							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", data[0].Q4_Color);
-							$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", data[0].YTD_Color);
-						});
-					},
-					error: function (request){
-					}
-				});
-			}
+		updateIndicatorUndoable = function(changes, changesOld){
+		    updateIndicator(changes)
+		    undoManager.add({
+		        undo: function(){
+		            updateIndicator(changesOld)
+		        },
+		        redo: function(){
+		            updateIndicator(changes)
+		        }
+		    });
+		};
+		function updateIndicator(changes){
+		    for (var i = 0; i< changes.length; ++i){
+		        var change = changes[i];
+		        var changedRow = change[0]
+		        var changedParameter = change[1];
+		        var changedValue = change[3];
+		        var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
+		        var isString = isNaN(parseInt(changedValue.replace('$','')));
+		        console.log(changedValue);
+		        if (!isString){
+		            if (formatStr !== ""){
+		                console.log(formatStr);
+		                changedValue = numeral(changedValue).format(formatStr);
+		            }
+		        }
+		        console.log(changedValue);
+		        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
+		            var parameters = {
+		                indicatorID: $IndInv.handsontable('getDataAtCell',changedRow,0),
+		                updateProperty: changedParameter,
+		                updateValue: changedValue,
+		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
+		            };
+		            $.ajax({
+		                url: this.action,
+		                type: 'POST',
+		                data: JSON.stringify(parameters),
+		                contentType: 'application/json; charset=utf-8',
+		                success: function (result) {
+		                    $.get('@Url.Action("/editInventory")', {indicatorID : $IndInv.handsontable('getDataAtCell',changedRow,0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (data) {
+		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", data[0].FY_Q1_Color, 'set');
+		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", data[0].FY_Q2_Color, 'set');
+		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", data[0].FY_Q3_Color, 'set');
+		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", data[0].FY_Q4_Color, 'set');
+		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", data[0].FY_YTD_Color, 'set');
+		                    });
+		                },
+		                error: function (request){
+		                }
+		            });
+		        }
+		        $IndInv.handsontable("setDataAtRowProp", changedRow, changedParameter, changedValue, 'set');
+		    }
 		}
 
 		function deleteIndicator(index){
@@ -367,9 +461,173 @@
 			});
 		}  
 
+		var showColumns = function(){
+		    var colHeaders = colHeadersOrg
+		    var columns = columnsOrg;
+		    var colWidths = colWidthsOrg;
+
+		    var colHeadersOld = []
+		    var columnsOld = [];
+		    var colWidthsOld = []
+
+		    var th = $('thead').children();
+		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+		        var currHeader = $IndInv.handsontable("getColHeader",i);
+		        var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+		        columnsOld.push( { data : $IndInv.handsontable("colToProp",i) })
+		        colHeadersOld.push(currHeader)
+		        colWidthsOld.push(colWidth);
+		    };
+		    var table = $IndInv.handsontable('getInstance');
+		    updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+		}
+
+		var hideColumns = function(toHide){
+		    var toHideHeaders = [];
+		    $.each(toHide, function(index, value){
+		        var colHeader = $(this).find('.colHeader')[0].innerHTML;
+		        toHideHeaders.push(colHeader)
+		    });
+		    var colHeaders = []
+		    var columns = [];
+		    var colWidths = []
+
+		    var colHeadersOld = []
+		    var columnsOld = [];
+		    var colWidthsOld = []
+
+		    var th = $('thead').children();
+		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+		        var currHeader = $IndInv.handsontable("getColHeader",i);
+		        var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+		        if (toHideHeaders.indexOf(currHeader) === -1){
+		            columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+		            colHeaders.push(currHeader)
+		            colWidths.push(colWidth);
+		        }
+		        columnsOld.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+		        colHeadersOld.push(currHeader)
+		        colWidthsOld.push(colWidth);
+		    };
+		    var table = $IndInv.handsontable('getInstance');
+		    updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+		};
+		updateColumnsUndoable = function(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld){
+		    updateColumns(table, columns,colHeaders,colWidths);
+		    undoManager.add({
+		        undo: function(){
+		            updateColumns(table, columnsOld,colHeadersOld,colWidthsOld);
+		        },
+		        redo: function(){
+		            updateColumns(table, columns,colHeaders,colWidths);
+		        }
+		    });
+		};
+
 		var selectedCellsRange;
 		$(document.body).on("contextmenu:focus", ".context-menu-item", function(e){ 
 			selectedCellsRange = $IndInv.handsontable("getSelected");
+		});
+
+		var selectHeader = $('table > thead').selectable({
+		    distance: 1,
+		    fiter:'.prheader',
+		    start: function(event, ui){
+		        
+		    }
+		})
+		var unselect = function(){$('th.ui-selected').removeClass('ui-selected')};
+
+		$(document).on('click','.filter-button', function(e){
+		    var el = $(this);
+		    var elTH = $(this).closest('th');
+		    var filtered = elTH.hasClass('filtered')
+		    var filters = [];
+		    var filterAvailable = [];
+		    var field = el.attr('field');//that.innerHTML;//$(this).find('.colHeader')[0].innerHTML;
+		    var dataArr = [];
+
+		    $.each($IndInv.handsontable("getData"),function(index,data){
+		        var filter = data[field];
+		        if (filterAvailable.indexOf(filter) === -1){
+		            filterAvailable.push(filter);
+		        }
+		    });
+
+		    if (filtered){
+		        filters = filterListFull[field]
+		    } else {
+		        filters = filterAvailable;
+		    }
+
+		    var newDiv = "<div class='filter-panel'>"
+		    newDiv += "<div class='filter-panel-header'>Filter by: " + field + "<i class='filter-panel-close fa fa-times'></i></div>"
+		    newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
+		    newDiv += "<div class='filter-list'><div>"
+		    $.each(filters, function(index,value){
+		        var checked = "";
+		        if (filtered){
+		            if(filterAvailable.indexOf(value) !== -1){
+		                checked = "clicked"
+		            }
+		        }
+		        newDiv += "<div class='filter-item " + checked + "'><div class='filter-title'>" + value + "</div></div>";
+		    });
+		    newDiv += "</div></div>"
+		    newDiv += "</div>"
+		    $('.header').after(newDiv);
+		    $('.filter-panel').hide();
+		    $('.filter-panel').slideDown('slow');
+		    $('.filter-panel').css({
+		        left:  currentMousePos.x,
+		        top:   currentMousePos.y
+		    });
+		    $('#search_filter').on('keyup change search click', function () {
+		        var valThis = $(this).val().toLowerCase();
+		        if (valThis == "") {
+		            $('.filter-item').removeClass('textFiltered');
+		        } else {
+		            $('.filter-item').each(function () {
+		                var text = $(this).text().toLowerCase();
+		                var listItems;
+		                if (text.indexOf(valThis) >= 0) {
+		                    $(this).removeClass('textFiltered');
+		                } else {
+		                    $(this).addClass('textFiltered');
+		                }
+		            });
+		        };
+		        $('.filter-item').show();
+		        $('.textFiltered').hide();
+		    });
+
+		    $('.filter-panel-close').on('click', function(){
+		        $(this).closest('filter-panel').undrags();
+		        $(this).closest('.filter-panel').slideUp('slow',function() { $(this).remove()});
+		        $('.new-map').remove()
+		    });
+
+		    $('.filter-item').on('click', function(){
+		        var filterItem = $(this).children()[0].innerHTML;
+		        if (!$(this).hasClass('clicked')){
+		            $(this).addClass('clicked');
+		            if (filterListChose[field].indexOf(filterItem) === -1){
+		                filterListChose[field].push(filterItem);
+		                doFilter();
+		            }
+		        } else {
+		            $(this).removeClass('clicked');
+		            filterListChose[field] = $.grep(filterListChose[field], function(value){
+		                return value != filterItem;
+		            });
+		            doFilter();
+		        }
+		        if(filterListChose[field].length !== 1){
+		            elTH.addClass('filtered');
+		        }else {
+		            elTH.removeClass('filtered');
+		        }
+		    });
 		});
 
 		$('#the-node2').contextMenu({
@@ -377,74 +635,23 @@
 			callback: function(key, options){
 			},
 			items: {
-				"test": {name:"test",
-					callback: function(key, options){
-						var filters = []
-						var field = $(this).children().children().first()[0].innerHTML;
-						$.each($IndInv.handsontable("getData"),function(index,data){
-							var filter = data[field];
-							if (filters.indexOf(filter) === -1){
-								filters.push(filter);
-							}
-						});
-
-						var newDiv = "<div class='filter-panel'>"
-						newDiv += "<div class='filter-panel-header'>Filter by: " + field + "<i class='filter-panel-close fa fa-times'></i></div>"
-						newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
-						newDiv += "<div class='filter-list'><div>"
-						$.each(filters, function(index,value){
-							newDiv += "<div class='filter-item'><div class='filter-title'>" + value + "</div></div>";
-						});
-						newDiv += "</div></div>"
-						newDiv += "</div>"
-						$('.header').after(newDiv);
-						$('.filter-panel').hide();
-						$('.filter-panel').slideDown('slow');
-						$('.filter-panel').css({
-							left:  currentMousePos.x,
-							top:   currentMousePos.y
-						});
-						$('.filter-panel-header').drags();
-
-						$('#search_filter').on('keyup change search click', function () {
-							var valThis = $(this).val().toLowerCase();
-							if (valThis == "") {
-								$('.filter-item').removeClass('textFiltered');
-							} else {
-								$('.filter-item').each(function () {
-									var text = $(this).text().toLowerCase();
-									var listItems;
-									if (text.indexOf(valThis) >= 0) {
-										$(this).removeClass('textFiltered');
-									} else {
-										$(this).addClass('textFiltered');
-									}
-								});
-							};
-							$('.filter-item').show();
-							$('.textFiltered').hide();
-						});
-
-						$('.filter-panel-close').on('click', function(){
-							$(this).closest('filter-panel').undrags();
-							$(this).closest('.filter-panel').slideUp('slow',function() { $(this).remove()});
-							$('.new-map').remove()
-						});
-
-						$('.filter-item').on('click', function(){
-							if (!$(this).hasClass('clicked')){
-								$(this).addClass('justClicked');
-								var filterItem = $(this).children()[0].innerHTML;
-								if (filterList[field].indexOf(filterItem) === -1){
-									filterList[field].push(filterItem);
-								}
-
-							} else {
-								$(this).removeClass('clicked');
-							}
-						});
-					}
+				hideCol: {
+				    name: "Hide Column",
+				    callback: function(key,options){
+				        var toHide = $("th.ui-selected");
+				        if (toHide.length === 0) toHide= $(this);
+				        hideColumns(toHide);
+				        unselect();
+				    }
 				},
+				showCol: {
+				    name: "Unhide Columns",
+				    callback: function(key,options){
+				        showColumns();
+				        unselect();
+				    }
+				}
+
 			}
 		});
 
@@ -671,7 +878,6 @@
 				var cols = $IndInv.handsontable("getDataAtRow",row  + 1);
 				$.each(cols,function(index, obj){
 					var field = index;
-					console.log(field);
 					$.ajax({
 						url: 'getValue',
 						type: 'GET',
@@ -710,6 +916,16 @@
 		$.ctrl("Y", function(){
 			undoManager.redo();
 		});
+
+	    //$('#showColor').on('click', function () {
+        var updateColumns = function(table, columns, colHeaders, colWidths){
+		    table.updateSettings({
+		        strechH: 'last',
+		        colWidths: colWidths,//[50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100],
+		        colHeaders: colHeaders,
+		        columns: columns
+		    });
+		};
 	});
 </script>
 
@@ -820,5 +1036,20 @@ font-size:medium!important;
     }
     .included {
         background:#ff6a00;
+    }
+     th.ui-selecting {
+        background-color:#ff6a00;
+    }
+    th.ui-selected {
+        background-color:#ff6a00;
+    }
+
+    .filter-button:hover {
+        color:#0063FF;
+    }
+    .filtered > div > span > i {
+        color:red;
+    }
+
     }
 </style>

@@ -40,6 +40,12 @@ namespace IndInv.Helpers
                     return "FY_" + (FYInt(fiscalYear) - 1).ToString() + "_" + (FYInt(fiscalYear) + 1 - 1).ToString() + "_YTD";
                 case "FY_Header":
                     return "FY " + (FYInt(fiscalYear)).ToString() + "/" + (FYInt(fiscalYear) + 1).ToString() + " Performance";
+                case "FY_3_Sup":
+                    return "FY_" + (FYInt(fiscalYear) - 3).ToString() + "_" + (FYInt(fiscalYear) + 1 - 3).ToString() + "_YTD_Sup";
+                case "FY_2_Sup":
+                    return "FY_" + (FYInt(fiscalYear) - 2).ToString() + "_" + (FYInt(fiscalYear) + 1 - 2).ToString() + "_YTD_Sup";
+                case "FY_1_Sup":
+                    return "FY_" + (FYInt(fiscalYear) - 1).ToString() + "_" + (FYInt(fiscalYear) + 1 - 1).ToString() + "_YTD_Sup";
                 default:
                     return fyStr.Replace(
                         "FY_", 
