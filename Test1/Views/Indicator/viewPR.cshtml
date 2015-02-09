@@ -864,12 +864,19 @@
             if (undo){
             	indicatorID=obj.closest("table").find(".prtd").first().closest("tr").attr("indicatorID");
             }
-            console.log(indicatorID);
-
             var clickedRow = obj.closest( "tr" );
             var definitions = obj.closest( "table" ).hasClass("PRDef");
-            $.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
-                @{var html = "";
+            console.log(returningObj);
+            var isNValue = returningObj.hasClass('prrow-isNValue');
+            if (isNValue && undo){
+            	$.post('addNValues', {fiscalYear: @ViewBag.fiscalYear, indicatorID: obj.attr('indicatorID')},function(data){
+            		returningObj.attr('mapID',data.mapID);
+            		returningObj.attr('indicatorID',data.indicatorID);
+            		returningObj.show();
+            	});
+            }else{
+            	$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
+            		@{var html = "";
                   html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
                   html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
                   for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
@@ -877,7 +884,7 @@
                       html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
                       html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
                   }}
-                @{var htmlDef = "";
+            		@{var htmlDef = "";
                   htmlDef += "<td></td>";
                   htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
                   for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
@@ -888,7 +895,7 @@
                       htmlDef += "<div class='tdValue'></div>";
                       htmlDef += "</td>";
                   }}
-                @{var htmlExist = "";
+            		@{var htmlExist = "";
                   htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
                   htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
                   for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
@@ -899,85 +906,83 @@
                       htmlExist += "<div class='tdValue'></div>";
                       htmlExist += "</td>";
                   }}
-                htmlColumns = "@Html.Raw(html)";
-                htmlColumnsDef = "@Html.Raw(htmlDef)";
-                htmlExistColumns = "@Html.Raw(htmlExist)";
-                if (!exist){
-                    clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
-                    $(".newrow-text").on('change keyup paste',function(e){
-                        var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
-                        var field = $(this).attr("field");
-                        var parameters = {
-                            indicatorID: indicatorID,
-                            updateProperty: field,
-                            updateValue: $( this ).val(),
-                            updateValueSup: "%NULL%",
-                            fiscalYear: @Model.Fiscal_Year,
-                        };
-                        $.ajax({
-                            url: 'setValue',
-                            type: 'POST',
-                            data: JSON.stringify(parameters),
-                            contentType: 'application/json; charset=utf-8',
-                            success: function (result) {
-                            },
-                            error: function (request){
-                            }
-                        }); 
-                    });
-                } else {
-                    $('.justClicked').attr('mapid',returnedData.mapID);
-                    $('.justClicked').addClass('clicked');
-                    $('.justClicked').removeClass('justClicked');
-                    if (!undo){
-                    	if (returnedData.newAreaID == areaID){
-                    		var newMap = $('.new-map');
-                    		newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
-                    	} else if (returnedData.newAreaID != 0) {
-                    		correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
-                    		correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
-                    	}
+            		htmlColumns = "@Html.Raw(html)";
+            		htmlColumnsDef = "@Html.Raw(htmlDef)";
+            		htmlExistColumns = "@Html.Raw(htmlExist)";
+            		if (!exist){
+            			clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
+            			$(".newrow-text").on('change keyup paste',function(e){
+            				var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
+            				var field = $(this).attr("field");
+            				var parameters = {
+            					indicatorID: indicatorID,
+            					updateProperty: field,
+            					updateValue: $( this ).val(),
+            					updateValueSup: "%NULL%",
+            					fiscalYear: @Model.Fiscal_Year,
+            				};
+            				$.ajax({
+            					url: 'setValue',
+            					type: 'POST',
+            					data: JSON.stringify(parameters),
+            					contentType: 'application/json; charset=utf-8',
+            					success: function (result) {
+            					},
+            					error: function (request){
+            					}
+            				}); 
+            			});
+            		} else {
+            			$('.justClicked').attr('mapid',returnedData.mapID);
+            			$('.justClicked').addClass('clicked');
+            			$('.justClicked').removeClass('justClicked');
+            			if (!undo){
+            				if (returnedData.newAreaID == areaID){
+            					var newMap = $('.new-map');
+            					newMap.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
+            				} else if (returnedData.newAreaID != 0) {
+            					correctAreaRow = $('[coeid="' + coeID + '"][areaid="' + returnedData.newAreaID + '"]').first();
+            					correctAreaRow.after("<tr class='prrow newrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID= '" + returnedData.colorID + "' directionID= '" + returnedData.directionID + "' thresholdID= '" + returnedData.thresholdID + "' formatID='' formatStr=''>" + htmlExistColumns);
+            				}
 
-                    	var newrowTds = $('.newrow-td')
-                    	$.each(newrowTds,function(index, obj){
-                    		var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
-                    		$(obj).attr('indicatorID', indicatorID);
-                    		var field = $(obj).attr("field");
-                    		$.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
-                    			var value = data.Value;
-                    			if (value == null) value = "";
-                    			var valueSup = data.Value_Sup;
-                    			if (valueSup == null) valueSup = "";
-                    			if (field !== 'Indicator'){
-                    				$(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
-                    				$(obj).children('.pr-input-val').val(data.Value)
-                    				$(obj).children('.pr-input-sup').val(data.Value_Sup)
-                    			} else {
-                    				$(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
-                    			}
-                    			$(obj).addClass(data.Color);
-                    			$(obj).removeClass("newrow-td");
-                    		});
-                    	});
-                    } else {
-                        $('.new-map').remove()
-                        clickedRow.next().removeClass('newrow');
-                    }
-                    var tbody = obj.closest('tbody');
-                    var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
-                    returningObj.attr('mapID',returnedData.mapID);
-                    returningObj.show();
-                    sortUndoable(tbody, rows, oldRows);
-                }
-            });
+            				var newrowTds = $('.newrow-td')
+            				$.each(newrowTds,function(index, obj){
+            					var indicatorID = $(obj).closest( "tr" ).attr("indicatorID");
+            					$(obj).attr('indicatorID', indicatorID);
+            					var field = $(obj).attr("field");
+            					$.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
+            						var value = data.Value;
+            						if (value == null) value = "";
+            						var valueSup = data.Value_Sup;
+            						if (valueSup == null) valueSup = "";
+            						if (field !== 'Indicator'){
+            							$(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
+            							$(obj).children('.pr-input-val').val(data.Value)
+            							$(obj).children('.pr-input-sup').val(data.Value_Sup)
+            						} else {
+            							$(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
+            						}
+            						$(obj).addClass(data.Color);
+            						$(obj).removeClass("newrow-td");
+            					});
+            				});
+            			} else {
+            				$('.new-map').remove()
+            				clickedRow.next().removeClass('newrow');
+            			}
+            			returningObj.attr('mapID',returnedData.mapID);
+            			returningObj.show();
+            			var tbody = obj.closest('tbody');
+            			var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
+            			sortUndoable(tbody, rows, oldRows);
+            		}
+            	});
+            }
         }
         </text>
         }
 
-        removeIndicatorUndoable = function(obj, prevObj, deletedRow, indicatorID){
-            removeIndicator(obj);
-        };
-        function removeIndicator(obj){
+    	function removeIndicator(obj){
             if (obj.closest( "tr" ).hasClass("prrow-isNValue")){
                 obj.closest( "tr" ).prev().children().attr('rowspan',1);
                 obj.closest( "tr" ).removeClass("prrow-isNValue");
@@ -1097,12 +1102,11 @@
 			            $(obj).attr('indicatorID', indicatorID);
 			            var field = $(obj).attr("field");
 			            $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
-                            if (data.Value != null && data.Value_Sup != null){
-                                //$(obj).html(data.Value + "<sup>" + data.Value_Sup + "</sup>");
-                                $(obj).children('.tdValue').html(data.Value+ "<sup>" + data.Value_Sup + "</sup>");
-                                $(obj).children('.pr-input-val').val(data.Value)
-                                $(obj).children('.pr-input-sup').val(data.Value_Sup)
-                            }
+			            	var val = data.Value === null ?  "" : data.Value;
+			            	var valSup = data.Value_Sup === null ?  "" : data.Value_Sup;
+			            	$(obj).children('.tdValue').html(val+ "<sup>" + valSup + "</sup>");
+			            	$(obj).children('.pr-input-val').val(val)
+			            	$(obj).children('.pr-input-sup').val(valSup)
                             $(obj).removeClass("newrow-td");
                         });
                     });
@@ -1961,13 +1965,13 @@
             	if (field === "CoE"){
             		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventoryTD2?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	}
             } else {
             	if (field === "CoE"){
             		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventoryTD2?fiscalYear=@ViewBag.fiscalYear"
+            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
             	}
             }
         });

@@ -60,5 +60,8 @@ namespace IndInv.Models.ViewModels
         public List<Analysts> allAnalysts { get; set; }
 
         public string Format_Code { get; set; }
+
+		public bool N_Value { get; set; }
+		public string N_Value_ID { get; set; }
     }
 }

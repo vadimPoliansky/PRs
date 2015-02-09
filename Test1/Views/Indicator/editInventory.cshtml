@@ -31,8 +31,22 @@
 
     ViewBag.fiscalYear = fiscalYear;
 }
+<div class="menu-bar">
+    <div class="row header-row">
+        <div class="large-6 columns">
+            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
+            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+            <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+            <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+        </div>
+        <div class="large-6 columns">
+            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+        </div>
+    </div>
+</div>
 <div class="row">
-<label>Search<input id="searchgrid" type="text" /></label>
+<label>Search:<input id="searchgrid" type="text" /></label>
 </div>
 
 
@@ -141,6 +155,10 @@
 				td.style.background = 'red';
 				td.style.color = 'white';
 			}
+			var isN = $IndInv.handsontable("getDataAtRowProp",row, "N_Value");
+			if (isN === true){
+				$(td).addClass('nValue'); //add the changeInput class to the actual td
+			}
 		};
 
 		function compSaved(instance, td, row, col, prop, value, cellProperties) {
@@ -148,10 +166,22 @@
 			if (cellProperties.saved) {//check for new property change in the cell
 				$(td).addClass('compSaved'); //add the changeInput class to the actual td
 			}
+			var isN = $IndInv.handsontable("getDataAtRowProp",row, "N_Value");
+			if (isN === true){
+				$(td).addClass('nValue'); //add the changeInput class to the actual td
+			}
+		};
+		function tdRender(instance, td, row, col, prop, value, cellProperties) {
+			Handsontable.TextCell.renderer.apply(this, arguments);
+			var isN = $IndInv.handsontable("getDataAtRowProp",row, "N_Value");
+			if (isN === true){
+				$(td).addClass('nValue'); //add the changeInput class to the actual td
+			}
 		};
 
 		Handsontable.renderers.registerRenderer('qcolor', qcolor);
 		Handsontable.renderers.registerRenderer('compSaved', compSaved);
+		Handsontable.renderers.registerRenderer('tdRender', tdRender);
 
 		var maxed = false
 			, resizeTimeout
@@ -173,10 +203,12 @@
 	        CoE: [],
 	    } 
 	    for (var i=1, len=values.length; i<len; i++){
-	        var filterItem = values[i]['CoE'];
-	        if (filterListFull['CoE'].indexOf(filterItem) === -1){
-	            filterListFull['CoE'].push(filterItem);
-	        }
+	    	var filterItem = values[i]['CoE'];
+	    	if(filterItem.length !== 0 && filterItem !== "0"){
+	    		if (filterListFull['CoE'].indexOf(filterItem) === -1){
+	    			filterListFull['CoE'].push(filterItem);
+	    		}
+	    	}
 	    };
 
 		var filterListChose = {
@@ -203,7 +235,6 @@
 			for (row = 0, r_len = datasrch.length; row < r_len; row++) {
 			    var condArr=[];
 			    $.each(filterListChose, function(index,data){
-                    console.log(data)
                     var currCond = false;
 				    if (data.length === 1) {
 				        currCond = true;
@@ -220,10 +251,8 @@
                             }*/
 				        }
 				    }
-				    console.log(currCond)
 				    condArr.push(currCond);
 			    });
-			    console.log(condArr)
 				var allTrue = true;
 				for (var i =0, len = condArr.length; i<len;i++){
 				    if (condArr[i] !== true){
@@ -281,43 +310,43 @@
             "OPEO_Lead"
         ];
 	    var columnsOrg = [
-            {data:"Indicator_ID"},
-            {data:"Indicator"},
-            {data:"CoE"},
-            {data:"FY_3"},
-            {data:"FY_3_Sup"},
-            {data:"FY_2"},
-            {data:"FY_2_Sup"},
-            {data:"FY_1"},
-            {data:"FY_1_Sup"},
+            {data:"Indicator_ID", renderer:"tdRender"},
+            {data:"Indicator", renderer:"tdRender"},
+            {data:"CoE", renderer:"tdRender"},
+            {data:"FY_3", renderer:"tdRender"},
+            {data:"FY_3_Sup", renderer:"tdRender"},
+            {data:"FY_2", renderer:"tdRender"},
+            {data:"FY_2_Sup", renderer:"tdRender"},
+            {data:"FY_1", renderer:"tdRender"},
+            {data:"FY_1_Sup", renderer:"tdRender"},
             {data:"FY_Q1", renderer:"qcolor"},
-            {data:"FY_Q1_Sup"},
+            {data:"FY_Q1_Sup", renderer:"tdRender"},
             {data:"FY_Q2", renderer:"qcolor"},
-            {data:"FY_Q2_Sup"},
+            {data:"FY_Q2_Sup", renderer:"tdRender"},
             {data:"FY_Q3", renderer:"qcolor"},
-            {data:"FY_Q3_Sup"},
+            {data:"FY_Q3_Sup", renderer:"tdRender"},
             {data:"FY_Q4", renderer:"qcolor"},
-            {data:"FY_Q4_Sup"},
+            {data:"FY_Q4_Sup", renderer:"tdRender"},
             {data:"FY_YTD", renderer:"qcolor"},
-            {data:"FY_YTD_Sup"},
-            {data:"FY_Target"},
-            {data:"FY_Target_Sup"},
+            {data:"FY_YTD_Sup", renderer:"tdRender"},
+            {data:"FY_Target", renderer:"tdRender"},
+            {data:"FY_Target_Sup", renderer:"tdRender"},
             {data:"FY_Comparator", renderer:"compSaved"},
-            {data:"FY_Comparator_Sup"},
-            {data:"FY_Performance_Threshold"},
-            {data:"FY_Performance_Threshold_Sup"},
-            {data:"FY_Color_ID"},
-            {data:"FY_YTD_Custom_Color"},
-            {data:"FY_Q1_Custom_Color"},
-            {data:"FY_Q2_Custom_Color"},
-            {data:"FY_Q3_Custom_Color"},
-            {data:"FY_Q4_Custom_Color"},
-            {data:"FY_Definition_Calculation"},
-            {data:"FY_Target_Rationale"},
-            {data:"FY_Comparator_Source"},
-            {data:"FY_Data_Source_MSH"},
-            {data:"FY_Data_Source_Benchmark"},
-            {data:"FY_OPEO_Lead"}
+            {data:"FY_Comparator_Sup", renderer:"tdRender"},
+            {data:"FY_Performance_Threshold", renderer:"tdRender"},
+            {data:"FY_Performance_Threshold_Sup", renderer:"tdRender"},
+            {data:"FY_Color_ID", renderer:"tdRender"},
+            {data:"FY_YTD_Custom_Color", renderer:"tdRender"},
+            {data:"FY_Q1_Custom_Color", renderer:"tdRender"},
+            {data:"FY_Q2_Custom_Color", renderer:"tdRender"},
+            {data:"FY_Q3_Custom_Color", renderer:"tdRender"},
+            {data:"FY_Q4_Custom_Color", renderer:"tdRender"},
+            {data:"FY_Definition_Calculation", renderer:"tdRender"},
+            {data:"FY_Target_Rationale", renderer:"tdRender"},
+            {data:"FY_Comparator_Source", renderer:"tdRender"},
+            {data:"FY_Data_Source_MSH", renderer:"tdRender"},
+            {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
+            {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
 	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100];
 	    var changesOld = [];
@@ -406,16 +435,15 @@
 		        var changedRow = change[0]
 		        var changedParameter = change[1];
 		        var changedValue = change[3];
+		        if (changedValue === null) changedValue = "";
 		        var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
 		        var isString = isNaN(parseInt(changedValue.replace('$','')));
-		        console.log(changedValue);
 		        if (!isString){
-		            if (formatStr !== ""){
-		                console.log(formatStr);
+		        	if (formatStr !== null && formatStr !== ""){
+		        		console.log(formatStr);
 		                changedValue = numeral(changedValue).format(formatStr);
 		            }
 		        }
-		        console.log(changedValue);
 		        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
 		            var parameters = {
 		                indicatorID: $IndInv.handsontable('getDataAtCell',changedRow,0),
@@ -548,9 +576,11 @@
 		    var dataArr = [];
 
 		    $.each($IndInv.handsontable("getData"),function(index,data){
-		        var filter = data[field];
-		        if (filterAvailable.indexOf(filter) === -1){
-		            filterAvailable.push(filter);
+		    	var filter = data[field];
+		    	if(filter.length !== 0 && filter !== "0"){
+		    		if (filterAvailable.indexOf(filter) === -1){
+		    			filterAvailable.push(filter);
+		    		}
 		        }
 		    });
 
@@ -861,9 +891,7 @@
 			addNValues(row, indicatorID);
 			undoManager.add({
 				undo: function(){
-					var removeObj = clickedCell.closest('tr').next().first();
-					var indicatorID = removeObj.attr('indicatorID');
-					removeIndicator(removeObj, indicatorID);
+					removeNValues(row, indicatorID);
 				},
 				redo: function(){
 					addNValues(row, indicatorID);
@@ -876,21 +904,29 @@
 			$.post('addNValues', { indicatorID : indicatorID, fiscalYear: @ViewBag.fiscalYear }, function(returnedData){
 				var indicatorID_N = returnedData.indicatorID;
 				var cols = $IndInv.handsontable("getDataAtRow",row  + 1);
-				$.each(cols,function(index, obj){
+				@*$.each(cols,function(index, obj){
 					var field = index;
-					$.ajax({
-						url: 'getValue',
-						type: 'GET',
-						async: 'false',
-						data: { indicatorID: indicatorID_N, field:field, fiscalYear: '@fiscalYear', convertToFull: true },
-						contentType: 'application/json; charset=utf-8',
-						success: function (result) {
-							$IndInv.handsontable("setDataAtRowProp",row + 1,field,result.Value);
-						}
-					});
-				});
-				$IndInv.handsontable("setDataAtCell",row + 1,1,indicatorID_N);
+					if (field !== "Indicator_ID" && field !== "N_Value"){
+						$.ajax({
+							url: 'getValue',
+							type: 'GET',
+							async: 'false',
+							data: { indicatorID: indicatorID_N, field:field, fiscalYear: '@fiscalYear', convertToFull: true },
+							contentType: 'application/json; charset=utf-8',
+							success: function (result) {
+								$IndInv.handsontable("setDataAtRowProp",row + 1,field,result.Value,"set");
+							}
+						});
+					}
+				});*@
+				$IndInv.handsontable("setDataAtRowProp",row + 1,"Indicator_ID",indicatorID_N,"set");
+				$IndInv.handsontable("setDataAtRowProp",row + 1,"N_Value",true,"set");
     		});
+		}
+		removeNValues = function(row, indicatorID){
+			$IndInv.handsontable('alter','remove_row', row + 1);
+			$IndInv.handsontable('render');
+			//$.post('removeNValues', { indicatorID: indicatorID, fiscalYear: @ViewBag.fiscalYear });
 		}
 
 		undoManager = new UndoManager();
@@ -925,7 +961,71 @@
 		        colHeaders: colHeaders,
 		        columns: columns
 		    });
-		};
+        };
+
+        $(document).on('click', '.menu-refresh', function(e){
+        	location.reload();
+        });
+
+        $(document).on('click', '.menu-undo', function(e){
+        	undoManager.undo();
+        });
+        $(document).on('click', '.menu-redo', function(e){
+        	undoManager.redo();
+        });
+
+        $(document).on('click', '.menu-edit-footnotes', function(e){
+        	e.preventDefault();
+        	window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
+        });
+
+        $(document).on('click', '.menu-open', function(e){
+        	var field = $(this).attr('field');
+        	var buttonEle = $(this);
+        	var menuBar =  $(this).closest('.menu-bar');
+        	var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
+        	var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
+        	var ajaxUrl = 'get' + field + 's';
+        	$.get(ajaxUrl, function(data){
+        		htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
+        		jQuery.each(data, function (i, value) {
+        			htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
+        		});
+        		htmlContent += "</div>";
+        		$('.rowLong').after(htmlContent);
+        		$('.menu-dropdown').hide();
+        		$('.menu-dropdown').slideDown('slow');
+        		$('.menu-dropdown').css({
+        			left:  posX,
+        			top:   posY+6
+        		});
+        		$('body').unbind("click").click(function (evt) {
+        			$('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
+        			$('.menu-dropdown').remove()
+        			buttonEle.removeClass('menu-button-pressed');
+        		});
+        		buttonEle.addClass('menu-button-pressed');
+        	});
+        });
+
+        $(document).on('click', '.menu-dropdown-button', function(e){
+        	var field = $(this).attr('field')
+        	var id = $(this).attr('id');
+        	if (id !== null){
+        		if (field === "CoE"){
+        			window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	} else if (field === "Analyst"){
+            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	}
+		} else {
+			if (field === "CoE"){
+				window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+            	} else if (field === "Analyst"){
+            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
+            	}
+		}
+        });
+
 	});
 </script>
 
@@ -948,8 +1048,12 @@ font-weight:300;
 font-size:medium!important;
     }
     label {
-        color:lightgray;
+        color:#808080;
+		font-size:0.5em;
     }
+	.lt-ie9 label {
+		padding:5px;
+	}
 
 	#dataTable th, #dataTable td {
        overflow: hidden;
@@ -961,11 +1065,6 @@ font-size:medium!important;
 		overflow-y:scroll !important;
 		font-size:0.5em;
 		resize:vertical !important;
-	}
-
-	.compSaved {
-		background-color: #0063FF !important;
-        color: White;
 	}
 
 	.filter-panel {
@@ -1051,5 +1150,63 @@ font-size:medium!important;
         color:red;
     }
 
+	td.nValue {
+		font-style:italic;
+		background-color:lightgray;
+	}
+	.compSaved {
+		background-color: #0063FF !important;
+        color: White;
+	}
+
+	.menu-dropdown {
+        background-color: rgb(2, 69, 137);
+        border: 0px 2px 2px 0px;
+		position: absolute;
+    }
+    .menu-title {
+        color:white;
+        font-size:0.75em;
+    }
+    .menu-dropdown-button {
+        padding: 5px;
+        color:white;
+        font-size:0.4em !important;
+    }
+
+    .menu-button-pressed {
+        background-color: rgb(2, 69, 137);
+    }
+
+    .menu-bar {
+        background-color:#0061a7;
+        border-bottom:2px solid rgb(0,51,102);
+        border-top:1px solid black;
+        padding-left: 17px;
+        line-height:30px;
+    }
+
+		.menu-bar > div {
+			max-width:100% !important;
+		}
+
+	.menu-button {
+        color:white;
+        display:inline;
+        font-size:medium;
+        margin:0px 3px;
+        padding: 3px;
+		float:left;
+    }
+
+
+    .menu-refresh {
+        float:right;
+    }
+	    .menu-hover:hover {
+        background-color:#ff6a00;
+    }
+    .menu-hover:active {
+        background-color:red;
     }
 </style>
