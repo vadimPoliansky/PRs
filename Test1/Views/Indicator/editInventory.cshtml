@@ -81,7 +81,7 @@
 				drg_w = $drag.outerWidth(),
 				pos_y = $drag.offset().top + drg_h - e.pageY,
 				pos_x = $drag.offset().left + drg_w - e.pageX;
-			$drag.css('z-index', 1110).parents().on("mousemove", function(e) {
+			$drag.css('z-index', 1000).parents().on("mousemove", function(e) {
 				$('.draggable').offset({
 					top:e.pageY + pos_y - drg_h,
 					left:e.pageX + pos_x - drg_w
@@ -340,7 +340,7 @@
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 150, 111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,200,200,200,111,111,111];
+	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100];
 	    var changesOld = [];
 
 		$IndInv .handsontable({
@@ -1000,7 +1000,7 @@
         var updateColumns = function(table, columns, colHeaders, colWidths){
 		    table.updateSettings({
 		        strechH: 'last',
-		        colWidths: colWidths,//[50, 250, 150, 111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,111,500,500,500,111,111,111,111,111,111,111],
+		        colWidths: colWidths,//[50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100],
 		        colHeaders: colHeaders,
 		        columns: columns
 		    });
@@ -1152,7 +1152,7 @@ font-size:medium!important;
         overflow-y:scroll;
         overflow-x:hidden;
 		float:left;
-		width:111%;
+		width:100%;
     }
     .filter-item-title {
         font-weight:bold;
@@ -1161,7 +1161,7 @@ font-size:medium!important;
     .filter-item {
         font-size:small;
         display:block;
-        width:111% !important;
+        width:100% !important;
         text-align:left !important;
         padding:5px;
     }
@@ -1230,7 +1230,7 @@ font-size:medium!important;
     }
 
 		.menu-bar > div {
-			max-width:111% !important;
+			max-width:100% !important;
 		}
 
 	.menu-button {
@@ -1264,9 +1264,9 @@ font-size:medium!important;
         left: 0;
         right: 0;
         height: 42px;
-        z-index:111;
+        z-index:100;
         text-align:right;
-		width:111%;
+		width:100%;
 		margin:-18px;
 }
     .calc-title, .calc {
