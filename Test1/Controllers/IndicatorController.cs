@@ -1106,12 +1106,14 @@ namespace IndInv.Controllers
         public JsonResult addNValues(Int16 indicatorID, Int16 fiscalYear)
         {
             var indicatorNValue = db.Indicators.FirstOrDefault(x => x.Indicator_N_Value == true && x.Indicator_N_Value_ID == indicatorID);
+			var title = "N-Values: " + db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID).Indicator;
             if (indicatorNValue == null)
             {
                 indicatorNValue = new Indicators()
                 {
                     Indicator_N_Value = true,
-                    Indicator_N_Value_ID = indicatorID
+                    Indicator_N_Value_ID = indicatorID,
+					Indicator = title
                 };
                 db.Indicators.Add(indicatorNValue);
                 db.SaveChanges();

@@ -55,6 +55,10 @@
 	</div>
 </div>
 
+<div class="footer">
+                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+</div>
+
 <script type="text/javascript">
 
 	$.fn.drags = function(opt) {
@@ -371,7 +375,7 @@
 				if (maxed && availableHeight === void 0) {
 					calculateSize();
 				}
-				return maxed  ?  availableHeight*0.95: 300;
+				return maxed  ?  availableHeight*0.93: 300;
 			},
 			fixedRowsTop: 0,
 			fixedColumnsLeft: 2,
@@ -382,7 +386,7 @@
 			colHeaders: colHeadersOrg,
 			columns: columnsOrg,
             colWidths : colWidthsOrg,
-			afterChange: function (change, source) {
+            afterChange: function (change, source) {
 				if (source === 'loadData') {
 					return;
 				} else {
@@ -390,6 +394,37 @@
 						updateIndicator(change, i);
 					}
 				}
+			},
+            afterSelection: function(r,c,r2,c2){
+            	selectedSum =0;
+            	selectedAverage =0;
+            	selectedN =0;
+            	selectedDec =0;
+            	var cells = $IndInv.handsontable("getData",r,c,r2,c2);
+            	$.each(cells,function(index,row){
+            		$.each(row,function(index,cell){
+            			var numRaw = cell; //$IndInv.handsontable("getDataAtCell",row,col);
+            			if (numRaw !== null){
+            				var num = parseFloat(numRaw.replace('$','').replace(/[^\d\.\-]/g, ""));
+            				if (!isNaN(num)){
+            					selectedN +=1
+            					selectedSum += num;
+            					selectedAverage = selectedSum / selectedN;
+            					if (num.countDecimals() > selectedDec){
+            						selectedDec = num.countDecimals();
+            					}
+            				}
+            			}
+            		});
+            	});
+            	calcRefresh();
+            },
+			afterDeselect: function(){
+				selectedSum =0;
+				selectedAverage =0;
+				selectedN =0;
+				selectedDec =0;
+				calcRefresh();
 			},
 			afterChange: function (change, source) {
 			    if (source === 'loadData' || source === 'set' || change === null) {
@@ -414,6 +449,20 @@
 				deleteIndicator(index);
 			}
 		});
+
+		Number.prototype.countDecimals = function () {
+			if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+			return this.toString().split(".")[1].length || 0; 
+		}
+		var selectedSum =0;
+		var selectedAverage =0;
+		var selectedN =0;
+		var selectedDec =0;
+		calcRefresh = function(){
+			$('.calc-sum').html(selectedSum.toFixed(selectedDec));
+			$('.calc-avg').html(selectedAverage.toFixed(selectedDec));
+			$('.calc-n').html(selectedN);
+		};
 
 		maxed = !maxed;
 		$IndInv.handsontable('render');
@@ -440,7 +489,6 @@
 		        var isString = isNaN(parseInt(changedValue.replace('$','')));
 		        if (!isString){
 		        	if (formatStr !== null && formatStr !== ""){
-		        		console.log(formatStr);
 		                changedValue = numeral(changedValue).format(formatStr);
 		            }
 		        }
@@ -555,6 +603,7 @@
 		var selectedCellsRange;
 		$(document.body).on("contextmenu:focus", ".context-menu-item", function(e){ 
 			selectedCellsRange = $IndInv.handsontable("getSelected");
+			console.log(selectedCellsRange);
 		});
 
 		var selectHeader = $('table > thead').selectable({
@@ -921,6 +970,9 @@
 				});*@
 				$IndInv.handsontable("setDataAtRowProp",row + 1,"Indicator_ID",indicatorID_N,"set");
 				$IndInv.handsontable("setDataAtRowProp",row + 1,"N_Value",true,"set");
+
+				var orgTitle = $IndInv.handsontable("getDataAtRowProp",row,"Indicator");
+				$IndInv.handsontable("setDataAtRowProp",row + 1,"Indicator","N-Values: " + orgTitle,"set");
     		});
 		}
 		removeNValues = function(row, indicatorID){
@@ -1152,7 +1204,7 @@ font-size:medium!important;
 
 	td.nValue {
 		font-style:italic;
-		background-color:lightgray;
+		background-color:#E6E6E6;
 	}
 	.compSaved {
 		background-color: #0063FF !important;
@@ -1208,5 +1260,29 @@ font-size:medium!important;
     }
     .menu-hover:active {
         background-color:red;
+    }
+
+	    .footer {
+        background-color:#0061a7;
+        border-bottom:2px solid rgb(0,51,102);
+        border-top:1px solid black;
+        padding-left: 17px;
+        line-height:7px;
+        position: fixed; 
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 42px;
+        z-index:100;
+        text-align:right;
+		width:100%;
+		margin:-18px;
+}
+    .calc-title, .calc {
+        color:white;
+        display:inline;
+        font-size:small;
+        margin:0px 3px;
+        padding: 3px;
     }
 </style>

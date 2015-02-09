@@ -835,7 +835,6 @@
     		    obj.attr('class', $.trim(classes.join(" ")));
     		    $(obj).addClass(color);
     		    var oldColorID = $(obj).closest('tr').attr('colorID');
-    		    console.log(oldColorID);
     		    if (oldColorID !== 3){
     		        changeColorUndoable(obj, 3, oldColorID);
     		    }
@@ -866,7 +865,6 @@
             }
             var clickedRow = obj.closest( "tr" );
             var definitions = obj.closest( "table" ).hasClass("PRDef");
-            console.log(returningObj);
             var isNValue = returningObj.hasClass('prrow-isNValue');
             if (isNValue && undo){
             	$.post('addNValues', {fiscalYear: @ViewBag.fiscalYear, indicatorID: obj.attr('indicatorID')},function(data){
@@ -1191,8 +1189,6 @@
                         		var newTR = $(this).parent()
                                         .parent()
                                         .nextAll(':not(".prrow-area")').first();
-                        		console.log(index);
-                        		console.log(newTR.children().length);
                         		if (newTR.children().length + nValueColDiff - 1< index){
                         			newTR= newTR.next();
                         		}
@@ -1724,7 +1720,6 @@
                                 var obj = $(this);
                                 var colorID= @color.Color_ID;
                             	var oldColorID = $(this).closest('tr').attr('colorID');
-                            	console.log("G");
                                 changeColorUndoable(obj, colorID, oldColorID);
                             },
                         },
