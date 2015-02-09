@@ -1769,6 +1769,21 @@ namespace IndInv.Controllers
             return View(indexViewModel);
         }
 
+		[HttpGet]
+		public JsonResult getIndicatorColor(Int16 indicatorID, Int16 fiscalYear)
+		{
+			var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+
+			var FY_Q1_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Color").GetValue(indicator, null);
+			var FY_Q2_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Color").GetValue(indicator, null);
+			var FY_Q3_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(indicator, null);
+			var FY_Q4_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(indicator, null);
+			var FY_YTD_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(indicator, null);
+
+			return Json(new {FY_Q1_Color = FY_Q1_Color, FY_Q2_Color = FY_Q2_Color, FY_Q3_Color = FY_Q3_Color, FY_Q4_Color = FY_Q4_Color, FY_YTD_Color = FY_YTD_Color}, JsonRequestBehavior.AllowGet);
+
+		}
+
         [HttpGet]
         public ActionResult getValue(Int16 indicatorID, string field, Int16 fiscalYear, bool? convertToFull)
         {

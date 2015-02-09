@@ -469,6 +469,7 @@
 		        }
 		    });
 		};
+		$.ajaxSetup({ cache: false });
 		function updateIndicator(changes){
 		    for (var i = 0; i< changes.length; ++i){
 		        var change = changes[i];
@@ -490,18 +491,20 @@
 		                updateValue: changedValue,
 		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
 		            };
+		        	$.ajaxSetup({ cache: false });
 		            $.ajax({
 		                url: this.action,
 		                type: 'POST',
 		                data: JSON.stringify(parameters),
 		                contentType: 'application/json; charset=utf-8',
 		                success: function (result) {
-		                    $.get('@Url.Action("/editInventory")', {indicatorID : $IndInv.handsontable('getDataAtCell',changedRow,0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (data) {
-		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", data[0].FY_Q1_Color, 'set');
-		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", data[0].FY_Q2_Color, 'set');
-		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", data[0].FY_Q3_Color, 'set');
-		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", data[0].FY_Q4_Color, 'set');
-		                        $IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", data[0].FY_YTD_Color, 'set');
+		                	$.get('getIndicatorColor', {indicatorID : $IndInv.handsontable('getDataAtCell',changedRow,0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
+		                		console.log(clrData.FY_Q1_Color);
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.FY_Q1_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.FY_Q2_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.FY_Q3_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.FY_Q4_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.FY_YTD_Color, 'set');
 		                    });
 		                },
 		                error: function (request){
