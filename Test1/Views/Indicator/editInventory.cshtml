@@ -244,7 +244,7 @@
 				        currCond = true;
 				    } else {
 				        for (var i=1, len=data.length; i<len; i++){
-				            var filterItem = data[i];
+				        	var filterItem = data[i].replace(/&amp;/g, '&');
 				            var field = data[0];
 				            var currValue = datasrch[row][field];
 				            if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
@@ -279,27 +279,27 @@
             "Indicator",
             "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
             "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_3",fiscalYear)" + "_Sup",
             "@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_2",fiscalYear)" + "_Sup",
             "@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_1",fiscalYear)" + "_Sup",
             "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1" + "_Sup",
             "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2" + "_Sup",
             "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3" + "_Sup",
             "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4" + "_Sup",
             "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-            "Sup",
+            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD" + "_Sup",
             "Target",
-            "Sup",
+            "Target" + "_Sup",
             "Comparator",
-            "Sup",
+            "Comparator" + "_Sup",
             "Performance_Threshold",
-            "Sup",
+            "Performance_Threshold" + "_Sup",
             "color_ID",
             "Custom_YTD",
             "Custom_Q1",
@@ -394,6 +394,7 @@
 						updateIndicator(change, i);
 					}
 				}
+				unselect();
 			},
             afterSelection: function(r,c,r2,c2){
             	selectedSum =0;
@@ -418,6 +419,7 @@
             		});
             	});
             	calcRefresh();
+            	unselect();
             },
 			afterDeselect: function(){
 				selectedSum =0;
@@ -425,6 +427,7 @@
 				selectedN =0;
 				selectedDec =0;
 				calcRefresh();
+				unselect();
 			},
 			afterChange: function (change, source) {
 			    if (source === 'loadData' || source === 'set' || change === null) {
@@ -572,10 +575,11 @@
 		    var columnsOld = [];
 		    var colWidthsOld = []
 
-		    var th = $('thead').children();
+		    //var th = $('thead').children();
 		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
 		        var currHeader = $IndInv.handsontable("getColHeader",i);
-		        var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+		    	//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+		        var colWidth = $IndInv.handsontable("getColWidth",i)
 		        if (toHideHeaders.indexOf(currHeader) === -1){
 		            columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
 		            colHeaders.push(currHeader)
@@ -603,7 +607,6 @@
 		var selectedCellsRange;
 		$(document.body).on("contextmenu:focus", ".context-menu-item", function(e){ 
 			selectedCellsRange = $IndInv.handsontable("getSelected");
-			console.log(selectedCellsRange);
 		});
 
 		var selectHeader = $('table > thead').selectable({
