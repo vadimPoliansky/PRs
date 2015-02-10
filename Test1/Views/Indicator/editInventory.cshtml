@@ -507,7 +507,6 @@
 		                contentType: 'application/json; charset=utf-8',
 		                success: function (result) {
 		                	$.get('getIndicatorColor', {indicatorID : $IndInv.handsontable('getDataAtCell',changedRow,0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
-		                		console.log(clrData.FY_Q1_Color);
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.FY_Q1_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.FY_Q2_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.FY_Q3_Color, 'set');

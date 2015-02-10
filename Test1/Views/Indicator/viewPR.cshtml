@@ -1510,7 +1510,6 @@
 
         addNewIndicatorUndoable = function(obj, indicatorID, existing){
         	if (obj.closest('tr').hasClass('prrow-hasNValue')){ obj = obj.closest('tr').next().children().first() }
-        	console.log(obj);
             addNewIndicator(obj, indicatorID);
             undoManager.add({
                 undo: function(){
