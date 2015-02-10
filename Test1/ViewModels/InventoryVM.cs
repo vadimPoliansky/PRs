@@ -31,6 +31,10 @@ namespace IndInv.Models.ViewModels
         public string FY_Target_Sup { get; set; }
         public string FY_Comparator { get; set; }
         public string FY_Comparator_Sup { get; set; }
+		public string FY_Comparator_Q1 { get; set; }
+		public string FY_Comparator_Q2 { get; set; }
+		public string FY_Comparator_Q3 { get; set; }
+		public string FY_Comparator_Q4 { get; set; }
         public string FY_Performance_Threshold { get; set; }
         public string FY_Performance_Threshold_Sup { get; set; }
 

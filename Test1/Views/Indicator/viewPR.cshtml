@@ -99,15 +99,15 @@
 						<ul id=""class="list">
 							<div class="block">
 								@{var properties = ModelMetadataProviders.Current;
-          var fiscalYear = Model.Fiscal_Year;
-          var allFields = new List<string>();
-          var allFieldClasses = new List<string>();
+								var fiscalYear = Model.Fiscal_Year;
+								var allFields = new List<string>();
+								var allFieldClasses = new List<string>();
 								}
 								@foreach (var coe in Model.allCoEs.OrderBy(x => x.CoE))
-        {
-            if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
-            {
-                var footnotes = new List<Footnotes>();
+								{
+								if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
+								{
+									var footnotes = new List<Footnotes>();
 									<fieldset class="prBlock">
 										<div class="large-10 columns" style="padding: 0">
 											<h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
@@ -118,8 +118,9 @@
 										<div class="large-1 columns" style="padding: 0">
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-PDF menu-hover'>View PDF</div>
 										</div>
-										<table id="tbl_@coe.CoE_Abbr" class="PR" border="1" style="border-collapse:collapse" runat="server" >
+										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_")" class="PR" border="1" style="border-collapse:collapse" runat="server" >
 											<tr class="prheader-1">
+												<td rowspan="2" class="prheader prheader-1 unique-id-col">#</td>
 												<td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
 												<td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
 												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
@@ -140,7 +141,7 @@
 											</tr>
 											@{var numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
-           {
+											{
 												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
 													<td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
@@ -148,93 +149,94 @@
 														@Html.DisplayFor(modelItem => area_map.Objective)
 													</td>
 												</tr>
-               string[,] oldColumns = null;
-               List<int> allColspans = new List<int>();
-               var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
-               var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
-               var allMapsWithNValues = new List<Indicator_CoE_Maps>();
-               foreach (var nValue in allNValues)
-               {
-                   var indicatorIndex = allMaps.FirstOrDefault(x => x.Indicator_ID == nValue.Indicator.Indicator_N_Value_ID);
-                   if (indicatorIndex != null)
-                   {
-                       var position = allMaps.IndexOf(indicatorIndex);
-                       allMapsWithNValues.Add(indicatorIndex);
-                       allMaps.Insert(position + 1, nValue);
-                   }
-               }
-               foreach (var map in allMaps)
-               {
-                   var indicator = map.Indicator;
-                   var indicatorType = indicator.GetType();
-                   var indicatorTitle = ""; int? number = numCount; var skip = false;
-                   if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
-                   {
-                       indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
-                       number = numCount;
-                   }
-                   else
-                   {
-                       numCount--;
-                       number = null;
-                       skip = true;
-                   }
-                   int rowSpan;
-                   var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
-                   var directionID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Direction_ID").GetValue(indicator, null);
-                   var thresholdID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Threshold_ID").GetValue(indicator, null);
-                   var formatStr = indicator.Format != null ? indicator.Format.Format_Code : "";
-                   var formatID = indicator.Format_ID != null ? indicator.Format_ID.ToString() : "";
-                   if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
-                   {
-                       if (allMapsWithNValues.Contains(map))
-                       {
-                           rowSpan = 2;
+			   
+												string[,] oldColumns = null;
+												List<int> allColspans = new List<int>();
+												var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
+												var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
+												var allMapsWithNValues = new List<Indicator_CoE_Maps>();
+												foreach (var nValue in allNValues)
+												{
+													var indicatorIndex = allMaps.FirstOrDefault(x => x.Indicator_ID == nValue.Indicator.Indicator_N_Value_ID);
+													if (indicatorIndex != null)
+													{
+														var position = allMaps.IndexOf(indicatorIndex);
+														allMapsWithNValues.Add(indicatorIndex);
+														allMaps.Insert(position + 1, nValue);
+													}
+												}
+												foreach (var map in allMaps)
+												{
+													var indicator = map.Indicator;
+													var indicatorType = indicator.GetType();
+													var indicatorTitle = ""; int? number = numCount; var skip = false;
+													if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+													{
+														indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+														number = numCount;
+													}
+													else
+													{
+														numCount--;
+														number = null;
+														skip = true;
+													}
+													int rowSpan;
+													var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
+													var directionID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Direction_ID").GetValue(indicator, null);
+													var thresholdID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Threshold_ID").GetValue(indicator, null);
+													var formatStr = indicator.Format != null ? indicator.Format.Format_Code : "";
+													var formatID = indicator.Format_ID != null ? indicator.Format_ID.ToString() : "";
+													
+													if (allMapsWithNValues.Contains(map) || !allNValues.Contains(map))
+													{
+														if (allMapsWithNValues.Contains(map))
+														{
+															rowSpan = 2;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                                                                   { @:footnoteID-@footnote.Footnote_ID 
+                                                            { @:footnoteID-@footnote.Footnote_ID 
 															} prrow prrow-hasNValue' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
-														}
-                       else
-                       {
-                           rowSpan = 1;
+														} else {
+															rowSpan = 1;
 															@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                                                                   { @:footnoteID-@footnote.Footnote_ID
+															{ @:footnoteID-@footnote.Footnote_ID
 															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 														}
+														
+														<td rowspan="@rowSpan" class="prtd-uid unique-id-col" mapID="@map.Map_ID" >
+															@map.Indicator_ID
+														</td>
+			   
 														<td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
-														<a class="row-up"><i class="fa fa-sort-asc"></i></a>
-														@number
-														<a class="row-down"><i class="fa fa-sort-desc"></i></a>
+															<a class="row-up"><i class="fa fa-sort-asc"></i></a>
+															@number
+															<a class="row-down"><i class="fa fa-sort-desc"></i></a>
 														</td>
+			   
 														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle
-			   											@{int j = 0;
-                   foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
-                   {
-                       if (j != 0)
-                       { Html.Raw(','); }
-															@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
-															j++;
-                                                            if (!footnotes.Contains(footnote.Footnote))
-                                                            {
-                                                                footnotes.Add(footnote.Footnote);
-                                                            }
-                   }}
-														</td>
-                   }
-                   else if (allNValues.Contains(map))
-                   {
-                       rowSpan = 0;
+			   												@{int j = 0;
+															foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+															{
+																if (j != 0)
+																{ Html.Raw(','); }
+																@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
+																j++;
+																if (!footnotes.Contains(footnote.Footnote))
+																{
+																	footnotes.Add(footnote.Footnote);
+																}
+															}}
+														</td>			   
+													} else if (allNValues.Contains(map)) {
+														rowSpan = 0;
 														@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                                                                  { @:footnoteID-@footnote.Footnote_ID
+                                                        { @:footnoteID-@footnote.Footnote_ID
 														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
+													} else {
+														rowSpan = 1;
 													}
-                   else
-                   {
-                       rowSpan = 1;
-                   }
-                   numCount++;
-                   //var format = indicator.Format.Format_Code;
-                   string[,] columns = new string[,]{
+													numCount++;
+													string[,] columns = new string[,]{
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null),
@@ -310,82 +312,86 @@
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 														rowSpan.ToString()
 													}};
-                   ViewBag.PRCols = columns;
-                   if (!skip)
-                   {
-                       oldColumns = columns;
-                   }
-                   for (int i = 0; i <= columns.GetUpperBound(0); i++)
-                   {
-                       if (!allFields.Contains(columns[i, 3]))
-                       {
-                           allFields.Add(columns[i, 3]);
-                           allFieldClasses.Add(columns[i, 2]);
-                       }
+													ViewBag.PRCols = columns;
+													if (!skip)
+													{
+														oldColumns = columns;
+													}
+													for (int i = 0; i <= columns.GetUpperBound(0); i++)
+													{
+														if (!allFields.Contains(columns[i, 3]))
+														{
+															allFields.Add(columns[i, 3]);
+															allFieldClasses.Add(columns[i, 2]);
+														}
 
-                       int colSpan = 1;
-                       if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
-                       {
-                           int k = 1;
-                           while (columns[i + k, 0] == "=")
-                           {
-                               colSpan++;
-                               k++;
-                           }
-                       }
-                       else { colSpan = 1; };
-                       allColspans.Add(colSpan);
-                       if (columns[i, 0] != "=")
-                       {
-                           var cls = columns[i, 2];
-                           if (skip) { cls = oldColumns[i, 2]; };
-                           if (allNValues.Contains(map)) { cls = "prtd"; };
-                           if (columns[i, 4] != "0")
-                           {
+														int colSpan = 1;
+														if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+														{
+															int k = 1;
+															while (columns[i + k, 0] == "=")
+															{
+																colSpan++;
+																k++;
+															}
+														}
+														else { colSpan = 1; };
+														allColspans.Add(colSpan);
+														if (columns[i, 0] != "=")
+														{
+															var cls = columns[i, 2];
+															if (skip) { cls = oldColumns[i, 2]; };
+															if (allNValues.Contains(map)) { cls = "prtd"; };
+															if (columns[i, 4] != "0")
+															{
 																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
                                                                     <input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
                                                                     <div class="tdValue">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></div>
 																</td>
-                           }
-                       }
-                       else
-                       {
-                           var cls = columns[i, 2];
-                           if (skip) { cls = oldColumns[i, 2]; };
-                           if (allNValues.Contains(map)) { cls = "prtd"; };
-                           if (columns[i, 4] != "0")
-                           {
+															}
+														}
+														else
+														{
+															var cls = columns[i, 2];
+															if (skip) { cls = oldColumns[i, 2]; };
+															if (allNValues.Contains(map)) { cls = "prtd"; };
+															if (columns[i, 4] != "0")
+															{
 																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="" oldvalue=""/>
                                                                     <input class="pr-input pr-input-sup" value="" oldvalue=""/>
                                                                     <div class="tdValue"></div>
 																</td>
-                           }
-                       }
-                   }
+															}
+														}
+													}
 												@:</tr>
-											    }
-           }
+												}
+											}
 										</table>
+
                                         <div class="row pr-footer-row">
                                             <div class="large-6 columns">
 									            <div class="footnotes">
 									                @{var l = 0;}
 									                @foreach (var footnote in footnotes)
-                         {
+													{
 										                @:@footnote.Footnote_Symbol. @footnote.Footnote  
 										                l++;
                                                         if (l % 2 == 0)
                                                         { <br />}
-                         }<br />
+													}<br />
                                                 </div>
                                             </div>
                                             <div class="large-6 columns">
-                                                <img class="pr-footer-image" src="~/Images/quaterly.png" width="8%"/><img class="pr-footer-image" src="~/Images/target.png" width="30%" /><img class="pr-footer-image" src="~/Images/na.png" width="15%"/>
+                                                <img class="pr-footer-image" src="~/Images/quaterly.png" width="8%"/>
+												<img class="pr-footer-image" src="~/Images/target.png" width="30%" />
+												<img class="pr-footer-image" src="~/Images/na.png" width="15%"/>
                                             </div>
 										<br />
                                         </div>
+
 
 										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
 											<tr class="prheader-1">
@@ -398,7 +404,7 @@
 
 											@{numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
-           {
+											{
 												<tr class="prrow prrow-area" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
 													<td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
@@ -406,43 +412,45 @@
 														@Html.DisplayFor(modelItem => area_map.Objective)
 													</td>
 												</tr>
-               string[,] oldColumns = null;
-               foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
-               {
-                   var indicatorTitle = ""; int? number = numCount; var skip = false;
-                   if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
-                   {
-                       indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
-                       number = numCount;
-                   }
-                   else
-                   {
-                       numCount--;
-                       number = null;
-                       skip = true;
-                   }
+											string[,] oldColumns = null;
+											foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+											{
+												var indicatorTitle = ""; int? number = numCount; var skip = false;
+												if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+												{
+													indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+													number = numCount;
+												}
+												else
+												{
+													numCount--;
+													number = null;
+													skip = true;
+												}
 												<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
                                                                               { @:footnoteID-@footnote.Footnote_ID 
 												} prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
+												<td class="prtd-uid unique-id-col" mapID="@map.Map_ID" >
+													@map.Indicator_ID
+												</td>
 												<td class="prtd-id-def" style="min-width: 1%;">@number</td>
 												@{numCount++;}
 												<td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
-			   									@{int j = 0;
-                 foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
-                 {
-                     if (j != 0)
-                     { Html.Raw(','); }
-													@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
-													j++;
-                                                    if (!footnotes.Contains(footnote.Footnote))
-                                                    {
-                                                        footnotes.Add(footnote.Footnote);
-                                                    }
-                 }}
+			   										@{int j = 0;
+													foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+													{
+														if (j != 0) { Html.Raw(','); }
+														@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
+														j++;
+														if (!footnotes.Contains(footnote.Footnote))
+														{
+															footnotes.Add(footnote.Footnote);
+														}
+													}}
 												</td>
 												@{var indicator = map.Indicator;
-              var indicatorType = indicator.GetType();
-              string[,] columns = new string[,]{
+												var indicatorType = indicator.GetType();
+												string[,] columns = new string[,]{
 												{
 													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
 													"", 
@@ -460,42 +468,42 @@
 													"prtdDef", 
 													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"
 												}};
-              if (!skip)
-              {
-                  oldColumns = columns;
-              }
-              ViewBag.PRColsDefs = columns;
+												if (!skip)
+												{
+													oldColumns = columns;
+												}
+												ViewBag.PRColsDefs = columns;
 												}
 												@for (int i = 0; i <= columns.GetUpperBound(0); i++)
-            {
-                int colSpan = 1;
-                if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
-                {
-                    int k = 1;
-                    while (columns[i + k, 0] == "=")
-                    {
-                        colSpan++;
-                        k++;
-                    }
-                }
-                else { colSpan = 1; };
-                if (columns[i, 0] != "=")
-                {
-                    var tdClass = columns[i, 2];
-                    if (skip) { tdClass = oldColumns[i, 2]; };
+												{
+													int colSpan = 1;
+													if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+													{
+														int k = 1;
+														while (columns[i + k, 0] == "=")
+														{
+															colSpan++;
+															k++;
+														}
+													}
+													else { colSpan = 1; };
+													if (columns[i, 0] != "=")
+													{
+														var tdClass = columns[i, 2];
+														if (skip) { tdClass = oldColumns[i, 2]; };
 															<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">
                                                                 <textarea class="pr-input pr-input-def" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])">@Html.Raw(columns[i, 0])</textarea>
                                                                 <div class="tdValue">@Html.Raw(columns[i, 0])</div>
                                                             </td>
-                }
-            }
+													}
+												}
 												</tr>
-               }
-           }
+											}
+										}
 										</table>
 									</fieldset>
-            }
-        }
+								}
+							}
 							</div>
 						</ul>
 					</div>
@@ -864,8 +872,11 @@
             	indicatorID=obj.closest("table").find(".prtd").first().closest("tr").attr("indicatorID");
             }
             var clickedRow = obj.closest( "tr" );
+            //if (clickedRow.hasClass('prrow-hasNValue')) clickedRow = clickedRow.next();
             var definitions = obj.closest( "table" ).hasClass("PRDef");
-            var isNValue = returningObj.hasClass('prrow-isNValue');
+            if (returningObj != null){
+            	var isNValue = returningObj.hasClass('prrow-isNValue');
+            }
             if (isNValue && undo){
             	$.post('addNValues', {fiscalYear: @ViewBag.fiscalYear, indicatorID: obj.attr('indicatorID')},function(data){
             		returningObj.attr('mapID',data.mapID);
@@ -875,35 +886,38 @@
             }else{
             	$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
             		@{var html = "";
-                  html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-                  html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
-                  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-                  {
-                      html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
-                      html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
-                  }}
+					  html += "<td class='prtd-uid unique-id-col'>#</td>";
+					  html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
+					  html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
+					  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+					  {
+						  html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
+						  html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
+					}}
             		@{var htmlDef = "";
-                  htmlDef += "<td></td>";
-                  htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
-                  for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
-                  {
-                      htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
-                      htmlDef += "<td field='" + ViewBag.PRColsDefs[i, 3] + "', colspan='1', class='newrow-td'>";
-                      htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
-                      htmlDef += "<div class='tdValue'></div>";
-                      htmlDef += "</td>";
-                  }}
+					  htmlDef += "<td></td>";
+					  htmlDef += "<td></td>";
+					  htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
+					  for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
+					  {
+						  htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
+						  htmlDef += "<td field='" + ViewBag.PRColsDefs[i, 3] + "', colspan='1', class='newrow-td'>";
+						  htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
+						  htmlDef += "<div class='tdValue'></div>";
+						  htmlDef += "</td>";
+					}}
             		@{var htmlExist = "";
-                  htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-                  htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
-                  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-                  {
-                      htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "'>";
-                      htmlExist += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
-                      htmlExist += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
-                      htmlExist += "<div class='tdValue'></div>";
-                      htmlExist += "</td>";
-                  }}
+				      htmlExist += "<td class='prtd-uid unique-id-col'>#</td>";
+					  htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
+					  htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
+					  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+					  {
+						  htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "'>";
+						  htmlExist += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
+						  htmlExist += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
+						  htmlExist += "<div class='tdValue'></div>";
+						  htmlExist += "</td>";
+					}}
             		htmlColumns = "@Html.Raw(html)";
             		htmlColumnsDef = "@Html.Raw(htmlDef)";
             		htmlExistColumns = "@Html.Raw(htmlExist)";
@@ -966,13 +980,13 @@
             				});
             			} else {
             				$('.new-map').remove()
-            				clickedRow.next().removeClass('newrow');
+            				//clickedRow.next().removeClass('newrow');
             			}
             			returningObj.attr('mapID',returnedData.mapID);
             			returningObj.show();
             			var tbody = obj.closest('tbody');
             			var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
-            			sortUndoable(tbody, rows, oldRows);
+            			sort(rows);
             		}
             	});
             }
@@ -984,6 +998,7 @@
             if (obj.closest( "tr" ).hasClass("prrow-isNValue")){
                 obj.closest( "tr" ).prev().children().attr('rowspan',1);
                 obj.closest( "tr" ).removeClass("prrow-isNValue");
+                obj.closest( "tr" ).prev().removeClass("prrow-hasNValue");
             }
             if (obj.closest( "tr" ).hasClass("prrow-hasNValue")){
                 obj.closest( "tr" ).next().remove();
@@ -1078,6 +1093,7 @@
                 @{var htmlNValue = "";
                   if (ViewBag.PRCols != null)
                   {
+					  htmlNValue += "<td class='unique-id-col'></td>";
                       htmlNValue += "<td></td>";
                       htmlNValue += "<td></td>";
                       for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
@@ -1493,18 +1509,17 @@
 
 
         addNewIndicatorUndoable = function(obj, indicatorID, existing){
+        	if (obj.closest('tr').hasClass('prrow-hasNValue')){ obj = obj.closest('tr').next().children().first() }
+        	console.log(obj);
             addNewIndicator(obj, indicatorID);
             undoManager.add({
                 undo: function(){
-                    if (existing){
-                        var removeObj = $('.newrow').first();
-                    } else {
-                        var removeObj = obj.closest('tr').next().first();
-                    }
+                    var removeObj = obj.closest('tr').next().first();
                     removeIndicator(removeObj, indicatorID);
                 },
                 redo: function (){
-                    addNewIndicator(obj, indicatorID);
+                	var removeObj = obj.closest('tr').next()
+                	addNewIndicator(obj, indicatorID, true, removeObj);
                 }
             });
         };
@@ -1584,8 +1599,21 @@
             },
 
             items: {
+            	"viewUID": {name: "Toggle Unique ID",
+            		callback: function(key, options){
+            			var uidCol = $('.unique-id-col');
+            			if (uidCol.first().is(':visible')) {
+            				$('.unique-id-col').hide();
+            			} else {
+							$('.unique-id-col').show();
+						}
+            		}
+            	},
+
+            	separator3: "-----",
+
                 "insB": {name: "Insert New Blank Indicator Below",
-                    callback: function(key, options){
+                	callback: function(key, options){
                         addNewIndicatorUndoable($(this), null);
                     }
                 },
@@ -1594,6 +1622,7 @@
                     callback: function(key, options){
                         var clickedObj = $(this);
                         var clickedRow = $(this).closest( "tr" );
+                        if (clickedRow.hasClass('prrow-hasNValue')) { clickedRow = clickedRow.next(); }
                         clickedRow.after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
                         var coeID = clickedRow.attr("coeID");
                         var newDiv = "<div class='add-indicator-panel'>"
@@ -2242,21 +2271,37 @@
 
 
     var oldRows;
-    var sortable = $('tbody').sortable({
-        items: "> .prrow:not(.prrow-area)",
+    var nValueRow;
+	@foreach (var coe in Model.allCoEs.OrderBy(x => x.CoE))
+	{
+	<text>
+	var sortable_@Html.Raw(coe.CoE_Abbr.Replace(" ","_")) = $('#tbl_@Html.Raw(coe.CoE_Abbr.Replace(" ","_")) > tbody').sortable({
+        items: "> tr.prrow:not(.prrow-area)",
         handle: ".prtd-id",
 		
         start: function(event, ui){
-            var tbody = $(this);
+        	var tbody = $(this);
+        	var row = $(ui.item);
+        	nValueRow = null;
+        	var hasNValue = row.hasClass('prrow-hasNValue');
+        	if(hasNValue){
+        		nValueRow = row.next().next();
+        	}
             oldRows = tbody.find("> tr:not(.ui-sortable-placeholder)");
         },
 
-        stop: function(event, io){
+        stop: function(event, ui){
+        	var row = $(ui.item);
+        	if (nValueRow !== null){
+        		nValueRow.insertAfter(row);
+        	}
             var tbody = $(this);
             var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
             sortUndoable(tbody, rows, oldRows);
         }
     });
+	</text>
+	}
 
     sort = function(rows){
         var order = [];
@@ -2444,8 +2489,19 @@
         padding: 5px;
 		width:100%;
     }
-
+	.unique-id-col {
+		display:none;
+	}
     .prtd-id {
+        font-size: 11px;
+        background-color: White;
+        text-align: center;
+        color: Black;
+        width:2%;
+        padding: 0px 2px 0px 2px;
+    }
+	.prtd-uid {
+		background-color: #cdd5d9;
         font-size: 11px;
         background-color: White;
         text-align: center;
@@ -2576,8 +2632,9 @@
     }
 
     table {
-        width:100%;
+        /*width:100%;*/
         margin:0 !important;
+		table-layout:fixed;
     }
 
     table, th, td {

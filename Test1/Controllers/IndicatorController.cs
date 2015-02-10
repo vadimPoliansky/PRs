@@ -1759,7 +1759,11 @@ namespace IndInv.Controllers
         {
             var indexViewModel = new indexViewModel()
             {
-                allIndicators = db.Indicators.Where(x => x.Indicator_CoE_Map.FirstOrDefault().CoE_ID > 10 && x.Indicator_CoE_Map.FirstOrDefault().CoE_ID < 20).ToList(),
+                allIndicators = db.Indicators.Where(x => 
+					x.Indicator_CoE_Map.FirstOrDefault().CoE_ID > 10 &&
+					x.Indicator_CoE_Map.FirstOrDefault().CoE_ID < 20 &&
+					x.Indicator_N_Value != true
+				).ToList(),
                 allAnalysts = db.Analysts.ToList(),
                 allAreas = db.Areas.Where(x => x.Area_ID == 1 || x.Area_ID == 3 || x.Area_ID == 4 || x.Area_ID == 5).ToList(),
                 allCoEs = db.CoEs.Where(x => x.CoE_ID > 10 && x.CoE_ID < 20 && x.CoE_ID != 14).ToList(),
@@ -2224,6 +2228,10 @@ namespace IndInv.Controllers
                 FY_Target_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Sup").GetValue(x, null),
                 FY_Comparator = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator").GetValue(x, null),
                 FY_Comparator_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Sup").GetValue(x, null),
+				FY_Comparator_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q1").GetValue(x, null),
+				FY_Comparator_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q2").GetValue(x, null),
+				FY_Comparator_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q3").GetValue(x, null),
+				FY_Comparator_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q4").GetValue(x, null),
                 FY_Performance_Threshold = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(x, null),
                 FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
@@ -2249,14 +2257,15 @@ namespace IndInv.Controllers
                 FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
                 Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
-				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.HasValue : false,
+				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
 				N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
 
                 Fiscal_Year = fiscalYear,
 
             }).ToList();
 
-			var viewModelNValues = viewModelItems.Where(x => x.Indicator_N_Value == true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
+			ModelState.Clear();
+			var viewModelNValues = db.Indicators.ToList().Where(x => x.Indicator_N_Value == true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
 			{
 				Indicator_ID = x.Indicator_ID,
 				Area_ID = x.Area_ID,
@@ -2284,6 +2293,10 @@ namespace IndInv.Controllers
 				FY_Target_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Sup").GetValue(x, null),
 				FY_Comparator = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator").GetValue(x, null),
 				FY_Comparator_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Sup").GetValue(x, null),
+				FY_Comparator_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q1").GetValue(x, null),
+				FY_Comparator_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q2").GetValue(x, null),
+				FY_Comparator_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q3").GetValue(x, null),
+				FY_Comparator_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q4").GetValue(x, null),
 				FY_Performance_Threshold = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(x, null),
 				FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
@@ -2309,7 +2322,7 @@ namespace IndInv.Controllers
 				FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
 				Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
-				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.HasValue : false,
+				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
 				N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
 
 				Fiscal_Year = fiscalYear,

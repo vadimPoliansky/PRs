@@ -303,6 +303,10 @@
             "Definition_Calculation",
             "Target_Rationale",
             "Comparator_Source",
+			"Comparator_Q1",
+			"Comparator_Q2",
+			"Comparator_Q3",
+			"Comparator_Q4",
             "Data_Source_MSH",
             "Data_Source_Benchmark",
             "OPEO_Lead"
@@ -336,11 +340,15 @@
             {data:"FY_Definition_Calculation", renderer:"tdRender"},
             {data:"FY_Target_Rationale", renderer:"tdRender"},
             {data:"FY_Comparator_Source", renderer:"tdRender"},
+			{data:"FY_Comparator_Q1", renderer:"compSaved"},
+			{data:"FY_Comparator_Q2", renderer:"compSaved"},
+			{data:"FY_Comparator_Q3", renderer:"compSaved"},
+			{data:"FY_Comparator_Q4", renderer:"compSaved"},
             {data:"FY_Data_Source_MSH", renderer:"tdRender"},
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,100,100,100];
+	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
 	    var changesOld = [];
 
 		$IndInv .handsontable({
@@ -787,7 +795,12 @@
 						"toQ2": {
 							name: "Q2",
 							callback: function(key,options){
-								var toSave = $(".ui-selected");
+								var toSave = [];
+								for(var r = selectedCellsRange[0], fR = selectedCellsRange[2]; r <= fR; r++){
+									for(var c = selectedCellsRange[1], fC = selectedCellsRange[3]; c <= fC; c++){
+										toSave.push($IndInv.handsontable("getCell",r,c));
+									}
+								}
 								if (toSave.length === 0){
 									toSave.push($(this));
 								}
@@ -819,7 +832,12 @@
 						"toQ3": {
 							name: "Q3",
 							callback: function(key,options){
-								var toSave = $(".ui-selected");
+								var toSave = [];
+								for(var r = selectedCellsRange[0], fR = selectedCellsRange[2]; r <= fR; r++){
+									for(var c = selectedCellsRange[1], fC = selectedCellsRange[3]; c <= fC; c++){
+										toSave.push($IndInv.handsontable("getCell",r,c));
+									}
+								}
 								if (toSave.length === 0){
 									toSave.push($(this));
 								}
@@ -851,7 +869,12 @@
 						"toQ4": {
 							name: "Q4",
 							callback: function(key,options){
-								var toSave = $(".ui-selected");
+								var toSave = [];
+								for(var r = selectedCellsRange[0], fR = selectedCellsRange[2]; r <= fR; r++){
+									for(var c = selectedCellsRange[1], fC = selectedCellsRange[3]; c <= fC; c++){
+										toSave.push($IndInv.handsontable("getCell",r,c));
+									}
+								}
 								if (toSave.length === 0){
 									toSave.push($(this));
 								}
@@ -902,6 +925,11 @@
 
 				var colComp = $IndInv.handsontable("propToCol",'FY_Comparator');
 				var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+				$IndInv.handsontable("setDataAtRowProp",
+					row,
+					"FY_Comparator_" + fieldQs[index].toString().slice(-2),
+					values[index],
+					"set");
 				if (undo !== true){
 					//$(this).first().parent().children('[field="' + fields[index] +'"]').addClass('comp-saved');
 					$IndInv.handsontable("getCellMeta",row,colComp).saved=true;
