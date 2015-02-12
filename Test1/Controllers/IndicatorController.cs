@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Text.RegularExpressions;
 using IndInv.Models;
 using IndInv.Models.ViewModels;
 using IndInv.Helpers;
@@ -1356,6 +1357,36 @@ namespace IndInv.Controllers
                 db.SaveChanges();
             }
         }
+
+		[HttpGet]
+		public ActionResult editObjectives(Int16 mapID)
+		{
+			var objectiveMap = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
+
+			var objectives = Regex.Matches(objectiveMap.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToArray();
+
+			var viewModel = objectives.Select(x => new ObjectiveViewModel
+			{
+				Map_ID = mapID,
+				Objective = x,
+			}).ToList();
+
+			return View(viewModel);
+		}
+		[HttpPost]
+		public void editObjectives(Int16 mapID, string[] objectives)
+		{
+			var objectiveString = "";
+			foreach (var obj in objectives)
+			{
+				objectiveString += "[" + obj + "]";
+			}
+
+			var map = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
+			map.Objective = objectiveString;
+			db.Entry(map).State = EntityState.Modified;
+			db.SaveChanges();
+		}
 
         [HttpGet]
         public ActionResult editFootnotes(String Footnote_ID_Filter)

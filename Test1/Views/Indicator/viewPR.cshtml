@@ -25,7 +25,7 @@
         <div class="large-6 columns">
             <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
         </div>
-    </div>
+    </div>	
 </div>
 
 <div class="footer">
@@ -375,7 +375,7 @@
                                             <div class="large-6 columns">
 									            <div class="footnotes">
 									                @{var l = 0;}
-									                @foreach (var footnote in footnotes)
+									                @foreach (var footnote in footnotes.OrderBy(x=>x.Footnote_Symbol))
 													{
 										                @:@footnote.Footnote_Symbol. @footnote.Footnote  
 										                l++;

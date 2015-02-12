@@ -208,6 +208,7 @@
     </Compile>
     <Compile Include="Models\Movie.cs" />
     <Compile Include="ViewModels\AnalystVM.cs" />
+    <Compile Include="ViewModels\ObjectiveVM.cs" />
     <Compile Include="ViewModels\colorVM.cs" />
     <Compile Include="ViewModels\editVM.cs" />
     <Compile Include="ViewModels\FootnotesVM.cs" />
@@ -883,6 +884,7 @@
     <Content Include="Views\Indicator\viewPRSimple_Header.cshtml" />
     <Content Include="Views\Indicator\viewPR.cshtml" />
     <Content Include="Views\Indicator\editInventoryTD2.cshtml" />
+    <Content Include="Views\Indicator\editObjectives.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
