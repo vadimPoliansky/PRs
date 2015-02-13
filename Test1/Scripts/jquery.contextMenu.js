@@ -847,7 +847,7 @@ var // currently active contextMenu trigger
                 });
             }
         },
-        hide: function(opt, force) {
+        hide: function (opt, force) {
             var $trigger = $(this);
             if (!opt) {
                 opt = $trigger.data('contextMenu') || {};
@@ -886,8 +886,10 @@ var // currently active contextMenu trigger
             // unregister key and mouse handlers
             //$(document).off('.contextMenuAutoHide keydown.contextMenu'); // http://bugs.jquery.com/ticket/10705
             $(document).off('.contextMenuAutoHide').off('keydown.contextMenu');
+			/*ADDED: made menu hide by adding display none css rather than slow jquery hide() function*/
+            opt.$menu.css({ 'display': 'none' });
             // hide menu
-            opt.$menu && opt.$menu[opt.animation.hide](opt.animation.duration, function (){
+            /*opt.$menu && opt.$menu[opt.animation.hide](opt.animation.duration, function (){
                 // tear down dynamically built menu after animation is completed.
                 if (opt.build) {
                     opt.$menu.remove();
@@ -912,7 +914,7 @@ var // currently active contextMenu trigger
                 setTimeout(function() {
                     $trigger.trigger('contextmenu:hidden');
                 }, 10);
-            });
+            });*/
         },
         create: function(opt, root) {
             if (root === undefined) {

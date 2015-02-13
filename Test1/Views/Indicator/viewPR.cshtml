@@ -16,7 +16,7 @@
 <div class="menu-bar">
     <div class="row header-row">
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
+            <div id="menu-coe" class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
@@ -433,7 +433,7 @@
 												<td class="prtd-uid unique-id-col" mapID="@map.Map_ID" >
 													@map.Indicator_ID
 												</td>
-												<td class="prtd-id-def" style="min-width: 1%;">@number</td>
+												<td class="prtd-id-def">@number</td>
 												@{numCount++;}
 												<td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
 			   										@{int j = 0;
@@ -584,6 +584,24 @@
         currentMousePos.x = event.pageX;
         currentMousePos.y = event.pageY + $('#pushobjLazy').scrollTop();
     });
+    $.ajaxSetup({ cache: false });
+    function setSelectionRange(input, selectionStart, selectionEnd) {
+    	if (input.setSelectionRange) {
+    		input.focus();
+    		input.setSelectionRange(selectionStart, selectionEnd);
+    	}
+    	else if (input.createTextRange) {
+    		var range = input.createTextRange();
+    		range.collapse(true);
+    		range.moveEnd('character', selectionEnd);
+    		range.moveStart('character', selectionStart);
+    		range.select();
+    	}
+    }
+
+    function setCaretToPos (input, pos) {
+    	setSelectionRange(input, pos, pos);
+    }
 
     $(document).ready(function () {
 
@@ -1132,7 +1150,7 @@
             element.children('.pr-input').hide();
             element.children('.tdValue').show();
         }
-        $(document).on('dblclick','.prtd, .cssGreen, .cssRed, .cssWhite, .cssYellow, .prtdDef, .prtd-titleDef', function (e) {
+        $(document).on('dblclick','table td.prtd', function (e) {
             if (!$(e.target).hasClass('pr-input')){
                 updateVal($(this));
             }
@@ -1304,6 +1322,40 @@
         };
 
         endEdit = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
+        	var changeColour = true;
+        	if (field == '@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target")'){
+        		var firstChar = updateValue.substr(0,1);
+        		var first2Char = updateValue.substr(0,2);
+        		var obj = currentEle.parent();
+        		var directions = [];
+        		var directionIDs = [];
+        		changeColour = false;
+        		@foreach(var direction in Model.allDirections){
+				<text>
+        		directions.push('@Html.Raw(direction.Direction)');
+        		directionIDs.push('@Html.Raw(direction.Direction_ID)');
+        		</text>
+				}
+        		var directionID = 1;
+        		for(var i =0; i<directions.length; i++){
+        			if (firstChar == directions[i]){
+        				directionID = directionIDs[i];
+        			}
+        		}
+        		for(var i =0; i<directions.length; i++){
+        			if (first2Char == directions[i].replace('≤','<=').replace('≥','>=')){
+        				directionID = directionIDs[i];
+        			}
+        		}
+        		var updateValueReplace = updateValue.replace('<=','≤').replace('>=','≥');
+        		if (updateValueReplace !== updateValue){
+        			var caretPos = getInputSelection(document.activeElement).start;
+        			currentEle.val(updateValueReplace);
+        			setCaretToPos(document.activeElement, caretPos - 1);
+        			updateValue = updateValueReplace;
+        		}
+        		changeDirection(obj, directionID);
+        	}
             currentEle.attr('oldValue', updateValue);
             var isString = isNaN(parseInt(updateValue.replace('$','')));
             if (!isString){
@@ -1328,7 +1380,9 @@
     	        data: JSON.stringify(parameters),
     	        contentType: 'application/json; charset=utf-8',
     	        success: function (result) {
-    	            changeColor(colorElement, -1)
+    	        	if (changeColour === true){
+    	        		changeColor(colorElement, -1)
+    	        	}
     	        },
     	        error: function (request){
     	        }
@@ -1637,11 +1691,11 @@
                                 }
                                 newDiv += "' indicatorID=" + value.Indicator_ID + "><div class='add-indicator-item-title'>" + value.Indicator_ID + " " + value.Area + ": </div>" + value.Indicator + "</div>";
                             });
-                            newDiv += "</div></div>"
-                            newDiv += "</div>"
+                            newDiv += "</div></div>";
+                            newDiv += "</div>";
                             $('.block').after(newDiv);
-                            $('.add-indicator-panel').hide();
-                            $('.add-indicator-panel').slideDown('slow');
+                            /*$('.add-indicator-panel').hide();
+                            $('.add-indicator-panel').slideDown('slow');*/
                             $('.add-indicator-panel').css({
                                 left:  currentMousePos.x,
                                 top:   currentMousePos.y
@@ -2546,7 +2600,6 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 75px;
         padding: 0px;
         width:9%;
     }
@@ -2874,7 +2927,7 @@
     .titleColumn {
         text-align:right;
     }
-
+	
     .backToTop {
         position: fixed;
         bottom: 0px;
@@ -3075,6 +3128,10 @@
     }
 	.lt-ie9 .prBlock {
 		padding:50px !important;
+	}
+
+	body {
+		overflow:hidden !important;
 	}
 
 </style>

@@ -2,6 +2,8 @@
 @using IndInv.Models
 @using System.Globalization
 <script src="../../Scripts/jquery-1.11.0.min.js"></script>
+<script src="../../Scripts/jquery-te-1.4.0.min.js"></script>
+<link href="../../Scripts/jquery-te-1.4.0.css" rel="stylesheet" />
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
 <!--script src="~/Scripts/jquery.handsontable.full.min.js"></!--script-->
@@ -137,6 +139,26 @@
 		$(document).on('input', '#mytxtBox', function () {
 		});
 
+		function strip_tags(input, allowed) {
+			var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
+			  commentsAndPhpTags = /<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi;
+
+			// making sure the allowed arg is a string containing only tags in lowercase (<a><b><c>)
+			allowed = (((allowed || "") + "").toLowerCase().match(/<[a-z][a-z0-9]*>/g) || []).join('');
+
+			return input.replace(commentsAndPhpTags, '').replace(tags, function ($0, $1) {
+				return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+			});
+		}
+
+		function safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
+			var escaped = Handsontable.helper.stringify(value);
+			escaped = strip_tags(escaped, '<em><b><strong><a><big><div>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+			td.innerHTML = escaped;
+
+			return td;
+		}
+
 		function qcolor(instance, td, row, col, prop, value, cellProperties) {
 			switch(prop){
 				case "FY_Q1": quarter = "FY_Q1_Color"; break;
@@ -185,6 +207,7 @@
 
 		Handsontable.renderers.registerRenderer('qcolor', qcolor);
 		Handsontable.renderers.registerRenderer('compSaved', compSaved);
+		Handsontable.renderers.registerRenderer('tdRender', tdRender);
 		Handsontable.renderers.registerRenderer('tdRender', tdRender);
 
 		var maxed = false
@@ -337,7 +360,7 @@
             {data:"FY_Comparator_Sup", renderer:"tdRender"},
             {data:"FY_Performance_Threshold", renderer:"tdRender"},
             {data:"FY_Performance_Threshold_Sup", renderer:"tdRender"},
-            {data:"FY_Definition_Calculation", renderer:"tdRender"},
+            {data:"FY_Definition_Calculation", renderer:safeHtmlRenderer},
             {data:"FY_Target_Rationale", renderer:"tdRender"},
             {data:"FY_Comparator_Source", renderer:"tdRender"},
 			{data:"FY_Comparator_Q1", renderer:"compSaved"},

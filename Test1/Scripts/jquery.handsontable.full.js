@@ -2951,9 +2951,9 @@ Handsontable.TableView.prototype.maximumVisibleElementHeight = function (top) {
                   break;
 
               	case keyCodes.ARROW_RIGHT:
-                  if(that.isEditorOpened()  && !activeEditor.isWaiting()){
-                    that.closeEditorAndSaveChanges(ctrlDown);
-                  }
+              		if (that.isEditorOpened() && !activeEditor.isWaiting()) {
+              			that.closeEditorAndSaveChanges(ctrlDown);
+              		}
                   moveSelectionRight(event.shiftKey);
 
                   event.preventDefault();
@@ -4821,7 +4821,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 (function(Handsontable){
   var TextEditor = Handsontable.editors.BaseEditor.prototype.extend();
 
-  TextEditor.prototype.init = function(){
+  TextEditor.prototype.init = function () {
     this.createElements();
     this.bindEvents();
   };
@@ -4843,8 +4843,9 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
 
 
+    console.log(event.target);
     //Process only events that have been fired in the editor
-    if (event.target !== that.TEXTAREA || event.isImmediatePropagationStopped()){
+    if (event.target !== that.TEXTAREA || event.isImmediatePropagationStopped()) {
       return;
     }
 
@@ -4911,15 +4912,13 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
   };
 
-  TextEditor.prototype.open = function(){
+  TextEditor.prototype.open = function () {
     this.refreshDimensions(); //need it instantly, to prevent https://github.com/warpech/jquery-handsontable/issues/348
-
     this.instance.addHook('beforeKeyDown', onBeforeKeyDown);
   };
 
-  TextEditor.prototype.close = function(){
-    this.textareaParentStyle.display = 'none';
-
+  TextEditor.prototype.close = function () {
+  	this.textareaParentStyle.display = 'none';
     if (document.activeElement === this.TEXTAREA) {
       this.instance.listen(); //don't refocus the table if user focused some cell outside of HT on purpose
     }
@@ -4927,9 +4926,9 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
   };
 
-  TextEditor.prototype.focus = function(){
-    this.TEXTAREA.focus();
-    this.wtDom.setCaretPosition(this.TEXTAREA, this.TEXTAREA.value.length);
+  TextEditor.prototype.focus = function () {
+  	this.TEXTAREA.focus();
+  	this.wtDom.setCaretPosition(this.TEXTAREA, this.TEXTAREA.value.length);
   };
 
   TextEditor.prototype.createElements = function () {
@@ -4956,7 +4955,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
 
     this.instance.rootElement[0].appendChild(this.TEXTAREA_PARENT);
-
+	
     var that = this;
     Handsontable.PluginHooks.add('afterRender', function () {
       that.instance.registerTimeout('refresh_editor_dimensions', function () {
@@ -5192,7 +5191,6 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     Handsontable.editors.TextEditor.prototype.prepare.apply(this, arguments);
 
     var parent = this;
-
     var options = {
       startRows: 0,
       startCols: 0,
@@ -5279,7 +5277,6 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
   };
 
   HandsontableEditor.prototype.open = function () {
-
     this.instance.addHook('beforeKeyDown', onBeforeKeyDown);
 
     Handsontable.editors.TextEditor.prototype.open.apply(this, arguments);
@@ -5318,7 +5315,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     if (onBeginEditing && onBeginEditing() === false) {
       return;
     }
-
+    
     Handsontable.editors.TextEditor.prototype.beginEditing.apply(this, arguments);
 
   };
@@ -10762,8 +10759,8 @@ WalkontableDom.prototype.outerHeight = function (elem) {
       endPos = pos;
     }
     if (el.setSelectionRange) {
-      el.focus();
-      el.setSelectionRange(pos, endPos);
+    	el.focus();
+    	el.setSelectionRange(pos, endPos);
     }
     else if (el.createTextRange) { //IE8
       var range = el.createTextRange();
