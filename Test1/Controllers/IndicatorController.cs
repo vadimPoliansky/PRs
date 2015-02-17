@@ -1359,7 +1359,7 @@ namespace IndInv.Controllers
         }
 
 		[HttpGet]
-		public ActionResult editObjectives(Int16 mapID)
+		public JsonResult editObjectives(Int16 mapID)
 		{
 			var objectiveMap = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
 
@@ -1371,21 +1371,27 @@ namespace IndInv.Controllers
 				Objective = x,
 			}).ToList();
 
-			return View(viewModel);
+			// return View(viewModel);
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
 		}
 		[HttpPost]
-		public void editObjectives(Int16 mapID, string[] objectives)
+		public JsonResult editObjectives(Int16 mapID, string[] objectives)
 		{
 			var objectiveString = "";
 			foreach (var obj in objectives)
 			{
-				objectiveString += "[" + obj + "]";
+				if (obj != null && obj.Length > 0)
+				{
+					objectiveString += "[" + obj + "]";
+				}
 			}
 
 			var map = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
 			map.Objective = objectiveString;
 			db.Entry(map).State = EntityState.Modified;
 			db.SaveChanges();
+
+			return Json(new {objectiveString = objectiveString}, JsonRequestBehavior.AllowGet);
 		}
 
         [HttpGet]
@@ -1777,7 +1783,7 @@ namespace IndInv.Controllers
         [HttpGet]
         public ActionResult getIndicatorList()
         {
-            var viewModel = db.Indicators.OrderBy(x => x.Indicator).Select(x => new IndicatorListViewModel
+            var viewModel = db.Indicators.OrderBy(x => x.Indicator_ID).Select(x => new IndicatorListViewModel
             {
                 Indicator_ID = x.Indicator_ID,
                 Indicator = x.Indicator,
@@ -1968,31 +1974,34 @@ namespace IndInv.Controllers
             }
             else
             {
-                var footnotes = updateValueSup.Split(',');
-                foreach (var map in db.Indicator_Footnote_Maps.Where(x => x.Indicator_ID == indicatorID).ToList())
-                {
-                    db.Indicator_Footnote_Maps.Remove(map);
-                }
-                db.SaveChanges();
-                foreach (var footnote in footnotes)
-                {
-                    if (footnote != "%NULL%")
-                    {
-                        Footnotes footnoteObj = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote.Trim());
-                        if (footnoteObj != null)
-                        {
-                            Int16 footnoteID = footnoteObj.Footnote_ID;
-                            var newMap = new Indicator_Footnote_Maps
-                            {
-                                Footnote_ID = footnoteID,
-                                Indicator_ID = indicatorID,
-                                Fiscal_Year = fiscalYear,
-                            };
-                            db.Indicator_Footnote_Maps.Add(newMap);
-                            db.SaveChanges();
-                        }
-                    }
-                }
+				if (updateValueSup != null)
+				{
+					var footnotes = updateValueSup.Split(',');
+					foreach (var map in db.Indicator_Footnote_Maps.Where(x => x.Indicator_ID == indicatorID).ToList())
+					{
+						db.Indicator_Footnote_Maps.Remove(map);
+					}
+					db.SaveChanges();
+					foreach (var footnote in footnotes)
+					{
+						if (footnote != "%NULL%")
+						{
+							Footnotes footnoteObj = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote.Trim());
+							if (footnoteObj != null)
+							{
+								Int16 footnoteID = footnoteObj.Footnote_ID;
+								var newMap = new Indicator_Footnote_Maps
+								{
+									Footnote_ID = footnoteID,
+									Indicator_ID = indicatorID,
+									Fiscal_Year = fiscalYear,
+								};
+								db.Indicator_Footnote_Maps.Add(newMap);
+								db.SaveChanges();
+							}
+						}
+					}
+				}
 
             }
 

@@ -351,6 +351,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PdfSharp.dll" />
+    <Content Include="Scripts\chosen.css" />
+    <Content Include="Scripts\chosen.jquery.js" />
+    <Content Include="Scripts\chosen.jquery.min.js" />
+    <Content Include="Scripts\chosen.min.css" />
     <Content Include="Scripts\classie.js" />
     <Content Include="Scripts\colResizable-1.5.min.js" />
     <Content Include="Scripts\ColumnFilterWidgets.css" />

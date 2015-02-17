@@ -2,6 +2,7 @@
 @model IndInv.Models.ViewModels.PRViewModel
 @using IndInv.Models
 @using System.Globalization
+@using System.Text.RegularExpressions;
 
 @{
     ViewBag.Title = "Performance Reports";
@@ -97,7 +98,7 @@
 						<ul id="myTags" class="tagList">
 						</ul>
 						<ul id=""class="list">
-							<div class="block">
+							<div class="block" id="block">
 								@{var properties = ModelMetadataProviders.Current;
 								var fiscalYear = Model.Fiscal_Year;
 								var allFields = new List<string>();
@@ -146,7 +147,14 @@
 													<td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 														<br />
-														@Html.DisplayFor(modelItem => area_map.Objective)
+														<div class="objective">
+															<ul class="triple-list objective-list">
+															@{var objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToArray();
+															foreach(var objective in objectives){
+																<text><li>@Html.Raw(objective)</li></text>
+															}}
+															</ul>
+														</div>
 													</td>
 												</tr>
 			   
@@ -566,6 +574,12 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
 
+<script src="../../Scripts/jquery.handsontable.full.js"></script>
+<link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
+
+<script src="~/Scripts/chosen.jquery.js"></script>
+<link href="~/Scripts/chosen.min.css" rel="stylesheet" />
+
 <script src="~/Scripts/tag-it.min.js"></script>
 <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
 <script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
@@ -579,6 +593,15 @@
 </script>
 
 <script type="text/javascript">
+	jQuery.fn.center = function (container) {
+		this.css("position","absolute");
+		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) *0) + $(container).scrollTop() +
+													$(window).scrollTop()) + "px");
+		this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+													$(window).scrollLeft()) + "px");
+		return this;
+	}
+
     var currentMousePos = { x: -1, y: -1 };
     $(document).mousemove(function(event) {
         currentMousePos.x = event.pageX;
@@ -878,9 +901,39 @@
             })
         }
 
-        @if (ViewBag.PRCols != null)
-        {
-        <text>
+		@{var html = "";
+			html += "<td class='prtd-uid unique-id-col'>#</td>";
+			html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
+			html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
+			for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+			{
+				html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
+				html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
+		}}
+		@{var htmlDef = "";
+			htmlDef += "<td></td>";
+			htmlDef += "<td></td>";
+			htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
+			for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
+			{
+				htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
+				htmlDef += "<td field='" + ViewBag.PRColsDefs[i, 3] + "', colspan='1', class='newrow-td'>";
+				htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
+				htmlDef += "<div class='tdValue'></div>";
+				htmlDef += "</td>";
+		}}
+		@{var htmlExist = "";
+			htmlExist += "<td class='prtd-uid unique-id-col'>#</td>";
+			htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
+			htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
+			for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+			{
+				htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "'>";
+				htmlExist += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
+				htmlExist += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
+				htmlExist += "<div class='tdValue'></div>";
+				htmlExist += "</td>";
+		}}
         function addNewIndicator(obj, newIndicatorID, undo, returningObj){
             exist = (newIndicatorID !== null);
             var coeID = obj.closest( "tr" ).attr("coeID");
@@ -903,39 +956,6 @@
             	});
             }else{
             	$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
-            		@{var html = "";
-					  html += "<td class='prtd-uid unique-id-col'>#</td>";
-					  html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-					  html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
-					  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-					  {
-						  html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
-						  html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
-					}}
-            		@{var htmlDef = "";
-					  htmlDef += "<td></td>";
-					  htmlDef += "<td></td>";
-					  htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
-					  for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
-					  {
-						  htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
-						  htmlDef += "<td field='" + ViewBag.PRColsDefs[i, 3] + "', colspan='1', class='newrow-td'>";
-						  htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
-						  htmlDef += "<div class='tdValue'></div>";
-						  htmlDef += "</td>";
-					}}
-            		@{var htmlExist = "";
-				      htmlExist += "<td class='prtd-uid unique-id-col'>#</td>";
-					  htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-					  htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
-					  for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
-					  {
-						  htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "'>";
-						  htmlExist += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
-						  htmlExist += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
-						  htmlExist += "<div class='tdValue'></div>";
-						  htmlExist += "</td>";
-					}}
             		htmlColumns = "@Html.Raw(html)";
             		htmlColumnsDef = "@Html.Raw(htmlDef)";
             		htmlExistColumns = "@Html.Raw(htmlExist)";
@@ -1008,8 +1028,6 @@
             		}
             	});
             }
-        }
-        </text>
         }
 
     	function removeIndicator(obj){
@@ -1491,13 +1509,73 @@
 
 
         $(".prarea").dblclick(function (e) {
-            var mapID = e.target.attributes.getNamedItem('mapID');
+        	//var mapID = e.target.attributes.getNamedItem('mapID');
+        	var mapID = $(e.target).closest('.prarea').attr('mapID');
             var currentEle = $(this);
             e.stopPropagation();
             
-            $.get('getAreaMap', { mapID: mapID.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-    		    updateObjVal(currentEle, mapID.value, data);
-    		});
+            $.get('editObjectives', { mapID: mapID}, function (data) {
+            	var newDiv = '<div id="edit-objective-panel">';
+            	newDiv += '<div id="edit-objective-panel-header"> <i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives';
+            	newDiv += '</div>';
+				newDiv += '<div id="objectives-table">';
+            	newDiv += '</div>';
+            	newDiv += '</div>';
+            	$('#block').after(newDiv);
+
+            	$Objectives = $('#objectives-table');
+            	$Objectives.handsontable({
+            		data: data,
+            		startRows: 1,
+            		startCols: 1,
+            		colHeaders: false,
+            		width:500,
+            		strechH: 'last',
+            		strechW: 'last',
+            		columns: [{data:"Objective"},],
+            		//colHeaders: ['<i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives'],
+            		colWidths: [500],
+            		minSpareRows: 1
+            	});
+
+            	var offset = $("#block").offset();
+            	$('#edit-objective-panel').css({
+            		left:  currentMousePos.x - offset.left + $(window).scrollLeft(),
+            		top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
+            	});
+
+            	$('#edit-objectives-save').on('click',function(e){
+            		$Objectives.handsontable('destroyEditor',false);
+            		var objectives = $Objectives.handsontable('getDataAtCol',0);
+            		$.ajax({
+            			contentType: 'application/json; charset=utf-8',
+            			type:"POST",
+            			url: "editObjectives",
+            			data: JSON.stringify({mapID: mapID, objectives: objectives}),
+            			traditional: true,
+            			success: function(objectiveString){
+            				var newList = "";
+            				for(var i =0, len = objectives.length; i<len;i++){
+            					if (objectives[i] !== null && objectives[i].length > 0 ){
+            						newList += "<li>" + objectives[i] + "</li>"
+            					}
+            				}
+            				currentEle.find('.objective-list').html(newList)
+            				$('#edit-objective-panel').remove();
+            				$('#CopyPasteDiv').remove();
+            				$('#edit-objectives-save').unbind('click');
+            			}
+            		});
+            	});
+            	//$('#edit-objective-panel').drags();
+            });
+
+            $('body').unbind("click").click(function (evt) {
+            	var panel = $(evt.target).closest('#edit-objective-panel');
+            	if (panel.length === 0) {
+            		$('#edit-objective-panel').remove();
+            	}
+            });
     	});
         function updateObjVal(currentEle, mapID, value) {
             $(currentEle).html('<textarea id="newEdit" mapID ="' + mapID + 
@@ -1647,7 +1725,7 @@
         }
 
         $('#the-node').contextMenu({
-            selector: 'td', 
+        	selector: 'td:not(.htCore)', 
             callback: function(key, options) {
             },
 
@@ -1664,6 +1742,138 @@
             	},
 
             	separator3: "-----",
+
+            	"insNew": {name: "Insert Indicator Below Package Test",
+            		callback: function(key, options){
+            			var obj = $(this).closest('tr');
+            			if (obj.hasClass('prrow-hasNValue')){ obj = obj.next() }
+            			var coeID = obj.attr('coeid');
+            			var areaID = obj.attr('areaid');
+            			$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: 0}, function(returnedData){
+            				var mapID = returnedData.mapID;
+            				var indicatorID = returnedData.indicatorID;
+            				$.get('getIndicatorList', function (indicatorList) {
+            					var newDiv = "";
+            					newDiv += "<div class='add-indicator-panel' id='add-indicator-panel'>"
+            					newDiv += "<div class='add-indicator-panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
+            					newDiv += "<div class='add-indicator-panel-body'>"
+            					newDiv += "<label for='indicator-list'>Select Indicator to Link</label>"
+            					newDiv += "<select class='indicator-list' id='indicator-list'>"
+            					newDiv += "<option value='NA' indicatorid='null' class='indicator-list-item'>NA</option>"
+            					$.each(indicatorList, function(index, value){
+            						newDiv += "<option value='" +  value.Indicator +"' index='" + index +"' indicatorid='" + value.Indicator_ID + "' class='indicator-list-item'>ID:" + value.Indicator_ID + " " +  value.Indicator + "</option>"
+            					});
+            					newDiv += "</select>"
+            					newDiv += "<form class='add-indicator-panel-form'>"
+            					newDiv += "<div class='row'>"
+            					newDiv += "<div class='columns large-12'><label for='Indicator'>Title <i class='fa fa-clipboard copy-button' field='Indicator'></i></label><input type='text' id='Indicator' /></div>";
+
+            					@{var fields = "";
+								fields += "<div class='columns large-3'>";
+								fields += "<label for='color-list'>Select Color Type</label>";
+								fields += "<select class='color-list' id='color-list'>";
+								foreach(var colour in Model.allColors){
+									fields += "<option value='" + colour.Color_Type + "' colorID='" + colour.Color_ID + "' class='indicator-list-item'" + (colour.Color_ID == 1 ? "selected='selected'" : "") + ">" + colour.Color_Type + "</option>";
+								}
+            					fields += "</select>";
+								fields += "</div>";
+								
+								fields += "<div class='columns large-3'>";
+								fields += "<label for='threshold-list'>Select Color Threshold Type</label>";
+								fields += "<select class='threshold-list' id='threshold-list'>";
+								foreach (var threshold in Model.allThresholds)
+								{
+									fields += "<option value='" + threshold.Threshold + "' thresholdID='" + threshold.Threshold_ID + "' class='indicator-list-item'" + (threshold.Threshold_ID == 1 ? "selected='selected'" : "") + ">" + threshold.Threshold + "</option>";
+								}
+            					fields += "</select>";
+								fields += "</div>";
+
+								fields += "<div class='columns large-3'>";
+								fields += "<label for='direction-list'>Select Color Direction</label>";
+								fields += "<select class='direction-list' id='direction-list'>";
+								foreach (var direction in Model.allDirections)
+								{
+									fields += "<option value='" + direction.Direction_ID + "' directionID='" + direction.Direction_ID + "' class='indicator-list-item'" + (direction.Direction_ID == 4 ? "selected='selected'" : "") + ">" + direction.Direction + "</option>";
+								}
+								fields += "</select>";
+								fields += "</div>";
+								
+								fields += "<div class='columns large-3'>";
+								fields += "<label for='format-list'>Select Format Type</label>";
+								fields += "<select class='format-list' id='format-list'>";
+								foreach (var format in Model.allFormats)
+								{
+									fields += "<option value='" + format.Format_Type + "' formatID='" + format.Format_ID + "' formatStr='" + format.Format_Code +"' class='indicator-list-item'" + (format.Format_ID == 3 ? "selected='selected'" : "") + ">" + format.Format_Type + "</option>";
+								}
+								fields += "</select>";
+								fields += "</div>";
+								
+								
+								for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
+								{
+									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "'>" + ViewBag.PRCols[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "' /></div>";
+									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "_Sup'>" + ViewBag.PRCols[i, 3] + "_Sup<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "_Sup' /></div>";
+								}
+								for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
+								{
+									fields += "<div class='columns large-12'><label for='" + ViewBag.PRColsDefs[i, 3] + "'>" + ViewBag.PRColsDefs[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRColsDefs[i, 3] + "'></i></label><textarea id='" + ViewBag.PRColsDefs[i, 3] + "' /></textarea></div>";
+								}}
+            					newDiv += "@Html.Raw(fields)";
+            					newDiv += "</div>"
+            					newDiv += "</form>"
+            					newDiv += "</div>"
+            					newDiv += "</div>"
+            					newDiv += "</div>"
+            					$('#block').after(newDiv);
+            					$('#add-indicator-panel').center("#pushobjLazy");
+            					$('#indicator-list').chosen();
+
+            					$(document).on('click','.copy-button', function(e){
+            						var field = $(this).attr('field');
+            						var copyIndicatorID = $('#indicator-list').find(':selected').attr('indicatorID');
+            						$.get('getValue',{indicatorID: copyIndicatorID, field: field ,fiscalYear: @Model.Fiscal_Year}, function(result){
+            							var value = result.Value
+            							$('#' + field).val(value);
+            						});
+            					});
+
+            					$(document).on('keyup change search click','.add-indicator-panel-form input, .add-indicator-panel-form textarea',function(e){
+            						var field = $(this).attr('id');
+            						var updateValue = $(this).val();
+            						var parameters = {
+            							indicatorID: indicatorID,
+            							updateProperty: field,
+            							updateValue: updateValue,
+            							updateValueSup: null,
+            							fiscalYear: @Model.Fiscal_Year,
+            						};
+            						$.ajax({
+            							url: 'setValueOld',
+            							type: 'POST',
+            							data: JSON.stringify(parameters),
+            							contentType: 'application/json; charset=utf-8',
+            							success: function (result) {
+            							},
+            							error: function (request){
+            							}
+            						});
+            					});
+
+            					$(document).on('click','.add-indicator-panel-done', function(e){
+            						var formatID = $('#format-list').find(':selected').attr('formatID');
+            						var formatStr = $('#format-list').find(':selected').attr('formatStr');
+            						var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
+            						var directionID = $('#direction-list').find(':selected').attr('directionID');
+            						var colorID = $('#color-list').find(':selected').attr('colorID');
+            						var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + 'prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
+            						rowHtml += "@Html.Raw(htmlExist)";
+            						rowHtml +="</tr>"
+            						obj.after(rowHtml);
+            					});
+            				});
+            			});
+            		}
+            	},
 
                 "insB": {name: "Insert New Blank Indicator Below",
                 	callback: function(key, options){
@@ -1693,7 +1903,7 @@
                             });
                             newDiv += "</div></div>";
                             newDiv += "</div>";
-                            $('.block').after(newDiv);
+                            $('#block').after(newDiv);
                             /*$('.add-indicator-panel').hide();
                             $('.add-indicator-panel').slideDown('slow');*/
                             $('.add-indicator-panel').css({
@@ -2427,20 +2637,28 @@
         border: 1px solid black;
         padding: 0px;
         background-color: red;
-        height:300px;
+        height:600px;
         margin:0px;
     }
+
+	.add-indicator-panel-body {
+		overflow:scroll;
+		height:93%;
+		padding:5px;
+	}
+
     .add-indicator-panel-header {
         background-color: rgb(51,51,51);
         padding:5px;
         margin-bottom:0px;
         color:white;
     }
-        .add-indicator-panel-header::before {
+        .add-indicator-panel-done {
             float:left;
-            font-family: FontAwesome;
-            /*font-size:large;*/
+/*            font-family: FontAwesome;
+            font-size:large;
             content: "\f067";
+	*/
             color:white;
             padding-right:5px;
             padding-right:5px;
@@ -2620,11 +2838,11 @@
 
 	textarea {
         width: 100% !important;
-		height:inherit !important;
+		height:50% !important;
         box-sizing: border-box;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
-        background-color: lightgray;
+        /*background-color: lightgray;*/
     }
 
     .prtdDef {
@@ -3133,5 +3351,46 @@
 	body {
 		overflow:hidden !important;
 	}
+
+	#edit-objective-panel {
+        background-color:lightgray !important;
+        border:1px solid black;
+        padding:0;
+        margin:0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border: 1px solid black;
+        padding: 0px;
+        background-color: red;
+        margin:0px;
+	}
+		#edit-objective-panel-header {
+        background-color:white !important;
+		color:black;
+		padding:5px;
+		text-align:center;
+	}
+
+	#edit-objectives-save {
+		float:left;
+		color:red;
+	}
+
+	.objective-list {
+		font-size:1em;
+	}
+	.triple-list {
+        -moz-column-count: 3;
+        -moz-column-gap: 0px;
+        -webkit-column-count: 3;
+        -webkit-column-gap: 0px;
+        column-count: 3;
+        column-gap: 0px;
+    }
+	.triple-list > li {
+		width:95%;
+    }
+
 
 </style>
