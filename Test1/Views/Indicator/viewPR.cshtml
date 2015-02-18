@@ -119,7 +119,7 @@
 										<div class="large-1 columns" style="padding: 0">
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-PDF menu-hover'>View PDF</div>
 										</div>
-										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_").Replace("&","_")" class="PR" border="1" style="border-collapse:collapse" runat="server" >
+										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_").Replace("&","_")" class="PR" border="1" runat="server" >
 											<thead>
 											<tr class="prheader-1">
 												<th rowspan="2" class="prheader prheader-1 unique-id-col">#</th>
@@ -640,10 +640,11 @@
     $(document).ready(function () {
 
     	$('#tbl_CCU').floatThead({
-    		useAbsolutePositioning: false
-    		// absolutePositioning is better for
-    		// highly dynamic sites
-    		// (which this is not)
+    		useAbsolutePositioning: false,
+    		zIndex: 0,
+    		scrollContainer: function($table){
+    			return $table.closest("#pushobjLazy");
+    		}
     	});
 
         function getInputSelection(el) {
@@ -1537,7 +1538,7 @@
             var currentEle = $(this);
             e.stopPropagation();
             
-            $.get('editObjectives', { mapID: mapID}, function (data) {
+            $.get('editObjectives', { mapID: mapID}, function (objData) {
             	var newDiv = '<div id="edit-objective-panel">';
             	newDiv += '<div id="edit-objective-panel-header"> <i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives';
             	newDiv += '</div>';
@@ -1545,18 +1546,18 @@
             	newDiv += '</div>';
             	newDiv += '</div>';
             	$('#block').after(newDiv);
-
+            	
             	$Objectives = $('#objectives-table');
+            	
             	$Objectives.handsontable({
-            		data: data,
+            		data: objData,
             		startRows: 1,
             		startCols: 1,
             		colHeaders: false,
             		width:500,
             		strechH: 'last',
             		strechW: 'last',
-            		columns: [{data:"Objective"},],
-            		//colHeaders: ['<i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives'],
+            		columns: [{data:"Objective"}],
             		colWidths: [500],
             		minSpareRows: 1
             	});
@@ -1850,7 +1851,7 @@
             					newDiv += "</form>"
             					newDiv += "</div>"
             					newDiv += "</div>"
-            					newDiv += "</div>"
+            					console.log(newDiv);
             					$('#block').after(newDiv);
             					$('#add-indicator-panel').center("#pushobjLazy");
             					$('#indicator-list').chosen();
@@ -1879,7 +1880,6 @@
             							var valueSup = null;
             							if (forSelectBox) {
             								var selectBox = currEle.parent().next();
-            								console.log(selectBox);
             								selectBox.find('option[' + field +'id="' + value + '"]').attr('selected','selected');
             							}
             							if (field === 'Indicator') valueSup = result.Value_Sup;
@@ -1978,7 +1978,6 @@
             							changeColor(newRow, colorID);
             							changeFormat(newRow, formatID);
             							var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
-            							console.log(rows);
             							sort(rows);
             						});
             					});
@@ -3029,6 +3028,7 @@
         /*width:100%;*/
         margin:0 !important;
 		table-layout:fixed;
+		border-collapse:collapse !important;
     }
 
     table, th, td {

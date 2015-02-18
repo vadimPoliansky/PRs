@@ -351,6 +351,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PdfSharp.dll" />
+    <Content Include="Scripts\chosen-sprite.png" />
     <Content Include="Scripts\chosen.css" />
     <Content Include="Scripts\chosen.jquery.js" />
     <Content Include="Scripts\chosen.jquery.min.js" />
