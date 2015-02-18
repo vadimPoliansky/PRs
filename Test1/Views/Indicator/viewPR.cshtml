@@ -122,24 +122,24 @@
 										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_").Replace("&","_")" class="PR" border="1" runat="server" >
 											<thead>
 											<tr class="prheader-1">
-												<th rowspan="2" class="prheader prheader-1 unique-id-col">#</th>
-												<th rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
-												<th rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="col-uid prheader prheader-1 unique-id-col">#</th>
+												<th rowspan="2" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
+												<th rowspan="2" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
 												<th rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
-												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
 											</tr>
 
 											<tr class="prheader-2 prheader-Final">
-												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
-												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
-												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
-												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
-												<th rowspan="1" class="prheader prheader-2">YTD</th>
+												<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
+												<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
+												<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
+												<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
+												<th rowspan="1" class="col-td prheader prheader-2">YTD</th>
 											</tr>
 											</thead>
 											<tbody>
@@ -214,17 +214,17 @@
 															} prrow'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
 														}
 														
-														<td rowspan="@rowSpan" class="prtd-uid unique-id-col" mapID="@map.Map_ID" >
+														<td rowspan="@rowSpan" class="col-uid prtd-uid unique-id-col" mapID="@map.Map_ID" >
 															@map.Indicator_ID
 														</td>
 			   
-														<td rowspan="@rowSpan" class="prtd-id" mapID="@map.Map_ID" >                
+														<td rowspan="@rowSpan" class="col-id prtd-id" mapID="@map.Map_ID" >                
 															<a class="row-up"><i class="fa fa-sort-asc"></i></a>
 															@number
 															<a class="row-down"><i class="fa fa-sort-desc"></i></a>
 														</td>
 			   
-														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title">@indicatorTitle
+														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="col-title prtd-title">@indicatorTitle
 			   												@{int j = 0;
 															foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 															{
@@ -356,7 +356,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="prtd @Html.Raw(cls)">
+																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
                                                                     <input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
                                                                     <div class="tdValue">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></div>
@@ -370,7 +370,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="prtd @Html.Raw(cls)">
+																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="col-td prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="" oldvalue=""/>
                                                                     <input class="pr-input pr-input-sup" value="" oldvalue=""/>
                                                                     <div class="tdValue"></div>
@@ -2917,6 +2917,21 @@
 	.lt-ie9 .prtd-id {
 		width:3%;
 	}
+
+	.col-uid {
+		width:2% !important;
+	}
+	.col-id {
+		width:2% !important;
+	}
+	.col-td {
+		width:7.5% !important;
+	}
+	.col-title {
+		width:20% !important;
+	}
+
+
 
     .prtd-title {
         font-size: 11px;
