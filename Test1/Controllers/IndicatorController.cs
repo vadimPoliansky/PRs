@@ -1104,6 +1104,13 @@ namespace IndInv.Controllers
             db.SaveChanges();
         }
 
+		public void deleteIndicator(Int16 indicatorID)
+		{
+			var delIndicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+			db.Entry(delIndicator).State = EntityState.Deleted;
+			db.SaveChanges();
+		}
+
         public JsonResult addNValues(Int16 indicatorID, Int16 fiscalYear)
         {
             var indicatorNValue = db.Indicators.FirstOrDefault(x => x.Indicator_N_Value == true && x.Indicator_N_Value_ID == indicatorID);
@@ -1840,7 +1847,7 @@ namespace IndInv.Controllers
 			string value;
 			try
 			{
-				value = (string)property.GetValue(indicator, null);
+				value = property.GetValue(indicator, null).ToString();
 			}
 			catch
 			{
@@ -1953,13 +1960,41 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public JsonResult setValueOld(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear)
+		public JsonResult setValueOld(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear, bool? convertToFull)
         {
             var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
 
+			if (updateProperty == "Format_ID"){
+				string formatStr = "";
+				try
+				{
+					indicator.Format_ID = Int16.Parse(updateValue);
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+					
+				}
+				catch
+				{
+				}
+				finally
+				{
+					var format = db.Formats.FirstOrDefault(x => x.Format_ID == indicator.Format_ID);
+					if (format != null)
+					{
+						formatStr = format.Format_Code;
+					}
+				}
+				return Json(formatStr, JsonRequestBehavior.AllowGet);
+			}
+
+			if (convertToFull.HasValue && convertToFull.Value)
+			{
+				updateProperty = FiscalYear.FYStrFull(updateProperty, fiscalYear);
+			}
+
             var type = indicator.GetType();
             var property = type.GetProperty(updateProperty);
-            property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
+			property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
 
             if (updateProperty != "Indicator")
             {

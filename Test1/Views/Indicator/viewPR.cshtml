@@ -120,26 +120,29 @@
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-PDF menu-hover'>View PDF</div>
 										</div>
 										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_").Replace("&","_")" class="PR" border="1" style="border-collapse:collapse" runat="server" >
+											<thead>
 											<tr class="prheader-1">
-												<td rowspan="2" class="prheader prheader-1 unique-id-col">#</td>
-												<td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-												<td rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
-												<td rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
-												<td rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
+												<th rowspan="2" class="prheader prheader-1 unique-id-col">#</th>
+												<th rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
+												<th rowspan="2" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+												<th rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+												<th rowspan="2" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
 											</tr>
 
 											<tr class="prheader-2 prheader-Final">
-												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
-												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
-												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
-												<td rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-												<td rowspan="1" class="prheader prheader-2">YTD</td>
+												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
+												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
+												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
+												<th rowspan="1" class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
+												<th rowspan="1" class="prheader prheader-2">Yth</th>
 											</tr>
+											</thead>
+											<tbody>
 											@{var numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
@@ -240,6 +243,7 @@
 														@:<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
                                                         { @:footnoteID-@footnote.Footnote_ID
 														} prrow prrow-isNValue'areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" colorID="@colorID" directionID="@directionID" thresholdID="@thresholdID" formatStr="@formatStr" formatID="@formatID">
+														numCount--;
 													} else {
 														rowSpan = 1;
 													}
@@ -377,6 +381,7 @@
 												@:</tr>
 												}
 											}
+											</tbody>
 										</table>
 
                                         <div class="row pr-footer-row">
@@ -577,6 +582,8 @@
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.10/jquery.floatThead.min.js"></script>
+
 <script src="~/Scripts/chosen.jquery.js"></script>
 <link href="~/Scripts/chosen.min.css" rel="stylesheet" />
 
@@ -593,6 +600,10 @@
 </script>
 
 <script type="text/javascript">
+	function toTitleCase(str)
+	{
+		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+	}
 	jQuery.fn.center = function (container) {
 		this.css("position","absolute");
 		this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) *0) + $(container).scrollTop() +
@@ -627,6 +638,13 @@
     }
 
     $(document).ready(function () {
+
+    	$('#tbl_CCU').floatThead({
+    		useAbsolutePositioning: false
+    		// absolutePositioning is better for
+    		// highly dynamic sites
+    		// (which this is not)
+    	});
 
         function getInputSelection(el) {
             var start = 0, end = 0, normalizedValue, range,
@@ -801,8 +819,9 @@
                         if (value !== ""){ 
                             var isString = isNaN(parseInt(value.replace('$','')));
                             if (!isString){
-                                value = value.replace(/[^\d\.\-]/g, "");
-                                formatedValue = numeral(value).format(formatStr);
+                            	value = value.replace(/[^\d\.\-]/g, "");
+                            	if(formatStr.indexOf('%') > 0) value = value / 100;
+                            	formatedValue = numeral(value).format(formatStr);
                             }
                             cell.val(formatedValue);
                             cell.parent().children('.tdValue').html(formatedValue+ "<sup>" + cellSup.val() + "</sup>");
@@ -1045,6 +1064,10 @@
             $.post('deleteCoEMaps', { mapID : mapID});
         };
 
+    	function removeIndicatorDelete(indicatorID){
+    		$.post('deleteIndicator', { indicatorID : indicatorID });
+    	}
+
         merge = function(cells){
             var i = 0;
             $.each(cells,function(index,value){
@@ -1152,8 +1175,8 @@
 			            $(obj).attr('indicatorID', indicatorID);
 			            var field = $(obj).attr("field");
 			            $.get('getValue', { indicatorID: indicatorID, field:field, fiscalYear: '@fiscalYear' }, function(data){
-			            	var val = data.Value === null ?  "" : data.Value;
-			            	var valSup = data.Value_Sup === null ?  "" : data.Value_Sup;
+			            	var val = data.Value == null ?  "" : data.Value;
+			            	var valSup = data.Value_Sup == null ?  "" : data.Value_Sup;
 			            	$(obj).children('.tdValue').html(val+ "<sup>" + valSup + "</sup>");
 			            	$(obj).children('.pr-input-val').val(val)
 			            	$(obj).children('.pr-input-sup').val(valSup)
@@ -1377,7 +1400,7 @@
             currentEle.attr('oldValue', updateValue);
             var isString = isNaN(parseInt(updateValue.replace('$','')));
             if (!isString){
-                if (formatStr !== ""){
+            	if (formatStr !== ""){
                     updateValue = numeral(updateValue).format(formatStr);
                 }
             }
@@ -1746,7 +1769,9 @@
             	"insNew": {name: "Insert Indicator Below Package Test",
             		callback: function(key, options){
             			var obj = $(this).closest('tr');
-            			if (obj.hasClass('prrow-hasNValue')){ obj = obj.next() }
+            			var objInto = obj;
+            			if (obj.hasClass('prrow-hasNValue')){ objInto = objInto.next(); }
+            			if (obj.hasClass('prrow-isNValue')){ obj = obj.prev(); }
             			var coeID = obj.attr('coeid');
             			var areaID = obj.attr('areaid');
             			$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: 0}, function(returnedData){
@@ -1767,43 +1792,45 @@
             					newDiv += "<form class='add-indicator-panel-form'>"
             					newDiv += "<div class='row'>"
             					newDiv += "<div class='columns large-12'><label for='Indicator'>Title <i class='fa fa-clipboard copy-button' field='Indicator'></i></label><input type='text' id='Indicator' /></div>";
+            					newDiv += "<div class='columns large-6'><label for='Data_Source_MSH'>Data_Source_MSH<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_MSH'></i></label><input type='text' id='Data_Source_MSH' class='convert-to-full')'/></div>";
+            					newDiv += "<div class='columns large-6'><label for='Data_Source_Benchmark'>Data_Source_Benchmark<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_Benchmark'></i></label><input type='text' id='Data_Source_Benchmark' class='convert-to-full')'/></div>";
 
             					@{var fields = "";
 								fields += "<div class='columns large-3'>";
-								fields += "<label for='color-list'>Select Color Type</label>";
+								fields += "<label for='color-list'>Select Color Type<i class='fa fa-clipboard copy-button convert-to-full-id for-select-box' field='color'></i></label>";
 								fields += "<select class='color-list' id='color-list'>";
 								foreach(var colour in Model.allColors){
-									fields += "<option value='" + colour.Color_Type + "' colorID='" + colour.Color_ID + "' class='indicator-list-item'" + (colour.Color_ID == 1 ? "selected='selected'" : "") + ">" + colour.Color_Type + "</option>";
+									fields += "<option value='" + colour.Color_Type + "' colorID='" + colour.Color_ID + "' class='color-list-item'" + (colour.Color_ID == 1 ? "selected='selected'" : "") + ">" + colour.Color_Type + "</option>";
 								}
             					fields += "</select>";
 								fields += "</div>";
 								
 								fields += "<div class='columns large-3'>";
-								fields += "<label for='threshold-list'>Select Color Threshold Type</label>";
+								fields += "<label for='threshold-list'>Select Color Threshold Type<i class='fa fa-clipboard copy-button convert-to-full-id for-select-box' field='threshold'></i></label>";
 								fields += "<select class='threshold-list' id='threshold-list'>";
 								foreach (var threshold in Model.allThresholds)
 								{
-									fields += "<option value='" + threshold.Threshold + "' thresholdID='" + threshold.Threshold_ID + "' class='indicator-list-item'" + (threshold.Threshold_ID == 1 ? "selected='selected'" : "") + ">" + threshold.Threshold + "</option>";
+									fields += "<option value='" + threshold.Threshold + "' thresholdID='" + threshold.Threshold_ID + "' class='threshold-list-item'" + (threshold.Threshold_ID == 1 ? "selected='selected'" : "") + ">" + threshold.Threshold + "</option>";
 								}
             					fields += "</select>";
 								fields += "</div>";
 
 								fields += "<div class='columns large-3'>";
-								fields += "<label for='direction-list'>Select Color Direction</label>";
+								fields += "<label for='direction-list'>Select Color Direction<i class='fa fa-clipboard copy-button convert-to-full-id for-select-box' field='direction'></i></label>";
 								fields += "<select class='direction-list' id='direction-list'>";
 								foreach (var direction in Model.allDirections)
 								{
-									fields += "<option value='" + direction.Direction_ID + "' directionID='" + direction.Direction_ID + "' class='indicator-list-item'" + (direction.Direction_ID == 4 ? "selected='selected'" : "") + ">" + direction.Direction + "</option>";
+									fields += "<option value='" + direction.Direction_ID + "' directionID='" + direction.Direction_ID + "' class='FY_Direction_ID-list-item'" + (direction.Direction_ID == 4 ? "selected='selected'" : "") + ">" + direction.Direction + "</option>";
 								}
 								fields += "</select>";
 								fields += "</div>";
 								
 								fields += "<div class='columns large-3'>";
-								fields += "<label for='format-list'>Select Format Type</label>";
+								fields += "<label for='format-list'>Select Format Type<i class='fa fa-clipboard copy-button convert-to-full-id for-select-box' field='format'></i></label>";
 								fields += "<select class='format-list' id='format-list'>";
 								foreach (var format in Model.allFormats)
 								{
-									fields += "<option value='" + format.Format_Type + "' formatID='" + format.Format_ID + "' formatStr='" + format.Format_Code +"' class='indicator-list-item'" + (format.Format_ID == 3 ? "selected='selected'" : "") + ">" + format.Format_Type + "</option>";
+									fields += "<option value='" + format.Format_Type + "' formatID='" + format.Format_ID + "' formatStr='" + format.Format_Code + "' class='format-list-item'" + (format.Format_ID == 3 ? "selected='selected'" : "") + ">" + format.Format_Type + "</option>";
 								}
 								fields += "</select>";
 								fields += "</div>";
@@ -1828,24 +1855,75 @@
             					$('#add-indicator-panel').center("#pushobjLazy");
             					$('#indicator-list').chosen();
 
-            					$(document).on('click','.copy-button', function(e){
-            						var field = $(this).attr('field');
+            					var copying = false;
+            					$('.copy-button').on('click', function(e){
+            						copying = true;
+            						var currEle = $(this);
+            						var forSelectBox = currEle.hasClass('for-select-box');
             						var copyIndicatorID = $('#indicator-list').find(':selected').attr('indicatorID');
-            						$.get('getValue',{indicatorID: copyIndicatorID, field: field ,fiscalYear: @Model.Fiscal_Year}, function(result){
+            						var convertToFull = false;
+            						var field = currEle.attr('field');
+            						var fieldJson = field;
+            						if (currEle.hasClass('convert-to-full-id') && field !== 'format'){
+            							fieldJson = "FY_" + toTitleCase(field) + "_ID";
+            							convertToFull = true;
+            						} else if (currEle.hasClass('convert-to-full-id')) {
+            							fieldJson = toTitleCase(field) + "_ID";
+            							convertToFull = false
+            						} else if (currEle.hasClass('convert-to-full')) {
+            							fieldJson = "FY_" + field;
+            							convertToFull = true;
+            						}
+            						$.get('getValue',{indicatorID: copyIndicatorID, field: fieldJson ,fiscalYear: @Model.Fiscal_Year, convertToFull: convertToFull}, function(result){
             							var value = result.Value
+            							var valueSup = null;
+            							if (forSelectBox) {
+            								var selectBox = currEle.parent().next();
+            								console.log(selectBox);
+            								selectBox.find('option[' + field +'id="' + value + '"]').attr('selected','selected');
+            							}
+            							if (field === 'Indicator') valueSup = result.Value_Sup;
             							$('#' + field).val(value);
+            							var parameters = {
+            								indicatorID: indicatorID,
+            								updateProperty: fieldJson,
+            								updateValue: value,
+            								updateValueSup: valueSup,
+            								fiscalYear: @Model.Fiscal_Year,
+            								convertToFull: convertToFull
+										};
+            							$.ajax({
+            								url: 'setValueOld',
+            								type: 'POST',
+            								data: JSON.stringify(parameters),
+            								contentType: 'application/json; charset=utf-8',
+            								success: function (result) {
+            									copying = false;
+            								},
+            								error: function (request){
+            								}
+            							});
             						});
+
             					});
 
-            					$(document).on('keyup change search click','.add-indicator-panel-form input, .add-indicator-panel-form textarea',function(e){
+            					$('.add-indicator-panel-form input, .add-indicator-panel-form textarea').on('keyup change search click',function(e){
+            						if (copying === true) return false;
             						var field = $(this).attr('id');
+            						var fieldJson = field;
+            						var convertToFull = null;
+            						if ($(this).hasClass('convert-to-full')) {
+            							fieldJson = "FY_" + field;
+            							convertToFull = true
+            						}
             						var updateValue = $(this).val();
             						var parameters = {
             							indicatorID: indicatorID,
-            							updateProperty: field,
+            							updateProperty: fieldJson,
             							updateValue: updateValue,
             							updateValueSup: null,
             							fiscalYear: @Model.Fiscal_Year,
+            							convertToFull: convertToFull,
             						};
             						$.ajax({
             							url: 'setValueOld',
@@ -1859,16 +1937,50 @@
             						});
             					});
 
-            					$(document).on('click','.add-indicator-panel-done', function(e){
+            					$('.add-indicator-panel-close').on('click', function(e){
+            						removeIndicatorDelete(indicatorID);
+            						$('.add-indicator-panel').remove();
+            					});
+
+            					$('.add-indicator-panel-done').on('click', function(e){
             						var formatID = $('#format-list').find(':selected').attr('formatID');
             						var formatStr = $('#format-list').find(':selected').attr('formatStr');
             						var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
             						var directionID = $('#direction-list').find(':selected').attr('directionID');
             						var colorID = $('#color-list').find(':selected').attr('colorID');
-            						var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + 'prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
+            						var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + ' prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
             						rowHtml += "@Html.Raw(htmlExist)";
             						rowHtml +="</tr>"
-            						obj.after(rowHtml);
+            						objInto.after(rowHtml);
+            						var newRow = objInto.next();
+            						var newTDs = newRow.children(".newrow-td")
+            						$.when($.each(newTDs,function(index,value){
+            							var currTD = $(this);
+            							var field = currTD.attr('field');
+            							$.get('getValue',{ indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function(data){
+            								var value = data.Value == null ? "" : data.Value;
+            								var valueSup = data.Value_Sup == null ? "" : data.Value_Sup;
+            								currTD.removeClass('newrow-td');
+            								currTD.attr('indicatorID',indicatorID);
+            								if (field === 'Indicator'){
+            									currTD.html(value + "<sup>" + valueSup + "</sup>");
+            								} else {
+            									currTD.children('.tdValue').html(value + "<sup>" + valueSup + "</sup>");
+            									currTD.children('.pr-input-val').val(value);
+            									currTD.children('.pr-input-sup').val(valueSup);
+            								}
+
+            							});
+            						})).done(function(){;
+            							$('.add-indicator-panel').remove();
+            							changeDirection(newRow, directionID);
+            							changeThreshold(newRow, thresholdID);
+            							changeColor(newRow, colorID);
+            							changeFormat(newRow, formatID);
+            							var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
+            							console.log(rows);
+            							sort(rows);
+            						});
             					});
             				});
             			});
@@ -1996,6 +2108,18 @@
                             },
                         }
                     }
+                },
+
+                "foldDeleteComp": {
+                	"name": "Remove Indicator Completely (NOT UNDOABLE!)",
+                	"items": {
+                		"foldDelete": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
+                			callback: function(key, options){
+                				var indicatorID = $(this).attr('indicatorID');
+                				removeIndicatorDelete(indicatorID);
+                			},
+                		}
+                	}
                 },
 
                 separator1: "-----",
