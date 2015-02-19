@@ -4716,6 +4716,10 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this._opened = true;
     this.focus();
 
+    console.log($(this));
+    $(this.TEXTAREA).jqte();
+    this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+
     this.instance.view.render(); //only rerender the selections (FillHandle should disappear when beginediting is triggered)
   };
 
@@ -4752,7 +4756,6 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
         return;
 
       }
-
 
       var val = [
         [String.prototype.trim.call(this.getValue())] //String.prototype.trim is defined in Walkontable polyfill.js
@@ -4826,12 +4829,15 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.bindEvents();
   };
 
+	//ADDED: get jqte value
   TextEditor.prototype.getValue = function(){
-    return this.TEXTAREA.value
+  	//return this.TEXTAREA.value
+  	return $(this.TEXTAREA).find('.jqte_editor').html()
   };
-
-  TextEditor.prototype.setValue = function(newValue){
-    this.TEXTAREA.value = newValue;
+	//ADDED: set jqte value
+  TextEditor.prototype.setValue = function (newValue) {
+  	//this.TEXTAREA.value = newValue;
+  	$(this.TEXTAREA).find('.jqte_editor').html(newValue)
   };
 
   var onBeforeKeyDown =  function onBeforeKeyDown(event){
