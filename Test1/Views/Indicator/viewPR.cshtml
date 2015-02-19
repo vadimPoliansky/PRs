@@ -128,7 +128,7 @@
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
-												<th rowspan="1" colspan="5" class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
+												<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
@@ -147,7 +147,7 @@
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
 												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-													<td class="prarea" colspan='13' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+													<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 														<br />
 														<div class="objective">
@@ -642,8 +642,12 @@
     	$('#tbl_CCU').floatThead({
     		useAbsolutePositioning: false,
     		zIndex: 0,
+			debug: true,
     		scrollContainer: function($table){
     			return $table.closest("#pushobjLazy");
+    		},
+    		getSizingRow: function($table){ 
+    			return $table.find('tbody tr:not(.prrow-area):visible:first>*');
     		}
     	});
 
@@ -943,12 +947,12 @@
 				htmlDef += "</td>";
 		}}
 		@{var htmlExist = "";
-			htmlExist += "<td class='prtd-uid unique-id-col'>#</td>";
-			htmlExist += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-			htmlExist += "<td colspan='1' rowspan='1' class='newrow-td prtd-title' field='Indicator'></td>";
+			htmlExist += "<td class='col-uid prtd-uid unique-id-col'>#</td>";
+			htmlExist += "<td class='col-id prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
+			htmlExist += "<td colspan='1' rowspan='1' class='col-title newrow-td prtd-title' field='Indicator'></td>";
 			for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
 			{
-				htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd " + ViewBag.PRCols[i, 2] + "'>";
+				htmlExist += "<td align='center' field='" + ViewBag.PRCols[i, 3] + "' colspan='1', rowspan='1', class='newrow-td prtd col-td " + ViewBag.PRCols[i, 2] + "'>";
 				htmlExist += "<input class='pr-input pr-input-val' value='' oldvalue=''/>";
 				htmlExist += "<input class='pr-input pr-input-sup' value='' oldvalue=''/>";
 				htmlExist += "<div class='tdValue'></div>";
@@ -1759,14 +1763,11 @@
             	"viewUID": {name: "Toggle Unique ID",
             		callback: function(key, options){
             			var uidCol = $('.unique-id-col');
-            			var colspan = parseInt($('td.prarea').first().attr('colspan'));
-            			if (uidCol.first().is(':visible')) {
-            				$('.unique-id-col').hide();
-            				$('td.prarea').attr('colspan', colspan - 1);
+            			var isVisible = $('.unique-id-col').css('width') == '1px';
+            			if (isVisible) {
+            				$('.unique-id-col').css('width','1px');
             			} else {
-            				$('.unique-id-col').show();
-
-            				$('td.prarea').attr('colspan', colspan + 1);
+            				$('.unique-id-col').css('width','2%');
 						}
             		}
             	},
@@ -2894,9 +2895,11 @@
         padding: 5px;
 		width:100%;
     }
-	.unique-id-col {
+	/*.unique-id-col {
 		display:none;
-	}
+		width:1px !important;
+		overflow:hidden;
+	}*/
     .prtd-id {
         font-size: 11px;
         background-color: White;
@@ -2919,16 +2922,18 @@
 	}
 
 	.col-uid {
-		width:2% !important;
+		width:1px;
+		overflow:hidden;
 	}
 	.col-id {
-		width:2% !important;
+		width:2%;
 	}
 	.col-td {
-		width:7.5% !important;
+		width:8%;
 	}
+
 	.col-title {
-		width:20% !important;
+		width:15%;
 	}
 
 
@@ -3056,7 +3061,7 @@
     table {
         width:100%;
         margin:0 !important;
-		table-layout:fixed;
+		table-layout:fixed !important;
 		border-collapse:collapse !important;
     }
 
