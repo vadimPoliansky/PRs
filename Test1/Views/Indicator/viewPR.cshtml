@@ -152,10 +152,13 @@
 														<br />
 														<div class="objective">
 															<ul class="triple-list objective-list">
-															@{var objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToArray();
-															foreach(var objective in objectives){
-																<text><li>@Html.Raw(objective)</li></text>
-															}}
+															@{if (area_map.Objective != null){
+																List<string> objectives;
+																objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
+																foreach(var objective in objectives){	
+																	<text><li>@Html.Raw(objective)</li></text>
+																}}
+															}
 															</ul>
 														</div>
 													</td>
@@ -409,11 +412,12 @@
 										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
 											<thead>
 											<tr class="prheader-1">
-												<th rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
-												<th rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
-												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
-												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
-												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
+												<th rowspan="1" class="col-uid prheader prheader-1"># </th>
+												<th rowspan="1" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
+												<th rowspan="1" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+												<th rowspan="1" class="col-def prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
+												<th rowspan="1" class="col-target-rationale prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
+												<th rowspan="1" class="col-comparator-source prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
 											</tr>
 											</thead>
 
@@ -445,7 +449,7 @@
 												<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
                                                                               { @:footnoteID-@footnote.Footnote_ID 
 												} prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
-												<td class="prtd-uid unique-id-col" mapID="@map.Map_ID" >
+												<td class="prtd-uid unique-id-col col-uid" mapID="@map.Map_ID" >
 													@map.Indicator_ID
 												</td>
 												<td class="prtd-id-def">@number</td>
@@ -2941,6 +2945,15 @@
 		width:15%;
 	}
 
+	.col-def {
+		width:30%;
+	}
+	.col-target-rationale{
+		width:30%;
+	}
+	.col-comparator-source{
+		width:30%;
+	}
 
 
     .prtd-title {
