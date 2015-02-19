@@ -1794,19 +1794,28 @@
             	"setFormat": {name: "Edit Format",
             		callback:function(key, options){
             			var obj =$(this).closest('td');
-            			console.log(obj);
-            			console.log(obj.find('.tdValue'));
-            			var value = obj.find('.tdValue').html();
+            			var objTr = obj.closest('tr');
+
+            			var formatStr = objTr.attr('formatStr');
+            			var indicatorID = objTr.attr('indicatorID');
+            			var field = obj.attr('field');
+            			var oldValue = obj.find('.tdValue').html();
+
             			var newDiv = "<div id='jqte-holder'>"
-            			newDiv += "<textarea id='format-edit' value='" + value + "'>" + value + "</textarea>"
+            			newDiv += "<textarea id='format-edit' value='" + oldValue + "'>" + oldValue + "</textarea>"
             			newDiv += "</div>"
             			var doneButton = "<i id='format-edit-done' class='fa fa-check format-edit-done'></i>"
             			var newButton = $('<a class="myButton" unselectable="on" />');
             			$('#block').after(newDiv);
             			$('#format-edit').jqte();
             			$('.jqte_toolbar').append(doneButton);
-
+            			$('#format-edit-done').on('click',function(e){
+            				var value = $('#jqte-holder').find('.jqte_editor').html();
+            				endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue);
+            				$('#jqte-holder').remove();
+            			});
             			$('#jqte-holder').center("#pushobjLazy");
+
             		}
             	},
 
@@ -2801,16 +2810,12 @@
 		margin:0px;
 	}
 	#jqte-holder {
-        background-color:white !important;
-        border:1px solid black;
         padding:0;
         margin:0;
         position: absolute;
         top: 0px;
         left: 0px;
-        border: 1px solid black;
         padding: 0px;
-        background-color: red;
         margin:0px;
 	}
 	#format-edit-done {
