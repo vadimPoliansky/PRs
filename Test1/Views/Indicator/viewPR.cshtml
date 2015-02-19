@@ -588,6 +588,9 @@
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
 
+<script src="../../Scripts/jquery-te-1.4.0.min.js"></script>
+<link href="../../Scripts/jquery-te-1.4.0.css" rel="stylesheet" />
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.10/jquery.floatThead.min.js"></script>
 
 <script src="~/Scripts/chosen.jquery.js"></script>
@@ -1652,8 +1655,12 @@
     	    $('body').unbind("click")
     	};
 		
-        undoManager = new UndoManager();
-        $.ctrl = function(key, callback, args) {
+    	undoManager = new UndoManager();
+
+    	$.ctrl = function(key, callback, args) {
+    		if ($('.jqte').length > 0){
+    			return false;
+    		} 
             var isCtrl = false;
             $(document).keydown(function(e) {
                 if(!args) args=[]; // IE barks when args is null
@@ -1661,7 +1668,7 @@
                 if(e.ctrlKey) isCtrl = true;
                 if(e.keyCode == key.charCodeAt(0) && isCtrl) {
                     callback.apply(this, args);
-                    return false;
+                    //return false;
                 }
             }).keyup(function(e) {
                 if(e.ctrlKey) isCtrl = false;
@@ -1669,7 +1676,7 @@
         };
 
         $.ctrl("Z", function(){
-            undoManager.undo();
+			undoManager.undo();
         });
 
         $.ctrl("Y", function(){
@@ -1783,6 +1790,25 @@
             	},
 
             	separator3: "-----",
+
+            	"setFormat": {name: "Edit Format",
+            		callback:function(key, options){
+            			var obj =$(this).closest('td');
+            			console.log(obj);
+            			console.log(obj.find('.tdValue'));
+            			var value = obj.find('.tdValue').html();
+            			var newDiv = "<div id='jqte-holder'>"
+            			newDiv += "<textarea id='format-edit' value='" + value + "'>" + value + "</textarea>"
+            			newDiv += "</div>"
+            			var doneButton = "<i id='format-edit-done' class='fa fa-check format-edit-done'></i>"
+            			var newButton = $('<a class="myButton" unselectable="on" />');
+            			$('#block').after(newDiv);
+            			$('#format-edit').jqte();
+            			$('.jqte_toolbar').append(doneButton);
+
+            			$('#jqte-holder').center("#pushobjLazy");
+            		}
+            	},
 
             	"insNew": {name: "Insert Indicator Below Package Test",
             		callback: function(key, options){
@@ -2611,6 +2637,7 @@
     var selectedN =0;
     var selectedDec =0;
     var selectObj = $('table').selectable({
+		cancel: ".jqte",
         filter: ".prtd",
         distance: 1,
         start: function(event, ui){
@@ -2770,6 +2797,25 @@
         float:right;
     }
 
+	.jqte {
+		margin:0px;
+	}
+	#jqte-holder {
+        background-color:white !important;
+        border:1px solid black;
+        padding:0;
+        margin:0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border: 1px solid black;
+        padding: 0px;
+        background-color: red;
+        margin:0px;
+	}
+	#format-edit-done {
+		color:red;
+	}
 
     .add-indicator-panel {
         background-color:lightgray !important;
