@@ -2450,6 +2450,7 @@ Handsontable.TableView = function (instance) {
   });
 
   $documentElement.on('mousedown.' + instance.guid, function (event) {
+  	//ADDED: check mouse EVENT?
     var next = event.target;
 
     if (next !== that.wt.wtTable.spreader) { //immediate click on "spreader" means click on the right side of vertical scrollbar
@@ -4710,15 +4711,17 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
     initialValue = typeof initialValue == 'string' ? initialValue : this.originalValue;
 
+    $(this.TEXTAREA).jqte();
+    this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+
     this.setValue(Handsontable.helper.stringify(initialValue));
 
     this.open();
     this._opened = true;
     this.focus();
 
-    console.log($(this));
-    $(this.TEXTAREA).jqte();
-    this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+    //ADDED changed textarea into a jqte
+
 
     this.instance.view.render(); //only rerender the selections (FillHandle should disappear when beginediting is triggered)
   };
@@ -4838,7 +4841,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
   TextEditor.prototype.setValue = function (newValue) {
   	//this.TEXTAREA.value = newValue;
   	$(this.TEXTAREA).find('.jqte_editor').html(newValue)
-  };
+  	};
 
   var onBeforeKeyDown =  function onBeforeKeyDown(event){
 
@@ -4849,7 +4852,11 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
 
 
-    console.log(event.target);
+	//Added: stop keyboard events if jqte
+    if ($(event.target).hasClass('jqte_editor')) {
+    	event.stopImmediatePropagation();
+    	return;
+    }
     //Process only events that have been fired in the editor
     if (event.target !== that.TEXTAREA || event.isImmediatePropagationStopped()) {
       return;
@@ -4932,9 +4939,13 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.instance.removeHook('beforeKeyDown', onBeforeKeyDown);
   };
 
+	//Added: set focus for jqte, left error because works
   TextEditor.prototype.focus = function () {
-  	this.TEXTAREA.focus();
+  	$(this.TEXTAREA).find('.jqte_editor').focus();
+  	//this.TEXTAREA.focus();
+  	//$(this.TEXTAREA).find('.jqte_editor').focus();
   	this.wtDom.setCaretPosition(this.TEXTAREA, this.TEXTAREA.value.length);
+  	//this.wtDom.setCaretPosition($(this.TEXTAREA).find('.jqte_editor'), $(this.TEXTAREA).find('.jqte_editor').html().length);
   };
 
   TextEditor.prototype.createElements = function () {
