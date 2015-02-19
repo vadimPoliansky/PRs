@@ -407,13 +407,15 @@
 
 
 										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
+											<thead>
 											<tr class="prheader-1">
-												<td rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-												<td rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-												<td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
-												<td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
-												<td rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
+												<th rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
+												<th rowspan="1" class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
+												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
+												<th rowspan="1" class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
 											</tr>
+											</thead>
 
 											@{numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
@@ -639,10 +641,11 @@
 
     $(document).ready(function () {
 
-    	$('#tbl_CCU').floatThead({
+    	$('table').floatThead({
     		useAbsolutePositioning: false,
     		zIndex: 0,
-			debug: true,
+    		debug: true,
+			reflow: true,
     		scrollContainer: function($table){
     			return $table.closest("#pushobjLazy");
     		},
@@ -1762,12 +1765,15 @@
             items: {
             	"viewUID": {name: "Toggle Unique ID",
             		callback: function(key, options){
-            			var uidCol = $('.unique-id-col');
-            			var isVisible = $('.unique-id-col').css('width') == '1px';
+            			var uidCol = $('.col-uid');
+            			var colWidth = parseInt(uidCol.css('width'));
+            			var isVisible = colWidth > 10;
             			if (isVisible) {
-            				$('.unique-id-col').css('width','1px');
+            				uidCol.width('0px');
+            				$('table').floatThead('reflow');
             			} else {
-            				$('.unique-id-col').css('width','2%');
+            				uidCol.width('2%');
+            				$('table').floatThead('reflow');
 						}
             		}
             	},
@@ -2914,7 +2920,6 @@
         background-color: White;
         text-align: center;
         color: Black;
-        width:1% !important;
         padding: 0px 2px 0px 2px;
     }
 	.lt-ie9 .prtd-id {
