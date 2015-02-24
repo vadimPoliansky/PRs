@@ -425,99 +425,109 @@
 											@{numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
-												<tr class="prrow prrow-area" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-													<td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+													<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 														<br />
-														@Html.DisplayFor(modelItem => area_map.Objective)
+														<div class="objective">
+															<ul class="triple-list objective-list">
+															@{if (area_map.Objective != null){
+																List<string> objectives;
+																objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
+																foreach(var objective in objectives){	
+																	<text><li>@Html.Raw(objective)</li></text>
+																}}
+															}
+															</ul>
+														</div>
 													</td>
 												</tr>
-											string[,] oldColumns = null;
-											foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
-											{
-												var indicatorTitle = ""; int? number = numCount; var skip = false;
-												if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
-												{
-													indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
-													number = numCount;
-												}
-												else
-												{
-													numCount--;
-													number = null;
-													skip = true;
-												}
-												<tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
-                                                                              { @:footnoteID-@footnote.Footnote_ID 
-												} prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
-												<td class="prtd-uid unique-id-col col-uid" mapID="@map.Map_ID" >
-													@map.Indicator_ID
-												</td>
-												<td class="prtd-id-def">@number</td>
-												@{numCount++;}
-												<td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
-			   										@{int j = 0;
-													foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
-													{
-														if (j != 0) { Html.Raw(','); }
-														@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
-														j++;
-														if (!footnotes.Contains(footnote.Footnote))
-														{
-															footnotes.Add(footnote.Footnote);
-														}
-													}}
-												</td>
-												@{var indicator = map.Indicator;
-												var indicatorType = indicator.GetType();
-												string[,] columns = new string[,]{
-												{
-													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
-													"", 
-													"prtdDef",
-													FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation"
-												},
-												{
-													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
-													"",
-													"prtdDef", 
-													FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale"},
-												{
-													(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
-													"", 
-													"prtdDef", 
-													FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"
-												}};
-												if (!skip)
-												{
-													oldColumns = columns;
-												}
-												ViewBag.PRColsDefs = columns;
-												}
-												@for (int i = 0; i <= columns.GetUpperBound(0); i++)
-												{
-													int colSpan = 1;
-													if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
-													{
-														int k = 1;
-														while (columns[i + k, 0] == "=")
-														{
-															colSpan++;
-															k++;
-														}
-													}
-													else { colSpan = 1; };
-													if (columns[i, 0] != "=")
-													{
-														var tdClass = columns[i, 2];
-														if (skip) { tdClass = oldColumns[i, 2]; };
-															<td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">
-                                                                <textarea class="pr-input pr-input-def" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])">@Html.Raw(columns[i, 0])</textarea>
-                                                                <div class="tdValue">@Html.Raw(columns[i, 0])</div>
-                                                            </td>
-													}
-												}
-												</tr>
+											    string[,] oldColumns = null;
+											    foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+											    {
+												    var indicatorTitle = ""; int? number = numCount; var skip = false;
+												    if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+												    {
+													    indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+													    number = numCount;
+												    }
+												    else
+												    {
+													    numCount--;
+													    number = null;
+													    skip = true;
+												    }
+												    <tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
+                                                                                    { @:footnoteID-@footnote.Footnote_ID 
+												    } prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
+												    <td class="prtd-uid unique-id-col col-uid" mapID="@map.Map_ID" >
+													    @map.Indicator_ID
+												    </td>
+												    <td class="prtd-id-def">@number</td>
+												    @{numCount++;}
+												    <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
+			   										    @{int j = 0;
+													    foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
+													    {
+														    if (j != 0) { Html.Raw(','); }
+														    @:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
+														    j++;
+														    if (!footnotes.Contains(footnote.Footnote))
+														    {
+															    footnotes.Add(footnote.Footnote);
+														    }
+													    }}
+												    </td>
+												    @{var indicator = map.Indicator;
+												    var indicatorType = indicator.GetType();
+												    string[,] columns = new string[,]{
+												    {
+													    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation").GetValue(indicator,null),
+													    "", 
+													    "prtdDef",
+													    FiscalYear.FYStrFull("FY_",fiscalYear) + "Definition_Calculation"
+												    },
+												    {
+													    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
+													    "",
+													    "prtdDef", 
+													    FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale"},
+												    {
+													    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
+													    "", 
+													    "prtdDef", 
+													    FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"
+												    }};
+												    if (!skip)
+												    {
+													    oldColumns = columns;
+												    }
+												    ViewBag.PRColsDefs = columns;
+												    }
+												    @for (int i = 0; i <= columns.GetUpperBound(0); i++)
+												    {
+													    int colSpan = 1;
+													    if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
+													    {
+														    int k = 1;
+														    while (columns[i + k, 0] == "=")
+														    {
+															    colSpan++;
+															    k++;
+														    }
+													    }
+													    else { colSpan = 1; };
+													    if (columns[i, 0] != "=")
+													    {
+														    var tdClass = columns[i, 2];
+														    if (skip) { tdClass = oldColumns[i, 2]; };
+															    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">
+                                                                    <textarea class="pr-input pr-input-def" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])">@Html.Raw(columns[i, 0])</textarea>
+                                                                    <div class="tdValue">@Html.Raw(columns[i, 0])</div>
+                                                                </td>
+													    }
+												    }
+												    </tr>
 											}
 										}
 										</table>
