@@ -776,14 +776,14 @@
         });
 
         $('.toggle-def').on('click', function(e){
-        	if ($('.PR').is(':visible')){
-        		$('.PR').hide();
-        		$('.pr-footer-row').hide();
-        		$('.PRDef').show();
-        	} else {
+        	if ($('.PRDef').is(':visible')){
         		$('.PR').show();
         		$('.pr-footer-row').show();
         		$('.PRDef').hide();
+        	} else {
+        		$('.PR').hide();
+        		$('.pr-footer-row').hide();
+        		$('.PRDef').show();
         	}
         });
 
@@ -2185,7 +2185,7 @@
                     }
                 },
 
-                "foldDeleteComp": {
+               /* "foldDeleteComp": {
                 	"name": "Remove Indicator Completely (NOT UNDOABLE!)",
                 	"items": {
                 		"foldDelete": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
@@ -2195,7 +2195,7 @@
                 			},
                 		}
                 	}
-                },
+                },*/
 
                 separator1: "-----",
 
