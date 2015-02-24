@@ -30,7 +30,8 @@
 </div>
 
 <div class="footer">
-                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+		<div fiscalYear="@Model.Fiscal_Year" class='toggle-button toggle-def menu-hover'>Toggle PR/Definition View</div>
+		<div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
 <div class="container">
@@ -409,7 +410,7 @@
                                         </div>
 
 
-										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
+										<table id="tblDef" class="PRDef" border="1" style="border-collapse: collapse;" runat="server">
 											<thead>
 											<tr class="prheader-1">
 												<th rowspan="1" class="col-uid prheader prheader-1"># </th>
@@ -609,6 +610,7 @@
 </script>
 
 <script type="text/javascript">
+
 	function toTitleCase(str)
 	{
 		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -744,7 +746,7 @@
             });
         }
 		
-        $(document).on('click', '.export-Excel', function(e){
+        $('.export-Excel').on('click', function(e){
             var coeID = e.target.attributes.getNamedItem('coeID').value
             var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
             var coeIDFilter;
@@ -753,7 +755,7 @@
             }
             window.open("viewPRExcel?fiscalYear=" + fiscalYear + coeIDFilter, "Excel");
         });
-        $(document).on('click', '.export-PDF', function(e){
+        $('.export-PDF').on('click', function(e){
             var coeID = e.target.attributes.getNamedItem('coeID').value
             var fiscalYear = e.target.attributes.getNamedItem('fiscalYear').value
             var coeIDFilter;
@@ -761,6 +763,16 @@
                 coeIDFilter = "&coeID=" + coeID;
             }
             window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
+        });
+
+        $('.toggle-def').on('click', function(e){
+        	if ($('.PR').is(':visible')){
+        		$('.PR').hide();
+        		$('.PRDef').show();
+        	} else {
+        		$('.PR').show();
+        		$('.PRDef').hide();
+        	}
         });
 
         function changeDirection(obj, directionID){
@@ -1446,7 +1458,9 @@
     	    if (update){
     	        currentEle.val(updateValue);
     	    }
-    	    currentEle.parent().children('.tdValue').html(updateValue + "<sup>" + updateValueSup + "</sup>");
+    	    var valueSup = updateValueSup ? "<sup>" + (updateValueSup || "") + "</sup>" : "";
+    	    currentEle.parent().children('.tdValue').html(updateValue + valueSup);
+    	    currentEle.val(updateValue);
     	}
         /////////////////////////////////////////////////////////////
         $(document).on('dblclick','.prtd-title', function (e) {
@@ -1593,7 +1607,6 @@
             			traditional: true,
             			success: function(objectiveString){
             				var newList = "";
-            				console.log(objectives);
             				for(var i =0, len = objectives.length; i<len;i++){
             					if (objectives[i] != null && objectives[i].length > 0 ){
             						newList += "<li>" + objectives[i] + "</li>"
@@ -1614,6 +1627,7 @@
             	var panel = $(evt.target).closest('#edit-objective-panel');
             	if (panel.length === 0) {
             		$('#edit-objective-panel').remove();
+            		$('#CopyPasteDiv').remove();
             	}
             });
     	});
@@ -1781,11 +1795,10 @@
             			var isVisible = colWidth > 10;
             			if (isVisible) {
             				uidCol.width('0px');
-            				$('table').floatThead('reflow');
             			} else {
             				uidCol.width('2%');
-            				$('table').floatThead('reflow');
-						}
+            			}
+            			$('table').floatThead('reflow');
             		}
             	},
 
@@ -2720,7 +2733,7 @@
 	{
 	<text>
 	var sortable_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) = $('#tbl_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) > tbody').sortable({
-        items: "> tr.prrow:not(.prrow-area)",
+		items: "> tr.prrow:not(.prrow-area):not('.prrow-isNValue')",
         handle: ".prtd-id",
 		
         start: function(event, ui){
@@ -3619,5 +3632,13 @@
 		width:95%;
     }*/
 
+	.toggle-def {
+		float:left;
+		color:white;
+        display:inline;
+        font-size:small;
+        margin:0px 3px;
+        padding: 6px;
 
+	}
 </style>

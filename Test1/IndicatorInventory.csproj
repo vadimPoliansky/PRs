@@ -202,6 +202,7 @@
     <Compile Include="Helpers\Color.cs" />
     <Compile Include="Helpers\ExcelFunctions.cs" />
     <Compile Include="Helpers\FiscalYear.cs" />
+    <Compile Include="Helpers\Functions.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\InventoryModels.cs">
       <SubType>Code</SubType>

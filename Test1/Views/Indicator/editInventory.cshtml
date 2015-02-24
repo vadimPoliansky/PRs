@@ -300,6 +300,7 @@
         var colHeadersOrg = [
             "ID",
             "Indicator",
+			"Footnotes",
             "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
             "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
             "@FiscalYear.FYStrFull("FY_3",fiscalYear)" + "_Sup",
@@ -337,6 +338,7 @@
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
             {data:"Indicator", renderer:"tdRender"},
+			{data:"Footnote", renderer:"tdRender"},
             {data:"CoE", renderer:"tdRender"},
             {data:"FY_3", renderer:"tdRender"},
             {data:"FY_3_Sup", renderer:"tdRender"},
@@ -371,10 +373,11 @@
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
+	    var colWidthsOrg = [50, 250, 75, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
 	    var changesOld = [];
 
-		$IndInv .handsontable({
+	    $IndInv .handsontable({
+			jqte: true,
 			clickBeginsEditing : WURFL.is_mobile? true:false,
 			data: values,
 			startRows: 1,
