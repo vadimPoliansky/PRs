@@ -778,9 +778,11 @@
         $('.toggle-def').on('click', function(e){
         	if ($('.PR').is(':visible')){
         		$('.PR').hide();
+        		$('.pr-footer-row').hide();
         		$('.PRDef').show();
         	} else {
         		$('.PR').show();
+        		$('.pr-footer-row').show();
         		$('.PRDef').hide();
         	}
         });
