@@ -1377,7 +1377,7 @@
 
             var updateValue = currentEle.val();
             var isString = isNaN(parseInt(updateValue.replace('$','')));
-            if (!isString){
+            if (!isString  && !currentEle.hasClass('pr-input-def')){
                 var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
             }
 
@@ -1390,7 +1390,7 @@
         });
 
         endEditUndoable = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
-            endEdit(currentEle, currentEleSup, formatStr ,indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false);
+        	endEdit(currentEle, currentEleSup, formatStr ,indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update);
             undoManager.add({
                 undo: function(){
                     endEdit(currentEle, currentEleSup, formatStr, indicatorID, field, oldValue, oldValueSup, updateValue, updateValueSup, true);
@@ -1438,7 +1438,8 @@
         	}
             currentEle.attr('oldValue', updateValue);
             var isString = isNaN(parseInt(updateValue.replace('$','')));
-            if (!isString){
+            console.log(currentEle);
+            if (!isString && !currentEle.hasClass('pr-input-def')){
             	if (formatStr !== ""){
                     updateValue = numeral(updateValue).format(formatStr);
                 }
@@ -1472,7 +1473,6 @@
     	    }
     	    var valueSup = updateValueSup ? "<sup>" + (updateValueSup || "") + "</sup>" : "";
     	    currentEle.parent().children('.tdValue').html(updateValue + valueSup);
-    	    currentEle.val(updateValue);
     	}
         /////////////////////////////////////////////////////////////
         $(document).on('dblclick','.prtd-title', function (e) {
@@ -1836,7 +1836,7 @@
             			$('.jqte_toolbar').append(doneButton);
             			$('#format-edit-done').on('click',function(e){
             				var value = $('#jqte-holder').find('.jqte_editor').html();
-            				endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue);
+            				endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
             				$('#jqte-holder').remove();
             			});
             			$('#jqte-holder').center("#pushobjLazy");
