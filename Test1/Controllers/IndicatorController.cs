@@ -2457,34 +2457,68 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public void editInventory(Int16 indicatorID, string updateProperty, string updateValue, int fiscalYear)
+        public void editInventory(Int16 indicatorID, string updateProperty, string updateValue, Int16 fiscalYear)
         {
-            var updatePropertyFull = updateProperty;
-            if (fiscalYear != 0)
-            {
-                updatePropertyFull = FiscalYear.FYStrFull(updateProperty, fiscalYear);
-            }
+			if (updateProperty == "Footnote")
+			{
+				if (updateValue != null)
+				{
+					var footnotes = updateValue.Split(',');
+					foreach (var map in db.Indicator_Footnote_Maps.Where(x => x.Indicator_ID == indicatorID).ToList())
+					{
+						db.Indicator_Footnote_Maps.Remove(map);
+					}
+					db.SaveChanges();
+					foreach (var footnote in footnotes)
+					{
+						if (footnote != "%NULL%")
+						{
+							Footnotes footnoteObj = db.Footnotes.FirstOrDefault(x => x.Footnote_Symbol == footnote.Trim());
+							if (footnoteObj != null)
+							{
+								Int16 footnoteID = footnoteObj.Footnote_ID;
+								var newMap = new Indicator_Footnote_Maps
+								{
+									Footnote_ID = footnoteID,
+									Indicator_ID = indicatorID,
+									Fiscal_Year = fiscalYear,
+								};
+								db.Indicator_Footnote_Maps.Add(newMap);
+								db.SaveChanges();
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				var updatePropertyFull = updateProperty;
+				if (fiscalYear != 0)
+				{
+					updatePropertyFull = FiscalYear.FYStrFull(updateProperty, fiscalYear);
+				}
 
-            var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
+				var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
 
-            if (indicator == null)
-            {
-                indicator = db.Indicators.Create();
-                //indicator.Indicator_ID = updateValue;
-                db.Indicators.Add(indicator);
-                db.SaveChanges();
-            }
-            else
-            {
-                var property = indicator.GetType().GetProperty(updatePropertyFull);
-                property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
+				if (indicator == null)
+				{
+					indicator = db.Indicators.Create();
+					//indicator.Indicator_ID = updateValue;
+					db.Indicators.Add(indicator);
+					db.SaveChanges();
+				}
+				else
+				{
+					var property = indicator.GetType().GetProperty(updatePropertyFull);
+					property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
 
-                if (ModelState.IsValid)
-                {
-                    db.Entry(indicator).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
-            }
+					if (ModelState.IsValid)
+					{
+						db.Entry(indicator).State = EntityState.Modified;
+						db.SaveChanges();
+					}
+				}
+			}
             //var indicatorID = indicatorChange[0].Indicator_ID;
             //if (db.Indicators.Any(x => x.Indicator_ID == indicatorID ))
             //{

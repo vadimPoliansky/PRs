@@ -4695,7 +4695,8 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     }
   };
 
-  BaseEditor.prototype.beginEditing = function(initialValue){
+  BaseEditor.prototype.beginEditing = function (initialValue) {
+
     if (this.state != Handsontable.EditorState.VIRGIN) {
       return;
     }
@@ -4710,7 +4711,6 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.state = Handsontable.EditorState.EDITING;
 
     initialValue = typeof initialValue == 'string' ? initialValue : this.originalValue;
-
   	//ADDED: changed textarea into a jqte
     if (this.cellProperties.jqte) {
     	$(this.TEXTAREA).jqte();
@@ -4857,9 +4857,9 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     var keyCodes = Handsontable.helper.keyCode;
     var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
 
-
 	//Added: stop keyboard events if jqte
-    if ($(event.target).hasClass('jqte_editor')) {
+    if ($(event.target).hasClass('jqte_editor') && event.key != "Esc") {
+		
     	event.stopImmediatePropagation();
     	return;
     }
