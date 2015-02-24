@@ -151,14 +151,6 @@
 			});
 		}
 
-		function safeHtmlRenderer(instance, td, row, col, prop, value, cellProperties) {
-			var escaped = Handsontable.helper.stringify(value);
-			escaped = strip_tags(escaped, '<em><b><strong><a><big><div>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
-			td.innerHTML = escaped;
-
-			return td;
-		}
-
 		function qcolor(instance, td, row, col, prop, value, cellProperties) {
 			switch(prop){
 				case "FY_Q1": quarter = "FY_Q1_Color"; break;
@@ -185,6 +177,12 @@
 			if (isN === true){
 				$(td).addClass('nValue'); //add the changeInput class to the actual td
 			}
+
+			var escaped = Handsontable.helper.stringify(value);
+			escaped = strip_tags(escaped, '<em><b><strong><a><big><div><span>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+			td.innerHTML = escaped;
+
+			return td;
 		};
 
 		function compSaved(instance, td, row, col, prop, value, cellProperties) {
@@ -198,11 +196,17 @@
 			}
 		};
 		function tdRender(instance, td, row, col, prop, value, cellProperties) {
-			Handsontable.TextCell.renderer.apply(this, arguments);
+			//Handsontable.TextCell.renderer.apply(this, arguments);
 			var isN = $IndInv.handsontable("getDataAtRowProp",row, "N_Value");
 			if (isN === true){
 				$(td).addClass('nValue'); //add the changeInput class to the actual td
 			}
+
+			var escaped = Handsontable.helper.stringify(value);
+			escaped = strip_tags(escaped, '<em><b><strong><a><big><div><span>'); //be sure you only allow certain HTML tags to avoid XSS threats (you should also remove unwanted HTML attributes)
+			td.innerHTML = escaped;
+
+			return td;
 		};
 
 		Handsontable.renderers.registerRenderer('qcolor', qcolor);
@@ -360,7 +364,7 @@
             {data:"FY_Comparator_Sup", renderer:"tdRender"},
             {data:"FY_Performance_Threshold", renderer:"tdRender"},
             {data:"FY_Performance_Threshold_Sup", renderer:"tdRender"},
-            {data:"FY_Definition_Calculation", renderer:safeHtmlRenderer},
+            {data:"FY_Definition_Calculation", renderer:"tdRender"},
             {data:"FY_Target_Rationale", renderer:"tdRender"},
             {data:"FY_Comparator_Source", renderer:"tdRender"},
 			{data:"FY_Comparator_Q1", renderer:"compSaved"},

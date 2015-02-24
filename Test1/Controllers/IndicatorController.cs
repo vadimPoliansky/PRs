@@ -17,6 +17,7 @@ using System.Net;
 using System.Collections.Specialized;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System.Data.Objects.SqlClient;
 
 
 namespace IndInv.Controllers
@@ -32,6 +33,7 @@ namespace IndInv.Controllers
         [HttpGet]
         public ActionResult Index(Int16? fiscalYear)
         {
+            
             if (!fiscalYear.HasValue)
             {
                 fiscalYear = 2;
@@ -2265,7 +2267,14 @@ namespace IndInv.Controllers
             var viewModelItems = new List<Indicators>();
             if (analystID.HasValue)
             {
-                viewModelItems = db.Indicators.Where(x => x.Analyst_ID == analystID).ToList();
+                //viewModelItems = db.Indicators.Where(x => x.Analyst_ID == analystID).ToList();
+                var analystName = db.Analysts.FirstOrDefault(x=>x.Analyst_ID == analystID).First_Name;
+                viewModelItems = db.Indicators.Where(x => 
+                    x.FY_13_14_Data_Source_Benchmark.Contains(analystName) ||
+                    x.FY_13_14_Data_Source_MSH.Contains(analystName) ||
+                    x.FY_14_15_Data_Source_Benchmark.Contains(analystName) ||
+                    x.FY_14_15_Data_Source_MSH.Contains(analystName)
+                    ).ToList();
             }
             else
             {
