@@ -2730,7 +2730,7 @@
 	{
 	<text>
 	var sortable_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) = $('#tbl_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) > tbody').sortable({
-        items: "> tr.prrow:not(.prrow-area)",
+        items: "> tr.prrow:not(.prrow-area):not(.prrow-isNValue)",
         handle: ".prtd-id",
 		
         start: function(event, ui){
