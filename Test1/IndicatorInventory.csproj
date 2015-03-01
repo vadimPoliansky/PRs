@@ -202,6 +202,7 @@
     <Compile Include="Helpers\Color.cs" />
     <Compile Include="Helpers\ExcelFunctions.cs" />
     <Compile Include="Helpers\FiscalYear.cs" />
+    <Compile Include="Helpers\Functions.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\InventoryModels.cs">
       <SubType>Code</SubType>
@@ -369,6 +370,7 @@
     <Content Include="Scripts\jquery-te-1.4.0.css" />
     <Content Include="Scripts\jquery-te-1.4.0.js" />
     <Content Include="Scripts\jquery-te-1.4.0.min.js" />
+    <Content Include="Scripts\jquery-te.png" />
     <Content Include="Scripts\jquery.columnizer.js" />
     <Content Include="Scripts\jquery.fixedheadertable.css" />
     <Content Include="Scripts\jquery.fixedheadertable.min.js" />

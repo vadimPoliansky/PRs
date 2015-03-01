@@ -4695,7 +4695,8 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     }
   };
 
-  BaseEditor.prototype.beginEditing = function(initialValue){
+  BaseEditor.prototype.beginEditing = function (initialValue) {
+
     if (this.state != Handsontable.EditorState.VIRGIN) {
       return;
     }
@@ -4710,18 +4711,17 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.state = Handsontable.EditorState.EDITING;
 
     initialValue = typeof initialValue == 'string' ? initialValue : this.originalValue;
-
-    $(this.TEXTAREA).jqte();
-    this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+  	//ADDED: changed textarea into a jqte
+    if (this.cellProperties.jqte) {
+    	$(this.TEXTAREA).jqte();
+    	this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+    }
 
     this.setValue(Handsontable.helper.stringify(initialValue));
 
     this.open();
     this._opened = true;
     this.focus();
-
-    //ADDED changed textarea into a jqte
-
 
     this.instance.view.render(); //only rerender the selections (FillHandle should disappear when beginediting is triggered)
   };
@@ -4834,14 +4834,20 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
 	//ADDED: get jqte value
   TextEditor.prototype.getValue = function(){
-  	//return this.TEXTAREA.value
-  	return $(this.TEXTAREA).find('.jqte_editor').html()
+  	if ($(this.TEXTAREA).hasClass('jqte')) {
+  		return $(this.TEXTAREA).find('.jqte_editor').html()
+  	} else {
+  		return this.TEXTAREA.value
+  	}
   };
 	//ADDED: set jqte value
   TextEditor.prototype.setValue = function (newValue) {
-  	//this.TEXTAREA.value = newValue;
-  	$(this.TEXTAREA).find('.jqte_editor').html(newValue)
-  	};
+  	if ($(this.TEXTAREA).hasClass('jqte')) {
+  		$(this.TEXTAREA).find('.jqte_editor').html(newValue)
+  	} else {
+  		this.TEXTAREA.value = newValue;
+  	}
+  };
 
   var onBeforeKeyDown =  function onBeforeKeyDown(event){
 
@@ -4851,9 +4857,9 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     var keyCodes = Handsontable.helper.keyCode;
     var ctrlDown = (event.ctrlKey || event.metaKey) && !event.altKey; //catch CTRL but not right ALT (which in some systems triggers ALT+CTRL)
 
-
 	//Added: stop keyboard events if jqte
-    if ($(event.target).hasClass('jqte_editor')) {
+    if ($(event.target).hasClass('jqte_editor') && event.key != "Esc") {
+		
     	event.stopImmediatePropagation();
     	return;
     }
@@ -4941,8 +4947,11 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
 	//Added: set focus for jqte, left error because works
   TextEditor.prototype.focus = function () {
-  	$(this.TEXTAREA).find('.jqte_editor').focus();
-  	//this.TEXTAREA.focus();
+  	if ($(this.TEXTAREA).hasClass('jqte')) {
+  		$(this.TEXTAREA).find('.jqte_editor').focus();
+  	} else {
+  		this.TEXTAREA.focus();
+  	}
   	//$(this.TEXTAREA).find('.jqte_editor').focus();
   	this.wtDom.setCaretPosition(this.TEXTAREA, this.TEXTAREA.value.length);
   	//this.wtDom.setCaretPosition($(this.TEXTAREA).find('.jqte_editor'), $(this.TEXTAREA).find('.jqte_editor').html().length);

@@ -58,7 +58,8 @@
 </div>
 
 <div class="footer">
-                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
+    <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
 <script type="text/javascript">
@@ -110,7 +111,7 @@
 		currentMousePos.x = event.pageX;
 		currentMousePos.y = event.pageY + $('#pushobjLazy').scrollTop();
 	});
-
+	
 	if (!Array.prototype.indexOf)
 	{
 		Array.prototype.indexOf = function(elt /*, from*/)
@@ -304,6 +305,7 @@
         var colHeadersOrg = [
             "ID",
             "Indicator",
+			"Footnotes",
             "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
             "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
             "@FiscalYear.FYStrFull("FY_3",fiscalYear)" + "_Sup",
@@ -341,6 +343,7 @@
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
             {data:"Indicator", renderer:"tdRender"},
+			{data:"Footnote", renderer:"tdRender"},
             {data:"CoE", renderer:"tdRender"},
             {data:"FY_3", renderer:"tdRender"},
             {data:"FY_3_Sup", renderer:"tdRender"},
@@ -375,10 +378,11 @@
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
+	    var colWidthsOrg = [50, 250, 75, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
 	    var changesOld = [];
 
-		$IndInv .handsontable({
+	    $IndInv .handsontable({
+			jqte: false,
 			clickBeginsEditing : WURFL.is_mobile? true:false,
 			data: values,
 			startRows: 1,
@@ -476,6 +480,13 @@
 			}
 		});
 
+	    $('.toggle-format').on('click',function(e){
+	    	var table = $IndInv.handsontable('getInstance');
+	    	table.updateSettings({
+	    		jqte: true
+	    	});
+	    });
+
 		Number.prototype.countDecimals = function () {
 			if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
 			return this.toString().split(".")[1].length || 0; 
@@ -514,7 +525,7 @@
 		        if (changedValue === null) changedValue = "";
 		        var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
 		        var isString = isNaN(parseInt(changedValue.replace('$','')));
-		        if (!isString){
+		        if (!isString && changedParameter != "Footnote"){
 		        	if (formatStr !== null && formatStr !== ""){
 		                changedValue = numeral(changedValue).format(formatStr);
 		            }
@@ -1341,5 +1352,14 @@ font-size:medium!important;
 	}
 	.handsontable .manualColumnResizerHandle {
 		z-index:501 !important;
+	}
+	.toggle-button {
+		float:left;
+		color:white;
+        display:inline;
+        font-size:small;
+        margin:0px 3px;
+        padding: 6px;
+
 	}
 </style>
