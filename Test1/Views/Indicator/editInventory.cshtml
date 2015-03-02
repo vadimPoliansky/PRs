@@ -283,7 +283,7 @@
 				        	var filterItem = data[i].replace(/&amp;/g, '&');
 				            var field = data[0];
 				            var currValue = datasrch[row][field];
-				            if (currValue === "" || currValue === null && filterItem === '(Blank)') {
+				            if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
 				            	currCond = true;
 				            } else if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
 				                currCond = true;
@@ -772,7 +772,6 @@
 		    $('.header').after(newDiv);
 		    var leftOverflow = currentMousePos.x + $('#filter-panel').width() - $('.header').width();
 		    leftOverflow = leftOverflow > 0 ? leftOverflow : 0;
-		    console.log (leftOverflow);
 		    $('#filter-panel').css({
 		    	left:  currentMousePos.x - leftOverflow,
 		        top:   currentMousePos.y
