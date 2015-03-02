@@ -1842,7 +1842,7 @@ namespace IndInv.Controllers
 			var FY_Q4_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(indicator, null);
 			var FY_YTD_Color = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(indicator, null);
 
-			return Json(new {FY_Q1_Color = FY_Q1_Color, FY_Q2_Color = FY_Q2_Color, FY_Q3_Color = FY_Q3_Color, FY_Q4_Color = FY_Q4_Color, FY_YTD_Color = FY_YTD_Color}, JsonRequestBehavior.AllowGet);
+			return Json(new {Q1_Color = FY_Q1_Color, Q2_Color = FY_Q2_Color, Q3_Color = FY_Q3_Color, Q4_Color = FY_Q4_Color, YTD_Color = FY_YTD_Color}, JsonRequestBehavior.AllowGet);
 
 		}
 
@@ -2399,6 +2399,8 @@ namespace IndInv.Controllers
 				FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
 
 				FY_Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
+				FY_Threshold_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Threshold_ID").GetValue(x, null),
+				FY_Direction_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Direction_ID").GetValue(x, null),
 				FY_YTD_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Custom_Color").GetValue(x, null),
 				FY_Q1_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Custom_Color").GetValue(x, null),
 				FY_Q2_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Custom_Color").GetValue(x, null),
@@ -2445,6 +2447,9 @@ namespace IndInv.Controllers
                 viewModel.Add(new InventoryViewModel());
             }
             viewModel.FirstOrDefault().allAnalysts = db.Analysts.ToList();
+			viewModel.FirstOrDefault().allDirections = db.Color_Directions.ToList();
+			viewModel.FirstOrDefault().allColors = db.Color_Types.ToList();
+			viewModel.FirstOrDefault().allThresholds = db.Color_Thresholds.ToList();
             if (Request.IsAjaxRequest())
             {
                 return Json(viewModel.Where(x => x.Indicator_ID.ToString().Contains(indicatorID == null ? "" : indicatorID)), JsonRequestBehavior.AllowGet);

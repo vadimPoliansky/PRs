@@ -229,18 +229,21 @@
 														</td>
 			   
 														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="col-title prtd-title">@indicatorTitle
-			   												@{int j = 0;
+															@{var footnoteString = "";
 															foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 															{
-																if (j != 0)
-																{ Html.Raw(','); }
-																@:<sup>@Html.DisplayTextFor(modelItem => footnote.Footnote.Footnote_Symbol)</sup>
-																j++;
+																footnoteString += footnote.Footnote.Footnote_Symbol;
+																footnoteString += ",";
 																if (!footnotes.Contains(footnote.Footnote))
 																{
 																	footnotes.Add(footnote.Footnote);
 																}
-															}}
+															}
+															if (footnoteString.Length > 0){
+																footnoteString = footnoteString.Substring(0, footnoteString.Length - 1);
+															}
+															}
+															<sup>@footnoteString</sup>
 														</td>			   
 													} else if (allNValues.Contains(map)) {
 														rowSpan = 0;
@@ -599,8 +602,7 @@
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
 
-<script src="../../Scripts/jquery-te-1.4.0.min.js"></script>
-<link href="../../Scripts/jquery-te-1.4.0.css" rel="stylesheet" />
+<script src="~/Scripts/CKEditor/ckeditor.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.10/jquery.floatThead.min.js"></script>
 
@@ -664,7 +666,7 @@
     		useAbsolutePositioning: false,
     		zIndex: 0,
     		debug: true,
-    		reflow: true,
+    		//autoReflow: true,
     		scrollContainer: function($table){
     			return $table.closest("#pushobjLazy");
     		},
@@ -785,6 +787,7 @@
         		$('.pr-footer-row').hide();
         		$('.PRDef').show();
         	}
+        	//$('table').floatThead('reflow');
         });
 
         function changeDirection(obj, directionID){
@@ -1438,7 +1441,6 @@
         	}
             currentEle.attr('oldValue', updateValue);
             var isString = isNaN(parseInt(updateValue.replace('$','')));
-            console.log(currentEle);
             if (!isString && !currentEle.hasClass('pr-input-def')){
             	if (formatStr !== ""){
                     updateValue = numeral(updateValue).format(formatStr);
@@ -1827,20 +1829,22 @@
             			var oldValue = obj.find('.tdValue').html();
 
             			var newDiv = "<div id='jqte-holder'>"
-            			newDiv += "<textarea id='format-edit' value='" + oldValue + "'>" + oldValue + "</textarea>"
+            			newDiv +="<div id='jqte-header' class='panel-header'><i id='jqte-holder-close' class='panel-close fa fa-times'></i>"
+            			newDiv += "</div>"
+            			newDiv += "<textarea id='formatEdit' value='" + oldValue + "'>" + oldValue + "</textarea>"
             			newDiv += "</div>"
             			var doneButton = "<i id='format-edit-done' class='fa fa-check format-edit-done'></i>"
             			var newButton = $('<a class="myButton" unselectable="on" />');
             			$('#block').after(newDiv);
-            			$('#format-edit').jqte();
-            			$('.jqte_toolbar').append(doneButton);
-            			$('#format-edit-done').on('click',function(e){
-            				var value = $('#jqte-holder').find('.jqte_editor').html();
+            			//$('#formatEdit').jqte();
+            			CKEDITOR.replace('formatEdit');
+            			$('#jqte-holder').center("#pushobjLazy");
+
+            			$('#jqte-holder-close').on('click',function(e){
+            				var value = CKEDITOR.instances.formatEdit.getData().replace('<p>', '').replace('</p>', '');
             				endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
             				$('#jqte-holder').remove();
             			});
-            			$('#jqte-holder').center("#pushobjLazy");
-
             		}
             	},
 
@@ -1858,7 +1862,7 @@
             				$.get('getIndicatorList', function (indicatorList) {
             					var newDiv = "";
             					newDiv += "<div class='add-indicator-panel' id='add-indicator-panel'>"
-            					newDiv += "<div class='add-indicator-panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
+            					newDiv += "<div class='add-indicator-panel-header panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:<i class='add-indicator-panel-close panel-close fa fa-times'></i></div>"
             					newDiv += "<div class='add-indicator-panel-body'>"
             					newDiv += "<label for='indicator-list'>Select Indicator to Link</label>"
             					newDiv += "<select class='indicator-list' id='indicator-list'>"
@@ -2076,7 +2080,7 @@
                         clickedRow.after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
                         var coeID = clickedRow.attr("coeID");
                         var newDiv = "<div class='add-indicator-panel'>"
-                        newDiv += "<div class='add-indicator-panel-header'>Add Existing Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
+                        newDiv += "<div class='add-indicator-panel-header panel-header'>Add Existing Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
                         newDiv += "<input class='search' id='search_input_Indicator' name='Search' type='search' placeholder='Search' />"
                         $.get('getIndicatorList', function (data) {
                             newDiv += "<div class='add-indicator-list'><div>"
@@ -2747,7 +2751,8 @@
 	var sortable_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) = $('#tbl_@Html.Raw(coe.CoE_Abbr.Replace(" ","_").Replace("&","_")) > tbody').sortable({
 		items: "> tr.prrow:not(.prrow-area):not('.prrow-isNValue')",
         handle: ".prtd-id",
-		
+        tolerance: "pointer",
+
         start: function(event, ui){
         	var tbody = $(this);
         	var row = $(ui.item);
@@ -2868,11 +2873,12 @@
 		padding:5px;
 	}
 
-    .add-indicator-panel-header {
+    .panel-header {
         background-color: rgb(51,51,51);
         padding:5px;
         margin-bottom:0px;
         color:white;
+		height:30px;
     }
         .add-indicator-panel-done {
             float:left;
@@ -2884,7 +2890,7 @@
             padding-right:5px;
             padding-right:5px;
         }
-    .add-indicator-panel-close {
+    .panel-close {
         color:white;
         float:right;
     }

@@ -40,6 +40,8 @@ namespace IndInv.Models.ViewModels
         public string FY_Performance_Threshold_Sup { get; set; }
 
         public Int16 FY_Color_ID { get; set; }
+		public Int16 FY_Direction_ID { get; set; }
+		public Int16 FY_Threshold_ID { get; set; }
         public string FY_YTD_Custom_Color { get; set; }
         public string FY_Q1_Custom_Color { get; set; }
         public string FY_Q2_Custom_Color { get; set; }
@@ -63,6 +65,9 @@ namespace IndInv.Models.ViewModels
         public int Fiscal_Year { get; set; }
 
         public List<Analysts> allAnalysts { get; set; }
+		public List<Color_Directions> allDirections { get; set; }
+		public List<Color_Thresholds> allThresholds { get; set; }
+		public List<Color_Types> allColors { get; set; }
 
         public string Format_Code { get; set; }
 

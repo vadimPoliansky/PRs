@@ -2,8 +2,7 @@
 @using IndInv.Models
 @using System.Globalization
 <script src="../../Scripts/jquery-1.11.0.min.js"></script>
-<script src="../../Scripts/jquery-te-1.4.0.min.js"></script>
-<link href="../../Scripts/jquery-te-1.4.0.css" rel="stylesheet" />
+<script src="~/Scripts/CKEditor/ckeditor.js"></script>
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
 <!--script src="~/Scripts/jquery.handsontable.full.min.js"></!--script-->
@@ -59,6 +58,7 @@
 
 <div class="footer">
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
+	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-wordwrap menu-hover'>Toggle Wordwrap </div>
     <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
@@ -136,9 +136,6 @@
 	}
 
 	$(document).ready(function () {
-
-		$(document).on('input', '#mytxtBox', function () {
-		});
 
 		function strip_tags(input, allowed) {
 			var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi,
@@ -231,22 +228,33 @@
 
 		var values = @Html.Raw(Json.Encode(Model));
 
-	    var filterListFull = {
-	        CoE: [],
-	    } 
-	    for (var i=1, len=values.length; i<len; i++){
-	    	var filterItem = values[i]['CoE'];
-	    	if(filterItem.length !== 0 && filterItem !== "0"){
-	    		if (filterListFull['CoE'].indexOf(filterItem) === -1){
-	    			filterListFull['CoE'].push(filterItem);
-	    		}
-	    	}
-	    };
-
 		var filterListChose = {
 		    CoE: ['CoE'],
-            Indicator: ['Indicator','']
+		    Indicator: ['Indicator',''],
+		    FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
+		    FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
 		}
+		var filterListFull = {
+			CoE: [],
+			FY_Data_Source_MSH: [],
+			FY_Data_Source_Benchmark: []
+		};
+		for (var prop in filterListChose){
+			if (prop === 'Indicator') continue;
+			if (filterListChose.hasOwnProperty(prop)){
+				for (var i=1, len=values.length; i<len; i++){
+					var field = filterListChose[prop][0];
+					var filterItem = values[i][field];
+					if (filterItem === null) continue;
+					if(filterItem.length !== 0 && filterItem !== "0"){
+						if (filterListFull[field].indexOf(filterItem) === -1){
+							filterListFull[field].push(filterItem);
+						}
+					}
+				};
+			}
+		}
+
 		var delay = (function(){
 		    var timer = 0;
 		    return function(callback, ms){
@@ -265,7 +273,7 @@
 			var datasrch = jQuery.makeArray(values);
 			var searcharray = [];
 			for (row = 0, r_len = datasrch.length; row < r_len; row++) {
-			    var condArr=[];
+				var condArr=[];
 			    $.each(filterListChose, function(index,data){
                     var currCond = false;
 				    if (data.length === 1) {
@@ -275,12 +283,11 @@
 				        	var filterItem = data[i].replace(/&amp;/g, '&');
 				            var field = data[0];
 				            var currValue = datasrch[row][field];
-				            if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
+				            if (currValue === "" || currValue === null && filterItem === '(Blank)') {
+				            	currCond = true;
+				            } else if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
 				                currCond = true;
 				            }
-				            /*if(currValue === filterItem){
-                                searcharray.push(datasrch[row]);
-                            }*/
 				        }
 				    }
 				    condArr.push(currCond);
@@ -300,6 +307,12 @@
 			} else {
 			    $IndInv.handsontable('loadData', values);
 			}
+        };
+        clearFilter =  function(field, elTH){
+        	filterListChose[field] = [field];
+        	$('#filter-list > .clicked').removeClass('clicked');
+        	elTH.removeClass('filtered')
+        	doFilter();
         };
 
         var colHeadersOrg = [
@@ -336,8 +349,8 @@
 			"Comparator_Q2",
 			"Comparator_Q3",
 			"Comparator_Q4",
-            "Data_Source_MSH",
-            "Data_Source_Benchmark",
+            "Data_Source_MSH  <i field='FY_Data_Source_MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
+            "Data_Source_Benchmark <i field='FY_Data_Source_Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
             "OPEO_Lead"
         ];
 	    var columnsOrg = [
@@ -378,11 +391,13 @@
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 75, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,100,100,100];
+	    var colWidthsOrg = [50, 250, 75, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,150,200,100];
 	    var changesOld = [];
 
 	    $IndInv .handsontable({
-			jqte: false,
+	    	jqte: false,
+	    	wordwrap: false,
+	    	currentRowClassName : 'wrapOn',
 			clickBeginsEditing : WURFL.is_mobile? true:false,
 			data: values,
 			startRows: 1,
@@ -487,6 +502,22 @@
 	    	});
 	    });
 
+	    $('.toggle-wordwrap').on('click',function(e){
+	    	var table = $IndInv.handsontable('getInstance');
+	    	var wordwrap = $('#dataTable').hasClass('wordwrap');
+	    	if (wordwrap){
+	    		table.updateSettings({
+	    			wordwrap: false
+	    		});
+	    		$('#dataTable').removeClass('wordwrap');
+	    	} else {
+	    		table.updateSettings({
+	    			wordwrap: true
+	    		});
+	    		$('#dataTable').addClass('wordwrap');
+	    	}
+	    });
+
 		Number.prototype.countDecimals = function () {
 			if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
 			return this.toString().split(".")[1].length || 0; 
@@ -517,12 +548,52 @@
 		};
 		$.ajaxSetup({ cache: false });
 		function updateIndicator(changes){
-		    for (var i = 0; i< changes.length; ++i){
+			for (var i = 0; i< changes.length; ++i){
 		        var change = changes[i];
 		        var changedRow = change[0]
 		        var changedParameter = change[1];
 		        var changedValue = change[3];
 		        if (changedValue === null) changedValue = "";
+		        var indicatorID = $IndInv.handsontable('getDataAtCell',changedRow,0);
+
+		        if (changedParameter == "FY_Target"){
+		        	var firstChar = changedValue.substr(0,1);
+		        	var first2Char = changedValue.substr(0,2);
+		        	var directions = [];
+		        	var directionIDs = [];
+		        	changeColour = false;
+		        	@foreach(var direction in Model.FirstOrDefault().allDirections){
+					<text>
+		        	directions.push('@Html.Raw(direction.Direction)');
+		        	directionIDs.push('@Html.Raw(direction.Direction_ID)');
+		        	</text>
+					}
+		        	var directionID = 1;
+		        	for(var i =0; i<directions.length; i++){
+		        		if (firstChar == directions[i]){
+		        			directionID = directionIDs[i];
+		        		}
+		        	}
+		        	for(var i =0; i<directions.length; i++){
+		        		if (first2Char == directions[i].replace('≤','<=').replace('≥','>=')){
+		        			directionID = directionIDs[i];
+		        		}
+		        	}
+		        	var updateValueReplace = changedValue.replace('<=','≤').replace('>=','≥');
+		        	if (updateValueReplace !== changedValue){
+		        		changedValue = updateValueReplace;
+		        	}
+		        	$.ajax({
+		        		url: 'changeDirection',
+		        		type: 'POST',
+		        		data: JSON.stringify({indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }),
+		        		async: false,
+		        		contentType: 'application/json; charset=utf-8',
+		        		success: function (result) {
+		        		}
+		        	});
+		        }
+
 		        var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
 		        var isString = isNaN(parseInt(changedValue.replace('$','')));
 		        if (!isString && changedParameter != "Footnote"){
@@ -532,7 +603,7 @@
 		        }
 		        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
 		            var parameters = {
-		                indicatorID: $IndInv.handsontable('getDataAtCell',changedRow,0),
+		            	indicatorID: indicatorID,
 		                updateProperty: changedParameter,
 		                updateValue: changedValue,
 		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
@@ -544,12 +615,12 @@
 		                data: JSON.stringify(parameters),
 		                contentType: 'application/json; charset=utf-8',
 		                success: function (result) {
-		                	$.get('getIndicatorColor', {indicatorID : $IndInv.handsontable('getDataAtCell',changedRow,0), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.FY_Q1_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.FY_Q2_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.FY_Q3_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.FY_Q4_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.FY_YTD_Color, 'set');
+		                	$.get('getIndicatorColor', {indicatorID : indicatorID, fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.Q1_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.Q2_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.Q3_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.Q4_Color, 'set');
+		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.YTD_Color, 'set');
 		                    });
 		                },
 		                error: function (request){
@@ -601,7 +672,7 @@
 		    var toHideHeaders = [];
 		    $.each(toHide, function(index, value){
 		        var colHeader = $(this).find('.colHeader')[0].innerHTML;
-		        toHideHeaders.push(colHeader)
+		        toHideHeaders.push(strip_tags(colHeader).toString().trim())
 		    });
 		    var colHeaders = []
 		    var columns = [];
@@ -613,10 +684,10 @@
 
 		    //var th = $('thead').children();
 		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
-		        var currHeader = $IndInv.handsontable("getColHeader",i);
+		    	var currHeader = $IndInv.handsontable("getColHeader",i);
 		    	//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
-		        var colWidth = $IndInv.handsontable("getColWidth",i)
-		        if (toHideHeaders.indexOf(currHeader) === -1){
+		    	var colWidth = $IndInv.handsontable("getColWidth",i)
+		        if (toHideHeaders.indexOf(strip_tags(currHeader,"").toString().trim()) === -1){
 		            columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
 		            colHeaders.push(currHeader)
 		            colWidths.push(colWidth);
@@ -665,6 +736,7 @@
 
 		    $.each($IndInv.handsontable("getData"),function(index,data){
 		    	var filter = data[field];
+		    	if (filter === null) filter = "(Blank)";
 		    	if(filter.length !== 0 && filter !== "0"){
 		    		if (filterAvailable.indexOf(filter) === -1){
 		    			filterAvailable.push(filter);
@@ -678,10 +750,14 @@
 		        filters = filterAvailable;
 		    }
 
-		    var newDiv = "<div class='filter-panel'>"
-		    newDiv += "<div class='filter-panel-header'>Filter by: " + field + "<i class='filter-panel-close fa fa-times'></i></div>"
-		    newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
-		    newDiv += "<div class='filter-list'><div>"
+		    var newDiv = "<div id='filter-panel' class='filter-panel'>"
+		    newDiv += "<div class='filter-panel-header' id='filter-panel-header'>Filter by: " + field + "<i id='filter-panel-close' class='filter-panel-close fa fa-times'></i></div>"
+		    newDiv += "<div class='row'>"
+			newDiv += "<div class='filter-panel-search'>"
+				newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
+				newDiv += "<div id='clear-filter'><i class='fa fa-eraser'></i></div>"
+			newDiv += "</div>"
+		    newDiv += "<div class='filter-list' id='filter-list'>"
 		    $.each(filters, function(index,value){
 		        var checked = "";
 		        if (filtered){
@@ -691,16 +767,48 @@
 		        }
 		        newDiv += "<div class='filter-item " + checked + "'><div class='filter-title'>" + value + "</div></div>";
 		    });
-		    newDiv += "</div></div>"
+		    newDiv += "</div>"
 		    newDiv += "</div>"
 		    $('.header').after(newDiv);
-		    $('.filter-panel').hide();
-		    $('.filter-panel').slideDown('slow');
-		    $('.filter-panel').css({
-		        left:  currentMousePos.x,
+		    var leftOverflow = currentMousePos.x + $('#filter-panel').width() - $('.header').width();
+		    leftOverflow = leftOverflow > 0 ? leftOverflow : 0;
+		    console.log (leftOverflow);
+		    $('#filter-panel').css({
+		    	left:  currentMousePos.x - leftOverflow,
 		        top:   currentMousePos.y
 		    });
-		    $('#search_filter').on('keyup change search click', function () {
+
+		    $('#filter-panel-header').drags();
+
+		    addFilterItem = function(ele, force){
+		    	var filterItem = $(ele).children()[0].innerHTML;
+		    	if (!$(ele).hasClass('clicked') || force){
+		    		$(ele).addClass('clicked');
+		    		if (filterListChose[field].indexOf(filterItem) === -1){
+		    			filterListChose[field].push(filterItem);
+		    			doFilter();
+		    		}
+		    	} else {
+		    		$(ele).removeClass('clicked');
+		    		filterListChose[field] = $.grep(filterListChose[field], function(value){
+		    			return value != filterItem;
+		    		});
+		    		doFilter();
+		    	}
+		    	if(filterListChose[field].length !== 1){
+		    		elTH.addClass('filtered');
+		    	}else {
+		    		elTH.removeClass('filtered');
+		    	}
+		    }
+
+		    $('#search_filter').focus();
+		    $('#search_filter').on('keyup change search click', function (e) {
+		    	if (e.which === 13){
+		    		$.each( $('#filter-list').children(":visible"),function(index,value){
+		    			addFilterItem(this, true);
+		    		});
+		    	}
 		        var valThis = $(this).val().toLowerCase();
 		        if (valThis == "") {
 		            $('.filter-item').removeClass('textFiltered');
@@ -719,32 +827,22 @@
 		        $('.textFiltered').hide();
 		    });
 
-		    $('.filter-panel-close').on('click', function(){
-		        $(this).closest('filter-panel').undrags();
-		        $(this).closest('.filter-panel').slideUp('slow',function() { $(this).remove()});
-		        $('.new-map').remove()
+		    $('#clear-filter').on('click',function(){
+		    	clearFilter(field, elTH);
+		    });
+
+		    var filterPanel = $('#filter-panel');
+		    $(document, '#filter-panel-close').on('mousedown', function(e){
+		    	if ($(e.target).closest('.filter-panel').length > 0  && !!!$(e.target).hasClass('filter-panel-close')){
+
+		    	}else {
+		    		filterPanel.undrags();
+		    		filterPanel.remove();
+		    	}
 		    });
 
 		    $('.filter-item').on('click', function(){
-		        var filterItem = $(this).children()[0].innerHTML;
-		        if (!$(this).hasClass('clicked')){
-		            $(this).addClass('clicked');
-		            if (filterListChose[field].indexOf(filterItem) === -1){
-		                filterListChose[field].push(filterItem);
-		                doFilter();
-		            }
-		        } else {
-		            $(this).removeClass('clicked');
-		            filterListChose[field] = $.grep(filterListChose[field], function(value){
-		                return value != filterItem;
-		            });
-		            doFilter();
-		        }
-		        if(filterListChose[field].length !== 1){
-		            elTH.addClass('filtered');
-		        }else {
-		            elTH.removeClass('filtered');
-		        }
+		    	addFilterItem(this);
 		    });
 		});
 
@@ -940,8 +1038,71 @@
 								saveComparatorUndoable(elements, fields, fieldQs, values, oldValues);
 							}
 						},
+					},
+				},
+
+				separator1: "-----",
+
+				"colorSettings": {
+					"name": "Color Type",
+					"items": {
+						@foreach (var color in Model.FirstOrDefault().allColors)
+						{
+						<text>
+						"Color_@color.Color_ID" : { "name": "Change to @color.Color_Type",
+							className: 'color-choice',
+							callback:function(key, options){
+								var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+								var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+								var colorID= @color.Color_ID;
+								var oldColorID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Color_ID"); //$(this).closest('tr').attr('colorID');
+								changeColorUndoable(indicatorID, colorID, oldColorID,row);
+							},
+						},
+						</text>
+						}
+					},
+				},
+				"directionsSettings": {
+					"name": "Color Direction",
+					"items": {
+						@foreach (var direction in Model.FirstOrDefault().allDirections)
+						{
+						<text>
+                    	"Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
+                    		className: 'color-choice',
+                    		callback:function(key, options){
+                    			var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+                    			var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+                    			var directionID= @direction.Direction_ID;
+                    			var oldDirectionID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Direction_ID"); //$(this).closest('tr').attr('colorID');
+                    			changeDirectionUndoable(indicatorID, directionID, oldDirectionID,row);
+							},
+						},
+						</text>
+						}
 					}
 				},
+				"thresholdSettings": {
+					"name": "Color Threshold",
+					"items": {
+						@foreach (var threshold in Model.FirstOrDefault().allThresholds)
+						{
+						<text>
+						"Threshold_@threshold.Threshold_ID" : { "name": "Change to @threshold.Threshold",
+							className: 'color-choice',
+							callback:function(key, options){
+								var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+								var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+								var thresholdID= @threshold.Threshold_ID;
+								var oldThresholdID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Threshold_ID"); //$(this).closest('tr').attr('colorID');
+								changeThresholdUndoable(indicatorID, thresholdID, oldThresholdID,row);
+							}
+						},
+						</text>
+						}
+					}
+				}
 			}
 		});
 
@@ -1137,6 +1298,71 @@
 		}
         });
 
+
+		function changeColor(indicatorID, colorID, row){
+			$.post('changeColor',{indicatorID: indicatorID, colorID: colorID, fiscalYear:@fiscalYear }, function(clrData){
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q1_Color", clrData.Q1_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q2_Color", clrData.Q2_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
+            });
+		}
+		function changeColorUndoable(indicatorID, colorID, oldColorID, row){
+			changeColor(indicatorID, colorID, row);
+			undoManager.add({
+				undo: function() {
+					changeColor(indicatorID, oldColorID, row);
+				},
+				redo: function(){
+					changeColor(indicatorID, colorID, row);
+				}
+			});
+		}
+
+		function changeDirection(indicatorID, directionID, row){
+			$.post('changeDirection',{indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }, function(clrData){
+            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q1_Color", clrData.Q1_Color, 'set');
+            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q2_Color", clrData.Q2_Color, 'set');
+            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
+            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
+            	$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
+            });
+		}
+		function changeDirectionUndoable(indicatorID, directionID, oldDirectionID, row){
+			changeDirection(indicatorID, directionID, row);
+			undoManager.add({
+				undo: function() {
+					changeDirection(indicatorID, oldDirectionID, row);
+				},
+				redo: function(){
+					changeDirection(indicatorID, directionID, row);
+				}
+			});
+		}
+
+		function changeThreshold(indicatorID, thresholdID, row){
+			$.post('changeThreshold',{indicatorID: indicatorID, thresholdID: thresholdID, fiscalYear:@fiscalYear }, function(clrData){
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q1_Color", clrData.Q1_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q2_Color", clrData.Q2_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
+            });
+		}
+		function changeThresholdUndoable(indicatorID, thresholdID, oldThresholdID, row){
+			changeThreshold(indicatorID, thresholdID, row);
+			undoManager.add({
+				undo: function() {
+					changeThreshold(indicatorID, oldThresholdID, row);
+				},
+				redo: function(){
+					changeThreshold(indicatorID, thresholdID, row);
+				}
+			});
+		}
+
+
 	});
 </script>
 
@@ -1166,7 +1392,7 @@ font-size:medium!important;
 		padding:5px;
 	}
 
-	#dataTable th, #dataTable td {
+	#dataTable:not(.wordwrap) th, #dataTable:not(.wordwrap) td {
        overflow: hidden;
        text-overflow: ellipsis;
        white-space:nowrap !important;
@@ -1361,5 +1587,20 @@ font-size:medium!important;
         margin:0px 3px;
         padding: 6px;
 
+	}
+
+	.filter-panel-search {
+		background-color:white;
+		width:100%;
+		height:37px;
+	}
+
+	#search_filter {
+		width:85%;
+		float:left;
+		border:none;
+	}
+	#clear-filter {
+		float:right;
 	}
 </style>

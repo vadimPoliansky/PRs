@@ -2337,6 +2337,7 @@ DefaultSettings.prototype = {
   type: 'text',
   copyable: true,
   debug: false, //shows debug overlays in Walkontable
+  wordwrap: false,
   clickBeginsEditing: false
 };
 Handsontable.DefaultSettings = DefaultSettings;
@@ -2503,6 +2504,9 @@ Handsontable.TableView = function (instance) {
   var walkontableConfig = {
     debug: function () {
       return that.settings.debug;
+    },
+    wordwrap: function () {
+    	return that.settings.wordwrap;
     },
     table: table,
     stretchH: this.settings.stretchH,
@@ -4712,9 +4716,11 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
     initialValue = typeof initialValue == 'string' ? initialValue : this.originalValue;
   	//ADDED: changed textarea into a jqte
-    if (this.cellProperties.jqte) {
-    	$(this.TEXTAREA).jqte();
-    	this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+    if (this.cellProperties.jqte && $('#cke_toCKEditor').length === 0) {
+    	//$(this.TEXTAREA).jqte();
+    	//this.TEXTAREA = $(this.TEXTAREA_PARENT).children().first();
+    	this.TEXTAREA.id = 'toCKEditor';
+    	CKEDITOR.replace('toCKEditor');
     }
 
     this.setValue(Handsontable.helper.stringify(initialValue));
@@ -4834,16 +4840,19 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
 
 	//ADDED: get jqte value
   TextEditor.prototype.getValue = function(){
-  	if ($(this.TEXTAREA).hasClass('jqte')) {
-  		return $(this.TEXTAREA).find('.jqte_editor').html()
+  	if (this.cellProperties.jqte) { //($(this.TEXTAREA).hasClass('jqte')) {
+  		return CKEDITOR.instances.toCKEditor.getData().replace('<p>', '').replace('</p>', '')
+  		//return $(this.TEXTAREA).find('.jqte_editor').html()
+//  		return this.TEXTAREA.value
   	} else {
   		return this.TEXTAREA.value
   	}
   };
 	//ADDED: set jqte value
   TextEditor.prototype.setValue = function (newValue) {
-  	if ($(this.TEXTAREA).hasClass('jqte')) {
-  		$(this.TEXTAREA).find('.jqte_editor').html(newValue)
+  	if (this.cellProperties.jqte) { //if ($(this.TEXTAREA).hasClass('jqte')) {
+  		return CKEDITOR.instances.toCKEditor.setData(newValue)
+  		//$(this.TEXTAREA).find('.jqte_editor').html(newValue)
   	} else {
   		this.TEXTAREA.value = newValue;
   	}
@@ -4976,6 +4985,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.textareaParentStyle = this.TEXTAREA_PARENT.style;
     this.textareaParentStyle.top = 0;
     this.textareaParentStyle.left = 0;
+    this.textareaParentStyle.width = '100%';
     this.textareaParentStyle.display = 'none';
 
     this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
@@ -12121,6 +12131,7 @@ function WalkontableSettings(instance, settings) {
   this.defaults = {
     table: void 0,
     debug: false, //shows WalkontableDebugOverlay
+	wordwrap: false,
 
     //presentation mode
     scrollH: 'auto', //values: scroll (always show scrollbar), auto (show scrollbar if table does not fit in the container), none (never show scrollbar)
@@ -12177,13 +12188,13 @@ function WalkontableSettings(instance, settings) {
   for (var i in this.defaults) {
     if (this.defaults.hasOwnProperty(i)) {
       if (settings[i] !== void 0) {
-        this.settings[i] = settings[i];
+      	this.settings[i] = settings[i];
       }
       else if (this.defaults[i] === void 0) {
         throw new Error('A required setting "' + i + '" was not provided');
       }
       else {
-        this.settings[i] = this.defaults[i];
+      	this.settings[i] = this.defaults[i];
       }
     }
   }
@@ -12424,7 +12435,9 @@ WalkontableTable.prototype.refreshStretching = function () {
 
   var rowHeightFn = function (i, TD) {
   	/*ADDED to fix height change issues!*/
-  	return 22;
+  	if (this.instance.getSetting('wordwrap') !== true) {
+  		return 22;
+  	}
   	/*ADDED to fix height change issues!*/
     if (that.instance.getSetting('nativeScrollbars')) {
       return 20;
@@ -13281,6 +13294,7 @@ Dragdealer.prototype =
 		this.speed = this.getOption('speed', 10) / 100;
 		this.xPrecision = this.getOption('xPrecision', 0);
 		this.yPrecision = this.getOption('yPrecision', 0);
+		this.wordwrap = this.getOption('wordwrap');
 		
 		this.callback = options.callback || null;
 		this.animationCallback = options.animationCallback || null;
