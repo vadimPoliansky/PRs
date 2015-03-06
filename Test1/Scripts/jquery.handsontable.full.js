@@ -4985,6 +4985,7 @@ Handsontable.SelectionPoint.prototype.arr = function (arr) {
     this.textareaParentStyle = this.TEXTAREA_PARENT.style;
     this.textareaParentStyle.top = 0;
     this.textareaParentStyle.left = 0;
+	//ADDED: max width
     this.textareaParentStyle.width = '100%';
     this.textareaParentStyle.display = 'none';
 

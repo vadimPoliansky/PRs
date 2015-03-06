@@ -52,7 +52,7 @@
 
 
 <div class="rowLong">
-    <div id="dataTable">
+    <div id="dataTable" class="nowrap">
 	</div>
 </div>
 
@@ -510,11 +510,13 @@
 	    			wordwrap: false
 	    		});
 	    		$('#dataTable').removeClass('wordwrap');
+	    		$('#dataTable').addClass('nowrap');
 	    	} else {
 	    		table.updateSettings({
 	    			wordwrap: true
 	    		});
 	    		$('#dataTable').addClass('wordwrap');
+	    		$('#dataTable').removeClass('nowrap');
 	    	}
 	    });
 
@@ -1391,11 +1393,15 @@ font-size:medium!important;
 		padding:5px;
 	}
 
-	#dataTable:not(.wordwrap) th, #dataTable:not(.wordwrap) td {
-       overflow: hidden;
-       text-overflow: ellipsis;
+	#dataTable.nowrap  td {
+       overflow: hidden !important;
+       text-overflow: ellipsis !important;
        white-space:nowrap !important;
   }
+	#dataTable.wordwrap  td {
+		overflow: visible !important;
+		white-space:normal !important;
+	}
 
 	.handsontableInput {
 		overflow-y:scroll !important;
