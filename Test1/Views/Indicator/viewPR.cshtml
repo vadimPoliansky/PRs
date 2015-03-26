@@ -857,7 +857,7 @@
                         var value = cell.val()
                         var formatedValue = value;
                         if (value !== ""){ 
-                            var isString = isNaN(parseInt(value.replace('$','')));
+                        	var isString = isNaN(parseInt(value.replace('$','')));
                             if (!isString){
                             	value = value.replace(/[^\d\.\-]/g, "");
                             	if(formatStr.indexOf('%') > 0) value = value / 100;
@@ -1378,7 +1378,8 @@
 
             var updateValue = currentEle.val();
             var isString = isNaN(parseInt(updateValue.replace('$','')));
-            if (!isString){
+            var isTime = isNaN(parseInt(updateValue.replace(':','')));
+            if (!isString && isTime){
                 var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
             }
 
@@ -1442,7 +1443,16 @@
 
             if (!isString && !currentEle.hasClass('pr-input-def')){
             	if (formatStr !== ""){
-                    updateValue = numeral(updateValue).format(formatStr);
+            		var isTime = (formatStr === '00:00:00')
+            		if (isTime) {
+            			console.log(updateValue)
+            			formatedValue = numeral().unformat(updateValue);
+						console.log(formatedValue)
+						formatedValue = numeral(formatedValue).format(formatStr);
+						console.log(formatedValue)
+            		} else {
+            			formatedValue = numeral(updateValue).format(formatStr);
+            		}
                 }
             }
             var colorElement = $(currentEle).parent();
@@ -2674,7 +2684,7 @@
     var selectedN =0;
     var selectedDec =0;
     var selectObj = $('table').selectable({
-		cancel: ".jqte",
+    	cancel: ".jqte, .pr-input, .newrow-text",
         filter: ".prtd",
         distance: 1,
         start: function(event, ui){
