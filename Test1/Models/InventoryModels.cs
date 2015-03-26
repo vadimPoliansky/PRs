@@ -146,6 +146,64 @@ namespace IndInv.Models
         public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
         public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
 
+
+		[Display(Name = "Q1")]
+		public string FY_15_16_Q1 { get; set; }
+		public string FY_15_16_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_15_16_Q2 { get; set; }
+		public string FY_15_16_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_15_16_Q3 { get; set; }
+		public string FY_15_16_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_15_16_Q4 { get; set; }
+		public string FY_15_16_Q4_Sup { get; set; }
+		[Display(Name = "FY 15/16")]
+		public string FY_15_16_YTD { get; set; }
+		public string FY_15_16_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_15_16_Target { get; set; }
+		public string FY_15_16_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_15_16_Comparator { get; set; }
+		public string FY_15_16_Comparator_Sup { get; set; }
+		public string FY_15_16_Comparator_Q1 { get; set; }
+		public string FY_15_16_Comparator_Q2 { get; set; }
+		public string FY_15_16_Comparator_Q3 { get; set; }
+		public string FY_15_16_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		public string FY_15_16_Performance_Threshold { get; set; }
+		public string FY_15_16_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_15_16_Color_ID { get; set; }
+		public Int16 FY_15_16_Threshold_ID { get; set; }
+		public Int16 FY_15_16_Direction_ID { get; set; }
+		public string FY_15_16_YTD_Custom_Color { get; set; }
+		public string FY_15_16_Q1_Custom_Color { get; set; }
+		public string FY_15_16_Q2_Custom_Color { get; set; }
+		public string FY_15_16_Q3_Custom_Color { get; set; }
+		public string FY_15_16_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_15_16_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_15_16_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_15_16_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_15_16_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_15_16_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_15_16_OPEO_Lead { get; set; }
+
+		public virtual string FY_15_16_Q1_Color { get { return Color.getColor(FY_15_16_Q1, FY_15_16_Target, FY_13_14_Q1_Sup, FY_15_16_Q1_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+		public virtual string FY_15_16_Q2_Color { get { return Color.getColor(FY_15_16_Q2, FY_15_16_Target, FY_13_14_Q2_Sup, FY_15_16_Q2_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+		public virtual string FY_15_16_Q3_Color { get { return Color.getColor(FY_15_16_Q3, FY_15_16_Target, FY_13_14_Q3_Sup, FY_15_16_Q3_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_13_14_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_13_14_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+
+
+
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual Areas Area { get; set; }
         public virtual ICollection<Indicator_Footnote_Maps> Indicator_Footnote_Map { get; set; }
