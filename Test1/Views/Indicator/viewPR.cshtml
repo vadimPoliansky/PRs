@@ -186,7 +186,7 @@
 													var indicatorTitle = ""; int? number = numCount; var skip = false;
 													if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
 													{
-														indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
+														indicatorTitle = Html.Raw(map.Indicator.Indicator).ToString();
 														number = numCount;
 													}
 													else
