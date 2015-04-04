@@ -314,3 +314,9 @@ C:\ASPNet\PRs\Test1\bin\itextsharp.dll
 C:\ASPNet\PRs\Test1\bin\TuesPechkin.dll
 C:\ASPNet\PRs\Test1\bin\DocumentFormat.OpenXml.xml
 C:\ASPNet\PRs\Test1\obj\Debug\IndicatorInventory.csproj.ResolveComReference.cache
+C:\AspNet\PRs\Test1\bin\System.Net.Http.Formatting.dll
+C:\AspNet\PRs\Test1\bin\System.Web.Http.dll
+C:\AspNet\PRs\Test1\bin\System.Web.Http.WebHost.dll
+C:\AspNet\PRs\Test1\bin\System.Net.Http.Formatting.xml
+C:\AspNet\PRs\Test1\bin\System.Web.Http.xml
+C:\AspNet\PRs\Test1\bin\System.Web.Http.WebHost.xml

@@ -521,13 +521,16 @@ namespace IndInv.Controllers
                             var stringSeperators = new string[] { "•" };
                             if (areaMap.Objective != null)
                             {
-                                var objectives = areaMap.Objective.Split(stringSeperators, StringSplitOptions.None);
-                                for (var i = 1; i < objectives.Length; i++)
+                                var objectives = Regex.Matches(areaMap.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();	
+                                //for (var i = 1; i < objectives.Length; i++)
+                                var i = 1;
+                                foreach (var objective in objectives)
                                 {
                                     prArea.FirstCell().RichText.AddNewLine();
                                     ws.Row(currentRow).Height += newLineHeight;
                                     prArea.FirstCell().RichText.AddText(indent).SetFontColor(prAreaFill).SetFontSize(prAreaObjectiveFontsize);
-                                    prArea.FirstCell().RichText.AddText(" •" + objectives[i]).FontSize = prAreaObjectiveFontsize;
+                                    prArea.FirstCell().RichText.AddText(" " + i +". " + objective).FontSize = prAreaObjectiveFontsize;
+                                    i++;
                                 }
                             }
                         }
