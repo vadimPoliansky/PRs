@@ -1378,8 +1378,8 @@
 
             var updateValue = currentEle.val();
             var isString = isNaN(parseInt(updateValue.replace('$','')));
-            var isTime = isNaN(parseInt(updateValue.replace(':','')));
-            if (!isString && isTime){
+            var isTime = !isNaN(parseInt(updateValue.replace(':','')));
+            if (!isString && !isTime){
                 var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
             }
 
