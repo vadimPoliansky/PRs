@@ -1383,7 +1383,7 @@
                 var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
             }
 
-            var updateValueSup = currentEleSup.val();
+            var updateValueSup = currentEleSup.val() || "";
             var oldValue = currentEle.attr('oldvalue')
             var oldValueSup = currentEleSup.attr('oldvalue')
             var indicatorID = currentEle.parent().attr('indicatorID');
@@ -1404,7 +1404,7 @@
         };
 
         endEdit = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
-        	var changeColour = true;
+            var changeColour = true;
         	if (field == '@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target")'){
         		var firstChar = updateValue.substr(0,1);
         		var first2Char = updateValue.substr(0,2);
@@ -1445,11 +1445,8 @@
             	if (formatStr !== ""){
             		var isTime = (formatStr === '00:00:00')
             		if (isTime) {
-            			console.log(updateValue)
             			formatedValue = numeral().unformat(updateValue);
-						console.log(formatedValue)
 						formatedValue = numeral(formatedValue).format(formatStr);
-						console.log(formatedValue)
             		} else {
             			formatedValue = numeral(updateValue).format(formatStr);
             		}
