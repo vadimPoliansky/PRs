@@ -30,7 +30,7 @@
         <td colspan="13"></td>
     </tr>
     <tr class="prheader-1">
-        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+        <td rowspan="2", class="prheader prheader-1 prcol-id">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
         <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
@@ -53,7 +53,7 @@
     {
 		<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
 			<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
-				<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
+				@Html.DisplayFor(modelItem => area_map.Area.Area)
 				<br />
 				<div class="objective">
 					<ul class="triple-list objective-list">
@@ -128,7 +128,7 @@
 					<a class="row-down"><i class="fa fa-sort-desc"></i></a>
 				</td>
 			   
-				<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="col-title prtd-title">@indicatorTitle
+				<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title prcol-id">@indicatorTitle
 					@{var footnoteString = "";
 					foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 					{
@@ -287,19 +287,15 @@
     </table>
     <div class="footnotes">
         @{var l = 0;
-          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 7 && x.Footnote_ID != 6))
+          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).OrderBy(x=>x.Footnote_Order))
           {
               footnotes.Remove(footnote);
-              if (l % 2 == 0 && l != 0)
+              if (l % 2 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
               { 
                 @:<br />
             }
-            <small>@footnote.Footnote_Symbol, @footnote.Footnote; </small>
+            <small><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </small>
               l++;
-          }
-          foreach (var footnote in footnotes)
-          {
-            <small>@footnote.Footnote_Symbol, @footnote.Footnote; </small><br />
           }}
         <br />
     </div>
@@ -312,7 +308,7 @@
 
     <table class="tbl_Def" id="tblDef_@coe.CoE_Abbr.Replace(" ", "_")" class="PRDef" border="1" runat="server" >
     <tr class="prheader-1">
-    <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
+    <td rowspan="1", class="prheader prheader-1 prcol-id">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
     <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
     <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
     <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
@@ -322,12 +318,23 @@
     @{numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
-        <tr class="prrow" areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-        <td class="prarea" colspan="100%" mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
-            <b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b> <br />    
-            @Html.DisplayFor(modelItem => area_map.Objective)
-        </td>
-        </tr>
+		<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
+			<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+				<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
+				<br />
+				<div class="objective">
+					<ul class="triple-list objective-list">
+					@{if (area_map.Objective != null){
+						List<string> objectives;
+						objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
+						foreach(var objective in objectives){	
+							<text><li>@Html.Raw(objective)</li></text>
+						}}
+					}
+					</ul>
+				</div>
+			</td>
+		</tr>
         string[,] oldColumns = null;
         foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
         {
@@ -346,7 +353,7 @@
             <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" style="background-color:White">
             <td class="prtd-id-def" style="min-width:1%;" >@number</td>
             @{numCount++;}
-            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef">@indicatorTitle
+            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef prcol-id">@indicatorTitle
             <sup>
             @{int j = 0;}
             @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
@@ -414,6 +421,7 @@
     body {
         font-size: 1vmax;
         font-family: 'Open Sans', sans-serif;
+		font-weight: 300;
     }
 
     .filter-bar {
@@ -500,6 +508,10 @@
         background-color:lightblue !important;
     }
 
+	.prcol-id {
+		max-width:5px !important;
+	}
+
     .prrow tr {
         -webkit-transition: all 0.30s ease-in-out;
         -moz-transition: all 0.30s ease-in-out;
@@ -562,8 +574,14 @@
         background-color: Silver;
         text-align: justify;
         color: Black;
-        padding: 5px;
+        padding: 1px;
     }
+	ul {
+		margin:1px;
+		padding:0px;
+		padding-left:5px;
+		list-style:none;
+	}
 
     table {
         width:1900px;
@@ -574,11 +592,13 @@
     table, th, td {
         min-width:75px;
         font-size: 0.8em;
-        border: 1pt solid black;
+		border-spacing:1px;
         border-collapse:collapse;
         white-space: normal;
         page-break-inside:avoid;
         font-family: 'Open Sans', sans-serif;
+		border-color:black;
+		font-weight: 300;
     }
 
         table tr:nth-of-type(2n) {
@@ -589,9 +609,8 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 1%;
+        min-width: 1px;
         padding: 0px 2px 0px 2px;
-        min-width:1%;
     }
 
     .prtd-title {
@@ -639,10 +658,11 @@
         min-width: 6.5%;
         max-width: 15%;
         padding: 0px;
+		padding-left:2px;
     }
 
     .footnotes {
-        
+        font-size:0.8em;
     }
 
     .disclaimer {
@@ -650,12 +670,12 @@
     }
 
     .footer-left-pg1, .footer-left-pg2 {
-        font-size:10px;
+        font-size:8px;
         left:-5px;
     }
     .footer-right-pg1, .footer-right-pg2 {
         float:right;
-        font-size:10px;
+        font-size:8px;
         right:-5px;
         page-break-after:always;
     }
@@ -749,18 +769,18 @@
                 while (ele.width() / ele.height() < setRatio) {
                     var fontSize = parseInt(ele.css('font-size')) * 0.98;
                     ele.css('font-size', fontSize );
-                    area.css('font-size', fontSize * 0.8);
-                    prHeader.css('font-size', fontSize * 0.8);
-                    title.css('font-size', fontSize * 1);
+                    area.css('font-size', fontSize );
+                    prHeader.css('font-size', fontSize);
+                    title.css('font-size', fontSize);
                     ele.css('height', maxHeight);
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
                     var fontSize = parseInt(ele.css('font-size')) * 1.1;
                     ele.css('font-size', fontSize );
-                    area.css('font-size', fontSize * 0.8);
-                    prHeader.css('font-size', fontSize * 0.8);
-                    title.css('font-size', fontSize * 1);
+                    area.css('font-size', fontSize );
+                    prHeader.css('font-size', fontSize);
+                    title.css('font-size', fontSize);
                     ele.css('height', maxHeight);
                 }
             }

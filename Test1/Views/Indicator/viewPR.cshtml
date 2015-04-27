@@ -394,7 +394,7 @@
                                             <div class="large-6 columns">
 									            <div class="footnotes">
 									                @{var l = 0;}
-									                @foreach (var footnote in footnotes.OrderBy(x=>x.Footnote_Symbol))
+									                @foreach (var footnote in footnotes.OrderBy(x=>x.Footnote_Order))
 													{
 										                @:@footnote.Footnote_Symbol. @footnote.Footnote  
 										                l++;
@@ -860,7 +860,7 @@
                         	var isString = isNaN(parseInt(value.replace('$','')));
                             if (!isString){
                             	value = value.replace(/[^\d\.\-]/g, "");
-                            	if(formatStr.indexOf('%') > 0) value = value / 100;
+                            	if(formatStr.indexOf('%') > 0 && value > 1) value = value / 100;
                             	formatedValue = numeral(value).format(formatStr);
                             }
                             cell.val(formatedValue);

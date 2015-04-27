@@ -35,19 +35,21 @@
         strechW: 'all',
         scrollH: 'auto',
         scrollV: 'auto',
-        width: 700,
+        width: 800,
         height: 500,
         fixedRowsTop: 0,
         fixedColumnsLeft: 1,
         contextMenu: true,
-        colWidths: [70, 600],
+        colWidths: [70, 600, 100],
         colHeaders: [
             "Symbol",
             "Text",
+			"Order"
         ],
         columns: [
             {data: 'Footnote_Symbol'},
-            {data: 'Footnote'}
+            {data: 'Footnote'},
+			{data: 'Footnote_Order'}
         ],
         afterChange: function (change, source) {
             if (source === 'loadData') {
@@ -81,6 +83,7 @@
                 Footnote: (changedParameter=="Footnote" ?  changedValue : newValue[0].Footnote),
                 Footnote_ID: (changedParameter=="Footnote_ID" ?  changedValue : newValue[0].Footnote_ID),
                 Footnote_Symbol: (changedParameter=="Footnote_Symbol" ?  changedValue : newValue[0].Footnote_Symbol),
+                Footnote_Order: (changedParameter=="Footnote_Order" ?  changedValue : newValue[0].Footnote_Order)
             })
             $.ajax({
                 url: this.action,

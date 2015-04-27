@@ -815,7 +815,7 @@ namespace IndInv.Controllers
                     int cellLengthFootnote = 0;
                     if (ws.Name == wsPRName)
                     {
-                        foreach (var footnote in footnotes)
+                        foreach (var footnote in footnotes.OrderBy(x=>x.Footnote_Order))
                         {
                             ws.Cell(currentRow, 1).RichText.AddText(footnote.Footnote_Symbol).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
                             ws.Cell(currentRow, 1).RichText.AddText(" " + footnote.Footnote + ";");
@@ -1015,7 +1015,7 @@ namespace IndInv.Controllers
                 options.Add("DisableJavascript", "false");
                 options.Add("PageSize", "Legal");
                 options.Add("UseLandscape", "true");
-                options.Add("Zoom", "1");
+                options.Add("Zoom", "1.1");
                 options.Add("MarginLeft", "2");
                 options.Add("MarginTop", "10");
                 options.Add("MarginBottomn", "1");
@@ -1415,6 +1415,7 @@ namespace IndInv.Controllers
                 Footnote_ID = x.Footnote_ID,
                 Footnote = x.Footnote,
                 Footnote_Symbol = x.Footnote_Symbol,
+				Footnote_Order = x.Footnote_Order
             }).ToList();
             if (Request.IsAjaxRequest())
             {
@@ -1430,6 +1431,7 @@ namespace IndInv.Controllers
                         Footnote_ID = newFootnote.Footnote_ID,
                         Footnote = newFootnote.Footnote,
                         Footnote_Symbol = newFootnote.Footnote_Symbol,
+						Footnote_Order = newFootnote.Footnote_Order
                     };
                     viewModel.Add(newViewModelItem);
 
@@ -1571,7 +1573,7 @@ namespace IndInv.Controllers
 		[HttpGet]
 		public ActionResult getFootnotes()
 		{
-			return Json(db.Footnotes.OrderBy(x => x.Footnote_Symbol).Select(x => new { Footnote_ID = x.Footnote_ID, Footnote = x.Footnote, Footnote_Symbol = x.Footnote_Symbol }).ToList(), JsonRequestBehavior.AllowGet);
+			return Json(db.Footnotes.OrderBy(x => x.Footnote_Order).Select(x => new { Footnote_ID = x.Footnote_ID, Footnote = x.Footnote, Footnote_Symbol = x.Footnote_Symbol, Footnote_Order = x.Footnote_Order}).ToList(), JsonRequestBehavior.AllowGet);
 		}
 
         [HttpGet]
