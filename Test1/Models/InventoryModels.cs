@@ -83,11 +83,11 @@ namespace IndInv.Models
         [Display(Name = "OPEO Lead")]
         public string FY_13_14_OPEO_Lead { get; set; }
 
-        public virtual string FY_13_14_Q1_Color { get { return Color.getColor(FY_13_14_Q1, FY_13_14_Target, FY_13_14_Q1_Sup, FY_13_14_Q1_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
-        public virtual string FY_13_14_Q2_Color { get { return Color.getColor(FY_13_14_Q2, FY_13_14_Target, FY_13_14_Q2_Sup, FY_13_14_Q2_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
-        public virtual string FY_13_14_Q3_Color { get { return Color.getColor(FY_13_14_Q3, FY_13_14_Target, FY_13_14_Q3_Sup, FY_13_14_Q3_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
-        public virtual string FY_13_14_Q4_Color { get { return Color.getColor(FY_13_14_Q4, FY_13_14_Target, FY_13_14_Q4_Sup, FY_13_14_Q4_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
-        public virtual string FY_13_14_YTD_Color { get { return Color.getColor(FY_13_14_YTD, FY_13_14_Target, FY_13_14_YTD, FY_13_14_YTD_Custom_Color, FY_13_14_Color_ID, true, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID); } }
+        public virtual string FY_13_14_Q1_Color { get { return Color.getColor(FY_13_14_Q1, FY_13_14_Target, FY_13_14_Q1_Sup, FY_13_14_Q1_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
+        public virtual string FY_13_14_Q2_Color { get { return Color.getColor(FY_13_14_Q2, FY_13_14_Target, FY_13_14_Q2_Sup, FY_13_14_Q2_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
+        public virtual string FY_13_14_Q3_Color { get { return Color.getColor(FY_13_14_Q3, FY_13_14_Target, FY_13_14_Q3_Sup, FY_13_14_Q3_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
+        public virtual string FY_13_14_Q4_Color { get { return Color.getColor(FY_13_14_Q4, FY_13_14_Target, FY_13_14_Q4_Sup, FY_13_14_Q4_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
+        public virtual string FY_13_14_YTD_Color { get { return Color.getColor(FY_13_14_YTD, FY_13_14_Target, FY_13_14_YTD, FY_13_14_YTD_Custom_Color, FY_13_14_Color_ID, true, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
 
 
 
@@ -140,11 +140,11 @@ namespace IndInv.Models
         [Display(Name = "OPEO Lead")]
         public string FY_14_15_OPEO_Lead { get; set; }
 
-        public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_13_14_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
-        public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_13_14_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
-        public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
-        public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
-        public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID); } }
+		public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_13_14_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_13_14_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+        public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+        public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+        public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
 
 
 		[Display(Name = "Q1")]
@@ -196,11 +196,11 @@ namespace IndInv.Models
 		[Display(Name = "OPEO Lead")]
 		public string FY_15_16_OPEO_Lead { get; set; }
 
-		public virtual string FY_15_16_Q1_Color { get { return Color.getColor(FY_15_16_Q1, FY_15_16_Target, FY_13_14_Q1_Sup, FY_15_16_Q1_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
-		public virtual string FY_15_16_Q2_Color { get { return Color.getColor(FY_15_16_Q2, FY_15_16_Target, FY_13_14_Q2_Sup, FY_15_16_Q2_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
-		public virtual string FY_15_16_Q3_Color { get { return Color.getColor(FY_15_16_Q3, FY_15_16_Target, FY_13_14_Q3_Sup, FY_15_16_Q3_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
-		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_13_14_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
-		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_13_14_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID); } }
+		public virtual string FY_15_16_Q1_Color { get { return Color.getColor(FY_15_16_Q1, FY_15_16_Target, FY_13_14_Q1_Sup, FY_15_16_Q1_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
+		public virtual string FY_15_16_Q2_Color { get { return Color.getColor(FY_15_16_Q2, FY_15_16_Target, FY_13_14_Q2_Sup, FY_15_16_Q2_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
+		public virtual string FY_15_16_Q3_Color { get { return Color.getColor(FY_15_16_Q3, FY_15_16_Target, FY_13_14_Q3_Sup, FY_15_16_Q3_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
+		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_13_14_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
+		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_13_14_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
 
 
 
