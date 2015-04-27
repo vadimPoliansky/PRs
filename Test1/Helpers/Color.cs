@@ -179,7 +179,7 @@ namespace IndInv.Helpers
                 }
             }
 
-			if (Color_ID != 4)
+			if (Color_ID != 4 && Color_ID != 5)
 			{
 				if (Target != null)
 				{
@@ -271,13 +271,13 @@ namespace IndInv.Helpers
 						{
 							return "cssRed";
 						}
-						else if (score > targetScore * threshold_high)
-						{
-							return "cssGreen";
-						}
 						else if (score >= targetScore * threshold_high && score <= targetScore * (((threshold_high * 100) + 1) / 100))
 						{
 							return "cssYellow";
+						}
+						else if (score > targetScore * threshold_high)
+						{
+							return "cssGreen";
 						}
 						else
 						{
@@ -290,13 +290,13 @@ namespace IndInv.Helpers
 						{
 							return "cssRed";
 						}
-						else if (score < targetScore * threshold_high)
-						{
-							return "cssGreen";
-						}
 						else if (score <= targetScore * threshold_high && score >= targetScore * (((threshold_high * 100) + 1) / 100))
 						{
 							return "cssYellow";
+						}
+						else if (score < targetScore * threshold_high)
+						{
+							return "cssGreen";
 						}
 						else
 						{
