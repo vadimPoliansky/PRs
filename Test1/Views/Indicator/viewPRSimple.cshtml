@@ -619,7 +619,7 @@
         text-align: center;
         color: Black;
         min-width: 1px;
-        padding: 5px;
+        padding: 0px;
     }
 
     .prtd-title {
@@ -629,7 +629,9 @@
         min-width: 20% !important;
         max-width: 20% !important;
         word-wrap: break-word;
-        padding: 0 10 0 2;
+        padding: 0;
+		padding-right: 2px;
+		padding-left: 2px;
     }
 
     .prtd-id-def {
@@ -638,7 +640,7 @@
         color: Black;
         min-width: 1% !important;
         max-width: 1% !important;
-        padding: 5px;
+        padding: 0;
     }
 
     .prtd-titleDef {
@@ -648,7 +650,9 @@
         min-width: 5.5% !important;
         max-width: 5.5% !important;
         word-wrap: break-word;
-        padding: 0 10 0 2;
+        padding: 0;
+		padding-right: 2px;
+		padding-left: 2px;
     }
 
     .prtd {
@@ -667,7 +671,7 @@
         min-width: 6.5%;
         max-width: 15%;
         padding: 0px;
-		padding-left:2px;
+		padding-left:0;
     }
 
     .footnotes {
@@ -780,7 +784,7 @@
             var title = $(".prrow-CoETitle");
             if (ele.width() / ele.height() < setRatio) {
                 while (ele.width() / ele.height() < setRatio) {
-                    var fontSize = parseInt(ele.css('font-size')) * 0.98;
+                    var fontSize = parseInt(ele.css('font-size')) * 0.99;
                     ele.css('font-size', fontSize );
                     area.css('font-size', fontSize );
                     prHeader.css('font-size', fontSize);
@@ -790,7 +794,7 @@
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
-                	var fontSize = parseInt(ele.css('font-size')) * 1.1;
+                	var fontSize = parseInt(ele.css('font-size')) * 1.05;
                 	if (fontSize > 25) {
                 		ele.css('height', 'auto');
                 		ele.parent().css('height', maxHeight);
@@ -811,7 +815,7 @@
         var objectiveColumnWidth = $('table').first().width() / 2
         columnizeOpt = { width: objectiveColumnWidth };
         $('.triple-list').columnize(columnizeOpt);
-        $(".tbl_PR").first().textfill(2.3, "91%");
-        $(".tbl_Def").first().textfill(2.3, "96%");
+        $(".tbl_PR").first().textfill(2.2, "91%");
+        $(".tbl_Def").first().textfill(2.2, "96%");
     });
 </script>
