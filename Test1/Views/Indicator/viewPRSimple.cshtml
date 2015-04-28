@@ -20,6 +20,8 @@
     {
         var footnotes = new List<Footnotes>();
     <div class="row" style="min-width:100%">
+	<div class="tbl_Container">
+
     <table class="tbl_PR" id="tbl_@coe.CoE_Abbr.Replace(" ", "_")" cellspacing="1" class="PR" border="1" runat="server" >
     <tr class="prrow-CoETitle">
         <td colspan="2"></td>
@@ -285,7 +287,10 @@
 		}
 	}
     </table>
-    <div class="footer footnotes">
+	</div>
+	
+	<div class="footer">
+    <div class="footnotes">
         @{var l = 0;
           foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).OrderBy(x=>x.Footnote_Order))
           {
@@ -299,13 +304,15 @@
           }}
         <br />
     </div>
-    <div class="footer footer-left-pg1">
+    <div class="footer-left-pg1">
         Page 1 of 2
     </div>
-    <div class="footer footer-right-pg1">
+    <div class="footer-right-pg1">
         Generated on: @DateTime.Now.ToString("M/d/yyyy");
     </div>
+	</div>
 
+	<div class="tbl_Container">
     <table class="tbl_Def" id="tblDef_@coe.CoE_Abbr.Replace(" ", "_")" class="PRDef" border="1" runat="server" >
     <tr class="prheader-1">
     <td rowspan="1", class="prheader prheader-1 prcol-id">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
@@ -394,6 +401,8 @@
         }
     }
     </table>
+	</div>
+
     <div class="disclaimer">Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.</div>
     <div class="footer-left-pg2">
         Page 2 of 2
@@ -572,12 +581,14 @@
 		list-style:none;
 	}
 
+	.tbl_Container {
+	}
+
     table {
-        width:1900px;
+		width:1900px;
         /*height:95%;*/
     }
 
-    
     table, th, td {
         min-width:75px;
         font-size: 0.8em;
@@ -609,7 +620,7 @@
         min-width: 20% !important;
         max-width: 20% !important;
         word-wrap: break-word;
-        padding: 2px 2px 2px 2px;
+        padding: 0 10 0 0;
     }
 
     .prtd-id-def {
@@ -628,7 +639,7 @@
         min-width: 5.5% !important;
         max-width: 5.5% !important;
         word-wrap: break-word;
-        padding: 2px 2px 2px 2px;
+        padding: 0 10 0 0;
     }
 
     .prtd {
@@ -661,14 +672,16 @@
     .footer-left-pg1, .footer-left-pg2 {
         font-size:8px;
         left:-5px;
-		page-break-after:always;
     }
     .footer-right-pg1, .footer-right-pg2 {
         float:right;
         font-size:8px;
         right:-5px;
+		position:fixed;
+		bottom:0px;
     }
 	.footer {
+		page-break-after:always;
 	}
 
     .cssRed {
@@ -752,7 +765,7 @@
 
     ; (function ($) {
         $.fn.textfill = function (setRatio, maxHeight) {
-            var ele = $(this);
+        	var ele = $(this);
             var area = $(".prarea");
             var prHeader = $(".prheader");
             var title = $(".prrow-CoETitle");
@@ -770,11 +783,12 @@
                 	var fontSize = parseInt(ele.css('font-size')) * 1.1;
                 	if (fontSize > 25) {
                 		ele.css('height', 'auto');
-                		ele.css('margin-top', '100');
+                		ele.parent().css('height', maxHeight);
+                		//ele.css('margin-top', $(ele.parent()).height() /2);
                 		break;
                 	}
                     ele.css('font-size', fontSize );
-                    area.css('font-size', fontSize );
+                    area.css('font-size', fontSize *0.9 );
                     prHeader.css('font-size', fontSize);
                     title.css('font-size', fontSize);
                     ele.css('height', maxHeight);
