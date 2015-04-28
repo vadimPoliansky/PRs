@@ -134,12 +134,15 @@
 					@{var footnoteString = "";
 					foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 					{
-						footnoteString += footnote.Footnote.Footnote_Symbol;
-						footnoteString += ",";
+						if (footnote.Footnote.Footnote_Order > 0){
+							footnoteString += footnote.Footnote.Footnote_Symbol;
+							footnoteString += ",";
+						}
 						if (!footnotes.Contains(footnote.Footnote))
 						{
 							footnotes.Add(footnote.Footnote);
 						}
+
 					}
 					if (footnoteString.Length > 0){
 						footnoteString = footnoteString.Substring(0, footnoteString.Length - 1);
@@ -312,7 +315,9 @@
     </div>
 	</div>
 
+	
 	<div class="tbl_Container">
+
     <table class="tbl_Def" id="tblDef_@coe.CoE_Abbr.Replace(" ", "_")" class="PRDef" border="1" runat="server" >
     <tr class="prheader-1">
     <td rowspan="1", class="prheader prheader-1 prcol-id">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
@@ -610,7 +615,7 @@
         text-align: center;
         color: Black;
         min-width: 1px;
-        padding: 0px 2px 0px 2px;
+        padding: 5px;
     }
 
     .prtd-title {
@@ -620,7 +625,7 @@
         min-width: 20% !important;
         max-width: 20% !important;
         word-wrap: break-word;
-        padding: 0 10 0 0;
+        padding: 0 10 0 2;
     }
 
     .prtd-id-def {
@@ -629,7 +634,7 @@
         color: Black;
         min-width: 1% !important;
         max-width: 1% !important;
-        padding: 0px 2px 0px 2px;
+        padding: 5px;
     }
 
     .prtd-titleDef {
@@ -639,7 +644,7 @@
         min-width: 5.5% !important;
         max-width: 5.5% !important;
         word-wrap: break-word;
-        padding: 0 10 0 0;
+        padding: 0 10 0 2;
     }
 
     .prtd {
@@ -776,7 +781,8 @@
                     area.css('font-size', fontSize );
                     prHeader.css('font-size', fontSize);
                     title.css('font-size', fontSize);
-                    ele.css('height', maxHeight);
+                    ele.css('height', 'auto');
+                    ele.parent().css('height', maxHeight);
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
@@ -801,7 +807,7 @@
         var objectiveColumnWidth = $('table').first().width() / 2
         columnizeOpt = { width: objectiveColumnWidth };
         $('.triple-list').columnize(columnizeOpt);
-        $(".tbl_PR").first().textfill(2.3, "94%");
+        $(".tbl_PR").first().textfill(2.3, "91%");
         $(".tbl_Def").first().textfill(2.3, "96%");
     });
 </script>
