@@ -46,7 +46,7 @@
         <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
         <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
         <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_YTD)</td>
+        <td rowspan="1", class="prheader prheader-2">YTD</td>
     </tr>
     @{var numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
@@ -285,7 +285,7 @@
 		}
 	}
     </table>
-    <div class="footnotes">
+    <div class="footer footnotes">
         @{var l = 0;
           foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).OrderBy(x=>x.Footnote_Order))
           {
@@ -299,10 +299,10 @@
           }}
         <br />
     </div>
-    <div class="footer-left-pg1">
+    <div class="footer footer-left-pg1">
         Page 1 of 2
     </div>
-    <div class="footer-right-pg1">
+    <div class="footer footer-right-pg1">
         Generated on: @DateTime.Now.ToString("M/d/yyyy");
     </div>
 
@@ -322,17 +322,6 @@
 			<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 				<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 				<br />
-				<div class="objective">
-					<ul class="triple-list objective-list">
-					@{if (area_map.Objective != null){
-						List<string> objectives;
-						objectives = Regex.Matches(area_map.Objective, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
-						foreach(var objective in objectives){	
-							<text><li>@Html.Raw(objective)</li></text>
-						}}
-					}
-					</ul>
-				</div>
 			</td>
 		</tr>
         string[,] oldColumns = null;
@@ -620,7 +609,7 @@
         min-width: 20% !important;
         max-width: 20% !important;
         word-wrap: break-word;
-        padding: 0px 2px 0px 2px;
+        padding: 2px 2px 2px 2px;
     }
 
     .prtd-id-def {
@@ -639,7 +628,7 @@
         min-width: 5.5% !important;
         max-width: 5.5% !important;
         word-wrap: break-word;
-        padding: 0px 2px 0px 2px;
+        padding: 2px 2px 2px 2px;
     }
 
     .prtd {
@@ -672,13 +661,15 @@
     .footer-left-pg1, .footer-left-pg2 {
         font-size:8px;
         left:-5px;
+		page-break-after:always;
     }
     .footer-right-pg1, .footer-right-pg2 {
         float:right;
         font-size:8px;
         right:-5px;
-        page-break-after:always;
     }
+	.footer {
+	}
 
     .cssRed {
         background-color: rgb(255, 0, 0);
@@ -776,7 +767,12 @@
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
-                    var fontSize = parseInt(ele.css('font-size')) * 1.1;
+                	var fontSize = parseInt(ele.css('font-size')) * 1.1;
+                	if (fontSize > 25) {
+                		ele.css('height', 'auto');
+                		ele.css('margin-top', '100');
+                		break;
+                	}
                     ele.css('font-size', fontSize );
                     area.css('font-size', fontSize );
                     prHeader.css('font-size', fontSize);
