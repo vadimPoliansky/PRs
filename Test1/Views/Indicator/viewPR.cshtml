@@ -1370,7 +1370,7 @@
                 return;
             }
             if (e.keyCode == 45 || e.keyCode == 36 || e.keyCode == 35 || e.keyCode == 33 || e.keyCode == 34){
-                return
+            	return;
             }
             var currentEle = $(this).parent().children('.pr-input').first();
             var currentEleSup = $(this).parent().children('.pr-input-sup').first();
@@ -1482,18 +1482,19 @@
     	    currentEle.parent().children('.tdValue').html(updateValue + "<sup>" + updateValueSup + "</sup>");
     	}
         /////////////////////////////////////////////////////////////
-        $(document).on('dblclick','.prtd-title', function (e) {
-            var indicatorID = e.target.attributes.getNamedItem('indicatorID');
-            var field = e.target.attributes.getNamedItem('field');
-            var currentEle = $(this);
-            var oldValue = $(this).text();
-            e.stopPropagation();
+    	$(document).on('dblclick','table td.prtd-title', function (e) {
+    		if (!$(e.target).hasClass('pr-input')){
+    			var indicatorID = e.target.attributes.getNamedItem('indicatorID');
+    			var field = e.target.attributes.getNamedItem('field');
+    			var currentEle = $(this);
+    			var oldValue = $(this).text();
 
-            $.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
-                var value = data.Value || "";
-                var value2 = data.Value_Sup || "";
-                updateValOLD(currentEle, value, value2, indicatorID.value, field.value);
-            });
+    			$.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
+    				var value = data.Value || "";
+    				var value2 = data.Value_Sup || "";
+    				updateValOLD(currentEle, value, value2, indicatorID.value, field.value);
+    			});
+    		}
 
         });
         function updateValOLD(currentEle, value, valueSup, indicatorID, field) {
@@ -2681,7 +2682,7 @@
     var selectedN =0;
     var selectedDec =0;
     var selectObj = $('table').selectable({
-    	cancel: ".jqte, .pr-input, .newrow-text",
+    	cancel: ".jqte, .pr-input, .newrow-text, .pr-edit-textarea",
         filter: ".prtd",
         distance: 1,
         start: function(event, ui){
@@ -2962,12 +2963,7 @@
         -ms-transition: all 0.30s ease-in-out;
         -o-transition: all 0.30s ease-in-out;
     }
-    .pr-edit-textarea:hover {
-        box-shadow: 0 0 10px rgba(255, 106, 0, 1);
-        padding: 3px 0px 3px 3px;
-        margin: 5px 1px 3px 0px;
-        border: 1px solid rgba(255, 106, 0, 1);
-    }
+    
 
     .prheader-1 {
         font-size: 11px;
