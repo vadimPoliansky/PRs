@@ -786,7 +786,7 @@
                 while (ele.width() / ele.height() < setRatio) {
                     var fontSize = parseInt(ele.css('font-size')) * 0.99;
                     ele.css('font-size', fontSize );
-                    area.css('font-size', fontSize );
+                    area.css('font-size', fontSize * 0.9);
                     prHeader.css('font-size', fontSize);
                     title.css('font-size', fontSize);
                     ele.css('height', 'auto');
