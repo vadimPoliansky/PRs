@@ -2183,8 +2183,8 @@
                 },
 
                 "foldDelete": {
-                    "name": "Remove Indicator From This PR",
-                    "items": {
+                    name: "Remove Indicator From This PR",
+                    items: {
                         "foldDelete": {"name": "Remove From This PR",
                             callback: function(key, options){
                                 var cell = $(this);
@@ -2197,9 +2197,9 @@
                 },
 
                 "foldDeleteComp": {
-                	"name": "Remove Indicator Completely (NOT UNDOABLE!)",
-                	"items": {
-                		"foldDelete": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
+                	name: "Remove Indicator Completely (NOT UNDOABLE!)",
+                	items: {
+                		"foldDeletePerm": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
                 			callback: function(key, options){
                 				var indicatorID = $(this).attr('indicatorID');
                 				removeIndicatorDelete(indicatorID);
