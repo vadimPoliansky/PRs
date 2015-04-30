@@ -296,7 +296,7 @@
 	<div class="footer">
     <div class="footnotes">
         @{var l = 0;
-          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0 || footnotes.Contains(x) || x.Footnote_Order != -2).OrderBy(x=>x.Footnote_Order))
+          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0 || footnotes.Contains(x) && x.Footnote_Order != -2).OrderBy(x=>x.Footnote_Order))
           {
               footnotes.Remove(footnote);
               if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
