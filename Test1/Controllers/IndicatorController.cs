@@ -1028,8 +1028,8 @@ namespace IndInv.Controllers
 
             string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.png");
             Image logo = Image.GetInstance(picPath);
-            //string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
-            //Image logoOPEO = Image.GetInstance(picPathOPEO);
+            string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+            Image logoOPEO = Image.GetInstance(picPathOPEO);
             string footerPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/footer.png");
             Image footer = Image.GetInstance(footerPath);
             string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
@@ -1078,10 +1078,10 @@ namespace IndInv.Controllers
                 logo.SetAbsolutePosition(5,reader.GetPageSizeWithRotation(page).Height-logo.ScaledHeight);
                 writer.DirectContent.AddImage(logo);
 
-                //logoOPEO.Alignment = Element.ALIGN_CENTER;
-                //logoOPEO.ScalePercent(20, 20);
-                //logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
-                //writer.DirectContent.AddImage(logoOPEO);
+                logoOPEO.Alignment = Element.ALIGN_CENTER;
+                logoOPEO.ScalePercent(20, 20);
+                logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
+                writer.DirectContent.AddImage(logoOPEO);
 
                 if (page == 1)
                 {
