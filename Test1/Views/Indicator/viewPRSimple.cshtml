@@ -134,8 +134,7 @@
 					@{var footnoteString = "";
 					foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 					{
-						if (footnote.Footnote.Footnote_Order > 0 || footnote.Footnote.Footnote_Order == -2)
-						{
+						if (footnote.Footnote.Footnote_Order > 0){
 							footnoteString += footnote.Footnote.Footnote_Symbol;
 							footnoteString += ",";
 						}
@@ -299,7 +298,7 @@
           foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0 || footnotes.Contains(x)).OrderBy(x=>x.Footnote_Order))
           {
               footnotes.Remove(footnote);
-              if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
+              if (l % 2 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
               { 
                 @:<br />
             }
@@ -309,12 +308,7 @@
                 @:<br />
             }
 			  l++;
-		  }
-		  foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x => x.Footnote_Order == -2).OrderBy(x => x.Footnote_Order)){
-			  <br />
-			<b><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </b>
-		  }
-		  }
+		  }}
         <br />
     </div>
     <div class="footer-left-pg1">
