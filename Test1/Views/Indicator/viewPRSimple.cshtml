@@ -296,7 +296,7 @@
 	<div class="footer">
     <div class="footnotes">
         @{var l = 0;
-          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0 || footnotes.Contains(x) && x.Footnote_Order != -2).OrderBy(x=>x.Footnote_Order))
+          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0).OrderBy(x=>x.Footnote_Order))
           {
               footnotes.Remove(footnote);
               if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
@@ -309,12 +309,17 @@
                 @:<br />
             }
 			  l++;
-		  }
-		  foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x => x.Footnote_Order == -2).OrderBy(x => x.Footnote_Order)){
-			  <br />
-			<b><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </b>
-		  }
-		  }
+		  }}
+		  <div class="new-fy-notes">
+		@{l = 0;
+		  foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x => x.Footnote_Order == -2 || footnotes.Contains(x)).OrderBy(x => x.Footnote_Order)){
+              if (l % 6 == 0 && l != 0)
+              { 
+                @:<br />
+			  }
+			  <small><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </small>
+		  }}
+		  </div>
         <br />
     </div>
     <div class="footer-left-pg1">
@@ -770,7 +775,9 @@
     }
 
 
-    }
+	.new-fy-notes {
+		border:1px solid black;
+	}
 </style>
 
 <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
