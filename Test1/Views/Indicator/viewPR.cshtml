@@ -1241,10 +1241,13 @@
             var inputEl = element.children('.pr-input');
             inputEl.show();
             if (sup === true){
-                inputEl.last().focus();
+            	inputEl.last().focus();
+            	inputEl.last().select();
             }else {
-                inputEl.first().focus();
+            	inputEl.first().focus();
+            	inputEl.first().select();
             }
+
             var tdEl = element.children('.tdValue');
             tdEl.hide();
             $('body').unbind("click").click(function (evt) {
