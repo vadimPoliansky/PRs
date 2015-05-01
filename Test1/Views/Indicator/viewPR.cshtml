@@ -1445,8 +1445,9 @@
             	if (formatStr !== ""){
             		var isTime = (formatStr === '00:00:00')
             		if (isTime) {
-            			updateValue = numeral().unformat(updateValue);
+            			updateValue = numeral().unformat(updateValue + ":00");
             			updateValue = numeral(updateValue).format(formatStr);
+            			updateValue = updateValue.substring(0,updateValue.length - 3);
             		} else {
             			updateValue = numeral(updateValue).format(formatStr);
             		}
