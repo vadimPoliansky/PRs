@@ -1017,7 +1017,7 @@ namespace IndInv.Controllers
                 options.Add("UseLandscape", "true");
                 options.Add("Zoom", "1.1");
                 options.Add("MarginLeft", "2");
-                options.Add("MarginTop", "2");
+                options.Add("MarginTop", "10");
                 options.Add("MarginBottomn", "1");
                 options.Add("MarginRight", "2");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
