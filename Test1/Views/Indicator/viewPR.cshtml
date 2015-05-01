@@ -1445,10 +1445,11 @@
             	if (formatStr !== ""){
             		var isTime = (formatStr === '00:00:00')
             		if (isTime) {
-            			formatedValue = numeral().unformat(updateValue);
-						formatedValue = numeral(formatedValue).format(formatStr);
+            			updateValue = numeral().unformat(updateValue);
+            			updateValue = numeral(updateValue).format(formatStr);
             		} else {
-            			formatedValue = numeral(updateValue).format(formatStr);
+            			console.log(formatStr);
+            			updateValue = numeral(updateValue).format(formatStr);
             		}
                 }
             }
