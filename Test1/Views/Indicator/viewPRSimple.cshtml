@@ -803,18 +803,24 @@
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
-                	var fontSize = parseInt(ele.css('font-size')) * 1.05;
-                	if (fontSize > 25) {
-                		ele.css('height', 'auto');
+                	/*if (fontSize > 30) {
+                		var padding = parseInt(ele.css('padding')) * 1.05;
+                		if (padding == 0) { padding = 1; }
+                		ele.css('padding', padding);
+                		area.css('padding', padding);
+                		prHeader.css('padding', padding);
+                		title.css('padding', padding);
                 		ele.parent().css('height', maxHeight);
                 		//ele.css('margin-top', $(ele.parent()).height() /2);
-                		break;
-                	}
-                    ele.css('font-size', fontSize);
-                    area.css('font-size', fontSize *0.9 );
-                    prHeader.css('font-size', fontSize);
-                    title.css('font-size', fontSize);
-                    ele.css('height', maxHeight);
+                		//break;
+                	} else {*/
+                		var fontSize = parseInt(ele.css('font-size')) * 1.05;
+                		ele.css('font-size', fontSize);
+                		area.css('font-size', fontSize * 0.9);
+                		prHeader.css('font-size', fontSize);
+                		title.css('font-size', fontSize);
+                		ele.css('height', maxHeight);
+                	/*}*/
                 }
             }
         }
