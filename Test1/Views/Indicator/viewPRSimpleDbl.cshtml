@@ -19,11 +19,6 @@
     if (@Model.Analyst_ID.HasValue ? coe.Indicator_CoE_Map.Any(x => x.Indicator.Analyst_ID == @Model.Analyst_ID) : true)
     {
         var footnotes = new List<Footnotes>();
-		
-	<div class="row-right">
-		@if (coe.CoE_Type != null){ <div>Center of Excellence: @coe.CoE_Type</div> }
-	</div>
-		
     <div class="row" style="min-width:100%">
 	<div class="tbl_Container">
 
@@ -36,25 +31,49 @@
     <tr class="prrow-seperator">
         <td colspan="13"></td>
     </tr>
-    <tr class="prheader-1">
-        <td rowspan="2", class="prheader prheader-1 prcol-id">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </td>
-        <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName YTD</td>
-        <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
-    </tr>
 
-    <tr class="prheader-2 prheader-Final">
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</td>
-        <td rowspan="1", class="prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</td>
-        <td rowspan="1", class="prheader prheader-2">YTD</td>
-    </tr>
+	<tr class="prheader-top">
+		<th class="col-top-blank-id" colspan ="1"></th>
+		<th class="col-top-blank-title" colspan ="1"></th>
+		<th class="prheader-1 prheader col-top" colspan="9">GIM</th>
+		<th class="prheader-1 prheader col-top-wide" colspan="1"></th>
+		<th class="prheader-1 prheader col-top" colspan ="9">ACE</th>
+		<th class="prheader-1 prheader col-top-wide" colspan ="1"></th>
+	</tr>
+
+	<tr class="prheader-1">
+		<th rowspan="2" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
+		<th rowspan="2" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
+
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+		<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+		<th rowspan="2" class="col-td col-td-wide prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+		<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
+		<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
+		<th rowspan="2" class="col-td col-td-wide prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
+
+		<th rowspan="2" class="col-td col-td-wide prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+	</tr>
+
+	<tr class="prheader-2 prheader-Final">
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">YTD</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q1)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q2)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q3)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.FY_13_14_Q4)</th>
+		<th rowspan="1" class="col-td prheader prheader-2">YTD</th>
+	</tr>
     @{var numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
@@ -94,6 +113,7 @@
 		foreach (var map in allMaps)
 		{
 			var indicator = map.Indicator;
+			var linkedIndicator = Model.allIndicators.FirstOrDefault(x => x.Indicator_ID == indicator.Indicator_Link) ?? indicator;
 			var indicatorType = indicator.GetType();
 			var indicatorTitle = ""; int? number = numCount; var skip = false;
 			if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
@@ -170,7 +190,7 @@
 			{
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null),
-				"", 
+				"col-left-border", 
 				FiscalYear.FYStrFull("FY_3",fiscalYear), 
 				"1",
 			},
@@ -235,10 +255,80 @@
 				"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
 				rowSpan.ToString()
 			},
+													
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(linkedIndicator,null),
+				"col-left-border", 
+				FiscalYear.FYStrFull("FY_3",fiscalYear), 
+				"1",
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(linkedIndicator,null), 
+				"", 
+				FiscalYear.FYStrFull("FY_2",fiscalYear),
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(linkedIndicator,null),
+				"", 
+				FiscalYear.FYStrFull("FY_1",fiscalYear), 
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(linkedIndicator,null), 
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(linkedIndicator,null) + " Q1_Color", 
+				FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1",
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(linkedIndicator,null) + " Q2_Color", 
+				FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2", 
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(linkedIndicator,null) + " Q3_Color", 
+				FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3", 
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(linkedIndicator,null) + " Q4_Color", 
+				FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4", 
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(linkedIndicator,null) + " YTD_Color", 
+				FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD", 
+				"1"
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(linkedIndicator,null), 
+				"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
+				rowSpan.ToString()
+			},
+			{
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(linkedIndicator,null),
+				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(linkedIndicator,null), 
+				"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
+				rowSpan.ToString()
+			},
+													
 			{
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
-				"", 
+				"col-left-border", 
 				FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 				rowSpan.ToString()
 			}};
@@ -335,7 +425,7 @@
     </div>
 	</div>
 
-	<div class="row" style="min-width:100%">
+	
 	<div class="tbl_Container">
 
     <table class="tbl_Def" id="tblDef_@coe.CoE_Abbr.Replace(" ", "_")" class="PRDef" border="1" runat="server" >
@@ -427,7 +517,6 @@
 	}
     </table>
 	</div>
-	</div>
 
     <div class="disclaimer">Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.</div>
     <div class="footer-left-pg2">
@@ -441,14 +530,6 @@
 }
 
 <style>
-
-	.row {
-		padding-top:30px;
-	}
-
-	.row-right {
-		float:right;
-	}
 
     body {
         font-size: 1vmax;
@@ -780,7 +861,7 @@
         margin: 0 0 0 0 !important;
     }
 
-                       .prrow-hasNValue > td {
+    .prrow-hasNValue > td {
         border-bottom:0px none;
     }
     .prrow-isNValue > td {
@@ -788,6 +869,52 @@
         height:20px;
     }
 
+		.col-uid {
+		width:1px;
+		overflow:hidden;
+	}
+	.col-id {
+		width:2%;
+	}
+	.col-td {
+		width:3%;
+	}
+
+	.col-td-wide {
+		width:8%;
+	}
+
+	.col-title {
+		width:15%;
+	}
+
+	.col-def {
+		width:30%;
+	}
+	.col-target-rationale{
+		width:30%;
+	}
+	.col-comparator-source{
+		width:32%;
+	}
+	.col-top {
+		width:32%;
+		border-right:none !important;
+		padding-left:88px;
+	}
+	.col-top-wide {
+		width:6%;
+		border-left:none !important;
+	}
+	.col-top-blank-id {
+		width:2%;
+	}
+	.col-top-blank-title {
+		width:15%;
+	}
+	.col-left-border {
+		border-left:5px solid black;
+	}
 
 	.new-fy-notes {
 		border:1px solid black;
@@ -844,7 +971,7 @@
         var objectiveColumnWidth = $('table').first().width() / 2
         columnizeOpt = { width: objectiveColumnWidth };
         $('.triple-list').columnize(columnizeOpt);
-        $(".tbl_PR").first().textfill(2.2, "90%");
-        $(".tbl_Def").first().textfill(2.2, "90%");
+        $(".tbl_PR").first().textfill(2.2, "93%");
+        $(".tbl_Def").first().textfill(2.2, "96%");
     });
 </script>

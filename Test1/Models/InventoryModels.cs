@@ -202,7 +202,7 @@ namespace IndInv.Models
 		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_13_14_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
 		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_13_14_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID,3); } }
 
-
+		public Int16? Indicator_Link { get; set; }
 
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual Areas Area { get; set; }
@@ -216,6 +216,7 @@ namespace IndInv.Models
         public Int16 CoE_ID { get; set; }
         public string CoE { get; set; }
         public string CoE_Abbr { get; set; }
+		public string CoE_Type { get; set; }
 
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual ICollection<Area_CoE_Maps> Area_CoE_Map { get; set; }

@@ -17,6 +17,7 @@ namespace IndInv.Models.ViewModels
         public List<Footnotes> allFootnotes { get; set; }
         public List<Areas> allAreas { get; set; }
 		public List<Formats> allFormats { get; set; }
+		public List<Indicators> allIndicators { get; set; }
 
         public Int16 Fiscal_Year { get; set; }
         public Int16? Analyst_ID { get; set; }

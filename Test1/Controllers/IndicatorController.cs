@@ -187,11 +187,58 @@ namespace IndInv.Controllers
                 allColors = db.Color_Types.ToList(),
                 allDirections = db.Color_Directions.ToList(),
                 allThresholds = db.Color_Thresholds.ToList(),
-				allFormats = db.Formats.ToList()
+				allFormats = db.Formats.ToList(),
+				allIndicators = null
             };
 
             return View(viewModel);
         }
+
+		public ActionResult viewPRdbl(Int16 fiscalYear, Int16? analystID, Int16? coeID)
+		{
+			var allMaps = new List<Indicator_CoE_Maps>();
+
+			if (analystID.HasValue)
+			{
+				allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
+			}
+			else
+			{
+				allMaps = db.Indicator_CoE_Maps.ToList();
+			}
+
+			var allCoEs = new List<CoEs>();
+			if (coeID.HasValue)
+			{
+				allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+				allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
+			}
+			else
+			{
+				allCoEs = db.CoEs.Where(x => x.CoE_ID != 0).ToList();
+			}
+
+			ModelState.Clear();
+			var viewModel = new PRViewModel
+			{
+				//allCoEs = db.CoEs.ToList(),
+				allAnalysts = db.Analysts.ToList(),
+				allCoEs = allCoEs,
+				allMaps = allMaps,
+				allIndicators = db.Indicators.ToList(),
+				allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+				allFootnotes = db.Footnotes.ToList(),
+				allAreas = db.Areas.ToList(),
+				Fiscal_Year = fiscalYear,
+				Analyst_ID = analystID,
+				allColors = db.Color_Types.ToList(),
+				allDirections = db.Color_Directions.ToList(),
+				allThresholds = db.Color_Thresholds.ToList(),
+				allFormats = db.Formats.ToList()
+			};
+
+			return View(viewModel);
+		}
 
 		public ActionResult EditInventoryTD(Int16 fiscalYear, Int16? analystID, Int16? coeID)
 		{
@@ -1017,7 +1064,7 @@ namespace IndInv.Controllers
                 options.Add("UseLandscape", "true");
                 options.Add("Zoom", "1.1");
                 options.Add("MarginLeft", "2");
-                options.Add("MarginTop", "10");
+                options.Add("MarginTop", "5");
                 options.Add("MarginBottomn", "1");
                 options.Add("MarginRight", "2");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
@@ -1026,7 +1073,7 @@ namespace IndInv.Controllers
                 memoryStream.Write(result, 0, result.Length);
             }
 
-            string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.png");
+            string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/SHSheader.png");
             Image logo = Image.GetInstance(picPath);
             //string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
             //Image logoOPEO = Image.GetInstance(picPathOPEO);
@@ -1074,8 +1121,8 @@ namespace IndInv.Controllers
                 pdfDocument.SetPageSize(pdfDocument.PageSize);
 
                 logo.Alignment = Element.ALIGN_CENTER;
-                logo.ScalePercent(15,15);
-                logo.SetAbsolutePosition(5,reader.GetPageSizeWithRotation(page).Height-logo.ScaledHeight);
+                logo.ScalePercent(70,70);
+				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
                 writer.DirectContent.AddImage(logo);
 
                 //logoOPEO.Alignment = Element.ALIGN_CENTER;
@@ -1101,6 +1148,139 @@ namespace IndInv.Controllers
 
             return View(viewModel);
         }
+
+		public ActionResult viewPRDblPdf(Int16 fiscalYear, Int16? coeID)
+		{
+			var allCoEs = db.CoEs.ToList();
+			if (coeID != 0 && coeID != null)
+			{
+				allCoEs = allCoEs.Where(x => x.CoE_ID == coeID).ToList();
+			}
+			else
+			{
+				allCoEs = allCoEs.Where(x => x.CoE_ID != 0).ToList();
+			}
+
+			var allMaps = new List<Indicator_CoE_Maps>();
+			allMaps = db.Indicator_CoE_Maps.ToList();
+			ModelState.Clear();
+			var viewModel = new PRViewModel
+			{
+				//allCoEs = db.CoEs.ToList(),
+				allCoEs = allCoEs,
+				allAnalysts = db.Analysts.ToList(),
+				allMaps = allMaps,
+				allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+				allFootnotes = db.Footnotes.ToList(),
+				Fiscal_Year = fiscalYear,
+				Analyst_ID = null,
+				allColors = db.Color_Types.ToList(),
+				allIndicators = db.Indicators.ToList()
+			};
+
+			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
+			httpResponse.Clear();
+			httpResponse.ContentType = "application/pdf";
+			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
+
+			MemoryStream memoryStream = new MemoryStream();
+			string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
+			var test = (this.RenderView("viewPRSimpleDbl", viewModel));
+			string value = "<meta charset='UTF-8' />" + test;
+			using (var client = new WebClient())
+			{
+				NameValueCollection options = new NameValueCollection();
+				options.Add("apikey", apiKey);
+				options.Add("value", value);
+				options.Add("DisableJavascript", "false");
+				options.Add("PageSize", "Legal");
+				options.Add("UseLandscape", "true");
+				options.Add("Zoom", "1.1");
+				options.Add("MarginLeft", "2");
+				options.Add("MarginTop", "10");
+				options.Add("MarginBottomn", "1");
+				options.Add("MarginRight", "2");
+				//options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
+				byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
+				//httpResponse.BinaryWrite(result);
+				memoryStream.Write(result, 0, result.Length);
+			}
+
+			string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/SHSheader.png");
+			Image logo = Image.GetInstance(picPath);
+			//string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+			//Image logoOPEO = Image.GetInstance(picPathOPEO);
+			string footerPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/footer.png");
+			Image footer = Image.GetInstance(footerPath);
+			string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
+			string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
+			string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
+			string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
+
+			var pdfDocument = new iTextSharp.text.Document();
+			var outStream = new MemoryStream();
+			var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
+
+			pdfDocument.Open();
+			var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
+
+			for (var page = 1; page <= reader.NumberOfPages; page++)
+			{
+				pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
+				pdfDocument.NewPage();
+				var importedPage = writer.GetImportedPage(reader, page);
+				var pageRotation = reader.GetPageRotation(page);
+				var pageWidth = reader.GetPageSizeWithRotation(page).Width;
+				var pageHeight = reader.GetPageSizeWithRotation(page).Height;
+				switch (pageRotation)
+				{
+					case 0:
+						writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+						break;
+
+					case 90:
+						writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
+						break;
+
+					case 180:
+						writer.DirectContent.AddTemplate(
+							importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
+						break;
+
+					case 270:
+						writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
+						break;
+				}
+				pdfDocument.SetPageSize(pdfDocument.PageSize);
+
+				logo.Alignment = Element.ALIGN_CENTER;
+				logo.ScalePercent(70, 70);
+				logo.SetAbsolutePosition((reader.GetPageSizeWithRotation(page).Width - logo.ScaledWidth) / 2, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
+				writer.DirectContent.AddImage(logo);
+
+				//logoOPEO.Alignment = Element.ALIGN_CENTER;
+				//logoOPEO.ScalePercent(20, 20);
+				//logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
+				//writer.DirectContent.AddImage(logoOPEO);
+
+				if (page == 1)
+				{
+					footer.Alignment = Element.ALIGN_CENTER;
+					footer.ScalePercent(45, 45);
+					footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 10);
+					writer.DirectContent.AddImage(footer);
+				}
+			}
+
+			writer.CloseStream = false;
+			pdfDocument.Close();
+
+			outStream.WriteTo(httpResponse.OutputStream);
+			outStream.Close();
+			httpResponse.End();
+
+			return View(viewModel);
+		}
 
         public void deleteCoEMaps(Int16 mapID)
         {
