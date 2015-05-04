@@ -362,6 +362,37 @@ namespace IndInv.Controllers
             return View(viewModel);
         }
 
+		public ActionResult viewPRSimpleDbl(Int16 fiscalYear, Int16? analystID)
+		{
+			var allMaps = new List<Indicator_CoE_Maps>();
+
+			if (analystID.HasValue)
+			{
+				allMaps = db.Indicator_CoE_Maps.Where(x => x.Indicator.Analyst_ID == analystID).ToList();
+			}
+			else
+			{
+				allMaps = db.Indicator_CoE_Maps.ToList();
+			}
+
+			ModelState.Clear();
+			var viewModel = new PRViewModel
+			{
+				//allCoEs = db.CoEs.ToList(),
+				allAnalysts = db.Analysts.ToList(),
+				allCoEs = db.CoEs.ToList(),
+				allMaps = allMaps,
+				allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+				allFootnotes = db.Footnotes.ToList(),
+				Fiscal_Year = fiscalYear,
+				Analyst_ID = analystID,
+				allColors = db.Color_Types.ToList(),
+				allIndicators = db.Indicators.ToList()
+			};
+
+			return View(viewModel);
+		}
+
         [AllowAnonymous]
         public ActionResult viewPRSimple_Header()
         {
@@ -1197,7 +1228,7 @@ namespace IndInv.Controllers
 				options.Add("UseLandscape", "true");
 				options.Add("Zoom", "1.1");
 				options.Add("MarginLeft", "2");
-				options.Add("MarginTop", "10");
+				options.Add("MarginTop", "5");
 				options.Add("MarginBottomn", "1");
 				options.Add("MarginRight", "2");
 				//options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
@@ -1255,7 +1286,7 @@ namespace IndInv.Controllers
 
 				logo.Alignment = Element.ALIGN_CENTER;
 				logo.ScalePercent(70, 70);
-				logo.SetAbsolutePosition((reader.GetPageSizeWithRotation(page).Width - logo.ScaledWidth) / 2, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
+				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
 				writer.DirectContent.AddImage(logo);
 
 				//logoOPEO.Alignment = Element.ALIGN_CENTER;
