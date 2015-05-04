@@ -25,7 +25,7 @@
     <table class="tbl_PR" id="tbl_@coe.CoE_Abbr.Replace(" ", "_")" cellspacing="1" class="PR" border="1" runat="server" >
     <tr class="prrow-CoETitle">
         <td colspan="2"></td>
-        <td class="prtd-CoETitle" colspan="8">@coe.CoE</td>
+        <td class="prtd-CoETitle" colspan="18">@coe.CoE</td>
         <td colspan="3"></td>
     </tr>
     <tr class="prrow-seperator">
@@ -78,7 +78,7 @@
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
 		<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-			<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+			<td class="prarea" colspan='24' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 				@Html.DisplayFor(modelItem => area_map.Area.Area)
 				<br />
 				<div class="objective">
@@ -539,8 +539,7 @@
 
     .filter-bar {
         background-color:#0061a7;
-        border-bottom:1px solid rgb(89, 108, 139);
-        border-top:1px solid black;
+
     }
 
     .filter {
@@ -549,20 +548,7 @@
         font-size:medium;
     }
 
-    .add-indicator-panel {
-        background-color:lightgray !important;
-        border:1px solid black;
-        padding:0;
-        margin:0;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        border: 1px solid black;
-        padding: 0px;
-        background-color: red;
-        height:300px;
-        margin:0px;
-    }
+
     .add-indicator-panel-header {
         background-color: rgb(51,51,51);
         padding:5px;
@@ -631,12 +617,6 @@
         -ms-transition: all 0.30s ease-in-out;
         -o-transition: all 0.30s ease-in-out;
     }
-    .prrow:hover {
-        box-shadow: 0 0 10px rgba(81, 203, 238, 1);
-        padding: 3px 0px 3px 3px;
-        margin: 5px 1px 3px 0px;
-        border: 1px solid rgba(81, 203, 238, 1);
-    }
 
     .pr-edit-textarea {
         -webkit-transition: all 0.30s ease-in-out;
@@ -696,10 +676,11 @@
     table {
 		width:1900px;
         /*height:95%;*/
+		outline:none !important;
+		border:none !important;
     }
 
     table, th, td {
-        min-width:75px;
         font-size: 0.8em;
 		border-spacing:1px;
         border-collapse:collapse;
@@ -760,7 +741,7 @@
         background-color: White;
         text-align: center;
         color: Black;
-        min-width: 111px !important;
+        min-width: 60px !important;
         padding: 0px;
         margin:0px;
     }
@@ -861,7 +842,7 @@
         margin: 0 0 0 0 !important;
     }
 
-                       .prrow-hasNValue > td {
+    .prrow-hasNValue > td {
         border-bottom:0px none;
     }
     .prrow-isNValue > td {
@@ -873,6 +854,58 @@
 	.new-fy-notes {
 		border:1px solid black;
 		background-color: Silver;
+	}
+
+	.col-uid {
+		width:1px;
+		overflow:hidden;
+	}
+	.col-id {
+		width:2%;
+	}
+	.col-td {
+		width:3%;
+	}
+
+	.col-td-wide {
+		width:8%;
+	}
+
+	.col-title {
+		width:15%;
+	}
+
+	.col-def {
+		width:30%;
+	}
+	.col-target-rationale{
+		width:30%;
+	}
+	.col-comparator-source{
+		width:32%;
+	}
+	.col-top {
+		width:32%;
+		border-right:none !important;
+		padding-left:88px;
+	}
+	.col-top-wide {
+		width:6%;
+		border-left:none !important;
+	}
+	.col-top-blank-id {
+		width:2%;
+		border:none !important;
+	}
+	.col-top-blank-title {
+		border:none !important;
+		width:15%;
+	}
+	.col-left-border {
+		border-left:3px solid black;
+	}
+	.prheader-top {
+		border-top:none !important;
 	}
 </style>
 
