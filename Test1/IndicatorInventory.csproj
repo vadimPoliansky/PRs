@@ -241,6 +241,9 @@
     <Content Include="App_Data\quaterly.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\SHSheader.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\target.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
