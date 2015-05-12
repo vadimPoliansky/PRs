@@ -391,22 +391,29 @@
 										</table>
 
                                         <div class="row pr-footer-row">
-                                            <div class="large-6 columns">
+                                            <div class="large-8 columns">
 									            <div class="footnotes">
-									                @{var l = 0;}
-									                @foreach (var footnote in footnotes.OrderBy(x=>x.Footnote_Order))
-													{
-										                @:@footnote.Footnote_Symbol. @footnote.Footnote  
-										                l++;
-                                                        if (l % 2 == 0)
-                                                        { <br />}
-													}<br />
+												@{var l = 0;
+												  foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0).OrderBy(x=>x.Footnote_Order))
+												  {
+													  footnotes.Remove(footnote);
+													  if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
+													  { 
+														@:<br />
+													}
+													<sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote;
+													  if (footnote.Footnote_Order < 0)
+													  { 
+														@:<br />
+													}
+													  l++;
+												  }}<br />
                                                 </div>
                                             </div>
-                                            <div class="large-6 columns">
-                                                <img class="pr-footer-image" src="~/Images/quaterly.png" width="8%"/>
-												<img class="pr-footer-image" src="~/Images/target.png" width="30%" />
-												<img class="pr-footer-image" src="~/Images/na.png" width="15%"/>
+                                            <div class="large-4 columns">
+                                                <img class="pr-footer-image" src="~/Images/quaterly.png" width="14%"/>
+												<img class="pr-footer-image" src="~/Images/target.png" width="56%" />
+												<img class="pr-footer-image" src="~/Images/na.png" width="29%"/>
                                             </div>
 										<br />
                                         </div>
