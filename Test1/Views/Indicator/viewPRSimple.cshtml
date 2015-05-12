@@ -256,7 +256,7 @@
 				}
 
 				int colSpan = 1;
-				if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=" && i != 0)
+				if (i != columns.GetUpperBound(0) && columns[i + 1, 0] == "=")
 				{
 					int k = 1;
 					while (columns[i + k, 0] == "=")
@@ -267,7 +267,7 @@
 				}
 				else { colSpan = 1; };
 				allColspans.Add(colSpan);
-				if (columns[i, 0] != "=")
+				if (columns[i, 0] != "=" && i != 0)
 				{
 					var cls = columns[i, 2];
 					if (skip) { cls = oldColumns[i, 2]; };
@@ -696,7 +696,7 @@
     }
 
 	.prtdDef-centered {
-		text-align:center;
+		text-align:center !important;
 	}
 
     .footnotes {
