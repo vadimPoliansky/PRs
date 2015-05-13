@@ -12,5 +12,6 @@ namespace IndInv.Models.ViewModels
         public string Q3_Color { get; set; }
         public string Q4_Color { get; set; }
         public string YTD_Color { get; set; }
+		public string Direction { get; set; }
     }
 }

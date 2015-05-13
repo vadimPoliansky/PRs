@@ -60,7 +60,8 @@ namespace IndInv.Models
         public string FY_13_14_Comparator_Q3 { get; set; }
         public string FY_13_14_Comparator_Q4 { get; set; }
         [Display(Name = "Performance Threshold")]
-        public string FY_13_14_Performance_Threshold { get; set; }
+//        public string FY_13_14_Performance_Threshold { get; set; }
+		public virtual string FY_13_14_Performance_Threshold { get { return Color.getThreshold(FY_13_14_Target, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 2); } }
         public string FY_13_14_Performance_Threshold_Sup { get; set; }
         public Int16 FY_13_14_Color_ID { get; set; }
         public Int16 FY_13_14_Threshold_ID { get; set; }
@@ -117,10 +118,11 @@ namespace IndInv.Models
         public string FY_14_15_Comparator_Q3 { get; set; }
         public string FY_14_15_Comparator_Q4 { get; set; }
         [Display(Name = "Performance Threshold")]
-        public string FY_14_15_Performance_Threshold { get; set; }
+        //public string FY_14_15_Performance_Threshold { get; set; }
         public string FY_14_15_Performance_Threshold_Sup { get; set; }
         public Int16 FY_14_15_Color_ID { get; set; }
         public Int16 FY_14_15_Threshold_ID { get; set; }
+		public virtual string FY_14_15_Performance_Threshold { get { return Color.getThreshold(FY_14_15_Target, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
         public Int16 FY_14_15_Direction_ID { get; set; }
         public string FY_14_15_YTD_Custom_Color { get; set; }
         public string FY_14_15_Q1_Custom_Color { get; set; }
@@ -173,7 +175,8 @@ namespace IndInv.Models
 		public string FY_15_16_Comparator_Q3 { get; set; }
 		public string FY_15_16_Comparator_Q4 { get; set; }
 		[Display(Name = "Performance Threshold")]
-		public string FY_15_16_Performance_Threshold { get; set; }
+//		public string FY_15_16_Performance_Threshold { get; set; }
+		public virtual string FY_15_16_Performance_Threshold { get { return Color.getThreshold(FY_15_16_Target, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 2); } }
 		public string FY_15_16_Performance_Threshold_Sup { get; set; }
 		public Int16 FY_15_16_Color_ID { get; set; }
 		public Int16 FY_15_16_Threshold_ID { get; set; }
@@ -217,6 +220,7 @@ namespace IndInv.Models
         public string CoE { get; set; }
         public string CoE_Abbr { get; set; }
 		public string CoE_Type { get; set; }
+		public string CoE_Notes { get; set; }
 
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual ICollection<Area_CoE_Maps> Area_CoE_Map { get; set; }
@@ -299,6 +303,7 @@ namespace IndInv.Models
         public string Format_Type { get; set; }
         public string Format_Code { get; set; }
         public Int16 Order { get; set; }
+		public string Format_Code_C { get; set; }
     }
 
     public class Color_Types

@@ -209,6 +209,7 @@
     </Compile>
     <Compile Include="Models\Movie.cs" />
     <Compile Include="ViewModels\AnalystVM.cs" />
+    <Compile Include="ViewModels\CoE_NotesVM.cs" />
     <Compile Include="ViewModels\ObjectiveVM.cs" />
     <Compile Include="ViewModels\colorVM.cs" />
     <Compile Include="ViewModels\editVM.cs" />
@@ -242,6 +243,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\SHSheader.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\SHSheader.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\target.png">
@@ -1317,7 +1321,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>50953</DevelopmentServerPort>
+          <DevelopmentServerPort>56271</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

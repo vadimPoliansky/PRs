@@ -34,69 +34,18 @@
 </div>
 
 <div class="container">
-	<div class="mp-pusher" id="mp-pusher">
-
-		<nav id="menuFilter3D" class="mp-menu">
-            <div class="mp-level">
-                <h2 class="backBtnMain mp-back"><i class="fa fa-times backBtnMain mp-back"></i>Filter by:</h2>
-                <ul>
-                    <li>
-                        <a href="#"><i class="fa fa-filter"></i>CoE</a>
-                        <div class="mp-level">
-                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by CoE:</h2>
-                            <ul class="doubleList">
-                                @foreach (var coe in Model.allCoEs)
-                                {
-                                    <li>
-                                        <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i>@coe.CoE_Abbr </a></small>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
-                        <div class="mp-level">
-                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Quadrant:</h2>
-                            <ul>
-                                @foreach (var area in Model.allAreas)
-                                {
-                                    <li>
-                                        <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i>@area.Area</a></small>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-filter"></i>Type</a>
-                        <div class="mp-level">
-                            <h2 class="backBtn mp-back"><i class="fa fa-times backBtn mp-back"></i>Filter by Type:</h2>
-                            <ul>
-                                @foreach (var footnote in Model.allFootnotes)
-                                {
-                                    <li>
-                                        <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i>@footnote.Footnote</a></small>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
+	
 
 		<div class="scroller">
 			<div class="scroller-inner">
 				<div id="pushList">
-					<input class="search" id="search_input" name="Search" type="search" placeholder="Search" />
-					<a><span id="trigger" class="filterExpand menu-trigger"><i class="fa fa-filter fa-2x"></i></span></a>
 
 					<div class="inner-wrap">
 
 						<ul id="myTags" class="tagList">
 						</ul>
+
+
 						<ul id=""class="list">
 							<div class="block" id="block">
 								@{var properties = ModelMetadataProviders.Current;
@@ -110,8 +59,9 @@
 								{
 									var footnotes = new List<Footnotes>();
 									<fieldset class="prBlock">
-										<div class="large-10 columns" style="padding: 0">
-											<h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
+										<h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
+										<div class="prtitle large-10 columns" coeID="@coe.CoE_ID" style="padding: 0">
+											<img class="pr-logo-image" src="~/Images/SHSheader.png" width="56%"/>
 										</div>
 										<div class="large-1 columns" style="padding: 0">
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-Excel menu-hover'>View Excel</div>
@@ -314,7 +264,7 @@
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), 
-														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
+														"prTarget", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
 														rowSpan.ToString()
 													},
 													{
@@ -409,6 +359,17 @@
 													  l++;
 												  }}<br />
                                                 </div>
+												<div id="coeNotes">
+
+															@{if (coe.CoE_Notes!= null){
+																List<string> coeNotes;
+																coeNotes = Regex.Matches(coe.CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
+																foreach(var coeNote in coeNotes){	
+																	<text>@Html.Raw(coeNote)<br /></text>
+																}}
+															}
+
+												</div>
                                             </div>
                                             <div class="large-4 columns">
                                                 <img class="pr-footer-image" src="~/Images/quaterly.png" width="14%"/>
@@ -552,54 +513,8 @@
 	</div>
 
 
-	<!-- /pusher -->
-</div><!-- /container -->
-    
-    <div id="menuFilter">
-    <nav>
-        <h2 class="backBtnMain"><i class="fa fa-times backBtnMain"></i>Filter by:</h2>
-        <ul>
-            <li>
-                <a href="#"><i class="fa fa-filter"></i>CoE</a>
-                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by CoE:</h2>
-                <ul class="doubleList">
-                    @foreach (var coe in Model.allCoEs)
-                    {
-                        <li>
-                            <small><a href="#" class="filterMenuItem" field="coeID" id="@coe.CoE_ID" name="@coe.CoE"><i class="fa fa-angle-right"></i> @coe.CoE_Abbr </a></small>
-                        </li>
-                    }
-                </ul>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-filter"></i>Quadrant</a>
-                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by Quadrant:</h2>
-                <ul>
-                    @foreach (var area in Model.allAreas)
-                    {
-                        <li>
-                            <small><a href="#" class="filterMenuItem" field="areaID" id="@area.Area_ID" name="@area.Area"><i class="fa fa-angle-right"></i> @area.Area</a></small>
-                        </li>
-                    }
-                </ul>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-filter"></i>Type</a>
-                <h2 class="backBtn"><i class="fa fa-times backBtn"></i>Filter by Type:</h2>
-                <ul>
-                    @foreach (var footnote in Model.allFootnotes)
-                    {
-                        <li>
-                            <small><a href="#" class="filterMenuItem" field="footnoteID" id="@footnote.Footnote_ID" name="@footnote.Footnote"><i class="fa fa-angle-right"></i> @footnote.Footnote</a></small>
-                        </li>
-                    }
-                </ul>
-            </li>
-        </ul>
-    </nav>
-</div>
+	
 
-<div class="overlay"></div>
 <div class="backToTop"><i class="fa fa-arrow-up"></i></div>
 
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -616,10 +531,7 @@
 <link href="~/Scripts/chosen.min.css" rel="stylesheet" />
 
 <script src="~/Scripts/tag-it.min.js"></script>
-<link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
-<script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js" ></script>
 <script type="text/javascript" src="~/Scripts/classie.js"></script>
-<script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
@@ -795,7 +707,7 @@
         	//$('table').floatThead('reflow');
         });
 
-        function changeDirection(obj, directionID){
+        function changeDirection(obj, directionID, rightClick){
             var indicatorID = obj.attr('indicatorID');
             var clickedObjs = obj.closest("tr").children();
             $.post('changeDirection',{indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }, function(data){
@@ -808,18 +720,48 @@
                         if (c.indexOf("Color") !== -1){
                             $(obj).addClass(data[c]);
                         }
+                        if (c.indexOf("prTarget") !== -1 && rightClick){
+                        	console.log(rightClick);
+                        	var newDirection = data.Direction;
+
+                        	var currTarget = $(obj).children('.pr-input-val').val();
+                        	var currTargetSup = $(obj).children('.pr-input-sup').val();
+
+                        	var newTarget = currTarget;
+                        	var newTarget = newTarget.replace("<","");
+                        	var newTarget = newTarget.replace(">","");
+                        	var newTarget = newTarget.replace("≤","");
+                        	var newTarget = newTarget.replace("≥","");
+                        	var newTarget = newDirection + newTarget;
+                        	var currentEle = $(obj);
+                        	var currentEleSup = $(obj).children('.pr-input-sup');
+                        	var formatStr = $(obj).parent().attr('formatstr');
+                        	var indicatorID = $(obj).attr('indicatorID');
+                        	var field = $(obj).attr('field');
+                        	var updateValue = newTarget;
+                        	var updateValueSup = currTargetSup || "";
+                        	var oldValue = currTarget;
+                        	var oldValueSup = currTargetSup;
+
+                        	$(obj).children('.tdValue').html(newTarget + "<sup>" + currTargetSup + "</sup>");
+                        	$(obj).children('.pr-input-val').val(newTarget);
+                        	$(obj).children('.pr-input-sup').val(currTargetSup);
+
+
+                        	endEdit(currentEle, currentEleSup, formatStr ,indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false, true);
+                        }
                     });
                 });
             });
         }
-        function changeDirectionUndoable(obj, directionID, oldDirectionID){
-            changeDirection(obj, directionID);
+        function changeDirectionUndoable(obj, directionID, oldDirectionID, rightClick){
+        	changeDirection(obj, directionID, rightClick);
             undoManager.add({
                 undo: function() {
-                    changeDirection(obj, oldDirectionID);
+                	changeDirection(obj, oldDirectionID, rightClick);
                 },
                 redo: function(){
-                    changeDirection(obj, directionID);
+                	changeDirection(obj, directionID, rightClick);
                 }
             });
         }
@@ -1369,36 +1311,46 @@
             });
         }
 
+        var delay = (function(){
+        	var timer = 0;
+        	return function(callback, ms){
+        		clearTimeout (timer);
+        		timer = setTimeout(callback, ms);
+        	};
+        })();
+
         $(document).on('keyup', '.pr-input',function(e){
-            if (e.ctrlKey && e.keyCode === 89){
-                return;
-            }
-            if (e.ctrlKey && e.keyCode === 90){
-                return;
-            }
-            if (e.keyCode === 17 || e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
-                return;
-            }
-            if (e.keyCode == 45 || e.keyCode == 36 || e.keyCode == 35 || e.keyCode == 33 || e.keyCode == 34){
-            	return;
-            }
-            var currentEle = $(this).parent().children('.pr-input').first();
-            var currentEleSup = $(this).parent().children('.pr-input-sup').first();
-            var formatStr = $(this).parent().parent().attr('formatStr');
+        		if (e.ctrlKey && e.keyCode === 89){
+        			return;
+        		}
+        		if (e.ctrlKey && e.keyCode === 90){
+        			return;
+        		}
+        		if (e.keyCode === 17 || e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40){
+        			return;
+        		}
+        		if (e.keyCode == 45 || e.keyCode == 36 || e.keyCode == 35 || e.keyCode == 33 || e.keyCode == 34){
+        			return;
+        		}
+        		var currentEle = $(this).parent().children('.pr-input').first();
+        		var currentEleSup = $(this).parent().children('.pr-input-sup').first();
+        		var formatStr = $(this).parent().parent().attr('formatStr');
 
-            var updateValue = currentEle.val();
-            var isString = isNaN(parseInt(updateValue.replace('$','')));
-            var isTime = !isNaN(parseInt(updateValue.replace(':','')));
-            if (!isString && !isTime){
-                var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
-            }
+        		var updateValue = currentEle.val();
+        		var isString = isNaN(parseInt(updateValue.replace('$','')));
+        		var isTime = !isNaN(parseInt(updateValue.replace(':','')));
+        		if (!isString && !isTime){
+        			var updateValue = updateValue.replace(/[^\d\.\-]/g, "");
+        		}
 
-            var updateValueSup = currentEleSup.val() || "";
-            var oldValue = currentEle.attr('oldvalue')
-            var oldValueSup = currentEleSup.attr('oldvalue')
-            var indicatorID = currentEle.parent().attr('indicatorID');
-            var field  = currentEle.parent().attr('field');
-            endEditUndoable(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false);
+        		var updateValueSup = currentEleSup.val() || "";
+        		var oldValue = currentEle.attr('oldvalue')
+        		var oldValueSup = currentEleSup.attr('oldvalue')
+        		var indicatorID = currentEle.parent().attr('indicatorID');
+        		var field  = currentEle.parent().attr('field');
+        		delay(function(){
+        			endEditUndoable(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, false);
+        		}, 500);
         });
 
         endEditUndoable = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
@@ -1413,9 +1365,9 @@
             });
         };
 
-        endEdit = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update){
+        endEdit = function(currentEle, currentEleSup, formatStr, indicatorID, field, updateValue, updateValueSup, oldValue, oldValueSup, update, ignoreTargetChange){
             var changeColour = true;
-        	if (field == '@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target")'){
+            if (field == '@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target")' && ignoreTargetChange == null){
         		var firstChar = updateValue.substr(0,1);
         		var first2Char = updateValue.substr(0,2);
         		var obj = currentEle.parent();
@@ -1590,78 +1542,189 @@
         /////////////////////////////////////////////////////////////
 
 
+        $(".prtitle").dblclick(function (e) {
+        	var currentEle = $(this);
+        	var coeID = currentEle.attr('coeID');
+        	e.stopPropagation();
+            
+        	$.get('editCoE_Notes', { coeID: coeID }, function (objData) {
+        		var newDiv = '<div id="edit-coeNotes-panel">';
+        		newDiv += '<div id="edit-coeNotes-panel-header"> <i id="edit-coeNotes-save" class="fa fa-floppy-o"></i> CoeNotes';
+        		newDiv += '</div>';
+        		newDiv += '<div id="coeNotes-table">';
+        		newDiv += '</div>';
+        		newDiv += '</div>';
+        		$('#block').after(newDiv);
+            	
+        		$CoeNotes = $('#coeNotes-table');
+            	
+        		$CoeNotes.handsontable({
+        			data: objData,
+        			startRows: 1,
+        			startCols: 1,
+        			colHeaders: false,
+        			width:500,
+        			strechH: 'last',
+        			strechW: 'last',
+        			columns: [{data:"CoE_Note"}],
+        			colWidths: [500],
+        			minSpareRows: 1
+        		});
+
+        		var offset = $("#block").offset();
+        		$('#edit-coeNotes-panel').css({
+        			left:  currentMousePos.x - offset.left + $(window).scrollLeft(),
+        			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
+        		});
+
+        		$('#edit-coeNotes-save').on('click',function(e){
+        			$CoeNotes.handsontable('destroyEditor',false);
+        			var coeNotes = $CoeNotes.handsontable('getDataAtCol',0);
+        			$.ajax({
+        				contentType: 'application/json; charset=utf-8',
+        				type:"POST",
+        				url: "editCoE_Notes",
+        				data: JSON.stringify({coeID: coeID, coeNotes: coeNotes}),
+        				traditional: true,
+        				success: function(coeNotesString){
+        					var newList = "";
+        					for(var i =0, len = coeNotes.length; i<len;i++){
+        						if (coeNotes[i] != null && coeNotes[i].length > 0 ){
+        							newList += "<div class='coeNote'>" + coeNotes[i] + "<br></div>"
+        						}
+        					}
+        					$('#coeNotes').html(newList);
+        					//currentEle.find('.coeNotes-list').html(newList)
+        					//currentEle.find('.coeNotes-list').first().columnize(columnizeOpt);
+        					$('#edit-coeNotes-panel').remove();
+        					$('#CopyPasteDiv').remove();
+        					$('#edit-coeNotes-save').unbind('click');
+        				}
+        			});
+        		});
+        		$('body').unbind("click").click(function (evt) {
+        			var panel = $(evt.target).closest('#edit-coeNotes-panel');
+        			if (panel.length === 0) {
+        				$CoeNotes.handsontable('destroyEditor',false);
+        				var coeNotes = $CoeNotes.handsontable('getDataAtCol',0);
+        				$.ajax({
+        					contentType: 'application/json; charset=utf-8',
+        					type:"POST",
+        					url: "editCoE_Notes",
+        					data: JSON.stringify({coeID: coeID, coeNotes: coeNotes}),
+        					traditional: true,
+        					success: function(coeNotesString){
+        						var newList = "";
+        						for(var i =0, len = coeNotes.length; i<len;i++){
+        							if (coeNotes[i] != null && coeNotes[i].length > 0 ){
+        								newList += coeNotes[i] + "<br>"
+        							}
+        						}
+        						$('#coeNotes').html(newList);
+        						//currentEle.find('.coeNotes-list').html(newList)
+        						//currentEle.find('.coeNotes-list').first().columnize(columnizeOpt);
+        						$('#edit-coeNotes-panel').remove();
+        						$('body').unbind('click');
+        					}
+        				});
+        			}
+        		});
+        		//$('#edit-objective-panel').drags();
+        	});
+        });
 
         $(".prarea").dblclick(function (e) {
         	//var mapID = e.target.attributes.getNamedItem('mapID');
         	var mapID = $(e.target).closest('.prarea').attr('mapID');
-            var currentEle = $(this);
-            e.stopPropagation();
+        	var currentEle = $(this);
+        	e.stopPropagation();
             
-            $.get('editObjectives', { mapID: mapID}, function (objData) {
-            	var newDiv = '<div id="edit-objective-panel">';
-            	newDiv += '<div id="edit-objective-panel-header"> <i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives';
-            	newDiv += '</div>';
-				newDiv += '<div id="objectives-table">';
-            	newDiv += '</div>';
-            	newDiv += '</div>';
-            	$('#block').after(newDiv);
+        	$.get('editObjectives', { mapID: mapID}, function (objData) {
+        		var newDiv = '<div id="edit-objective-panel">';
+        		newDiv += '<div id="edit-objective-panel-header"> <i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives';
+        		newDiv += '</div>';
+        		newDiv += '<div id="objectives-table">';
+        		newDiv += '</div>';
+        		newDiv += '</div>';
+        		$('#block').after(newDiv);
             	
-            	$Objectives = $('#objectives-table');
+        		$Objectives = $('#objectives-table');
             	
-            	$Objectives.handsontable({
-            		data: objData,
-            		startRows: 1,
-            		startCols: 1,
-            		colHeaders: false,
-            		width:500,
-            		strechH: 'last',
-            		strechW: 'last',
-            		columns: [{data:"Objective"}],
-            		colWidths: [500],
-            		minSpareRows: 1
-            	});
+        		$Objectives.handsontable({
+        			data: objData,
+        			startRows: 1,
+        			startCols: 1,
+        			colHeaders: false,
+        			width:500,
+        			strechH: 'last',
+        			strechW: 'last',
+        			columns: [{data:"Objective"}],
+        			colWidths: [500],
+        			minSpareRows: 1
+        		});
 
-            	var offset = $("#block").offset();
-            	$('#edit-objective-panel').css({
-            		left:  currentMousePos.x - offset.left + $(window).scrollLeft(),
-            		top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
-            	});
+        		var offset = $("#block").offset();
+        		$('#edit-objective-panel').css({
+        			left:  currentMousePos.x - offset.left + $(window).scrollLeft(),
+        			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
+        		});
 
-            	$('#edit-objectives-save').on('click',function(e){
-            		$Objectives.handsontable('destroyEditor',false);
-            		var objectives = $Objectives.handsontable('getDataAtCol',0);
-            		$.ajax({
-            			contentType: 'application/json; charset=utf-8',
-            			type:"POST",
-            			url: "editObjectives",
-            			data: JSON.stringify({mapID: mapID, objectives: objectives}),
-            			traditional: true,
-            			success: function(objectiveString){
-            				var newList = "";
-            				console.log(objectives);
-            				for(var i =0, len = objectives.length; i<len;i++){
-            					if (objectives[i] != null && objectives[i].length > 0 ){
-            						newList += "<li>" + objectives[i] + "</li>"
-            					}
-            				}
-            				currentEle.find('.objective-list').html(newList)
-            				currentEle.find('.objective-list').first().columnize(columnizeOpt);
-            				$('#edit-objective-panel').remove();
-            				$('#CopyPasteDiv').remove();
-            				$('#edit-objectives-save').unbind('click');
-            			}
-            		});
-            	});
-            	//$('#edit-objective-panel').drags();
-            });
+        		$('#edit-objectives-save').on('click',function(e){
+        			$Objectives.handsontable('destroyEditor',false);
+        			var objectives = $Objectives.handsontable('getDataAtCol',0);
+        			$.ajax({
+        				contentType: 'application/json; charset=utf-8',
+        				type:"POST",
+        				url: "editObjectives",
+        				data: JSON.stringify({mapID: mapID, objectives: objectives}),
+        				traditional: true,
+        				success: function(objectiveString){
+        					var newList = "";
+        					for(var i =0, len = objectives.length; i<len;i++){
+        						if (objectives[i] != null && objectives[i].length > 0 ){
+        							newList += "<li>" + objectives[i] + "</li>"
+        						}
+        					}
+        					currentEle.find('.objective-list').html(newList)
+        					currentEle.find('.objective-list').first().columnize(columnizeOpt);
+        					$('#edit-objective-panel').remove();
+        					$('#CopyPasteDiv').remove();
+        					$('#edit-objectives-save').unbind('click');
+        				}
+        			});
+        		});
+        		//$('#edit-objective-panel').drags();
+        	});
 
-            $('body').unbind("click").click(function (evt) {
-            	var panel = $(evt.target).closest('#edit-objective-panel');
-            	if (panel.length === 0) {
-            		$('#edit-objective-panel').remove();
-            	}
-            });
-    	});
+        	$('body').unbind("click").click(function (evt) {
+        		var panel = $(evt.target).closest('#edit-objective-panel');
+        		if (panel.length === 0) {
+        			$Objectives.handsontable('destroyEditor',false);
+        			var objectives = $Objectives.handsontable('getDataAtCol',0);
+        			$.ajax({
+        				contentType: 'application/json; charset=utf-8',
+        				type:"POST",
+        				url: "editObjectives",
+        				data: JSON.stringify({mapID: mapID, objectives: objectives}),
+        				traditional: true,
+        				success: function(objectiveString){
+        					var newList = "";
+        					for(var i =0, len = objectives.length; i<len;i++){
+        						if (objectives[i] != null && objectives[i].length > 0 ){
+        							newList += "<li>" + objectives[i] + "</li>"
+        						}
+        					}
+        					currentEle.find('.objective-list').html(newList)
+        					currentEle.find('.objective-list').first().columnize(columnizeOpt);
+        					$('#edit-objective-panel').remove();
+        					$('#CopyPasteDiv').remove();
+        					$('#edit-objectives-save').unbind('click');
+        					$('body').unbind('click');
+        				}
+        			});
+        		}
+        	});
+        });
         function updateObjVal(currentEle, mapID, value) {
             $(currentEle).html('<textarea id="newEdit" mapID ="' + mapID + 
                                     '" value="' + value + 
@@ -2252,7 +2315,7 @@
                                 var obj = $(this);
                                 var directionID= @direction.Direction_ID;
                                 var oldDirectionID = $(this).closest('tr').attr('directionID');
-                                changeDirectionUndoable(obj, directionID, oldDirectionID);
+                                changeDirectionUndoable(obj, directionID, oldDirectionID, true);
                             },
                         },
                         </text>
@@ -2495,7 +2558,7 @@
 <script type="text/javascript">
 
 	if (!$("html").hasClass("lt-ie9")) {
-		new mlPushMenu(document.getElementById('menuFilter3D'), document.getElementById('trigger'));
+
 	} else {
 		
 	}
@@ -2504,77 +2567,9 @@
 		var objectiveColumnWidth = $('table').first().width() / 2
 		columnizeOpt = { width: objectiveColumnWidth };
 		$('.triple-list').columnize(columnizeOpt);
-        $(".overlay").hide()
 		
-        if ($("html").hasClass("lt-ie9")) {
-
-
-            $('#menuFilter').multilevelpushmenu({
-                fullCollapse: true,
-                menuHeight: $(window).height(),
-                collapsed: true,
-                menuWidth: '30%',
-                onExpandMenuStart: function () {
-                    $(".overlay").fadeIn("fast");
-                },
-                onCollapseMenuStart: function () {
-                    if ($('#menuFilter').multilevelpushmenu('activemenu').attr('data-level') == 0) {
-                        $(".overlay").fadeOut("fast");
-                    }
-                },
-            });
-
-            $('.backItemClass').remove();
-
-            $('.backBtn').on('click', function () {
-                $('#menuFilter').multilevelpushmenu('collapse', 0)
-            });
-
-            $('.backBtnMain').on('click', function () {
-                $('#menuFilter').multilevelpushmenu('collapse')
-            });
-
-            $('.filterExpand').click(function () {
-                $('#menuFilter').multilevelpushmenu('expand');
-            });
-
-            $('#menuFilter').multilevelpushmenu('redraw');
-        }
-
-        $('.overlay').on('click',function(e){
-        	$('#menuFilter').multilevelpushmenu('collapse')
-        	$(".overlay").fadeOut("fast");
-        });
-
         var hidden = false;
 
-        var delay = (function(){
-            var timer = 0;
-            return function(callback, ms){
-                clearTimeout (timer);
-                timer = setTimeout(callback, ms);
-            };
-        })();
-        $('#search_input').on('keyup change search click', function () {
-            delay(function(value){
-                var valThis = $('#search_input').val().toLowerCase();
-                if (valThis == "") {
-                    $(".blockFilter").removeClass('textFiltered');
-                } else {
-                    //$('.blockFilter > li > .row > .titleColumn > .title').each(function () {
-                    $('.blockFilter > .prtd-title, .blockFilter > .prtd-titleDef').each(function () {
-                        var text = $(this).text().toLowerCase();
-                        var listItems;
-                        if (text.indexOf(valThis) >= 0) {
-                            $(this).closest(".blockFilter").removeClass('textFiltered');
-                        } else {
-                            $(this).closest(".blockFilter").addClass('textFiltered');
-                        }
-                    });
-                };
-                refreshView();
-            }, 500);
-        });
 
 
         $("#myTags").tagit({
@@ -2852,6 +2847,10 @@
 
     .pr-footer-image{
         float:right;
+    }
+
+	.pr-logo-image{
+        float:left;
     }
 
 	.jqte {
@@ -3289,11 +3288,11 @@
         line-height:30px;
     }
 
-	.footnotes {
+	.footnotes, #coeNotes {
 		font-size:11px !important;
 		color:black;
 	}
-	.footnote {
+	.footnote, .coeNote {
 		float:left;
 		width:50%;
 	}
@@ -3644,6 +3643,31 @@
 	}
 
 	#edit-objectives-save {
+		float:left;
+		color:red;
+	}
+
+	#edit-coeNotes-panel {
+        background-color:lightgray !important;
+        border:1px solid black;
+        padding:0;
+        margin:0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border: 1px solid black;
+        padding: 0px;
+        background-color: red;
+        margin:0px;
+	}
+		#edit-coeNotes-panel-header {
+        background-color:white !important;
+		color:black;
+		padding:5px;
+		text-align:center;
+	}
+
+	#edit-coeNotes-save {
 		float:left;
 		color:red;
 	}

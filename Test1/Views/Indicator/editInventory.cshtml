@@ -223,8 +223,14 @@
 			var offset = $IndInv.offset();
 			availableWidth = $window.width() - offset.left + $window.scrollLeft();
 			availableHeight = $window.height() - offset.top + $window.scrollTop();
+
+			$IndInv.handsontable('updateSettings','width: ' + availableWidth + 'px');
+			$IndInv.handsontable('updateSettings','height: ' + availableHeight + 'px');
+			//$IndInv.style.height  = availableHeight + 'px';
 		};
 		$window.on('resize', calculateSize);
+		setInterval(calculateSize, 5000)
+
 
 		var values = @Html.Raw(Json.Encode(Model));
 

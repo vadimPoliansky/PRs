@@ -300,33 +300,33 @@
 	
 	<div class="footer">
     <div class="footnotes">
-        @{var l = 0;
-          foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0).OrderBy(x=>x.Footnote_Order))
-          {
-              footnotes.Remove(footnote);
-              if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
-              { 
-                @:<br />
-            }
-            <small><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </small>
-              if (footnote.Footnote_Order < 0)
-              { 
-                @:<br />
-            }
-			  l++;
-		  }}
-		  <div class="new-fy-notes">
-		@{l = 0;
-		  foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x => x.Footnote_Order == -2 || footnotes.Contains(x) ).OrderBy(x => x.Footnote_Order)){
-              if (l % 6 == 0 && l != 0)
-              { 
-                @:<br />
-			  }
-			  <small><sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote; </small>
-		  }}
-		  </div>
-        <br />
-    </div>
+@{var l = 0;
+	foreach (var footnote in Model.allFootnotes.Where(x => x.Footnote_ID != 6).Where(x =>x.Footnote_Order > 0).OrderBy(x=>x.Footnote_Order))
+	{
+		footnotes.Remove(footnote);
+		if (l % 6 == 0 && l != 0 || footnote.Footnote_Symbol == "*")
+		{ 
+		@:<br />
+	}
+	<sup>@footnote.Footnote_Symbol</sup>@footnote.Footnote;
+		if (footnote.Footnote_Order < 0)
+		{ 
+		@:<br />
+	}
+		l++;
+	}}<br />
+</div>
+<div id="coeNotes">
+
+			@{if (coe.CoE_Notes!= null){
+				List<string> coeNotes;
+				coeNotes = Regex.Matches(coe.CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1,m.Value.Length - 2)).ToList();	
+				foreach(var coeNote in coeNotes){	
+					<text>@Html.Raw(coeNote)<br /></text>
+				}}
+			}
+
+</div>
     <div class="footer-left-pg1">
         Page 1 of 2
     </div>
@@ -699,7 +699,7 @@
 		text-align:center !important;
 	}
 
-    .footnotes {
+    .footnotes, #coeNotes {
         font-size:0.8em;
     }
 
@@ -794,7 +794,7 @@
     }
 
 
-	.new-fy-notes {
+	#coeNotes {
 		border:1px solid black;
 		background-color: Silver;
 	}

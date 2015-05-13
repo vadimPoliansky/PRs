@@ -1617,6 +1617,50 @@ namespace IndInv.Controllers
 			return Json(new {objectiveString = objectiveString}, JsonRequestBehavior.AllowGet);
 		}
 
+		[HttpGet]
+		public JsonResult editCoE_Notes(Int16 coeID)
+		{
+			var coe = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
+
+			string[] coeNotes;
+			if (coe.CoE_Notes != null)
+			{
+				coeNotes = Regex.Matches(coe.CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToArray();
+			}
+			else
+			{
+				coeNotes = new string[] {""};
+			}
+
+			var viewModel = coeNotes.Select(x => new CoE_NoteViewModel
+			{
+				CoE_ID = coeID,
+				CoE_Note = x,
+			}).ToList();
+
+			// return View(viewModel);
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+		[HttpPost]
+		public JsonResult editCoE_Notes(Int16 coeID, string[] coeNotes)
+		{
+			var coeNoteString = "";
+			foreach (var obj in coeNotes)
+			{
+				if (obj != null && obj.Length > 0)
+				{
+					coeNoteString += "[" + obj + "]";
+				}
+			}
+
+			var coe = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
+			coe.CoE_Notes = coeNoteString;
+			db.Entry(coe).State = EntityState.Modified;
+			db.SaveChanges();
+
+			return Json(new { coeNoteString = coeNoteString }, JsonRequestBehavior.AllowGet);
+		}
+
         [HttpGet]
         public ActionResult editFootnotes(String Footnote_ID_Filter)
         {
@@ -2470,6 +2514,7 @@ namespace IndInv.Controllers
                 Q3_Color = colorQ3,
                 Q4_Color = colorQ4,
                 YTD_Color = colorYTD,
+				Direction = db.Color_Directions.FirstOrDefault(x=> x.Direction_ID == directionID).Direction
             };
             return Json(viewModel, JsonRequestBehavior.AllowGet);
         }

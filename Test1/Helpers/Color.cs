@@ -376,5 +376,61 @@ namespace IndInv.Helpers
 				}
 			}
 		}
+
+		public static string getThreshold(String inTarget, Indicators inIndicator, Int16? Threshold_ID, Int16? Direction_ID, Int16 Fiscal_Year)
+		{
+			string str;
+			float outScore;
+			string Target = inTarget;
+
+			str = Color.getNum(Target);
+			if (str == null) { return "TBD"; }
+			if (float.TryParse(str, out outScore)) { }
+			else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
+			float targetScore = outScore;
+
+			double threshold_high = 1.1;
+			double threshold_low = 0.9;
+			if (Threshold_ID == 2)
+			{
+				threshold_high = 1.01;
+				threshold_low = 0.99;
+			}
+
+			var direction = ">";
+			if (Direction_ID == 2)
+			{
+				direction = "≥";
+			}
+			else if (Direction_ID == 3)
+			{
+				direction = "<";
+			}
+			else if (Direction_ID == 4)
+			{
+				direction = "≤";
+			}
+
+			if (Target != null)
+			{
+				if (Target.IndexOf("%") != -1) { targetScore = targetScore / 100; }
+				if (direction == "≤" || direction == "<")
+				{
+					return (targetScore * threshold_high).ToString(inIndicator.Format.Format_Code_C);
+				}
+				else if (direction == "≥" || direction == ">")
+				{
+					return (targetScore * threshold_low).ToString(inIndicator.Format.Format_Code_C);
+				}
+				else
+				{
+					return "TBD";
+				}
+			}
+			else
+			{
+				return "";
+			}
+		}
 	}
 }
