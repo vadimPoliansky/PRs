@@ -43,7 +43,12 @@ namespace IndInv.Helpers
 
 			if (maxPos != 0)
 			{
-				numStr = str.Substring(minPos, maxPos - minPos + 1).Replace(",", "").Replace("$", "").Replace(":", ".");
+				numStr = str.Substring(minPos, maxPos - minPos + 1).Replace(",", "").Replace("$", "");
+				if (numStr.IndexOf(":") > 0)
+				{
+					TimeSpan timespan = TimeSpan.Parse(numStr);
+					numStr = timespan.TotalHours.ToString();
+				}
 			}
 			//string num = numStr;
 			return numStr;
@@ -416,11 +421,25 @@ namespace IndInv.Helpers
 				if (Target.IndexOf("%") != -1) { targetScore = targetScore / 100; }
 				if (direction == "≤" || direction == "<")
 				{
+					if (inIndicator.Format != null)
+					{
+						if (inIndicator.Format.Format_Code_C == "T")
+						{
+							return TimeSpan.FromHours(targetScore * threshold_high).ToString("h\\:mm");
+						}
+					}
 					return (targetScore * threshold_high).ToString(inIndicator.Format != null ? inIndicator.Format.Format_Code_C : "");
 				}
 				else if (direction == "≥" || direction == ">")
 				{
 
+					if (inIndicator.Format != null)
+					{
+						if (inIndicator.Format.Format_Code_C == "T")
+						{
+							return TimeSpan.FromHours(targetScore * threshold_low).ToString("h\\:mm");
+						}
+					}
 					return (targetScore * threshold_low).ToString(inIndicator.Format != null ? inIndicator.Format.Format_Code_C : "");
 				}
 				else
