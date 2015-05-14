@@ -221,6 +221,7 @@ namespace IndInv.Models
         public string CoE_Abbr { get; set; }
 		public string CoE_Type { get; set; }
 		public string CoE_Notes { get; set; }
+		public string CoE_Subtitle { get; set; }
 
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual ICollection<Area_CoE_Maps> Area_CoE_Map { get; set; }
