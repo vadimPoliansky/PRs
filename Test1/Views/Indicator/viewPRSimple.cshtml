@@ -30,7 +30,7 @@
     <table class="tbl_PR" id="tbl_@coe.CoE_Abbr.Replace(" ", "_")" cellspacing="1" class="PR" border="1" runat="server" >
     <tr class="prrow-CoETitle">
         <td colspan="2"></td>
-        <td class="prtd-CoETitle" colspan="8">@coe.CoE<div><small>@coe.CoE_Subtitle</small></div></td>
+        <td class="prtd-CoETitle" colspan="8">@coe.CoE<div class="prtd-CoETitle-SubTitle"><small>@coe.CoE_Subtitle</small></div></td>
         <td colspan="3"></td>
     </tr>
     <tr class="prrow-seperator">
@@ -571,6 +571,9 @@
         color:white;
         font-size:2em;
     }
+	.prtd-CoETitle-SubTitle {
+		font-size:0.8em;
+	}
     .prrow-Seperator > td {
         border-left:1px solid white !important;
         border-right:1px solid white  !important;
