@@ -416,11 +416,12 @@ namespace IndInv.Helpers
 				if (Target.IndexOf("%") != -1) { targetScore = targetScore / 100; }
 				if (direction == "≤" || direction == "<")
 				{
-					return (targetScore * threshold_high).ToString(inIndicator.Format.Format_Code_C);
+					return (targetScore * threshold_high).ToString(inIndicator.Format != null ? inIndicator.Format.Format_Code_C : "");
 				}
 				else if (direction == "≥" || direction == ">")
 				{
-					return (targetScore * threshold_low).ToString(inIndicator.Format.Format_Code_C);
+
+					return (targetScore * threshold_low).ToString(inIndicator.Format != null ? inIndicator.Format.Format_Code_C : "");
 				}
 				else
 				{
