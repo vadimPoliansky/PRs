@@ -2109,44 +2109,47 @@
 
             				    //$('.add-indicator-panel-done').on('click', function(e){
             					$('body').unbind("click").click(function (evt) {
-            						var formatID = $('#format-list').find(':selected').attr('formatID');
-            						var formatStr = $('#format-list').find(':selected').attr('formatStr');
-            						var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
-            						var directionID = $('#direction-list').find(':selected').attr('directionID');
-            						var colorID = $('#color-list').find(':selected').attr('colorID');
-            						var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + ' prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
-            						rowHtml += "@Html.Raw(htmlExist)";
-            						rowHtml +="</tr>"
-            						objInto.after(rowHtml);
-            						var newRow = objInto.next();
-            						var newTDs = newRow.children(".newrow-td")
-            						$.when($.each(newTDs,function(index,value){
-            							var currTD = $(this);
-            							var field = currTD.attr('field');
-            							$.get('getValue',{ indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function(data){
-            								var value = data.Value == null ? "" : data.Value;
-            								var valueSup = data.Value_Sup == null ? "" : data.Value_Sup;
-            								currTD.removeClass('newrow-td');
-            								currTD.attr('indicatorID',indicatorID);
-            								if (field === 'Indicator'){
-            									currTD.html(value + "<sup>" + valueSup + "</sup>");
-            								} else {
-            									currTD.children('.tdValue').html(value + "<sup>" + valueSup + "</sup>");
-            									currTD.children('.pr-input-val').val(value);
-            									currTD.children('.pr-input-sup').val(valueSup);
-            								}
+            						var panel = $(evt.target).closest('#add-indicator-panel');
+            						if (panel.length === 0) {
+            							var formatID = $('#format-list').find(':selected').attr('formatID');
+            							var formatStr = $('#format-list').find(':selected').attr('formatStr');
+            							var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
+            							var directionID = $('#direction-list').find(':selected').attr('directionID');
+            							var colorID = $('#color-list').find(':selected').attr('colorID');
+            							var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + ' prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
+            							rowHtml += "@Html.Raw(htmlExist)";
+            							rowHtml +="</tr>"
+            							objInto.after(rowHtml);
+            							var newRow = objInto.next();
+            							var newTDs = newRow.children(".newrow-td")
+            							$.when($.each(newTDs,function(index,value){
+            								var currTD = $(this);
+            								var field = currTD.attr('field');
+            								$.get('getValue',{ indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function(data){
+            									var value = data.Value == null ? "" : data.Value;
+            									var valueSup = data.Value_Sup == null ? "" : data.Value_Sup;
+            									currTD.removeClass('newrow-td');
+            									currTD.attr('indicatorID',indicatorID);
+            									if (field === 'Indicator'){
+            										currTD.html(value + "<sup>" + valueSup + "</sup>");
+            									} else {
+            										currTD.children('.tdValue').html(value + "<sup>" + valueSup + "</sup>");
+            										currTD.children('.pr-input-val').val(value);
+            										currTD.children('.pr-input-sup').val(valueSup);
+            									}
 
+            								});
+            							})).done(function(){;
+            								$('.add-indicator-panel').remove();
+            								changeDirection(newRow, directionID);
+            								changeThreshold(newRow, thresholdID);
+            								changeColor(newRow, colorID);
+            								changeFormat(newRow, formatID);
+            								var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
+            								sort(rows);
             							});
-            						})).done(function(){;
-            							$('.add-indicator-panel').remove();
-            							changeDirection(newRow, directionID);
-            							changeThreshold(newRow, thresholdID);
-            							changeColor(newRow, colorID);
-            							changeFormat(newRow, formatID);
-            							var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
-            							sort(rows);
-            						});
-            					    $('body').unbind('click');
+            							$('body').unbind('click');
+            						}
             					});
             				});
             			});
@@ -3719,7 +3722,7 @@
 
 	.container {
 		overflow-y: scroll !important;
-		height: 80%;
+		height: 92%;
 	}
 
 	/*
