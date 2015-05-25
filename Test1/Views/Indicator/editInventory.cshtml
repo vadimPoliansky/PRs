@@ -37,6 +37,7 @@
         <div class="large-6 columns">
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
@@ -1271,16 +1272,25 @@
 
         $(document).on('click', '.menu-open', function(e){
         	var field = $(this).attr('field');
+        	if (field != "Fiscal_Year") { notFiscalYear = true;} else {notFiscalYear = false;}
         	var buttonEle = $(this);
         	var menuBar =  $(this).closest('.menu-bar');
         	var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
         	var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
         	var ajaxUrl = 'get' + field + 's';
         	$.get(ajaxUrl, function(data){
-        		htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
-        		jQuery.each(data, function (i, value) {
-        			htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
-        		});
+        		if (notFiscalYear){
+        			htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
+        			jQuery.each(data, function (i, value) {
+        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
+        			});
+        		}
+        		else {
+        			jQuery.each(data, function (i, value) {
+        				//Use code Instead of ID
+        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_Code"] + "' field='" + field + "'>" + value[field] + "</div>"
+        			});
+        		}
         		htmlContent += "</div>";
         		$('.rowLong').after(htmlContent);
         		$('.menu-dropdown').hide();
@@ -1306,6 +1316,11 @@
         			window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Analyst"){
             		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            	} else if (field === "Fiscal_Year"){
+            		currAddress = window.location.href
+            		currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
+            		currAddress = currAddress + "&fiscalYear=" + id;
+            		window.location.href = currAddress;
             	}
 		} else {
 			if (field === "CoE"){

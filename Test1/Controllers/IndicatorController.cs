@@ -1901,6 +1901,12 @@ namespace IndInv.Controllers
 
         }
 
+		[HttpGet]
+		public JsonResult getFiscal_Years()
+		{
+			return Json(db.Fiscal_Years.OrderBy(x => x.Fiscal_Year_Code).Select(x => new { x.Fiscal_Year_Code, x.Fiscal_Year }).ToList(), JsonRequestBehavior.AllowGet);
+		}
+
         [HttpGet]
         public JsonResult getCoEs()
         {
