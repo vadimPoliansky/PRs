@@ -1740,6 +1740,88 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
+        public ActionResult editCoEs(String CoE_ID_Filter)
+        {
+            var viewModelItems = db.CoEs.ToArray();
+            var viewModel = viewModelItems.OrderBy(x => x.CoE_ID).Select(x => new CoEsViewModel
+            {
+                CoE_ID = x.CoE_ID,
+                CoE = x.CoE,
+                CoE_Abbr = x.CoE_Abbr,
+                CoE_Notes = x.CoE_Notes,
+                CoE_Subtitle = x.CoE_Subtitle,
+                CoE_Type = x.CoE_Type
+            }).ToList();
+            if (Request.IsAjaxRequest())
+            {
+                if (CoE_ID_Filter == "")
+                {
+                    var newCoE = db.CoEs.Create();
+                    db.CoEs.Add(newCoE);
+                    db.SaveChanges();
+
+                    viewModel = new List<CoEsViewModel>();
+                    var newViewModelItem = new CoEsViewModel
+                    {
+                        CoE_ID = newCoE.CoE_ID,
+                        CoE = newCoE.CoE,
+                        CoE_Abbr = newCoE.CoE_Abbr,
+                        CoE_Notes = newCoE.CoE_Notes,
+                        CoE_Subtitle = newCoE.CoE_Subtitle,
+                        CoE_Type = newCoE.CoE_Type
+                    };
+                    viewModel.Add(newViewModelItem);
+
+                    return Json(viewModel, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(viewModel.Where(x => x.CoE_ID.ToString().Contains(CoE_ID_Filter == null ? "" : CoE_ID_Filter)), JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+            {
+                return View(viewModel);
+            }
+
+        }
+
+        [HttpPost]
+        public void deleteCoEs(Int16 CoEID)
+        {
+            var deleteCoE = db.CoEs.FirstOrDefault(x => x.CoE_ID == CoEID);
+            db.CoEs.Remove(deleteCoE);
+            db.SaveChanges();
+        }
+
+        [HttpPost]
+        public ActionResult editCoEs(IList<CoEs> CoEChange)
+        {
+            var CoEID = CoEChange[0].CoE_ID;
+            if (db.CoEs.Any(x => x.CoE_ID == CoEID))
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Entry(CoEChange[0]).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return View();
+                }
+                return View();
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    db.CoEs.Add(CoEChange[0]);
+                    db.SaveChanges();
+                    return View();
+                }
+                return View();
+            }
+
+        }
+
+        [HttpGet]
         public ActionResult editAnalysts(String Analyst_ID_Filter)
         {
             var viewModelItems = db.Analysts.ToArray();

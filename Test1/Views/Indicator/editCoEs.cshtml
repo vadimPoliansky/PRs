@@ -4,7 +4,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
 <link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
-@model IList<IndInv.Models.ViewModels.FootnotesViewModel>
+@model IList<IndInv.Models.ViewModels.CoEsViewModel>
 @using IndInv.Models
 @{
     ViewBag.Title = "Edit Indicator Inventory";
@@ -17,11 +17,11 @@
 <script type="text/javascript">
 
     var maxed = false
-            , resizeTimeout
-            , availableWidth
-            , availableHeight
-            , $window = $(window)
-            , $example1 = $('#dataTable');
+        , resizeTimeout
+        , availableWidth
+        , availableHeight
+        , $window = $(window)
+        , $example1 = $('#dataTable');
 
     var calculateSize = function () {
         var offset = $example1.offset();
@@ -43,10 +43,29 @@
         startCols: 1,
         rowHeaders: true,
         colHeaders: true,
-        strechH: 'all',
-        strechW: 'all',
+        strechH: 'auto',
+        strechW: 'auto',
         scrollH: 'auto',
         scrollV: 'auto',
+        fixedRowsTop: 0,
+        fixedColumnsLeft: 1,
+        contextMenu: true,
+        minSpareRows: 1,
+        colWidths: [300, 300, 300, 300, 300],
+        colHeaders: [
+            "CoE",
+            "Abbr",
+			"Type",
+            "Notes",
+            "Subtitle"
+        ],
+        columns: [
+            {data: 'CoE'},
+            {data: 'CoE_Abbr'},
+			{data: 'CoE_Type'},
+            {data: 'CoE_Notes'},
+            {data: 'CoE_Subtitle'}
+        ],
         width: function () {
             if (maxed && availableWidth === void 0) {
                 calculateSize();
@@ -59,53 +78,41 @@
             }
             return maxed  ?  availableHeight*0.93: 300;
         },
-        fixedRowsTop: 0,
-        fixedColumnsLeft: 1,
-        contextMenu: true,
-        colWidths: [70, 400, 100],
-        colHeaders: [
-            "Symbol",
-            "Text",
-			"Order"
-        ],
-        columns: [
-            {data: 'Footnote_Symbol'},
-            {data: 'Footnote'},
-			{data: 'Footnote_Order'}
-        ],
         afterChange: function (change, source) {
             if (source === 'loadData') {
                 return;
             } else {
                 for (var i = 0; i< change.length; ++i){
-                    if (change[i][1] != "Footnote_ID"){
-                        updateFootnote(change, i);
+                    if (change[i][1] != "CoE_ID"){
+                        updateCoE(change, i);
                     }
                 }
             }
         },
         beforeRemoveRow: function(index, amount){
-            var footnoteID =  this.getDataAtRowProp(index, 'Footnote_ID')
-            deleteFootnote(footnoteID);
+            var coeID =  this.getDataAtRowProp(index, 'CoE_ID')
+            deleteCoE(coeID);
         }
     });
 
     maxed = !maxed;
     $example1.handsontable('render');
 
-    function updateFootnote(change, i){
+    function updateCoE(change, i){
         var changedRow = change[i][0];
         var changedParameter = change[i][1];
         var changedValue = change[i][3];
-        $.get('@Url.Action("/editFootnotes")', {Footnote_ID_Filter : $example1.handsontable('getDataAtCell', changedRow,'Footnote_ID')}, function (data) {
+        $.get('@Url.Action("/editCoEs")', {CoE_ID_Filter : $example1.handsontable('getDataAtCell', changedRow,'CoE_ID')}, function (data) {
             var newValue = data;
-            $example1.handsontable('setDataAtRowProp', changedRow,'Footnote_ID', data[0].Footnote_ID)
+            $example1.handsontable('setDataAtRowProp', changedRow,'CoE_ID', data[0].CoE_ID)
             var parameters = []
             parameters.push({
-                Footnote: (changedParameter=="Footnote" ?  changedValue : newValue[0].Footnote),
-                Footnote_ID: (changedParameter=="Footnote_ID" ?  changedValue : newValue[0].Footnote_ID),
-                Footnote_Symbol: (changedParameter=="Footnote_Symbol" ?  changedValue : newValue[0].Footnote_Symbol),
-                Footnote_Order: (changedParameter=="Footnote_Order" ?  changedValue : newValue[0].Footnote_Order)
+                CoE: (changedParameter=="CoE" ?  changedValue : newValue[0].CoE),
+                CoE_ID: (changedParameter=="CoE_ID" ?  changedValue : newValue[0].CoE_ID),
+                CoE_Abbr: (changedParameter=="CoE_Abbr" ?  changedValue : newValue[0].CoE_Abbr),
+                CoE_Type: (changedParameter=="CoE_Type" ?  changedValue : newValue[0].CoE_Type),
+                CoE_Notes: (changedParameter=="CoE_Notes" ?  changedValue : newValue[0].CoE_Notes),
+                CoE_Subtitle: (changedParameter=="CoE_Subtitle" ?  changedValue : newValue[0].CoE_Subtitle)
             })
             $.ajax({
                 url: this.action,
@@ -120,10 +127,10 @@
         });
     }
 
-    function deleteFootnote(footnoteID){
-        var parameters = {footnoteID: footnoteID};
+    function deleteCoE(coeID){
+        var parameters = {coeID: coeID};
         $.ajax({
-            url:'@Url.Action("/deleteFootnotes")',
+            url:'@Url.Action("/deleteCoEs")',
             type: 'POST',
             data: JSON.stringify(parameters),
             contentType: 'application/json; charset=utf-8',

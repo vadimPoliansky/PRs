@@ -210,6 +210,7 @@
     <Compile Include="Models\Movie.cs" />
     <Compile Include="ViewModels\AnalystVM.cs" />
     <Compile Include="ViewModels\CoE_NotesVM.cs" />
+    <Compile Include="ViewModels\CoEsVM.cs" />
     <Compile Include="ViewModels\ObjectiveVM.cs" />
     <Compile Include="ViewModels\colorVM.cs" />
     <Compile Include="ViewModels\editVM.cs" />
@@ -1272,6 +1273,7 @@
     <Content Include="Scripts\CKEditor\skins\moono\readme.md" />
     <Content Include="Views\Indicator\viewPRdbl.cshtml" />
     <Content Include="Views\Indicator\viewPRSimpleDbl.cshtml" />
+    <Content Include="Views\Indicator\editCoEs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

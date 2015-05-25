@@ -20,6 +20,7 @@
             <div id="menu-coe" class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+            <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
             <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
         </div>
@@ -59,8 +60,9 @@
 								{
 									var footnotes = new List<Footnotes>();
 									<fieldset class="prBlock">
-										<h3>@Html.DisplayFor(modelItem => coe.CoE)</h3>
-										<div class="prtitle large-10 columns" coeID="@coe.CoE_ID" style="padding: 0">
+                                        
+										<h3 class="prtitle"  coeID="@coe.CoE_ID">@Html.DisplayFor(modelItem => coe.CoE)</h3>
+										<div class="large-10 columns" style="padding: 0">
 											<img class="pr-logo-image" src="~/Images/SHSheader.png" width="56%"/>
 										</div>
 										<div class="large-1 columns" style="padding: 0">
@@ -2018,7 +2020,7 @@
             					$('#indicator-list').chosen();
 
             					var copying = false;
-            					$('.copy-button').on('click', function(e){
+            					$('.copy-button').on('dblclick', function(e){
             						copying = true;
             						var currEle = $(this);
             						var forSelectBox = currEle.hasClass('for-select-box');
@@ -2098,12 +2100,14 @@
             						});
             					});
 
+                                /*
             					$('.add-indicator-panel-close').on('click', function(e){
             						removeIndicatorDelete(indicatorID);
             						$('.add-indicator-panel').remove();
-            					});
+            					});*/
 
-            					$('.add-indicator-panel-done').on('click', function(e){
+            				    //$('.add-indicator-panel-done').on('click', function(e){
+            					$('body').unbind("click").click(function (evt) {
             						var formatID = $('#format-list').find(':selected').attr('formatID');
             						var formatStr = $('#format-list').find(':selected').attr('formatStr');
             						var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
@@ -2141,6 +2145,7 @@
             							var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
             							sort(rows);
             						});
+            					    $('body').unbind('click');
             					});
             				});
             			});
@@ -2498,6 +2503,11 @@
         $(document).on('click', '.menu-edit-footnotes', function(e){
             e.preventDefault();
             window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
+        });
+
+        $(document).on('click', '.menu-edit-coes', function(e){
+            e.preventDefault();
+            window.open("editCoEs", "popupWindow", "width=900,height=700,scrollbars=yes");
         });
 
         $(document).on('click', '.menu-open', function(e){

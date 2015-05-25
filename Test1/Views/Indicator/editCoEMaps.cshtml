@@ -103,6 +103,13 @@ input[type=checkbox].css-checkbox {
         }
     }
 
+    var maxed = false
+			, resizeTimeout
+			, availableWidth
+			, availableHeight
+			, $window = $(window)
+			, $IndInv = $('#dataTable');
+
     function updateMaps(name, status){
         var parameterArray = name.split("_");
         var indicatorID = parameterArray[0];

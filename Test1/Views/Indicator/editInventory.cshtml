@@ -38,6 +38,7 @@
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+            <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
             <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
             <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
         </div>
@@ -47,7 +48,7 @@
     </div>
 </div>
 <div class="row">
-<label>Search:<input id="searchgrid" type="text" /></label>
+<label>Search Indicators:<input id="searchgrid" type="text" /></label>
 </div>
 
 
@@ -234,13 +235,15 @@
 
 		var values = @Html.Raw(Json.Encode(Model));
 
-		var filterListChose = {
+	    var filterListChose = {
+	        Indicator_ID: ['Indicator_ID'],
 		    CoE: ['CoE'],
 		    Indicator: ['Indicator',''],
 		    FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
 		    FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
 		}
-		var filterListFull = {
+	    var filterListFull = {
+	        Indicator_ID: [],
 			CoE: [],
 			FY_Data_Source_MSH: [],
 			FY_Data_Source_Benchmark: []
@@ -287,11 +290,12 @@
 				    } else {
 				        for (var i=1, len=data.length; i<len; i++){
 				        	var filterItem = data[i].replace(/&amp;/g, '&');
-				            var field = data[0];
+				        	var field = data[0];
 				            var currValue = datasrch[row][field];
 				            if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
 				            	currCond = true;
-				            } else if(currValue === filterItem || filterItem === "" || ('' + currValue).toLowerCase().indexOf(filterItem) > -1){
+				            } else if(currValue == filterItem || filterItem == "" || 
+                                (field != "Indicator_ID" && ('' + currValue).toLowerCase().indexOf(filterItem) > -1)){
 				                currCond = true;
 				            }
 				        }
@@ -322,7 +326,7 @@
         };
 
         var colHeadersOrg = [
-            "ID",
+            "ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
             "Indicator",
 			"Footnotes",
             "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
@@ -743,6 +747,8 @@
 		    var dataArr = [];
 
 		    $.each($IndInv.handsontable("getData"),function(index,data){
+		        if (field == "ID") { field = "Indicator_ID"; }
+
 		    	var filter = data[field];
 		    	if (filter === null) filter = "(Blank)";
 		    	if(filter.length !== 0 && filter !== "0"){
@@ -790,11 +796,11 @@
 		    addFilterItem = function(ele, force){
 		    	var filterItem = $(ele).children()[0].innerHTML;
 		    	if (!$(ele).hasClass('clicked') || force){
-		    		$(ele).addClass('clicked');
-		    		if (filterListChose[field].indexOf(filterItem) === -1){
-		    			filterListChose[field].push(filterItem);
-		    			doFilter();
-		    		}
+		    	    $(ele).addClass('clicked');
+		    	    if (filterListChose[field].indexOf(filterItem) === -1){
+		    	        filterListChose[field].push(filterItem);
+		    	        doFilter();
+		    	    }
 		    	} else {
 		    		$(ele).removeClass('clicked');
 		    		filterListChose[field] = $.grep(filterListChose[field], function(value){
@@ -1256,6 +1262,11 @@
         $(document).on('click', '.menu-edit-footnotes', function(e){
         	e.preventDefault();
         	window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
+        });
+
+        $(document).on('click', '.menu-edit-coes', function(e){
+            e.preventDefault();
+            window.open("editCoEs", "popupWindow", "width=900,height=700,scrollbars=yes");
         });
 
         $(document).on('click', '.menu-open', function(e){
