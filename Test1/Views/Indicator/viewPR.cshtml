@@ -13,6 +13,9 @@
     }
     ViewBag.Buttons += "<div id='btn' class='btnSwitch' value=" + 0 + " parameter=analystID >" + "All" + "</div>";
     ViewBag.fiscalYear = Model.Fiscal_Year;
+	var html = "";
+	var htmlDef = "";
+	var htmlExist = "";
 }
 <div class="menu-bar">
     <div class="row header-row">
@@ -136,8 +139,8 @@
 												{
 													var indicator = map.Indicator;
 													var indicatorType = indicator.GetType();
-													var indicatorTitle = ""; int? number = numCount; var skip = false;
-													if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+													var indicatorTitle = map.Indicator.Indicator ?? ""; int? number = numCount; var skip = false;
+													/*if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
 													{
 														indicatorTitle = Html.Raw(map.Indicator.Indicator).ToString();
 														number = numCount;
@@ -147,7 +150,7 @@
 														numCount--;
 														number = null;
 														skip = true;
-													}
+													}*/
 													int rowSpan;
 													var colorID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(indicator, null);
 													var directionID = (Int16)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Direction_ID").GetValue(indicator, null);
@@ -418,8 +421,8 @@
 											    string[,] oldColumns = null;
 											    foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
 											    {
-												    var indicatorTitle = ""; int? number = numCount; var skip = false;
-												    if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
+												    var indicatorTitle = map.Indicator.Indicator ?? ""; int? number = numCount; var skip = false;
+												    /*if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
 												    {
 													    indicatorTitle = Html.DisplayFor(modelItem => map.Indicator.Indicator).ToString();
 													    number = numCount;
@@ -429,7 +432,7 @@
 													    numCount--;
 													    number = null;
 													    skip = true;
-												    }
+												    }*/
 												    <tr class='blockFilter coeID-@coe.CoE_ID areaID-@area_map.Area_ID @foreach (var footnote in map.Indicator.Indicator_Footnote_Map)
                                                                                     { @:footnoteID-@footnote.Footnote_ID 
 												    } prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" indicatorId="@map.Indicator_ID" style="background-color:White">
@@ -581,6 +584,15 @@
     }
 
     $(document).ready(function () {
+
+		
+    	var delay = (function(){
+    		var timer = 0;
+    		return function(callback, ms){
+    			clearTimeout (timer);
+    			timer = setTimeout(callback, ms);
+    		};
+    	})();
 
     	$('table').floatThead({
     		useAbsolutePositioning: false,
@@ -911,8 +923,8 @@
                 }
             })
         }
-
-		@{var html = "";
+        @{if (ViewBag.PRCols != null){ ;
+		 html = "";
 			html += "<td class='prtd-uid unique-id-col'>#</td>";
 			html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
 			html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
@@ -920,8 +932,8 @@
 			{
 				html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
 				html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
-		}}
-		@{var htmlDef = "";
+		}
+		 htmlDef = "";
 			htmlDef += "<td></td>";
 			htmlDef += "<td></td>";
 			htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
@@ -932,8 +944,8 @@
 				htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
 				htmlDef += "<div class='tdValue'></div>";
 				htmlDef += "</td>";
-		}}
-		@{var htmlExist = "";
+		}
+		 htmlExist = "";
 			htmlExist += "<td class='col-uid prtd-uid unique-id-col'>#</td>";
 			htmlExist += "<td class='col-id prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
 			htmlExist += "<td colspan='1' rowspan='1' class='col-title newrow-td prtd-title' field='Indicator'></td>";
@@ -945,6 +957,7 @@
 				htmlExist += "<div class='tdValue'></div>";
 				htmlExist += "</td>";
 		}}
+		}
         function addNewIndicator(obj, newIndicatorID, undo, returningObj){
             exist = (newIndicatorID !== null);
             var coeID = obj.closest( "tr" ).attr("coeID");
@@ -972,27 +985,34 @@
             		htmlExistColumns = "@Html.Raw(htmlExist)";
             		if (!exist){
             			clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
+
             			$(".newrow-text").on('change keyup paste',function(e){
-            				var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
-            				var field = $(this).attr("field");
-            				var parameters = {
-            					indicatorID: indicatorID,
-            					updateProperty: field,
-            					updateValue: $( this ).val(),
-            					updateValueSup: "%NULL%",
-            					fiscalYear: @Model.Fiscal_Year,
-            				};
-            				$.ajax({
-            					url: 'setValue',
-            					type: 'POST',
-            					data: JSON.stringify(parameters),
-            					contentType: 'application/json; charset=utf-8',
-            					success: function (result) {
-            					},
-            					error: function (request){
-            					}
-            				}); 
+            				delay(function(){
+            					var parameters = [];
+            					$('.newrow-text').each(function(i, ele){
+            						var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
+            						var field = $(this).attr("field");
+            						parameters.push({
+            							fiscalYear: @Model.Fiscal_Year,
+            							indicatorID: indicatorID,
+            							updateProperty: field,
+            							updateValue: $( this ).val(),
+            							updateValueSup: "%NULL%"
+            						});
+            					});
+            					$.ajax({
+            						url: 'setValueRow',
+            						type: 'POST',
+            						data: JSON.stringify(parameters),
+            						contentType: 'application/json; charset=utf-8',
+            						success: function (result) {
+            						},
+            						error: function (request){
+            						}
+            					});
+            				}, 500);
             			});
+
             		} else {
             			$('.justClicked').attr('mapid',returnedData.mapID);
             			$('.justClicked').addClass('clicked');
@@ -1314,14 +1334,6 @@
             });
         }
 
-        var delay = (function(){
-        	var timer = 0;
-        	return function(callback, ms){
-        		clearTimeout (timer);
-        		timer = setTimeout(callback, ms);
-        	};
-        })();
-
         $(document).on('keyup', '.pr-input',function(e){
         		if (e.ctrlKey && e.keyCode === 89){
         			return;
@@ -1639,12 +1651,13 @@
         $(".prarea").dblclick(function (e) {
         	//var mapID = e.target.attributes.getNamedItem('mapID');
         	var mapID = $(e.target).closest('.prarea').attr('mapID');
+        	var areaID = $(e.target).closest('.prarea').parent().attr('areaID');
         	var currentEle = $(this);
         	e.stopPropagation();
             
         	$.get('editObjectives', { mapID: mapID}, function (objData) {
         		var newDiv = '<div id="edit-objective-panel">';
-        		newDiv += '<div id="edit-objective-panel-header"> <i id="edit-objectives-save" class="fa fa-floppy-o"></i> Objectives';
+        		newDiv += '<div id="edit-objective-panel-header"> <i id="area-delete" class="fa fa-trash"></i> Objectives';
         		newDiv += '</div>';
         		newDiv += '<div id="objectives-table">';
         		newDiv += '</div>';
@@ -1672,27 +1685,18 @@
         			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
         		});
 
-        		$('#edit-objectives-save').on('click',function(e){
-        			$Objectives.handsontable('destroyEditor',false);
-        			var objectives = $Objectives.handsontable('getDataAtCol',0);
+        		$('#area-delete').on('click',function(e){
         			$.ajax({
         				contentType: 'application/json; charset=utf-8',
         				type:"POST",
-        				url: "editObjectives",
-        				data: JSON.stringify({mapID: mapID, objectives: objectives}),
+        				url: "deleteAreaCoEMap",
+        				data: JSON.stringify({mapID: mapID}),
         				traditional: true,
-        				success: function(objectiveString){
-        					var newList = "";
-        					for(var i =0, len = objectives.length; i<len;i++){
-        						if (objectives[i] != null && objectives[i].length > 0 ){
-        							newList += "<li>" + objectives[i] + "</li>"
-        						}
-        					}
-        					currentEle.find('.objective-list').html(newList)
-        					currentEle.find('.objective-list').first().columnize(columnizeOpt);
+        				success: function(){
+        					currentEle.remove();
+        					$('.areaID-' + areaID).remove();
         					$('#edit-objective-panel').remove();
-        					$('#CopyPasteDiv').remove();
-        					$('#edit-objectives-save').unbind('click');
+        					$('body').unbind('click');
         				}
         			});
         		});
@@ -2001,7 +2005,7 @@
 								fields += "</select>";
 								fields += "</div>";
 								
-								
+								if (ViewBag.PRCols != null){
 								for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
 								{
 									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "'>" + ViewBag.PRCols[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "' /></div>";
@@ -2010,7 +2014,8 @@
 								for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
 								{
 									fields += "<div class='columns large-12'><label for='" + ViewBag.PRColsDefs[i, 3] + "'>" + ViewBag.PRColsDefs[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRColsDefs[i, 3] + "'></i></label><textarea id='" + ViewBag.PRColsDefs[i, 3] + "' /></textarea></div>";
-								}}
+								}} 
+								}
             					newDiv += "@Html.Raw(fields)";
             					newDiv += "</div>"
             					newDiv += "</form>"
@@ -2511,7 +2516,7 @@
 
         $(document).on('click', '.menu-edit-coes', function(e){
             e.preventDefault();
-            window.open("editCoEs", "popupWindow", "width=900,height=700,scrollbars=yes");
+            window.open("editCoEs?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=700,scrollbars=yes");
         });
 
         $(document).on('click', '.menu-open', function(e){
@@ -3676,7 +3681,7 @@
 		text-align:center;
 	}
 
-	#edit-objectives-save {
+	#area-delete {
 		float:left;
 		color:red;
 	}

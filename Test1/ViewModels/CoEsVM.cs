@@ -13,5 +13,6 @@ namespace IndInv.Models.ViewModels
         public string CoE_Type { get; set; }
         public string CoE_Notes { get; set; }
         public string CoE_Subtitle { get; set; }
+		public Int16 Fiscal_Year { get; set; }
     }
 }

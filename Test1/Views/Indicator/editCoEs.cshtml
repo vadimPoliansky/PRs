@@ -8,7 +8,7 @@
 @using IndInv.Models
 @{
     ViewBag.Title = "Edit Indicator Inventory";
-
+	var fiscalYear = Model.FirstOrDefault().Fiscal_Year;
 }
 
 <br />
@@ -102,18 +102,18 @@
         var changedRow = change[i][0];
         var changedParameter = change[i][1];
         var changedValue = change[i][3];
-        $.get('@Url.Action("/editCoEs")', {CoE_ID_Filter : $example1.handsontable('getDataAtCell', changedRow,'CoE_ID')}, function (data) {
+        $.get('@Url.Action("/editCoEs")', {CoE_ID_Filter : $example1.handsontable('getDataAtCell', changedRow,'CoE_ID'), fiscalYear: @fiscalYear }, function (data) {
             var newValue = data;
             $example1.handsontable('setDataAtRowProp', changedRow,'CoE_ID', data[0].CoE_ID)
             var parameters = []
             parameters.push({
-                CoE: (changedParameter=="CoE" ?  changedValue : newValue[0].CoE),
-                CoE_ID: (changedParameter=="CoE_ID" ?  changedValue : newValue[0].CoE_ID),
-                CoE_Abbr: (changedParameter=="CoE_Abbr" ?  changedValue : newValue[0].CoE_Abbr),
-                CoE_Type: (changedParameter=="CoE_Type" ?  changedValue : newValue[0].CoE_Type),
-                CoE_Notes: (changedParameter=="CoE_Notes" ?  changedValue : newValue[0].CoE_Notes),
-                CoE_Subtitle: (changedParameter=="CoE_Subtitle" ?  changedValue : newValue[0].CoE_Subtitle)
-            })
+            	CoE: (changedParameter=="CoE" ?  changedValue : newValue[0].CoE),
+            	CoE_ID: (changedParameter=="CoE_ID" ?  changedValue : newValue[0].CoE_ID),
+            	CoE_Abbr: (changedParameter=="CoE_Abbr" ?  changedValue : newValue[0].CoE_Abbr),
+            	CoE_Type: (changedParameter=="CoE_Type" ?  changedValue : newValue[0].CoE_Type),
+            	CoE_Notes: (changedParameter=="CoE_Notes" ?  changedValue : newValue[0].CoE_Notes),
+            	CoE_Subtitle: (changedParameter=="CoE_Subtitle" ?  changedValue : newValue[0].CoE_Subtitle)
+            });
             $.ajax({
                 url: this.action,
                 type: 'POST',

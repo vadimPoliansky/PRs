@@ -1320,6 +1320,13 @@ namespace IndInv.Controllers
             db.SaveChanges();
         }
 
+		public void deleteAreaCoEMap(Int16 mapID)
+		{
+			var delMap = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
+			db.Entry(delMap).State = EntityState.Deleted;
+			db.SaveChanges();
+		}
+
 		public void deleteIndicator(Int16 indicatorID)
 		{
 			var delIndicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorID);
@@ -1740,7 +1747,7 @@ namespace IndInv.Controllers
         }
 
         [HttpGet]
-        public ActionResult editCoEs(String CoE_ID_Filter)
+		public ActionResult editCoEs(String CoE_ID_Filter)
         {
             var viewModelItems = db.CoEs.ToArray();
             var viewModel = viewModelItems.OrderBy(x => x.CoE_ID).Select(x => new CoEsViewModel
@@ -1757,8 +1764,50 @@ namespace IndInv.Controllers
                 if (CoE_ID_Filter == "")
                 {
                     var newCoE = db.CoEs.Create();
+					newCoE.CoE_Abbr = "";
                     db.CoEs.Add(newCoE);
                     db.SaveChanges();
+
+
+					var newIndicator = new Indicators();
+					var newAreaCoEMap = new Area_CoE_Maps();
+					var newIndicatorCoEMap = new Indicator_CoE_Maps();
+
+					var allFiscalYear = db.Fiscal_Years.ToList();
+					var allAreas = db.Areas.ToList();
+					foreach (var fiscalYear in allFiscalYear)
+					{
+						foreach (var area in allAreas)
+						{
+							for (var i = 1; i <= 5; i++)
+							{
+								newIndicator = db.Indicators.Create();
+								db.Indicators.Add(newIndicator);
+								db.SaveChanges();
+								newIndicator.Area_ID = area.Area_ID;
+								db.Entry(newIndicator).State = EntityState.Modified;
+								db.SaveChanges();
+
+								newIndicatorCoEMap = new Indicator_CoE_Maps
+								{
+									CoE_ID = newCoE.CoE_ID,
+									Fiscal_Year = fiscalYear.Fiscal_Year_Code,
+									Indicator_ID = newIndicator.Indicator_ID
+								};
+								db.Indicator_CoE_Maps.Add(newIndicatorCoEMap);
+								db.SaveChanges();
+							}
+							newAreaCoEMap = new Area_CoE_Maps{
+								Area_ID = area.Area_ID,
+								CoE_ID = newCoE.CoE_ID,
+								Fiscal_Year = fiscalYear.Fiscal_Year_Code,
+								Objective = ""
+							};
+							db.Area_CoE_Maps.Add(newAreaCoEMap);
+							db.SaveChanges();
+						}
+					}
+
 
                     viewModel = new List<CoEsViewModel>();
                     var newViewModelItem = new CoEsViewModel
@@ -1795,28 +1844,30 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public ActionResult editCoEs(IList<CoEs> CoEChange)
+        public ActionResult editCoEs(IList<CoEs> CoEChange, Int16 fiscalYear)
         {
             var CoEID = CoEChange[0].CoE_ID;
             if (db.CoEs.Any(x => x.CoE_ID == CoEID))
             {
                 if (ModelState.IsValid)
                 {
+					CoEChange[0].CoE_Abbr = "";
                     db.Entry(CoEChange[0]).State = EntityState.Modified;
                     db.SaveChanges();
-                    return View();
+					return new EmptyResult();
                 }
-                return View();
+				return new EmptyResult();
             }
             else
             {
                 if (ModelState.IsValid)
                 {
                     db.CoEs.Add(CoEChange[0]);
-                    db.SaveChanges();
-                    return View();
+
+					
+					return new EmptyResult();
                 }
-                return View();
+				return new EmptyResult();
             }
 
         }
@@ -2268,6 +2319,25 @@ namespace IndInv.Controllers
                 return Json("", JsonRequestBehavior.AllowGet);
             }
         }
+
+		[HttpPost]
+		public JsonResult setValueRow(List<IndicatorRowViewModel> indicatorRows)
+		{
+			foreach (var indicatorValues in indicatorRows)
+			{
+				var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == indicatorValues.indicatorID);
+
+				var type = indicator.GetType();
+				var property = type.GetProperty(indicatorValues.updateProperty);
+				if (!property.GetGetMethod().IsVirtual)
+				{
+					property.SetValue(indicator, Convert.ChangeType(indicatorValues.updateValue, property.PropertyType), null);
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+			}
+			return Json("", JsonRequestBehavior.AllowGet);
+		}
 
         [HttpPost]
         public JsonResult setValueFootnotes(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear)
@@ -2867,10 +2937,19 @@ namespace IndInv.Controllers
             }
             else
             {
-                indicator = new Indicators();
+				indicator = db.Indicators.Create();//new Indicators();
+				db.Indicators.Add(indicator);
+				db.SaveChanges();
                 indicator.Area_ID = areaID;
+
+				var type = indicator.GetType();
+				var property = type.GetProperty(Helpers.FiscalYear.FYStrFull("FY_Color_ID", fiscalYear));
+				property.SetValue(indicator, Convert.ChangeType(1, property.PropertyType), null);
+
+
                 indicator.Indicator = "";
-                db.Indicators.Add(indicator);
+				db.Entry(indicator).State = EntityState.Modified;
+                //db.Indicators.Add(indicator);
                 db.SaveChanges();
             }
 
