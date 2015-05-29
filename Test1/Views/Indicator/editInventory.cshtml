@@ -40,8 +40,6 @@
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
-            <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
-            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
         </div>
         <div class="large-6 columns">
             <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
@@ -59,6 +57,8 @@
 </div>
 
 <div class="footer">
+	<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+    <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-wordwrap menu-hover'>Toggle Wordwrap </div>
     <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
@@ -829,15 +829,27 @@
 		        if (valThis == "") {
 		            $('.filter-item').removeClass('textFiltered');
 		        } else {
-		            $('.filter-item').each(function () {
-		                var text = $(this).text().toLowerCase();
-		                var listItems;
-		                if (text.indexOf(valThis) >= 0) {
-		                    $(this).removeClass('textFiltered');
-		                } else {
-		                    $(this).addClass('textFiltered');
-		                }
-		            });
+		        	if (field != "Indicator_ID"){
+		        		$('.filter-item').each(function () {
+		        			var text = $(this).text().toLowerCase();
+		        			var listItems;
+		        			if (text.indexOf(valThis) >= 0) {
+		        				$(this).removeClass('textFiltered');
+		        			} else {
+		        				$(this).addClass('textFiltered');
+		        			}
+		        		});
+		        	} else {
+		        		$('.filter-item').each(function () {
+		        			var text = $(this).text().toLowerCase();
+		        			var listItems;
+		        			if (text == valThis) {
+		        				$(this).removeClass('textFiltered');
+		        			} else {
+		        				$(this).addClass('textFiltered');
+		        			}
+		        		});
+		        	}
 		        };
 		        $('.filter-item').show();
 		        $('.textFiltered').hide();
@@ -1269,7 +1281,7 @@
 
         $(document).on('click', '.menu-edit-coes', function(e){
             e.preventDefault();
-            window.open("editCoEs", "popupWindow", "width=900,height=700,scrollbars=yes");
+            window.open("editCoEs", "popupWindow", "width=900,height=1000,scrollbars=yes");
         });
 
         $(document).on('click', '.menu-open', function(e){

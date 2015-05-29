@@ -63,7 +63,6 @@
             {data: 'CoE'},
             {data: 'CoE_Abbr'},
 			{data: 'CoE_Type'},
-            {data: 'CoE_Notes'},
             {data: 'CoE_Subtitle'}
         ],
         width: function () {
@@ -71,12 +70,6 @@
                 calculateSize();
             }
             return maxed  ?  availableWidth *0.98 : 300;
-        },
-        height: function () {
-            if (maxed && availableHeight === void 0) {
-                calculateSize();
-            }
-            return maxed  ?  availableHeight*0.93: 300;
         },
         afterChange: function (change, source) {
             if (source === 'loadData') {

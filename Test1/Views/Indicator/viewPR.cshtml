@@ -25,16 +25,16 @@
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
-            <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
-            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
         </div>
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
         </div>
     </div>	
 </div>
 
 <div class="footer">
+				<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+	            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
                 <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
@@ -65,7 +65,7 @@
 									var footnotes = new List<Footnotes>();
 									<fieldset class="prBlock">
                                         
-										<h3 class="prtitle"  coeID="@coe.CoE_ID">@Html.DisplayFor(modelItem => coe.CoE)</h3>
+										<h3 class="prtitle"  coeID="@coe.CoE_ID">@Html.DisplayFor(modelItem => coe.CoE)<br /><small>@coe.CoE_Subtitle</small></h3>
 										<div class="large-10 columns" style="padding: 0">
 											<img class="pr-logo-image" src="~/Images/SHSheader.png" width="56%"/>
 										</div>
@@ -987,6 +987,42 @@
             			clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
 
             			$(".newrow-text").on('change keyup paste',function(e){
+            				var updateValue = $( this ).val();
+            				var field = $(this).attr("field");
+            				var currentEle = $( this );
+            				if (field == '@Html.Raw(FiscalYear.FYStrFull("FY_", fiscalYear) + "Target")'){
+            					var firstChar = updateValue.substr(0,1);
+            					var first2Char = updateValue.substr(0,2);
+            					var obj = currentEle.parent().parent();
+            					var directions = [];
+            					var directionIDs = [];
+            					changeColour = false;
+        						@foreach(var direction in Model.allDirections){
+								<text>
+									directions.push('@Html.Raw(direction.Direction)');
+									directionIDs.push('@Html.Raw(direction.Direction_ID)');
+        						</text>
+								}
+								var directionID = 1;
+								for(var i =0; i<directions.length; i++){
+									if (firstChar == directions[i]){
+										directionID = directionIDs[i];
+									}
+								}
+								for(var i =0; i<directions.length; i++){
+									if (first2Char == directions[i].replace('≤','<=').replace('≥','>=')){
+										directionID = directionIDs[i];
+									}
+								}
+								var updateValueReplace = updateValue.replace('<=','≤').replace('>=','≥');
+								if (updateValueReplace !== updateValue){
+									var caretPos = getInputSelection(document.activeElement).start;
+									currentEle.val(updateValueReplace);
+									setCaretToPos(document.activeElement, caretPos - 1);
+									updateValue = updateValueReplace;
+								}
+								changeDirection(obj, directionID);
+							}
             				delay(function(){
             					var parameters = [];
             					$('.newrow-text').each(function(i, ele){
@@ -2516,7 +2552,7 @@
 
         $(document).on('click', '.menu-edit-coes', function(e){
             e.preventDefault();
-            window.open("editCoEs?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=700,scrollbars=yes");
+            window.open("editCoEs?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
         });
 
         $(document).on('click', '.menu-open', function(e){
