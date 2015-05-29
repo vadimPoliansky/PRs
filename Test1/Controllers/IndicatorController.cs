@@ -2703,6 +2703,7 @@ namespace IndInv.Controllers
             {
                 viewModelItems = viewModelItems.Where(x => x.Indicator_ID == Int16.Parse(indicatorID)).ToList();
             }
+			var allFootnotes = db.Indicator_Footnote_Maps.ToList();
             var viewModel = viewModelItems.Where(x=>x.Indicator_N_Value != true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
             {
                 Indicator_ID = x.Indicator_ID,
@@ -2711,6 +2712,8 @@ namespace IndInv.Controllers
                         (x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "")
                       : "",
                 Indicator = x.Indicator,
+				//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
+				Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z=>z.Footnote.Footnote_Symbol).ToList()),
                 FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
                 FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
                 FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),

@@ -1950,7 +1950,7 @@
             				$.get('getIndicatorList', function (indicatorList) {
             					var newDiv = "";
             					newDiv += "<div class='add-indicator-panel' id='add-indicator-panel'>"
-            					newDiv += "<div class='add-indicator-panel-header panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:<i class='add-indicator-panel-close panel-close fa fa-times'></i></div>"
+            					newDiv += "<div class='add-indicator-panel-header panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:</div>" //<i class='add-indicator-panel-close panel-close fa fa-times'></i>
             					newDiv += "<div class='add-indicator-panel-body'>"
             					newDiv += "<label for='indicator-list'>Select Indicator to Link</label>"
             					newDiv += "<select class='indicator-list' id='indicator-list'>"
@@ -2006,14 +2006,14 @@
 								fields += "</div>";
 								
 								if (ViewBag.PRCols != null){
+								for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
+								{
+									fields += "<div class='columns large-12'><label for='" + ViewBag.PRColsDefs[i, 3] + "'>" + ViewBag.PRColsDefs[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRColsDefs[i, 3] + "'></i></label><textarea id='" + ViewBag.PRColsDefs[i, 3] + "' /></textarea></div>";
+								}
 								for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
 								{
 									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "'>" + ViewBag.PRCols[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "' /></div>";
 									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "_Sup'>" + ViewBag.PRCols[i, 3] + "_Sup<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "_Sup' /></div>";
-								}
-								for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
-								{
-									fields += "<div class='columns large-12'><label for='" + ViewBag.PRColsDefs[i, 3] + "'>" + ViewBag.PRColsDefs[i, 3] + "<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRColsDefs[i, 3] + "'></i></label><textarea id='" + ViewBag.PRColsDefs[i, 3] + "' /></textarea></div>";
 								}} 
 								}
             					newDiv += "@Html.Raw(fields)";
@@ -2026,7 +2026,7 @@
             					$('#indicator-list').chosen();
 
             					var copying = false;
-            					$('.copy-button').on('dblclick', function(e){
+            					$('.copy-button').on('click', function(e){
             						copying = true;
             						var currEle = $(this);
             						var forSelectBox = currEle.hasClass('for-select-box');
@@ -2913,13 +2913,13 @@
         border: 1px solid black;
         padding: 0px;
         background-color: red;
-        height:300px;
+        height:600px;
         margin:0px;
     }
 
 	.add-indicator-panel-body {
 		overflow:scroll;
-		height:93%;
+		height:95%;
 		padding:5px;
 	}
 

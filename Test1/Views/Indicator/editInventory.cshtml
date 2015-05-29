@@ -619,11 +619,13 @@
 		            	indicatorID: indicatorID,
 		                updateProperty: changedParameter,
 		                updateValue: changedValue,
+		                updateValueSup: changedValue,
 		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
 		            };
 		        	$.ajaxSetup({ cache: false });
+		        	var ajaxUrl = changedParameter != "Footnote" ? this.action : "setValueFootnotes";
 		            $.ajax({
-		                url: this.action,
+		            	url: ajaxUrl,
 		                type: 'POST',
 		                data: JSON.stringify(parameters),
 		                contentType: 'application/json; charset=utf-8',
