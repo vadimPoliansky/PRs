@@ -428,7 +428,6 @@
 	}
     </table>
 	</div>
-	</div>
 
     <div class="disclaimer">Portal data from the Canadian Institute for Health Information (CIHI) has been used to generate data within this report with acknowledgement to CIHI, the Ministry of Health and Long-Term Care (MOHLTC) and Stats Canada (as applicable). Views are not those of the acknowledged sources. Facility identifiable data other than Mount Sinai Hospital (MSH) is not to be published without the consent of that organization (except where reported at an aggregate level). As this is not a database supported by MSH, please demonstrate caution with use and interpretation of the information. MSH is not responsible for any changes derived from the source data/canned reports. Data may be subject to change.</div>
     <div class="footer-left-pg2">
@@ -438,6 +437,7 @@
         Generated on: @DateTime.Now.ToString("M/d/yyyy");
     </div>
     </div>
+			</div>
     }
 }
 
@@ -708,6 +708,7 @@
 
     .disclaimer {
         font-size:10px;
+		        page-break-before:avoid;
     }
 
     .footer-left-pg1, .footer-left-pg2 {
@@ -723,6 +724,7 @@
     }
 	.footer {
 		page-break-after:always;
+
 	}
 
     .cssRed {
@@ -820,8 +822,7 @@
                     area.css('font-size', fontSize * 0.9);
                     prHeader.css('font-size', fontSize);
                     title.css('font-size', fontSize);
-                    ele.css('height', 'auto');
-                    ele.parent().css('height', maxHeight);
+                    ele.css('height', maxHeight);
                 }
             } else {
                 while (ele.width() / ele.height() > setRatio) {
@@ -853,6 +854,6 @@
         columnizeOpt = { width: objectiveColumnWidth };
         $('.triple-list').columnize(columnizeOpt);
         $(".tbl_PR").first().textfill(2.2, "90%");
-        $(".tbl_Def").first().textfill(2.5, "93%");
+        $(".tbl_Def").first().textfill(2.22, "90%");
     });
 </script>
