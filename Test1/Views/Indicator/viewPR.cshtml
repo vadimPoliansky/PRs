@@ -33,7 +33,8 @@
 
 <div class="footer">
 				<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
-            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+				<div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+				<div class="menu-hover menu-button menu-spellcheck"><i class="fa fa-check"></i>Spelling</div>
 	            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
                 <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
@@ -524,6 +525,7 @@
 <div class="backToTop"><i class="fa fa-arrow-up"></i></div>
 
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
 <script src="~/Scripts/jquery.columnizer.js"></script>
 <script src="../../Scripts/jquery.handsontable.full.js"></script>
@@ -721,6 +723,7 @@
         	}
         	//$('table').floatThead('reflow');
         });
+
 
         function changeDirection(obj, directionID, rightClick){
             var indicatorID = obj.attr('indicatorID');
@@ -1920,7 +1923,7 @@
         }
 
         $('#the-node').contextMenu({
-        	selector: 'td:not(.htCore)', 
+        	selector: 'td:not(.htCore):note(input)', 
             callback: function(key, options) {
             },
 
@@ -2543,6 +2546,25 @@
         });
         $(document).on('click', '.menu-redo', function(e){
             undoManager.redo();
+        });
+
+        $(document).on('click', '.menu-spellcheck', function(e){
+        	$.each($('.prtd, .prtd-title'),function(index,value){
+        		var ele = $(this);
+        		var eleVal = "";
+        		if (ele.hasClass('prtd')){
+        			eleVal = $(this).children('.tdValue').text();
+        		} else {
+        			eleVal = $(this).text();
+        		} 
+        		$.post('spellCheckTD',{value: eleVal},function(data){
+        			if(data == false){
+        				ele.addClass('spellCheckFail');
+        			} else {
+        				ele.removeClass('spellCheckFail');
+        			}
+        		});
+        	});
         });
 
         $(document).on('click', '.menu-edit-footnotes', function(e){
@@ -3753,6 +3775,10 @@
 
 	p {
 		font-size:1em !important;
+	}
+
+	.spellCheckFail {
+		background-color:red;
 	}
 
 

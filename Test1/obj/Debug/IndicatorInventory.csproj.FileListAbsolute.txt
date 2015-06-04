@@ -318,3 +318,9 @@ C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\SHSheader.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\SHSheader.png
 C:\ASPNet\PRs\Test1\bin\App_Data\SHSheader.png
 C:\ASPNet\PRs\Test1\bin\Images\SHSheader.png
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Hunspellx64.dll
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Hunspellx86.dll
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\NHunspell.dll
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\NHunspell.pdb
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\en_US.aff
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\en_US.dic

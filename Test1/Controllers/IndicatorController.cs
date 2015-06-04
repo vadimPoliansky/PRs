@@ -2233,6 +2233,28 @@ namespace IndInv.Controllers
 
 		}
 
+		public JsonResult spellCheckTD(string value)
+		{
+			bool correct = true;
+
+			Regex r = new Regex("^[a-zA-Z]*$");
+
+			using (NHunspell.Hunspell hunspell = new NHunspell.Hunspell(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.aff"), this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.dic")))
+			{
+				var words = value.Split(' ');
+				foreach(var word in words){
+					if (r.IsMatch(word))
+					{
+						if (!hunspell.Spell(word))
+						{
+							correct = false;
+						}
+					}
+				}
+			}
+			return Json(correct);
+		}
+
         [HttpGet]
         public ActionResult getValue(Int16 indicatorID, string field, Int16 fiscalYear, bool? convertToFull)
         {
