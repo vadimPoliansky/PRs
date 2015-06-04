@@ -989,6 +989,7 @@
             		if (!exist){
             			clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
 
+            			$(".newrow-text").contextMenu(false);
             			$(".newrow-text").on('change keyup paste',function(e){
             				var updateValue = $( this ).val();
             				var field = $(this).attr("field");
@@ -1923,88 +1924,92 @@
         }
 
         $('#the-node').contextMenu({
-        	selector: 'td:not(.htCore)', 
-            callback: function(key, options) {
-            },
+        	selector: 'td:not(:has(input:visible)):not(:has(textarea:visible))', 
+        	build: function($trigger, e){
+        		//if ($trigger.children('input:visible').length == 0) { 
+				if (true){
+        			return {
+        				callback: function(key, options) {
+        				},
 
-            items: {
-            	"viewUID": {name: "Toggle Unique ID",
-            		callback: function(key, options){
-            			var uidCol = $('.col-uid');
-            			var colWidth = parseInt(uidCol.css('width'));
-            			var isVisible = colWidth > 10;
-            			if (isVisible) {
-            				uidCol.width('0px');
-            				$('table').floatThead('reflow');
-            			} else {
-            				uidCol.width('2%');
-            				$('table').floatThead('reflow');
-						}
-            		}
-            	},
+        				items: {
+        					"viewUID": {name: "Toggle Unique ID",
+        						callback: function(key, options){
+        							var uidCol = $('.col-uid');
+        							var colWidth = parseInt(uidCol.css('width'));
+        							var isVisible = colWidth > 10;
+        							if (isVisible) {
+        								uidCol.width('0px');
+        								$('table').floatThead('reflow');
+        							} else {
+        								uidCol.width('2%');
+        								$('table').floatThead('reflow');
+        							}
+        						}
+        					},
 
-            	separator3: "-----",
+        					separator3: "-----",
 
-            	"setFormat": {name: "Edit Format",
-            		callback:function(key, options){
-            			var obj =$(this).closest('td');
-            			var objTr = obj.closest('tr');
+        					"setFormat": {name: "Edit Format",
+        						callback:function(key, options){
+        							var obj =$(this).closest('td');
+        							var objTr = obj.closest('tr');
 
-            			var formatStr = objTr.attr('formatStr');
-            			var indicatorID = objTr.attr('indicatorID');
-            			var field = obj.attr('field');
-            			var oldValue = obj.find('.tdValue').html();
+        							var formatStr = objTr.attr('formatStr');
+        							var indicatorID = objTr.attr('indicatorID');
+        							var field = obj.attr('field');
+        							var oldValue = obj.find('.tdValue').html();
 
-            			var newDiv = "<div id='jqte-holder'>"
-            			newDiv +="<div id='jqte-header' class='panel-header'><i id='jqte-holder-close' class='panel-close fa fa-times'></i>"
-            			newDiv += "</div>"
-            			newDiv += "<textarea id='formatEdit' value='" + oldValue + "'>" + oldValue + "</textarea>"
-            			newDiv += "</div>"
-            			var doneButton = "<i id='format-edit-done' class='fa fa-check format-edit-done'></i>"
-            			var newButton = $('<a class="myButton" unselectable="on" />');
-            			$('#block').after(newDiv);
-            			//$('#formatEdit').jqte();
-            			CKEDITOR.replace('formatEdit');
-            			$('#jqte-holder').center("#pushobjLazy");
+        							var newDiv = "<div id='jqte-holder'>"
+        							newDiv +="<div id='jqte-header' class='panel-header'><i id='jqte-holder-close' class='panel-close fa fa-times'></i>"
+        							newDiv += "</div>"
+        							newDiv += "<textarea id='formatEdit' value='" + oldValue + "'>" + oldValue + "</textarea>"
+        							newDiv += "</div>"
+        							var doneButton = "<i id='format-edit-done' class='fa fa-check format-edit-done'></i>"
+        							var newButton = $('<a class="myButton" unselectable="on" />');
+        							$('#block').after(newDiv);
+        							//$('#formatEdit').jqte();
+        							CKEDITOR.replace('formatEdit');
+        							$('#jqte-holder').center("#pushobjLazy");
 
-            			$('#jqte-holder-close').on('click',function(e){
-            				var value = CKEDITOR.instances.formatEdit.getData().replace('<p>', '').replace('</p>', '');
-            				endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
-            				$('#jqte-holder').remove();
-            			});
-            		}
-            	},
+        							$('#jqte-holder-close').on('click',function(e){
+        								var value = CKEDITOR.instances.formatEdit.getData().replace('<p>', '').replace('</p>', '');
+        								endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
+        								$('#jqte-holder').remove();
+        							});
+        						}
+        					},
 
-            	"insNew": {name: "Insert Indicator Below Package Test",
-            		callback: function(key, options){
-            			var obj = $(this).closest('tr');
-            			var objInto = obj;
-            			if (obj.hasClass('prrow-hasNValue')){ objInto = objInto.next(); }
-            			if (obj.hasClass('prrow-isNValue')){ obj = obj.prev(); }
-            			var coeID = obj.attr('coeid');
-            			var areaID = obj.attr('areaid');
-            			$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: 0}, function(returnedData){
-            				var mapID = returnedData.mapID;
-            				var indicatorID = returnedData.indicatorID;
-            				$.get('getIndicatorList', function (indicatorList) {
-            					var newDiv = "";
-            					newDiv += "<div class='add-indicator-panel' id='add-indicator-panel'>"
-            					newDiv += "<div class='add-indicator-panel-header panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:</div>" //<i class='add-indicator-panel-close panel-close fa fa-times'></i>
-            					newDiv += "<div class='add-indicator-panel-body'>"
-            					newDiv += "<label for='indicator-list'>Select Indicator to Link</label>"
-            					newDiv += "<select class='indicator-list' id='indicator-list'>"
-            					newDiv += "<option value='NA' indicatorid='null' class='indicator-list-item'>NA</option>"
-            					$.each(indicatorList, function(index, value){
-            						newDiv += "<option value='" +  value.Indicator +"' index='" + index +"' indicatorid='" + value.Indicator_ID + "' class='indicator-list-item'>ID:" + value.Indicator_ID + " " +  value.Indicator + "</option>"
-            					});
-            					newDiv += "</select>"
-            					newDiv += "<form class='add-indicator-panel-form'>"
-            					newDiv += "<div class='row'>"
-            					newDiv += "<div class='columns large-12'><label for='Indicator'>Title <i class='fa fa-clipboard copy-button' field='Indicator'></i></label><input type='text' id='Indicator' /></div>";
-            					newDiv += "<div class='columns large-6'><label for='Data_Source_MSH'>Data_Source_MSH<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_MSH'></i></label><input type='text' id='Data_Source_MSH' class='convert-to-full')'/></div>";
-            					newDiv += "<div class='columns large-6'><label for='Data_Source_Benchmark'>Data_Source_Benchmark<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_Benchmark'></i></label><input type='text' id='Data_Source_Benchmark' class='convert-to-full')'/></div>";
+        					"insNew": {name: "Insert Indicator Below Package Test",
+        						callback: function(key, options){
+        							var obj = $(this).closest('tr');
+        							var objInto = obj;
+        							if (obj.hasClass('prrow-hasNValue')){ objInto = objInto.next(); }
+        							if (obj.hasClass('prrow-isNValue')){ obj = obj.prev(); }
+        							var coeID = obj.attr('coeid');
+        							var areaID = obj.attr('areaid');
+        							$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: 0}, function(returnedData){
+        								var mapID = returnedData.mapID;
+        								var indicatorID = returnedData.indicatorID;
+        								$.get('getIndicatorList', function (indicatorList) {
+        									var newDiv = "";
+        									newDiv += "<div class='add-indicator-panel' id='add-indicator-panel'>"
+        									newDiv += "<div class='add-indicator-panel-header panel-header'><i class='add-indicator-panel-done fa fa-check'></i>Add Indicator:</div>" //<i class='add-indicator-panel-close panel-close fa fa-times'></i>
+        									newDiv += "<div class='add-indicator-panel-body'>"
+        									newDiv += "<label for='indicator-list'>Select Indicator to Link</label>"
+        									newDiv += "<select class='indicator-list' id='indicator-list'>"
+        									newDiv += "<option value='NA' indicatorid='null' class='indicator-list-item'>NA</option>"
+        									$.each(indicatorList, function(index, value){
+        										newDiv += "<option value='" +  value.Indicator +"' index='" + index +"' indicatorid='" + value.Indicator_ID + "' class='indicator-list-item'>ID:" + value.Indicator_ID + " " +  value.Indicator + "</option>"
+        									});
+        									newDiv += "</select>"
+        									newDiv += "<form class='add-indicator-panel-form'>"
+        									newDiv += "<div class='row'>"
+        									newDiv += "<div class='columns large-12'><label for='Indicator'>Title <i class='fa fa-clipboard copy-button' field='Indicator'></i></label><input type='text' id='Indicator' /></div>";
+        									newDiv += "<div class='columns large-6'><label for='Data_Source_MSH'>Data_Source_MSH<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_MSH'></i></label><input type='text' id='Data_Source_MSH' class='convert-to-full')'/></div>";
+        									newDiv += "<div class='columns large-6'><label for='Data_Source_Benchmark'>Data_Source_Benchmark<i class='fa fa-clipboard copy-button convert-to-full')' field='Data_Source_Benchmark'></i></label><input type='text' id='Data_Source_Benchmark' class='convert-to-full')'/></div>";
 
-            					@{var fields = "";
+        									@{var fields = "";
 								fields += "<div class='columns large-3'>";
 								fields += "<label for='color-list'>Select Color Type<i class='fa fa-clipboard copy-button convert-to-full-id for-select-box' field='color'></i></label>";
 								fields += "<select class='color-list' id='color-list'>";
@@ -2055,402 +2060,406 @@
 									fields += "<div class='columns large-6'><label for='" + ViewBag.PRCols[i, 3] + "_Sup'>" + ViewBag.PRCols[i, 3] + "_Sup<i class='fa fa-clipboard copy-button' field='" + ViewBag.PRCols[i, 3] + "'></i></label><input type='text' id='" + ViewBag.PRCols[i, 3] + "_Sup' /></div>";
 								}} 
 								}
-            					newDiv += "@Html.Raw(fields)";
-            					newDiv += "</div>"
-            					newDiv += "</form>"
-            					newDiv += "</div>"
-            					newDiv += "</div>"
-            					$('#block').after(newDiv);
-            					$('#add-indicator-panel').center("#pushobjLazy");
-            					$('#indicator-list').chosen();
+        									newDiv += "@Html.Raw(fields)";
+        									newDiv += "</div>"
+        									newDiv += "</form>"
+        									newDiv += "</div>"
+        									newDiv += "</div>"
+        									$('#block').after(newDiv);
+        									$('#add-indicator-panel').center("#pushobjLazy");
+        									$('#indicator-list').chosen();
 
-            					var copying = false;
-            					$('.copy-button').on('click', function(e){
-            						copying = true;
-            						var currEle = $(this);
-            						var forSelectBox = currEle.hasClass('for-select-box');
-            						var copyIndicatorID = $('#indicator-list').find(':selected').attr('indicatorID');
-            						var convertToFull = false;
-            						var field = currEle.attr('field');
-            						var fieldJson = field;
-            						if (currEle.hasClass('convert-to-full-id') && field !== 'format'){
-            							fieldJson = "FY_" + toTitleCase(field) + "_ID";
-            							convertToFull = true;
-            						} else if (currEle.hasClass('convert-to-full-id')) {
-            							fieldJson = toTitleCase(field) + "_ID";
-            							convertToFull = false
-            						} else if (currEle.hasClass('convert-to-full')) {
-            							fieldJson = "FY_" + field;
-            							convertToFull = true;
-            						}
-            						$.get('getValue',{indicatorID: copyIndicatorID, field: fieldJson ,fiscalYear: @Model.Fiscal_Year, convertToFull: convertToFull}, function(result){
-            							var value = result.Value
-            							var valueSup = null;
-            							if (forSelectBox) {
-            								var selectBox = currEle.parent().next();
-            								selectBox.find('option[' + field +'id="' + value + '"]').attr('selected','selected');
-            							}
-            							if (field === 'Indicator') valueSup = result.Value_Sup;
-            							$('#' + field).val(value);
-            							var parameters = {
-            								indicatorID: indicatorID,
-            								updateProperty: fieldJson,
-            								updateValue: value,
-            								updateValueSup: valueSup,
-            								fiscalYear: @Model.Fiscal_Year,
-            								convertToFull: convertToFull
-										};
-            							$.ajax({
-            								url: 'setValueOld',
-            								type: 'POST',
-            								data: JSON.stringify(parameters),
-            								contentType: 'application/json; charset=utf-8',
-            								success: function (result) {
-            									copying = false;
-            								},
-            								error: function (request){
-            								}
-            							});
-            						});
+        									var copying = false;
+        									$('.copy-button').on('click', function(e){
+        										copying = true;
+        										var currEle = $(this);
+        										var forSelectBox = currEle.hasClass('for-select-box');
+        										var copyIndicatorID = $('#indicator-list').find(':selected').attr('indicatorID');
+        										var convertToFull = false;
+        										var field = currEle.attr('field');
+        										var fieldJson = field;
+        										if (currEle.hasClass('convert-to-full-id') && field !== 'format'){
+        											fieldJson = "FY_" + toTitleCase(field) + "_ID";
+        											convertToFull = true;
+        										} else if (currEle.hasClass('convert-to-full-id')) {
+        											fieldJson = toTitleCase(field) + "_ID";
+        											convertToFull = false
+        										} else if (currEle.hasClass('convert-to-full')) {
+        											fieldJson = "FY_" + field;
+        											convertToFull = true;
+        										}
+        										$.get('getValue',{indicatorID: copyIndicatorID, field: fieldJson ,fiscalYear: @Model.Fiscal_Year, convertToFull: convertToFull}, function(result){
+        											var value = result.Value
+        											var valueSup = null;
+        											if (forSelectBox) {
+        												var selectBox = currEle.parent().next();
+        												selectBox.find('option[' + field +'id="' + value + '"]').attr('selected','selected');
+        											}
+        											if (field === 'Indicator') valueSup = result.Value_Sup;
+        											$('#' + field).val(value);
+        											var parameters = {
+        												indicatorID: indicatorID,
+        												updateProperty: fieldJson,
+        												updateValue: value,
+        												updateValueSup: valueSup,
+        												fiscalYear: @Model.Fiscal_Year,
+        												convertToFull: convertToFull
+        											};
+        											$.ajax({
+        												url: 'setValueOld',
+        												type: 'POST',
+        												data: JSON.stringify(parameters),
+        												contentType: 'application/json; charset=utf-8',
+        												success: function (result) {
+        													copying = false;
+        												},
+        												error: function (request){
+        												}
+        											});
+        										});
 
-            					});
+        									});
 
-            					$('.add-indicator-panel-form input, .add-indicator-panel-form textarea').on('keyup change search click',function(e){
-            						if (copying === true) return false;
-            						var field = $(this).attr('id');
-            						var fieldJson = field;
-            						var convertToFull = null;
-            						if ($(this).hasClass('convert-to-full')) {
-            							fieldJson = "FY_" + field;
-            							convertToFull = true
-            						}
-            						var updateValue = $(this).val();
-            						var parameters = {
-            							indicatorID: indicatorID,
-            							updateProperty: fieldJson,
-            							updateValue: updateValue,
-            							updateValueSup: null,
-            							fiscalYear: @Model.Fiscal_Year,
-            							convertToFull: convertToFull,
-            						};
-            						$.ajax({
-            							url: 'setValueOld',
-            							type: 'POST',
-            							data: JSON.stringify(parameters),
-            							contentType: 'application/json; charset=utf-8',
-            							success: function (result) {
-            							},
-            							error: function (request){
-            							}
-            						});
-            					});
+        									$('.add-indicator-panel-form input, .add-indicator-panel-form textarea').on('keyup change search click',function(e){
+        										if (copying === true) return false;
+        										var field = $(this).attr('id');
+        										var fieldJson = field;
+        										var convertToFull = null;
+        										if ($(this).hasClass('convert-to-full')) {
+        											fieldJson = "FY_" + field;
+        											convertToFull = true
+        										}
+        										var updateValue = $(this).val();
+        										var parameters = {
+        											indicatorID: indicatorID,
+        											updateProperty: fieldJson,
+        											updateValue: updateValue,
+        											updateValueSup: null,
+        											fiscalYear: @Model.Fiscal_Year,
+        											convertToFull: convertToFull,
+        										};
+        										$.ajax({
+        											url: 'setValueOld',
+        											type: 'POST',
+        											data: JSON.stringify(parameters),
+        											contentType: 'application/json; charset=utf-8',
+        											success: function (result) {
+        											},
+        											error: function (request){
+        											}
+        										});
+        									});
 
-                                /*
-            					$('.add-indicator-panel-close').on('click', function(e){
-            						removeIndicatorDelete(indicatorID);
-            						$('.add-indicator-panel').remove();
-            					});*/
+        									/*
+											$('.add-indicator-panel-close').on('click', function(e){
+												removeIndicatorDelete(indicatorID);
+												$('.add-indicator-panel').remove();
+											});*/
 
-            				    //$('.add-indicator-panel-done').on('click', function(e){
-            					$('body').unbind("click").click(function (evt) {
-            						var panel = $(evt.target).closest('#add-indicator-panel');
-            						if (panel.length === 0) {
-            							var formatID = $('#format-list').find(':selected').attr('formatID');
-            							var formatStr = $('#format-list').find(':selected').attr('formatStr');
-            							var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
-            							var directionID = $('#direction-list').find(':selected').attr('directionID');
-            							var colorID = $('#color-list').find(':selected').attr('colorID');
-            							var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + ' prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
-            							rowHtml += "@Html.Raw(htmlExist)";
-            							rowHtml +="</tr>"
-            							objInto.after(rowHtml);
-            							var newRow = objInto.next();
-            							var newTDs = newRow.children(".newrow-td")
-            							$.when($.each(newTDs,function(index,value){
-            								var currTD = $(this);
-            								var field = currTD.attr('field');
-            								$.get('getValue',{ indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function(data){
-            									var value = data.Value == null ? "" : data.Value;
-            									var valueSup = data.Value_Sup == null ? "" : data.Value_Sup;
-            									currTD.removeClass('newrow-td');
-            									currTD.attr('indicatorID',indicatorID);
-            									if (field === 'Indicator'){
-            										currTD.html(value + "<sup>" + valueSup + "</sup>");
-            									} else {
-            										currTD.children('.tdValue').html(value + "<sup>" + valueSup + "</sup>");
-            										currTD.children('.pr-input-val').val(value);
-            										currTD.children('.pr-input-sup').val(valueSup);
-            									}
+        									//$('.add-indicator-panel-done').on('click', function(e){
+        									$('body').unbind("click").click(function (evt) {
+        										var panel = $(evt.target).closest('#add-indicator-panel');
+        										if (panel.length === 0) {
+        											var formatID = $('#format-list').find(':selected').attr('formatID');
+        											var formatStr = $('#format-list').find(':selected').attr('formatStr');
+        											var thresholdID = $('#threshold-list').find(':selected').attr('thresholdID');
+        											var directionID = $('#direction-list').find(':selected').attr('directionID');
+        											var colorID = $('#color-list').find(':selected').attr('colorID');
+        											var rowHtml = '<tr class="blockFilter coeID-' + coeID + ' areaID-' + areaID + ' prrow" formatid="' + formatID + '" formatstr="' + formatStr + '" thresholdid="' + thresholdID + '" directionid="' + directionID + '" colorid="' + colorID + '" indicatorid="' +  indicatorID +'" mapid="' + mapID +'" coeid="' + coeID + '" areaid="' + areaID + '">'
+        											rowHtml += "@Html.Raw(htmlExist)";
+        											rowHtml +="</tr>"
+        											objInto.after(rowHtml);
+        											var newRow = objInto.next();
+        											var newTDs = newRow.children(".newrow-td")
+        											$.when($.each(newTDs,function(index,value){
+        												var currTD = $(this);
+        												var field = currTD.attr('field');
+        												$.get('getValue',{ indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function(data){
+        													var value = data.Value == null ? "" : data.Value;
+        													var valueSup = data.Value_Sup == null ? "" : data.Value_Sup;
+        													currTD.removeClass('newrow-td');
+        													currTD.attr('indicatorID',indicatorID);
+        													if (field === 'Indicator'){
+        														currTD.html(value + "<sup>" + valueSup + "</sup>");
+        													} else {
+        														currTD.children('.tdValue').html(value + "<sup>" + valueSup + "</sup>");
+        														currTD.children('.pr-input-val').val(value);
+        														currTD.children('.pr-input-sup').val(valueSup);
+        													}
 
-            								});
-            							})).done(function(){;
-            								$('.add-indicator-panel').remove();
-            								changeDirection(newRow, directionID);
-            								changeThreshold(newRow, thresholdID);
-            								changeColor(newRow, colorID);
-            								changeFormat(newRow, formatID);
-            								var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
-            								sort(rows);
-            							});
-            							$('body').unbind('click');
-            						}
-            					});
-            				});
-            			});
-            		}
-            	},
+        												});
+        											})).done(function(){;
+        												$('.add-indicator-panel').remove();
+        												changeDirection(newRow, directionID);
+        												changeThreshold(newRow, thresholdID);
+        												changeColor(newRow, colorID);
+        												changeFormat(newRow, formatID);
+        												var rows = newRow.closest('tbody').find("> tr:not(.ui-sortable-placeholder)");
+        												sort(rows);
+        											});
+        											$('body').unbind('click');
+        										}
+        									});
+        								});
+        							});
+        						}
+        					},
 
-                "insB": {name: "Insert New Blank Indicator Below",
-                	callback: function(key, options){
-                        addNewIndicatorUndoable($(this), null);
-                    }
-                },
+        					"insB": {name: "Insert New Blank Indicator Below",
+        						callback: function(key, options){
+        							addNewIndicatorUndoable($(this), null);
+        						}
+        					},
 
-                insBExs: {name: "Insert Existing Indicator Below",
-                    callback: function(key, options){
-                        var clickedObj = $(this);
-                        var clickedRow = $(this).closest( "tr" );
-                        if (clickedRow.hasClass('prrow-hasNValue')) { clickedRow = clickedRow.next(); }
-                        clickedRow.after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
-                        var coeID = clickedRow.attr("coeID");
-                        var newDiv = "<div class='add-indicator-panel'>"
-                        newDiv += "<div class='add-indicator-panel-header panel-header'>Add Existing Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
-                        newDiv += "<input class='search' id='search_input_Indicator' name='Search' type='search' placeholder='Search' />"
-                        $.get('getIndicatorList', function (data) {
-                            newDiv += "<div class='add-indicator-list'><div>"
-                            var indicatorList = $("[coeid='" + coeID + "'] > .prtd-title").map(function(){return Number($(this).attr("indicatorid"));}).get();
-                            $.each(data, function(index,value){
-                                newDiv += "<div class='add-indicator-item"
-                                if ( jQuery.inArray(value.Indicator_ID, indicatorList) != -1 ) {
-                                    newDiv += " included"
-                                }
-                                newDiv += "' indicatorID=" + value.Indicator_ID + "><div class='add-indicator-item-title'>" + value.Indicator_ID + " " + value.Area + ": </div>" + value.Indicator + "</div>";
-                            });
-                            newDiv += "</div></div>";
-                            newDiv += "</div>";
-                            $('#block').after(newDiv);
-                            /*$('.add-indicator-panel').hide();
-                            $('.add-indicator-panel').slideDown('slow');*/
-                            $('.add-indicator-panel').css({
-                                left:  currentMousePos.x,
-                                top:   currentMousePos.y
-                            });
-                            $('.add-indicator-panel-header').drags();
+        					insBExs: {name: "Insert Existing Indicator Below",
+        						callback: function(key, options){
+        							var clickedObj = $(this);
+        							var clickedRow = $(this).closest( "tr" );
+        							if (clickedRow.hasClass('prrow-hasNValue')) { clickedRow = clickedRow.next(); }
+        							clickedRow.after("<tr class='new-map'><td colspan=99>'ADD'</td></tr>");
+        							var coeID = clickedRow.attr("coeID");
+        							var newDiv = "<div class='add-indicator-panel'>"
+        							newDiv += "<div class='add-indicator-panel-header panel-header'>Add Existing Indicator:<i class='add-indicator-panel-close fa fa-times'></i></div>"
+        							newDiv += "<input class='search' id='search_input_Indicator' name='Search' type='search' placeholder='Search' />"
+        							$.get('getIndicatorList', function (data) {
+        								newDiv += "<div class='add-indicator-list'><div>"
+        								var indicatorList = $("[coeid='" + coeID + "'] > .prtd-title").map(function(){return Number($(this).attr("indicatorid"));}).get();
+        								$.each(data, function(index,value){
+        									newDiv += "<div class='add-indicator-item"
+        									if ( jQuery.inArray(value.Indicator_ID, indicatorList) != -1 ) {
+        										newDiv += " included"
+        									}
+        									newDiv += "' indicatorID=" + value.Indicator_ID + "><div class='add-indicator-item-title'>" + value.Indicator_ID + " " + value.Area + ": </div>" + value.Indicator + "</div>";
+        								});
+        								newDiv += "</div></div>";
+        								newDiv += "</div>";
+        								$('#block').after(newDiv);
+        								/*$('.add-indicator-panel').hide();
+										$('.add-indicator-panel').slideDown('slow');*/
+        								$('.add-indicator-panel').css({
+        									left:  currentMousePos.x,
+        									top:   currentMousePos.y
+        								});
+        								$('.add-indicator-panel-header').drags();
 
-                            $('#search_input_Indicator').on('keyup change search click', function () {
-                                var valThis = $(this).val().toLowerCase();
-                                if (valThis == "") {
-                                    $('.add-indicator-item').removeClass('textFiltered');
-                                } else {
-                                    $('.add-indicator-item').each(function () {
-                                        var text = $(this).text().toLowerCase();
-                                        var listItems;
-                                        if (text.indexOf(valThis) >= 0) {
-                                            $(this).removeClass('textFiltered');
-                                        } else {
-                                            $(this).addClass('textFiltered');
-                                        }
-                                    });
-                                };
-                                $('.add-indicator-item').show();
-                                $('.textFiltered').hide();
-                            });
+        								$('#search_input_Indicator').on('keyup change search click', function () {
+        									var valThis = $(this).val().toLowerCase();
+        									if (valThis == "") {
+        										$('.add-indicator-item').removeClass('textFiltered');
+        									} else {
+        										$('.add-indicator-item').each(function () {
+        											var text = $(this).text().toLowerCase();
+        											var listItems;
+        											if (text.indexOf(valThis) >= 0) {
+        												$(this).removeClass('textFiltered');
+        											} else {
+        												$(this).addClass('textFiltered');
+        											}
+        										});
+        									};
+        									$('.add-indicator-item').show();
+        									$('.textFiltered').hide();
+        								});
 
-                            $('.add-indicator-panel-close').on('click', function(){
-                                $(this).closest('.add-indicator-panel').undrags();
-                                $(this).closest('.add-indicator-panel').slideUp('slow',function() { $(this).remove()});
-                                $('.new-map').remove()
-                            });
+        								$('.add-indicator-panel-close').on('click', function(){
+        									$(this).closest('.add-indicator-panel').undrags();
+        									$(this).closest('.add-indicator-panel').slideUp('slow',function() { $(this).remove()});
+        									$('.new-map').remove()
+        								});
 
-                            $('.add-indicator-item').on('dblclick', function(){
-                                var indicatorID = $(this).attr('indicatorID')
-                                if (!$(this).hasClass('included')){
-                                    if (!$(this).hasClass('clicked')){
-                                        $(this).addClass('justClicked');
-                                        addNewIndicatorUndoable(clickedObj, indicatorID, true);
-                                    } else {
-                                        $(this).removeClass('clicked');
-                                        var mapID = $(this).attr('mapID')
-                                        $.post('deleteCoEMaps', { mapID : mapID});
-                                        $('.newrow[indicatorid="' + indicatorID + '"]').remove();
-                                    }
-                                }
-                            });
-                        });
-                    }
-                },
+        								$('.add-indicator-item').on('dblclick', function(){
+        									var indicatorID = $(this).attr('indicatorID')
+        									if (!$(this).hasClass('included')){
+        										if (!$(this).hasClass('clicked')){
+        											$(this).addClass('justClicked');
+        											addNewIndicatorUndoable(clickedObj, indicatorID, true);
+        										} else {
+        											$(this).removeClass('clicked');
+        											var mapID = $(this).attr('mapID')
+        											$.post('deleteCoEMaps', { mapID : mapID});
+        											$('.newrow[indicatorid="' + indicatorID + '"]').remove();
+        										}
+        									}
+        								});
+        							});
+        						}
+        					},
 
-                "merge":{
-                    name: "Merge cells",
-                    callback: function(key, options){
-                        mergeUndoable($(".to-merge"), $(".to-merge-start"))
-                    }
-                },
+        					"merge":{
+        						name: "Merge cells",
+        						callback: function(key, options){
+        							mergeUndoable($(".to-merge"), $(".to-merge-start"))
+        						}
+        					},
 
-                "unmerge":{
-                    name: "Unmerge cells",
-                    callback: function(key, options){
-                        var toUnmerge = $(".ui-selected");
-                        if (toUnmerge.length === 0) toUnmerge= $(this);
-                        var mergedCells = [];
-                        $.each(toUnmerge.nextAll(), function(index,value){
-                            var cell = $(this);
-                            if (! cell.is(":visible")) mergedCells.push(cell);
-                            if (cell.is(":visible")) false;
-                        });
-                        unmergeUndoable(toUnmerge, mergedCells);
-                    }
-                },
+        					"unmerge":{
+        						name: "Unmerge cells",
+        						callback: function(key, options){
+        							var toUnmerge = $(".ui-selected");
+        							if (toUnmerge.length === 0) toUnmerge= $(this);
+        							var mergedCells = [];
+        							$.each(toUnmerge.nextAll(), function(index,value){
+        								var cell = $(this);
+        								if (! cell.is(":visible")) mergedCells.push(cell);
+        								if (cell.is(":visible")) false;
+        							});
+        							unmergeUndoable(toUnmerge, mergedCells);
+        						}
+        					},
 
-                "addNValues": {
-                    name: "Add N Values to this Indicator",
-                    callback: function(key,options){
-                        addNValuesUndoable($(this));
-                    }
-                },
+        					"addNValues": {
+        						name: "Add N Values to this Indicator",
+        						callback: function(key,options){
+        							addNValuesUndoable($(this));
+        						}
+        					},
 
-                "foldDelete": {
-                    name: "Remove Indicator From This PR",
-                    items: {
-                        "foldDelete": {"name": "Remove From This PR",
-                            callback: function(key, options){
-                                var cell = $(this);
-                                var prevCell = $(this).closest('tr').prev().first()
-                                var indicatorID = $(this).attr('indicatorID');
-                                removeIndicatorUndoable( cell, prevCell, cell.closest('tr'), indicatorID );
-                            },
-                        }
-                    }
-                },
+        					"foldDelete": {
+        						name: "Remove Indicator From This PR",
+        						items: {
+        							"foldDelete": {"name": "Remove From This PR",
+        								callback: function(key, options){
+        									var cell = $(this);
+        									var prevCell = $(this).closest('tr').prev().first()
+        									var indicatorID = $(this).attr('indicatorID');
+        									removeIndicatorUndoable( cell, prevCell, cell.closest('tr'), indicatorID );
+        								},
+        							}
+        						}
+        					},
 
-                "foldDeleteComp": {
-                	name: "Remove Indicator Completely (NOT UNDOABLE!)",
-                	items: {
-                		"foldDeleteComp": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
-                			callback: function(key, options){
-                				var indicatorID = $(this).attr('indicatorID');
-                				removeIndicatorDelete(indicatorID);
-                			},
-                		}
-                	}
-                },
+        					"foldDeleteComp": {
+        						name: "Remove Indicator Completely (NOT UNDOABLE!)",
+        						items: {
+        							"foldDeleteComp": {"name": "Remove Indicator Completely (NOT UNDOABLE!)",
+        								callback: function(key, options){
+        									var indicatorID = $(this).attr('indicatorID');
+        									removeIndicatorDelete(indicatorID);
+        								},
+        							}
+        						}
+        					},
 
-                separator1: "-----",
+        					separator1: "-----",
 
-                "colorSettings": {
-                    "name": "Color Type",
-                    "items": {
-                        @foreach (var color in Model.allColors)
+        					"colorSettings": {
+        						"name": "Color Type",
+        						"items": {
+        							@foreach (var color in Model.allColors)
                         {
                         <text>
-                        "Color_@color.Color_ID" : { "name": "Change to @color.Color_Type",
-                            className: 'color-choice',
-                            callback:function(key, options){
-                                var obj = $(this);
-                                var colorID= @color.Color_ID;
-                            	var oldColorID = $(this).closest('tr').attr('colorID');
-                                changeColorUndoable(obj, colorID, oldColorID);
-                            },
-                        },
-                        </text>
+        							"Color_@color.Color_ID" : { "name": "Change to @color.Color_Type",
+        								className: 'color-choice',
+        								callback:function(key, options){
+        									var obj = $(this);
+        									var colorID= @color.Color_ID;
+        									var oldColorID = $(this).closest('tr').attr('colorID');
+        									changeColorUndoable(obj, colorID, oldColorID);
+        								},
+        							},
+        							</text>
                         }
-                    },
-                },
-                "directionsSettings": {
-                    "name": "Color Direction",
-                    "items": {
-                        @foreach (var direction in Model.allDirections)
+        						},
+        					},
+        					"directionsSettings": {
+        						"name": "Color Direction",
+        						"items": {
+        							@foreach (var direction in Model.allDirections)
                         {
                         <text>
-                        "Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
-                            className: 'color-choice',
-                            callback:function(key, options){
-                                var obj = $(this);
-                                var directionID= @direction.Direction_ID;
-                                var oldDirectionID = $(this).closest('tr').attr('directionID');
-                                changeDirectionUndoable(obj, directionID, oldDirectionID, true);
-                            },
-                        },
-                        </text>
+        							"Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
+        								className: 'color-choice',
+        								callback:function(key, options){
+        									var obj = $(this);
+        									var directionID= @direction.Direction_ID;
+        									var oldDirectionID = $(this).closest('tr').attr('directionID');
+        									changeDirectionUndoable(obj, directionID, oldDirectionID, true);
+        								},
+        							},
+        							</text>
                         }
-                    },
-                },
-                "thresholdSettings": {
-                    "name": "Color Threshold",
-                    "items": {
-                        @foreach (var threshold in Model.allThresholds)
+        						},
+        					},
+        					"thresholdSettings": {
+        						"name": "Color Threshold",
+        						"items": {
+        							@foreach (var threshold in Model.allThresholds)
                         {
                         <text>
-                        "Threshold_@threshold.Threshold_ID" : { "name": "Change to @threshold.Threshold",
-                            className: 'color-choice',
-                            callback:function(key, options){
-                                var obj = $(this);
-                                var thresholdID= @threshold.Threshold_ID;
-                                var oldThresholdID = $(this).closest('tr').attr('thresholdID');
-                                changeThresholdUndoable(obj, thresholdID, oldThresholdID);
-                            },
-                        },
-                        </text>
+        							"Threshold_@threshold.Threshold_ID" : { "name": "Change to @threshold.Threshold",
+        								className: 'color-choice',
+        								callback:function(key, options){
+        									var obj = $(this);
+        									var thresholdID= @threshold.Threshold_ID;
+        									var oldThresholdID = $(this).closest('tr').attr('thresholdID');
+        									changeThresholdUndoable(obj, thresholdID, oldThresholdID);
+        								},
+        							},
+        							</text>
                         }
-                    },
-                },
+        						},
+        					},
 
-                separator2: "-----",
+        					separator2: "-----",
 
-                "setGreen": {name: "Color Cell Green",
-                    callback: function(key, options){
-                        var color = "cssGreen";
-                        var obj = $(this)
-                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
-                            return v.indexOf('css') === 0;
-                        })[0];
-                        setCustomColorUndoable(obj, color, oldColor);
-                    }
-                },
-                "setYellow": {name: "Color Cell Yellow",
-                    callback: function(key, options){
-                        var color = "cssYellow";
-                        var obj = $(this)
-                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
-                            return v.indexOf('css') === 0;
-                        })[0];
-                        setCustomColorUndoable(obj, color, oldColor);
-                    }
-                },
-                "setRed": {name: "Color Cell Red",
-                    callback: function(key, options){
-                        var color = "cssRed";
-                        var obj = $(this)
-                        var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
-                            return v.indexOf('css') === 0;
-                        })[0];
-                        setCustomColorUndoable(obj, color, oldColor);
-                    }
-                },
+        					"setGreen": {name: "Color Cell Green",
+        						callback: function(key, options){
+        							var color = "cssGreen";
+        							var obj = $(this)
+        							var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+        								return v.indexOf('css') === 0;
+        							})[0];
+        							setCustomColorUndoable(obj, color, oldColor);
+        						}
+        					},
+        					"setYellow": {name: "Color Cell Yellow",
+        						callback: function(key, options){
+        							var color = "cssYellow";
+        							var obj = $(this)
+        							var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+        								return v.indexOf('css') === 0;
+        							})[0];
+        							setCustomColorUndoable(obj, color, oldColor);
+        						}
+        					},
+        					"setRed": {name: "Color Cell Red",
+        						callback: function(key, options){
+        							var color = "cssRed";
+        							var obj = $(this)
+        							var oldColor = $.grep(obj.attr('class').split(" "), function(v, i){
+        								return v.indexOf('css') === 0;
+        							})[0];
+        							setCustomColorUndoable(obj, color, oldColor);
+        						}
+        					},
 
-                separator3: "-----",
+        					separator3: "-----",
 
-                "formatSettings": {
-                    "name": "Format Type",
-                    "items": {
-                        @foreach (var format in Model.allFormats.OrderBy(x => x.Order))
+        					"formatSettings": {
+        						"name": "Format Type",
+        						"items": {
+        							@foreach (var format in Model.allFormats.OrderBy(x => x.Order))
                         {
                         <text>
-                	    "Format_@format.Format_ID" : { "name": "Change to @format.Format_Type",
-                	        className: 'color-choice',
-                	        callback:function(key, options){
-                	            var obj = $(this);
-                	            var formatID= @format.Format_ID;
-                    			var oldFormatID = $(this).closest('tr').attr('formatID');
-                    			changeFormatUndoable(obj, formatID, oldFormatID);
-                    		},
-                    	},
-                	    </text>
+        							"Format_@format.Format_ID" : { "name": "Change to @format.Format_Type",
+        								className: 'color-choice',
+        								callback:function(key, options){
+        									var obj = $(this);
+        									var formatID= @format.Format_ID;
+        									var oldFormatID = $(this).closest('tr').attr('formatID');
+        									changeFormatUndoable(obj, formatID, oldFormatID);
+        								},
+        							},
+        							</text>
                         }
-                	},
-                },
-
-            }
+        						},
+        					},
+        				}
+        			}
+        		} else {
+        			return false;
+        		}
+        	}
 		});
         @*
         $(document).on('click', '.row-up,.row-down', function(){
