@@ -336,6 +336,13 @@ namespace IndInv.Models
 		public Int16 Fiscal_Year_Code { get; set; }
 	}
 
+	public class Words
+	{
+		[Key]
+		public Int16 ID { get; set; }
+		public string Word { get; set; }
+	}
+
     public class InventoryDBContext : DbContext
     {
         public DbSet<Indicators> Indicators { get; set; }
@@ -347,6 +354,7 @@ namespace IndInv.Models
         public DbSet<Color_Directions> Color_Directions { get; set; }
         public DbSet<Formats> Formats { get; set; }
 		public DbSet<Fiscal_Years> Fiscal_Years { get; set; }
+		public DbSet<Words> Words { get; set; }
 
         public DbSet<Indicator_CoE_Maps> Indicator_CoE_Maps { get; set; }
         public DbSet<Area_CoE_Maps> Area_CoE_Maps { get; set; }

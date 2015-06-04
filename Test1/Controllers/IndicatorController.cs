@@ -1746,6 +1746,81 @@ namespace IndInv.Controllers
 
         }
 
+
+		[HttpGet]
+		public ActionResult editWords(String Word_ID_Filter)
+		{
+			var viewModelItems = db.Words.ToList();
+			var viewModel = viewModelItems.OrderBy(x => x.ID).Select(x => new WordsViewModel
+			{
+				ID = x.ID,
+				Word = x.Word
+			}).ToList();
+			if (Request.IsAjaxRequest())
+			{
+				if (Word_ID_Filter == "")
+				{
+					var newWord = db.Words.Create();
+					db.Words.Add(newWord);
+					db.SaveChanges();
+
+					viewModel = new List<WordsViewModel>();
+					var newViewModelItem = new WordsViewModel
+					{
+						ID = newWord.ID,
+						Word = newWord.Word
+					};
+					viewModel.Add(newViewModelItem);
+
+					return Json(viewModel, JsonRequestBehavior.AllowGet);
+				}
+				else
+				{
+					return Json(viewModel.Where(x => x.ID.ToString().Contains(Word_ID_Filter == null ? "" : Word_ID_Filter)), JsonRequestBehavior.AllowGet);
+				}
+			}
+			else
+			{
+				return View(viewModel);
+			}
+
+		}
+
+		[HttpPost]
+		public void deleteWords(Int16 wordID)
+		{
+			var deleteWord = db.Words.FirstOrDefault(x => x.ID == wordID);
+			db.Words.Remove(deleteWord);
+			db.SaveChanges();
+		}
+
+		[HttpPost]
+		public ActionResult editWords(IList<Words> wordChange)
+		{
+			var wordID = wordChange[0].ID;
+			if (db.Words.Any(x => x.ID == wordID))
+			{
+				if (ModelState.IsValid)
+				{
+					db.Entry(wordChange[0]).State = EntityState.Modified;
+					db.SaveChanges();
+					return View();
+				}
+				return View();
+			}
+			else
+			{
+				if (ModelState.IsValid)
+				{
+					db.Words.Add(wordChange[0]);
+					db.SaveChanges();
+					return View();
+				}
+				return View();
+			}
+
+		}
+
         [HttpGet]
 		public ActionResult editCoEs(String CoE_ID_Filter)
         {
@@ -2233,6 +2308,16 @@ namespace IndInv.Controllers
 
 		}
 
+		bool IsAllUpper(string input)
+		{
+			for (int i = 0; i < input.Length; i++)
+			{
+				if (Char.IsLetter(input[i]) && !Char.IsUpper(input[i]))
+					return false;
+			}
+			return true;
+		}
+
 		public JsonResult spellCheckTD(string value)
 		{
 			bool correct = true;
@@ -2243,11 +2328,20 @@ namespace IndInv.Controllers
 			{
 				var words = value.Split(' ');
 				foreach(var word in words){
-					if (r.IsMatch(word))
+					var chkWord = word;
+					chkWord = chkWord.Replace("(", "");
+					chkWord = chkWord.Replace(")", "");
+					if (r.IsMatch(chkWord))
 					{
-						if (!hunspell.Spell(word))
+						if (!hunspell.Spell(chkWord))
 						{
-							correct = false;
+							if (db.Words.Where(x=>x.Word == chkWord).Count() == 0)
+							{
+								if (!IsAllUpper(chkWord))
+								{
+									correct = false;
+								}
+							}
 						}
 					}
 				}

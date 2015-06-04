@@ -214,6 +214,7 @@
     <Compile Include="ViewModels\AnalystVM.cs" />
     <Compile Include="ViewModels\CoE_NotesVM.cs" />
     <Compile Include="ViewModels\CoEsVM.cs" />
+    <Compile Include="ViewModels\WordsVM.cs" />
     <Compile Include="ViewModels\IndicatorRowVM.cs" />
     <Compile Include="ViewModels\ObjectiveVM.cs" />
     <Compile Include="ViewModels\colorVM.cs" />
@@ -906,6 +907,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Indicator\editWords.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Movies\Index.cshtml" />

@@ -25,6 +25,7 @@
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
             <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
             <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
+			<div class="menu-hover menu-button menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
         </div>
         <div class="large-6 columns">
         </div>
@@ -2585,6 +2586,13 @@
             e.preventDefault();
             window.open("editCoEs?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
         });
+
+    	$(document).on('click', '.menu-edit-dictionary', function(e){
+    		e.preventDefault();
+    		window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
+
+
 
         $(document).on('click', '.menu-open', function(e){
             var field = $(this).attr('field');
