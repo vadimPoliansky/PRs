@@ -2331,6 +2331,9 @@ namespace IndInv.Controllers
 					var chkWord = word;
 					chkWord = chkWord.Replace("(", "");
 					chkWord = chkWord.Replace(")", "");
+					chkWord = chkWord.Replace("*", "");
+					chkWord = chkWord.Replace("/", "");
+					chkWord = chkWord.Replace("\\", "");
 					if (r.IsMatch(chkWord))
 					{
 						if (!hunspell.Spell(chkWord))
