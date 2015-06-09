@@ -170,6 +170,7 @@
 <script type="text/javascript" src="~/Scripts/classie.js"></script>
 <script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 
+
 <script type="text/javascript">
 
     if (!$("html").hasClass("lt-ie9")) {
@@ -189,6 +190,8 @@
         	$('#panel-side').width('50%');
         	$('.inner-wrap').width('50%');
         	$('#chartTest').width('50%%');
+        	$('.active-indicator').removeClass('active-indicator')
+        	$(this).closest('.block').addClass('active-indicator');
         	$.post('details',{ indicatorID: indicatorID, fiscalYear: @fiscalYear }, function(data){
         		var currency = false;
         		var time = false;
@@ -480,9 +483,9 @@
         					data: s1,
         					index: 50
         				}],
-        				legend: [{
-        					enabled: 'false'
-        				}],
+        				legend: {
+        					enabled: false
+        				},
         				credits: [{
         					enabled: 'false'
         				}]
@@ -490,6 +493,10 @@
         		});
         	});
         });
+
+    	$('#pushobjLazy').on('scroll',function(e){
+    		console.log(e);
+    	});
         
         if ($("html").hasClass("lt-ie9")) {
             $('#menuFilter').multilevelpushmenu({
@@ -634,6 +641,7 @@
         	$('#menuFilter').multilevelpushmenu('collapse')
         	$('#overlay').fadeOut("fast");
         });
+
     });
 
 
@@ -1004,6 +1012,12 @@
 	#pushList {
 		height:100%;
     }
+
+	 .active-indicator {
+		background-color:#ff6500 !important;
+	}
+
+
 
 </style>
 
