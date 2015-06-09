@@ -52,6 +52,27 @@ namespace IndInv.Controllers
             return View(indexViewModel);
         }
 
+		public ActionResult dashboard(Int16? fiscalYear)
+		{
+
+			if (!fiscalYear.HasValue)
+			{
+				fiscalYear = 2;
+			}
+			var indexViewModel = new indexViewModel()
+			{
+				allIndicators = db.Indicators.Where(x => x.Indicator_CoE_Map.FirstOrDefault().CoE_ID > 10 && x.Indicator_CoE_Map.FirstOrDefault().CoE_ID < 20).ToList(),
+				allAnalysts = db.Analysts.ToList(),
+				allAreas = db.Areas.Where(x => x.Area_ID == 1 || x.Area_ID == 3 || x.Area_ID == 4 || x.Area_ID == 5).ToList(),
+				allCoEs = db.CoEs.Where(x => x.CoE_ID > 10 && x.CoE_ID < 20 && x.CoE_ID != 14).ToList(),
+				allFootnotes = db.Footnotes.ToList(),
+
+				Fiscal_Year = fiscalYear.Value,
+			};
+
+			return View(indexViewModel);
+		}
+
         [HttpPost]
         public ActionResult searchAdvanced(IList<searchViewModel> advancedSearch)
         {
@@ -3109,7 +3130,8 @@ namespace IndInv.Controllers
             return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID, colorID = colorID}, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Details(Int16 indicatorID, Int16 fiscalYear)
+		[HttpPost]
+        public JsonResult Details(Int16 indicatorID, Int16 fiscalYear)
         {
             var viewModelItems = new List<Indicators>();
             viewModelItems = db.Indicators.Where(x => x.Indicator_ID == indicatorID).ToList();
@@ -3159,6 +3181,7 @@ namespace IndInv.Controllers
                 FY_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD").GetValue(x, null),
                 FY_YTD_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Sup").GetValue(x, null),
                 Target = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target").GetValue(x, null),
+				TargetNum = Helpers.Color.getNum((string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target").GetValue(x, null)),
                 Target_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Sup").GetValue(x, null),
                 Comparator = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator").GetValue(x, null),
                 Comparator_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Sup").GetValue(x, null),
@@ -3189,7 +3212,7 @@ namespace IndInv.Controllers
                 Fiscal_Year = fiscalYear,
 
             }).FirstOrDefault();
-            return View(viewModel);
+            return Json(viewModel);
         }
 
         //

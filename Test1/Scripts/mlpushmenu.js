@@ -175,6 +175,8 @@
 			// increment level depth
 			++this.level;
 
+			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeOut(10); }
+
 			// move the main wrapper
 			var levelFactor = ( this.level - 1 ) * this.options.levelSpacing,
 				translateVal = this.options.type === 'overlap' ? this.el.offsetWidth + levelFactor : this.el.offsetWidth;
@@ -208,6 +210,8 @@
 			classie.remove( this.wrapper, 'mp-pushed' );
 			this._toggleLevels();
 			this.open = false;
+
+			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeIn(500, 'easeInQuint'); }
 		},
 		// close sub menus
 		_closeMenu : function() {

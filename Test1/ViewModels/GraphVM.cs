@@ -74,6 +74,7 @@ namespace IndInv.Models.ViewModels
         public string FY_YTD { get; set; }
         public string FY_YTD_Sup { get; set; }
         public string Target { get; set; }
+		public string TargetNum { get; set; }
         public string Target_Sup { get; set; }
         public string Comparator { get; set; }
         public string Comparator_Sup { get; set; }
