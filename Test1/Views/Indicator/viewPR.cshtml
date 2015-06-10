@@ -7,6 +7,7 @@
 @{
     ViewBag.Title = "Performance Reports";
     ViewBag.Buttons = "";
+	var coeID = Model.allCoEs.FirstOrDefault().CoE_ID;
     foreach (var analyst in Model.allAnalysts)
     {
         ViewBag.Buttons += "<div id='btn' class='btnSwitch' value=" + analyst.Analyst_ID + " parameter=analystID >" + analyst.First_Name + "</div>";
@@ -83,7 +84,7 @@
 												<th rowspan="2" class="col-uid prheader prheader-1 unique-id-col">#</th>
 												<th rowspan="2" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
 												<th rowspan="2" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
-												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1 remove-in-corp">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
 												<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
@@ -104,8 +105,12 @@
 											@{var numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
+												var colSpanArea = 14;
+												if (coeID ==60 || coeID == 61){
+													colSpanArea--;
+												}			
 												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-													<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+													<td class="prarea" colspan='@colSpanArea' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 														<br />
 														<div class="objective">
@@ -216,7 +221,7 @@
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_3",fiscalYear) + "_Sup").GetValue(indicator,null),
-														"", 
+														"remove-in-corp", 
 														FiscalYear.FYStrFull("FY_3",fiscalYear), 
 														"1",
 													},
@@ -320,10 +325,18 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
+																var tdValue = columns[i, 0];
+																if (tdValue != null){
+																	if(tdValue != ""){
+																		if(tdValue.Substring(0, 1) == "'") { 
+																			tdValue = tdValue.Substring(1, tdValue.Length - 1); 
+																		}
+																	}
+																}
 																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
-                                                                    <input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
+                                                                    <input class="pr-input pr-input-val" value="@Html.Raw(tdValue)" oldvalue="@Html.Raw(tdValue)"/>
                                                                     <input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
-                                                                    <div class="tdValue">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></div>
+                                                                    <div class="tdValue">@Html.Raw(tdValue) <sup>@Html.Raw(columns[i, 1])</sup></div>
 																</td>
 															}
 														}
@@ -588,7 +601,10 @@
 
     $(document).ready(function () {
 
-		
+    	if(@coeID == 60 || @coeID == 61){
+    		$(".remove-in-corp").hide();
+    	}
+
     	var delay = (function(){
     		var timer = 0;
     		return function(callback, ms){
