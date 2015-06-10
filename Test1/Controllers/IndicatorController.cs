@@ -1106,6 +1106,12 @@ namespace IndInv.Controllers
             string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
             var test = (this.RenderView("viewPRSimple", viewModel));
             string value = "<meta charset='UTF-8' />" + test;
+
+			List<string> coeNotes;
+			coeNotes = Regex.Matches(allCoEs.FirstOrDefault(x=>x.CoE_ID == coeID).CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
+			var coeNotesCount = coeNotes.Count();
+			var topMargin = 6 + coeNotesCount*5;
+
             using (var client = new WebClient())
             {
                 NameValueCollection options = new NameValueCollection();
@@ -1114,10 +1120,10 @@ namespace IndInv.Controllers
                 options.Add("DisableJavascript", "false");
                 options.Add("PageSize", "Legal");
                 options.Add("UseLandscape", "true");
-                options.Add("Zoom", "1.1");
+                options.Add("Zoom", "1.0");
                 options.Add("MarginLeft", "2");
-                options.Add("MarginTop", "5");
-                options.Add("MarginBottomn", "");
+                options.Add("MarginTop", "10");
+				options.Add("MarginBottomn", "5");
                 options.Add("MarginRight", "2");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
                 byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
@@ -1174,7 +1180,7 @@ namespace IndInv.Controllers
 
                 logo.Alignment = Element.ALIGN_CENTER;
                 logo.ScalePercent(70,70);
-				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
+				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight-15);
                 writer.DirectContent.AddImage(logo);
 
                 //logoOPEO.Alignment = Element.ALIGN_CENTER;
