@@ -1117,7 +1117,7 @@ namespace IndInv.Controllers
                 options.Add("Zoom", "1.1");
                 options.Add("MarginLeft", "2");
                 options.Add("MarginTop", "5");
-                options.Add("MarginBottomn", "1");
+                options.Add("MarginBottomn", "");
                 options.Add("MarginRight", "2");
                 //options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
                 byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
