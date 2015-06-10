@@ -34,11 +34,11 @@
 </div>
 
 <div class="footer">
-				<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
-				<div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
-				<div class="menu-hover menu-button menu-spellcheck"><i class="fa fa-check"></i>Spelling</div>
-	            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
-                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+	<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+	<div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+	<div class="menu-hover menu-button menu-spellcheck"><i class="fa fa-check"></i>Spelling</div>
+	<div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+    <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
 <div class="container">
@@ -52,7 +52,6 @@
 
 						<ul id="myTags" class="tagList">
 						</ul>
-
 
 						<ul id=""class="list">
 							<div class="block" id="block">
@@ -91,6 +90,7 @@
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+												<th rowspan="2" class="col-comment prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comment").DisplayName</th>
 											</tr>
 
 											<tr class="prheader-2 prheader-Final">
@@ -105,7 +105,7 @@
 											@{var numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
-												var colSpanArea = 14;
+												var colSpanArea = 15;
 												if (coeID ==60 || coeID == 61){
 													colSpanArea--;
 												}			
@@ -190,7 +190,7 @@
 															<a class="row-down"><i class="fa fa-sort-desc"></i></a>
 														</td>
 			   
-														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="col-title prtd-title">@indicatorTitle
+														<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="col-title prtd-title">@Html.Raw(indicatorTitle)
 															@{var footnoteString = "";
 															foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 															{
@@ -292,7 +292,15 @@
 														"", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 														rowSpan.ToString()
-													}};
+													},
+													{
+														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comment").GetValue(indicator,null),
+														"",
+														"col-comment prtd-comment comment-col prtd-nosup", 
+														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comment", 
+														rowSpan.ToString()
+													}
+													};
 													ViewBag.PRCols = columns;
 													if (!skip)
 													{
@@ -1938,7 +1946,7 @@
         				},
 
         				items: {
-        					"viewUID": {name: "Toggle Unique ID",
+        					"viewUID": {name: "Show/Hide Unique ID",
         						callback: function(key, options){
         							var uidCol = $('.col-uid');
         							var colWidth = parseInt(uidCol.css('width'));
@@ -1948,6 +1956,21 @@
         								$('table').floatThead('reflow');
         							} else {
         								uidCol.width('2%');
+        								$('table').floatThead('reflow');
+        							}
+        						}
+        					},
+
+        					"viewComments": {name: "Show/Hide Comments",
+        						callback: function(key, options){
+        							var commentCol = $('.col-comment');
+        							var colWidth = parseInt(commentCol.css('width'));
+        							var isVisible = colWidth > 10;
+        							if (isVisible) {
+        								commentCol.width('0px');
+        								$('table').floatThead('reflow');
+        							} else {
+        								commentCol.width('10%');
         								$('table').floatThead('reflow');
         							}
         						}
@@ -1963,7 +1986,13 @@
         							var formatStr = objTr.attr('formatStr');
         							var indicatorID = objTr.attr('indicatorID');
         							var field = obj.attr('field');
-        							var oldValue = obj.find('.tdValue').html();
+
+        							var oldValue = "";
+        							if (field == 'Indicator'){
+        								oldValue = obj.html();
+        							} else {
+        								oldValue = obj.find('.tdValue').html();
+        							}
 
         							var newDiv = "<div id='jqte-holder'>"
         							newDiv +="<div id='jqte-header' class='panel-header'><i id='jqte-holder-close' class='panel-close fa fa-times'></i>"
@@ -1979,7 +2008,17 @@
 
         							$('#jqte-holder-close').on('click',function(e){
         								var value = CKEDITOR.instances.formatEdit.getData().replace('<p>', '').replace('</p>', '');
-        								endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
+
+        								if (field == 'Indicator'){    			
+        									$.get('getValue', { indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function (data) {
+        										var value2 = data.Value_Sup || "";
+        										console.log(obj);
+        										endEditUndoable(obj, null, formatStr, indicatorID, field, value, value2, oldValue, null, true);
+        									});
+        								} else {
+        									endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
+        								}
+
         								$('#jqte-holder').remove();
         							});
         						}
@@ -3140,6 +3179,10 @@
 		width:1px;
 		overflow:hidden;
 	}
+	.col-comment {
+		width:1px;
+		overflow:hidden;
+	}
 	.col-id {
 		width:2%;
 	}
@@ -3804,6 +3847,13 @@
 
 	.spellCheckFail {
 		background-color:red;
+	}
+
+	.prtd-nosup > .pr-input-sup {
+		display:none !important;
+	}
+	.prtd-nosup > .pr-input-val {
+		width:100% !important;
 	}
 
 
