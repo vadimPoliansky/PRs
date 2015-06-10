@@ -86,7 +86,7 @@
 												<th rowspan="2" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
 												<th rowspan="2" class="col-td prheader prheader-1 remove-in-corp">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
-												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName YTD</th>
 												<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
@@ -390,6 +390,9 @@
 																}}
 															}
 
+												</div>
+												<div id="coeNotesButton" coeID="@coeID">
+													<i class="fa fa-plus-circle"></i>  CoE Endnotes
 												</div>
                                             </div>
                                             <div class="large-4 columns">
@@ -1614,14 +1617,14 @@
         /////////////////////////////////////////////////////////////
 
 
-        $(".prtitle").dblclick(function (e) {
+        $("#coeNotesButton").click(function (e) {
         	var currentEle = $(this);
         	var coeID = currentEle.attr('coeID');
         	e.stopPropagation();
             
         	$.get('editCoE_Notes', { coeID: coeID }, function (objData) {
         		var newDiv = '<div id="edit-coeNotes-panel">';
-        		newDiv += '<div id="edit-coeNotes-panel-header"> <i id="edit-coeNotes-save" class="fa fa-floppy-o"></i> CoeNotes';
+        		newDiv += '<div id="edit-coeNotes-panel-header"> <i id="edit-coeNotes-delete" class="fa fa-trash"></i> CoE Endnotes';
         		newDiv += '</div>';
         		newDiv += '<div id="coeNotes-table">';
         		newDiv += '</div>';
@@ -1649,9 +1652,10 @@
         			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
         		});
 
-        		$('#edit-coeNotes-save').on('click',function(e){
+        		$('#edit-coeNotes-delete').on('click',function(e){
+        		//$('#edit-coeNotes-delete').on('click',function(e){
         			$CoeNotes.handsontable('destroyEditor',false);
-        			var coeNotes = $CoeNotes.handsontable('getDataAtCol',0);
+        			var coeNotes = [""];//$CoeNotes.handsontable('getDataAtCol',0);
         			$.ajax({
         				contentType: 'application/json; charset=utf-8',
         				type:"POST",
@@ -1670,7 +1674,7 @@
         					//currentEle.find('.coeNotes-list').first().columnize(columnizeOpt);
         					$('#edit-coeNotes-panel').remove();
         					$('#CopyPasteDiv').remove();
-        					$('#edit-coeNotes-save').unbind('click');
+        					$('#edit-coeNotes-delete').unbind('click');
         				}
         			});
         		});
@@ -1742,7 +1746,7 @@
         			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
         		});
 
-        		$('#area-delete').on('click',function(e){
+        		/*$('#area-delete').on('click',function(e){
         			$.ajax({
         				contentType: 'application/json; charset=utf-8',
         				type:"POST",
@@ -1756,7 +1760,7 @@
         					$('body').unbind('click');
         				}
         			});
-        		});
+        		});*/
         		//$('#edit-objective-panel').drags();
         	});
 
@@ -3412,7 +3416,7 @@
         line-height:30px;
     }
 
-	.footnotes, #coeNotes {
+	.footnotes, #coeNotes, #coeNotesButton {
 		font-size:11px !important;
 		color:black;
 	}
@@ -3797,7 +3801,7 @@
 		text-align:center;
 	}
 
-	#edit-coeNotes-save {
+	#edit-coeNotes-delete {
 		float:left;
 		color:red;
 	}
