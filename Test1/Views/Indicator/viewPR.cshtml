@@ -1653,31 +1653,10 @@
         		});
 
         		$('#edit-coeNotes-delete').on('click',function(e){
-        		//$('#edit-coeNotes-delete').on('click',function(e){
-        			$CoeNotes.handsontable('destroyEditor',false);
-        			var coeNotes = [""];//$CoeNotes.handsontable('getDataAtCol',0);
-        			$.ajax({
-        				contentType: 'application/json; charset=utf-8',
-        				type:"POST",
-        				url: "editCoE_Notes",
-        				data: JSON.stringify({coeID: coeID, coeNotes: coeNotes}),
-        				traditional: true,
-        				success: function(coeNotesString){
-        					var newList = "";
-        					for(var i =0, len = coeNotes.length; i<len;i++){
-        						if (coeNotes[i] != null && coeNotes[i].length > 0 ){
-        							newList += "<div class='coeNote'>" + coeNotes[i] + "<br></div>"
-        						}
-        					}
-        					$('#coeNotes').html(newList);
-        					//currentEle.find('.coeNotes-list').html(newList)
-        					//currentEle.find('.coeNotes-list').first().columnize(columnizeOpt);
-        					$('#edit-coeNotes-panel').remove();
-        					$('#CopyPasteDiv').remove();
-        					$('#edit-coeNotes-delete').unbind('click');
-        				}
-        			});
+        			var coeNotes = $CoeNotes.handsontable('loadData',[""]);
+        			$('body').click();
         		});
+
         		$('body').unbind("click").click(function (evt) {
         			var panel = $(evt.target).closest('#edit-coeNotes-panel');
         			if (panel.length === 0) {
@@ -1744,6 +1723,11 @@
         		$('#edit-objective-panel').css({
         			left:  currentMousePos.x - offset.left + $(window).scrollLeft(),
         			top:   currentMousePos.y - offset.top - $("#pushobjLazy").scrollTop(),
+        		});
+
+        		$('#area-delete').on('click',function(e){
+        			var objectives = $Objectives.handsontable('loadData',[""]);
+        			$('body').click();
         		});
 
         		/*$('#area-delete').on('click',function(e){
@@ -3420,6 +3404,10 @@
 		font-size:11px !important;
 		color:black;
 	}
+	#coeNotesButton {
+		width:30%;
+	}
+
 	.footnote, .coeNote {
 		float:left;
 		width:50%;
