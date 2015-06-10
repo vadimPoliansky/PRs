@@ -2012,8 +2012,9 @@
         								if (field == 'Indicator'){    			
         									$.get('getValue', { indicatorID: indicatorID, field: field, fiscalYear: @Model.Fiscal_Year}, function (data) {
         										var value2 = data.Value_Sup || "";
-        										console.log(obj);
-        										endEditUndoable(obj, null, formatStr, indicatorID, field, value, value2, oldValue, null, true);
+        										evt = {target:'none'};
+        										endEditUndoableOld(evt, obj, indicatorID, field, value, value2, oldValue, value2);
+        										//endEditUndoable(obj, null, formatStr, indicatorID, field, value, value2, oldValue, null, true);
         									});
         								} else {
         									endEditUndoable(obj.children().first(), null, formatStr, indicatorID, field, value, "", oldValue, null, true);
