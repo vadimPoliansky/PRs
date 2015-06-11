@@ -68,6 +68,7 @@
             <div class="scroller-inner">
                 <div id="pushList">
 
+						<div class="inner-wrap-pad">-</div>
 						<div class="inner-wrap">
 
 							<div id="panel-indicatorlist">
@@ -959,11 +960,14 @@
         visibility:hidden !important;
     }
 
+	.inner-wrap-pad {
+		height:37px;
+	}
+
     .inner-wrap {
         position:absolute;
 		width:inherit !important;
 		height:100%;
-		top: 37px;
     }
 
 	.list {
@@ -1034,7 +1038,12 @@
 		background-color:#ff6500 !important;
 	}
 
-
+	body {
+		overflow:hidden;
+	}
+	.inner-wrap {
+		overflow: auto;
+	}
 
 </style>
 
