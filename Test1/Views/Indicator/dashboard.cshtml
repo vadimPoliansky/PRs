@@ -1,8 +1,11 @@
-﻿@model IndInv.Models.ViewModels.indexViewModel
+﻿@using IndInv.Helpers
+@model IndInv.Models.ViewModels.indexViewModel
+@using IndInv.Models
 @{
     ViewBag.Title = "Search Results";
     ViewBag.fiscalYear = Model.Fiscal_Year;
 	var fiscalYear = Model.Fiscal_Year;
+	var properties = ModelMetadataProviders.Current;
 }
 
 <div class="container">
@@ -184,6 +187,8 @@
         $(".blockContent").on("click", function () {
         	var indicatorID = $(this).closest(".block").attr("indicatorID");
         	var currPath = window.location.pathname
+        	var indicatorTitle = $(this).closest(".block").children('li:first').children('div:first').children('.titleColumn').children('.title').html();
+        	console.log(indicatorTitle);
         	//window.location.href = currPath.charAt(currPath.length - 1) == "/" ? "details?indicatorID=" + indicatorID + "&fiscalYear=" + @fiscalYear :
         	//                                                                        "details?indicatorID=" + indicatorID + "&fiscalYear=" + @fiscalYear ;
         	$('#panel-indicatorlist').width('50%');
@@ -242,6 +247,18 @@
                     "" : parseFloat(data['Comparator'], 10)
         		];
 
+        		var colorsArray = [
+					data['Q1_Color'],
+					data['Q2_Color'],
+					data['Q3_Color'],
+					data['Q4_Color'],
+					data['FY_3_YTD_Color'],
+					data['FY_2_YTD_Color'],
+					data['FY_1_YTD_Color'],
+					data['YTD_Color'],
+					data['FY_3_YTD_Color']
+        		];
+
         		/*polyfill*/
         		if (!Array.prototype.filter) {
         			Array.prototype.filter = function (fun /*, thisp */) {
@@ -290,14 +307,14 @@
         		maxY = maxY / maxYarray > 2 ? maxY / 2 : maxY;
 
         		var s1 = [
-					valuesArray[4],
-					valuesArray[5],
-					valuesArray[6],
-					valuesArray[0],
-					valuesArray[1],
-					valuesArray[2],
-					valuesArray[3],
-					valuesArray[7],
+					{y:valuesArray[4],color:'#368EBE'},
+					{y:valuesArray[5],color:'#368EBE'},
+					{y:valuesArray[6],color:'#368EBE'},
+					{y:valuesArray[0],color:'#368EBE'},
+					{y:valuesArray[1],color:'#368EBE'},
+					{y:valuesArray[2],color:'#368EBE'},
+					{y:valuesArray[3],color:'#368EBE'},
+					{y:valuesArray[7],color:'#368EBE'}
         		];
         		var s2 = [
 					valuesArray[4],
@@ -347,7 +364,14 @@
 
         		var target_4 = valuesArray[8]
 
-        		var ticks1 = ['FY1112','FY1213','FY1314','FY1415 Q1', 'FY1415 Q2', 'FY1415 Q3', 'FY1415 Q4','FY1415 YTD'];
+        		var ticks1 = ['@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName',
+								'@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName',
+								'@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName',
+								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q1',
+								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q2', 
+								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q3',
+								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4',
+								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD'];
         		//var ticks2 = ['FY2010', 'FY2011', 'FY2012', 'FY2013 YTD'];
         		var ticks2 = [
 					'a','b','c','d'
@@ -414,10 +438,10 @@
 
         			chart1 = new Highcharts.Chart({
         				title: {
-        					text: 'test'
+        					text: indicatorTitle
         				},
         				subtitle: {
-        					text: 'for ' + 'test',
+        					text: '@FiscalYear.FYStrFull("FY_Header", fiscalYear)',
         				},
         				xAxis: {
         					categories: ticks1,
@@ -453,25 +477,25 @@
         						percentFrom: 0.75,
         						percentTo: 1
         					}, {
-        						color: 'red',
+        						color: '#ff2032',
         						value: sTargetYTD[0],
         						width: '2',
         						percentFrom: 0,
         						percentTo: 0.25
         					}, {
-        						color: 'red',
+        						color: '#ff2032',
         						value: sTargetYTD[1],
         						width: '2',
         						percentFrom: 0.25,
         						percentTo: 0.5
         					}, {
-        						color: 'red',
+        						color: '#ff2032',
         						value: sTargetYTD[2],
         						width: '2',
         						percentFrom: 0.5,
         						percentTo: 0.75
         					}, {
-        						color: 'red',
+        						color: '#ff2032',
         						value: sTargetYTD[3],
         						width: '2',
         						percentFrom: 0.75,

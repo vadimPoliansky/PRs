@@ -101,6 +101,10 @@ namespace IndInv.Models.ViewModels
         public string Q3_Color { get; set; }
         public string Q4_Color { get; set; }
         public string YTD_Color { get; set; }
+		public string FY_3_YTD_Color { get; set; }
+		public string FY_2_YTD_Color { get; set; }
+		public string FY_1_YTD_Color { get; set; }
+
 
         public int Fiscal_Year { get; set; }
     }

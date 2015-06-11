@@ -3219,6 +3219,10 @@ namespace IndInv.Controllers
                 Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
                 YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
+				FY_1_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 1) + "_YTD_Color").GetValue(x, null),
+				FY_2_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD_Color").GetValue(x, null),
+				FY_3_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Color").GetValue(x, null),
+
                 Fiscal_Year = fiscalYear,
 
             }).FirstOrDefault();
