@@ -2373,6 +2373,37 @@
         						}
         					},
 
+        					"foldDeleteArea":{
+        						name: "Remove This Area From This PR",
+        						items: {
+        							"foldAreaDelete": {"name" : "Remove This Area From This PR",
+        								callback: function(key,options){
+        									var currentEle = $(this);
+        									var isArea = currentEle.hasClass('prarea');
+        									if (isArea){
+        										var areaMapID = currentEle.attr('mapID');
+        										var areaID = currentEle.parent().attr('areaID');
+        										$.ajax({
+        											contentType: 'application/json; charset=utf-8',
+        											type:"POST",
+        											url: "deleteAreaCoEMap",
+        											data: JSON.stringify({mapID: areaMapID}),
+        											traditional: true,
+        											success: function(){
+        												currentEle.remove();
+        												$('.areaID-' + areaID).remove();
+        												$('#edit-objective-panel').remove();
+        												$('body').unbind('click');
+        											}
+        										});
+        									} else {
+        										alert('Please Click on Area');
+        									}
+        								},
+        							}
+        						}
+        					},
+
         					"foldDeleteComp": {
         						name: "Remove Indicator Completely (NOT UNDOABLE!)",
         						items: {

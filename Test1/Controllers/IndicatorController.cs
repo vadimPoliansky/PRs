@@ -1108,9 +1108,13 @@ namespace IndInv.Controllers
             string value = "<meta charset='UTF-8' />" + test;
 
 			List<string> coeNotes;
-			coeNotes = Regex.Matches(allCoEs.FirstOrDefault(x=>x.CoE_ID == coeID).CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
-			var coeNotesCount = coeNotes.Count();
-			var topMargin = 6 + coeNotesCount*5;
+			var topMargin = 6;
+			if (allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes != null && allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes != "")
+			{
+				coeNotes = Regex.Matches(allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
+				var coeNotesCount = coeNotes.Count();
+				topMargin+=coeNotesCount * 5;
+			}
 
             using (var client = new WebClient())
             {
