@@ -175,7 +175,8 @@
 			// increment level depth
 			++this.level;
 
-			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeOut(10); }
+			//ADDED!
+			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeOut(10); $('#myTags').fadeOut(10); }
 
 			// move the main wrapper
 			var levelFactor = ( this.level - 1 ) * this.options.levelSpacing,
@@ -211,7 +212,8 @@
 			this._toggleLevels();
 			this.open = false;
 
-			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeIn(500, 'easeInQuint'); }
+			//ADDED!
+			if ($('.mlpush-chart').length > 0) { $('.mlpush-chart').fadeIn(500, 'easeInQuint'); $("#myTags").fadeIn(500, 'easeInQuint'); }
 		},
 		// close sub menus
 		_closeMenu : function() {

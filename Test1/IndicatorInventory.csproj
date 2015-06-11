@@ -764,6 +764,7 @@
     <Content Include="Scripts\jquery.fixedheadertable.min.js" />
     <Content Include="Scripts\jquery.floatThead.dev.min.js" />
     <Content Include="Scripts\jquery.handsontable.full.min.js" />
+    <Content Include="Scripts\jquery.scrollify.min.js" />
     <Content Include="Scripts\jquery.simplemodal.1.4.3.min.js" />
     <Content Include="Scripts\jquery.spellchecker.css" />
     <Content Include="Scripts\jquery.spellchecker.js" />

@@ -823,7 +823,7 @@
             var title = $(".prrow-CoETitle");
             if (ele.width() / (ele.height()) < setRatio) {
             	while (ele.width() / (ele.height()) < setRatio) {
-                    var fontSize = parseInt(ele.css('font-size')) * 0.99;
+            		var fontSize = parseInt(ele.css('font-size')) * 0.955;
                     ele.css('font-size', fontSize );
                     area.css('font-size', fontSize * 0.9);
                     prHeader.css('font-size', fontSize);
@@ -868,6 +868,6 @@
 
         $('.triple-list').columnize(columnizeOpt);
         $(".tbl_PR").first().textfill(2.22, prPercent);
-        $(".tbl_Def").first().textfill(2.22, "90%");
+        $(".tbl_Def").first().textfill(2.5, "90%");
     });
 </script>

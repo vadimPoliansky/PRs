@@ -1064,14 +1064,14 @@
             * @param {Function} fn The event handler
             */
             addEvent: function (el, event, fn) {
-                $(el).bind(event, fn);
+            	$(el).bind(event, fn);
             },
 
             /**
             * Remove event added with addEvent
             * @param {Object} el The object
             * @param {String} eventType The event type. Leave blank to remove all events.
-            * @param {Function} handler The function to remove
+            * @param {Function} handler The function to removeevents
             */
             removeEvent: function (el, eventType, handler) {
                 // workaround for jQuery issue with unbinding custom events:
@@ -1092,10 +1092,9 @@
             * @param {Function} defaultFunction
             */
             fireEvent: function (el, type, eventArguments, defaultFunction) {
-                var event = $.Event(type),
+            	var event = $.Event(type),
                 detachedType = 'detached' + type,
                 defaultPrevented;
-
                 // Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
                 // never uses these properties, Chrome includes them in the default click event and
                 // raises the warning when they are copied over in the extend statement below.
