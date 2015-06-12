@@ -324,3 +324,4 @@ C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\NHunspell.dll
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\NHunspell.pdb
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\en_US.aff
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\en_US.dic
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\ajax-loader.gif
