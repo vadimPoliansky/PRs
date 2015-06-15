@@ -339,10 +339,11 @@
 		height:37px;
 	}
 
-    .inner-wrap {
+    #inner-wrap {
         position:absolute;
 		width:inherit !important;
 		height:100%;
+		width:50%;
     }
 
 	.lt-ie9 .inner-wrap {
@@ -357,15 +358,16 @@
 
 
 	#panel-side {
-		width:0px;
+		width:50%;
 		float:right !important;
 	}
 
 	#panel-indicatorlist {
 		float:left !important;
-		width:100% ;
+		width:50% ;
 		margin:0;
 		padding:0;
+
 	}
 
 	#overlay {
@@ -411,12 +413,15 @@
 			text-align: center;
 			background-color:#2d3947;
 			color:rgb(243, 243, 243);
+			padding: 0.5625em 0.625em;
+			line-height: 1.125em;
 		}
 		#chartData table {
 			width:100%;
 			background-color:#2d3947;
 			color:rgb(243, 243, 243);
 			border:none;
+
 		}
 			#chartData table tr.chart-target-values td {
 				color:#ff2032;
@@ -574,7 +579,7 @@
 		<ul id="myTags" class="tagList">
 		</ul>
 
-						<div class="inner-wrap">
+						<div class="inner-wrap" id="inner-wrap">
 
 							<div id="panel-indicatorlist-pad"></div>
 							<div id="panel-indicatorlist">
@@ -739,6 +744,7 @@
     	var sComparatorYTD;
     	var sComparatorYTD1;
     	var sComparatorYTD2;
+    	var chartWidth;
     	var indicatorTitle
     	var maxY;
     	var ticks;
@@ -773,25 +779,25 @@
     			percentTo: 0.5
     		}, {
     			color: '#ff6500',
-    			value: comparatorObjArr[3],
+    			value: comparatorObjArr[4],
     			width: '2',
     			percentFrom: 0.5,
     			percentTo: 0.625
     		},{
     			color: '#ff6500',
-    			value: comparatorObjArr[3],
+    			value: comparatorObjArr[5],
     			width: '2',
     			percentFrom: 0.625,
     			percentTo: 0.75
     		}, {
     			color: '#ff6500',
-    			value: comparatorObjArr[3],
+    			value: comparatorObjArr[6],
     			width: '2',
     			percentFrom:  0.75,
     			percentTo: 0.875
     		},{
     			color: '#ff6500',
-    			value: comparatorObjArr[3],
+    			value: comparatorObjArr[7],
     			width: '2',
     			percentFrom:  0.875,
     			percentTo: 1
@@ -821,25 +827,25 @@
     			percentTo: 0.5
     		}, {
     			color: '#ff2032',
-    			value: sTargetYTD[3],
+    			value: sTargetYTD[4],
     			width: '2',
     			percentFrom: 0.5,
     			percentTo: 0.625
     		},{
     			color: '#ff2032',
-    			value: sTargetYTD[3],
+    			value: sTargetYTD[5],
     			width: '2',
     			percentFrom: 0.625,
     			percentTo: 0.75
     		}, {
     			color: '#ff2032',
-    			value: sTargetYTD[3],
+    			value: sTargetYTD[6],
     			width: '2',
     			percentFrom:  0.75,
     			percentTo: 0.875
     		},{
     			color: '#ff2032',
-    			value: sTargetYTD[3],
+    			value: sTargetYTD[7],
     			width: '2',
     			percentFrom:  0.875,
     			percentTo: 1
@@ -848,7 +854,16 @@
 
         $("#overlay").hide()
         $('#chartData').hide();
+        //$('#panel-indicatorlist').width('50%');
+        //$('#panel-side').width('50%');
+        //$('#inner-wrap').width('50%');
+        chartWidth = $('.inner-wrap').width()/2 -20;
+        $('#chartData').width('50%');
+        $('#chartData').width($('#chartData').width()-20);
+        $('#chartData').css('top','25%');
+        $('#chartData').css('top',$('#chartTest').position().top+$('#chartTest').height());
         $(".blockContent").on("click", function () {
+        	$('#chartData').show();
         	var indicatorID = $(this).closest(".block").attr("indicatorID");
         	var currPath = window.location.pathname
         	indicatorTitle = $(this).closest(".block").children('li:first').children('div:first').children('.titleColumn').children('.title').text();
@@ -857,19 +872,10 @@
 
         	//window.location.href = currPath.charAt(currPath.length - 1) == "/" ? "details?indicatorID=" + indicatorID + "&fiscalYear=" + @fiscalYear :
         	//                                                                        "details?indicatorID=" + indicatorID + "&fiscalYear=" + @fiscalYear ;
-        	$('#panel-indicatorlist').width('50%');
-        	$('#panel-side').width('50%');
-        	$('.inner-wrap').width('50%');
-        	$('#chartTest').width('50%');
-        	$('#chartTest').width($('#chartTest').width()-20);
-        	$('#chartData').width('50%');
-        	$('#chartData').width($('#chartTest').width()-20);
-        	$('#chartData').css('top','25%');
-        	$('#chartData').css('top',$('#chartTest').position().top+$('#chartTest').height());
         	$('.active-indicator').removeClass('active-indicator')
         	$(this).closest('.block').addClass('active-indicator');
         	$.post('details',{ indicatorID: indicatorID, fiscalYear: @fiscalYear }, function(data){
-        		$('#chartData').show();
+
         		//$('#ajax-loader').hide();
         		var currency = false;
         		var time = false;
@@ -1019,11 +1025,11 @@
 					lowNumToHide,
 					lowNumToHide,
 					lowNumToHide,
+					valuesArray[9]*0.6,
 					valuesArray[9]*0.5,
-					valuesArray[9]*0.5,
-					valuesArray[9]*0.5,
-					valuesArray[9]*0.5,
-					valuesArray[9]*0.5
+					valuesArray[9]*0.4,
+					valuesArray[9]*0.3,
+					valuesArray[9]*0.3
         		];
         		sComparatorYTD = sComparatorYTD1;
 
@@ -1134,7 +1140,7 @@
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4',
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD'];
 
-        		makeChart(sComparatorYTD1, 1000);
+        		makeChart(sComparatorYTD1, 200);
         	});
         });
 
@@ -1157,7 +1163,8 @@
     				chart: {
     					renderTo: 'chartTest',
     					type: 'column',
-    					backgroundColor: "#2D3947"
+    					backgroundColor: "#2D3947",
+    					width: chartWidth
     				},
     				title: {
     					style: {
@@ -1190,7 +1197,10 @@
     							color: '#fff'
     						},
     						borderWidth: 0,
-    						shadow: false
+    						shadow: false,
+    						animation: {
+    							duration: duration
+    						}
     					}
     				},
     				tooltip: {
