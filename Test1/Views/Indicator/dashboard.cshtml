@@ -161,6 +161,12 @@
 		top:77px;
 		padding-right:9px;
 	}
+	#myTags {
+		pointer-events: none !important;
+	}
+	.tagit-choice {
+		pointer-events:all !important;
+	}
 
 
     .tagit-choice {
@@ -391,6 +397,36 @@
 		left:50%;
 		pointer-events:none !important;
 	}
+	#chartData {
+		height: 144px;
+		left: 50%;
+		margin: 0;
+		padding: 0;
+		position: fixed;
+		top: 25%;
+		width: 50%;
+	}
+		#chartData table tr td, #chartData table tr th {
+			font-size: 0.35em !important;
+			text-align: center;
+			background-color:#2d3947;
+			color:rgb(243, 243, 243);
+		}
+		#chartData table {
+			width:100%;
+			background-color:#2d3947;
+			color:rgb(243, 243, 243);
+			border:none;
+		}
+			#chartData table tr.chart-target-values td {
+				color:#ff2032;
+			}
+			#chartData table tr.chart-comparator-values td {
+				color:#ff6500;
+			}
+			#chartData table tr.active-comparator td, #chartData table tr.active-target td {
+				background:#1e283a;
+			}
 /*	#ajax-loader {
 		position: fixed;
 		top: 40%;
@@ -624,6 +660,58 @@
 <div class="overlay" id="overlay"></div>
 
 <div id="chartTest" class="mlpush-chart" style="height:400px;"></div>
+<div id="chartData" class="mlpush-chart">
+	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th>@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</th>
+				<th>@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</th>
+				<th>@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</th>
+				<th>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q1</th>
+				<th>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q2</th>
+				<th>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q3</th>
+				<th>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4</th>
+				<th>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="chart-comparator-values active-comparator">
+				<td>Comperator</td>
+				<td id="chart-comparator-0"></td>
+				<td id="chart-comparator-1"></td>
+				<td id="chart-comparator-2"></td>
+				<td id="chart-comparator-3"></td>
+				<td id="chart-comparator-4"></td>
+				<td id="chart-comparator-5"></td>
+				<td id="chart-comparator-6"></td>
+				<td id="chart-comparator-7"></td>
+			</tr>
+			<tr class="chart-comparator-values">
+				<td>Comperator2</td>
+				<td id="chart-comparator-2-0"></td>
+				<td id="chart-comparator-2-1"></td>
+				<td id="chart-comparator-2-2"></td>
+				<td id="chart-comparator-2-3"></td>
+				<td id="chart-comparator-2-4"></td>
+				<td id="chart-comparator-2-5"></td>
+				<td id="chart-comparator-2-6"></td>
+				<td id="chart-comparator-2-7"></td>
+			</tr>
+			<tr class="chart-target-values active-target">
+				<td>Target</td>
+				<td id="chart-target-0"></td>
+				<td id="chart-target-1"></td>
+				<td id="chart-target-2"></td>
+				<td id="chart-target-3"></td>
+				<td id="chart-target-4"></td>
+				<td id="chart-target-5"></td>
+				<td id="chart-target-6"></td>
+				<td id="chart-target-7"></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
 
 <div class="backToTop"><i class="fa fa-arrow-up"></i></div>
 
@@ -648,7 +736,7 @@
     $(document).ready(function ($) {
 
         $("#overlay").hide()
-
+        $('#chartData').hide();
         $(".blockContent").on("click", function () {
         	var indicatorID = $(this).closest(".block").attr("indicatorID");
         	var currPath = window.location.pathname
@@ -661,10 +749,16 @@
         	$('#panel-indicatorlist').width('50%');
         	$('#panel-side').width('50%');
         	$('.inner-wrap').width('50%');
-        	$('#chartTest').width('50%%');
+        	$('#chartTest').width('50%');
+        	$('#chartTest').width($('#chartTest').width()-20);
+        	$('#chartData').width('50%');
+        	$('#chartData').width($('#chartTest').width()-20);
+        	$('#chartData').css('top','25%');
+        	$('#chartData').css('top',$('#chartTest').position().top+$('#chartTest').height());
         	$('.active-indicator').removeClass('active-indicator')
         	$(this).closest('.block').addClass('active-indicator');
         	$.post('details',{ indicatorID: indicatorID, fiscalYear: @fiscalYear }, function(data){
+        		$('#chartData').show();
         		//$('#ajax-loader').hide();
         		var currency = false;
         		var time = false;
@@ -805,27 +899,227 @@
 					valuesArray[8],
         		];
 
-        		var sComparatorYTD = [
-					valuesArray[9],
-					valuesArray[9],
-					valuesArray[9],
+        		var lowNumToHide = -10000000000;
+        		var sComparatorYTD1 = [
+					lowNumToHide,
+					lowNumToHide,
+					lowNumToHide,
 					valuesArray[9],
 					valuesArray[9],
 					valuesArray[9],
 					valuesArray[9],
 					valuesArray[9]
         		];
+        		var sComparatorYTD2 = [
+					lowNumToHide,
+					lowNumToHide,
+					lowNumToHide,
+					valuesArray[9]*0.5,
+					valuesArray[9]*0.5,
+					valuesArray[9]*0.5,
+					valuesArray[9]*0.5,
+					valuesArray[9]*0.5
+        		];
+        		var sComparatorYTD = sComparatorYTD1;
+
+        		var makePlotLines = function(comparatorObjArr){
+        			return [{
+        				color: '#ff6500',
+        				value: comparatorObjArr[0],
+        				width: '2',
+        				percentFrom: 0,
+        				percentTo: 0.125
+        			}, {
+        				color: '#ff6500',
+        				value: comparatorObjArr[1],
+        				width: '2',
+        				percentFrom: 0.125,
+        				percentTo: 0.25
+        			}, {
+        				color: '#ff6500',
+        				value: comparatorObjArr[2],
+        				width: '2',
+        				percentFrom: 0.25,
+        				percentTo: 0.375
+        			}, {
+        				color: '#ff6500',
+        				value: comparatorObjArr[3],
+        				width: '2',
+        				percentFrom: 0.375,
+        				percentTo: 0.5
+        			}, {
+        				color: '#ff6500',
+        				value: comparatorObjArr[3],
+        				width: '2',
+        				percentFrom: 0.5,
+        				percentTo: 0.625
+        			},{
+        				color: '#ff6500',
+        				value: comparatorObjArr[3],
+        				width: '2',
+        				percentFrom: 0.625,
+        				percentTo: 0.75
+        			}, {
+        				color: '#ff6500',
+        				value: comparatorObjArr[3],
+        				width: '2',
+        				percentFrom:  0.75,
+        				percentTo: 0.875
+        			},{
+        				color: '#ff6500',
+        				value: comparatorObjArr[3],
+        				width: '2',
+        				percentFrom:  0.875,
+        				percentTo: 1
+        			},{
+        				color: '#ff2032',
+        				value: sTargetYTD[0],
+        				width: '2',
+        				percentFrom: 0,
+        				percentTo: 0.125
+        			}, {
+        				color: '#ff2032',
+        				value: sTargetYTD[1],
+        				width: '2',
+        				percentFrom: 0.125,
+        				percentTo: 0.25
+        			}, {
+        				color: '#ff2032',
+        				value: sTargetYTD[2],
+        				width: '2',
+        				percentFrom: 0.25,
+        				percentTo: 0.375
+        			}, {
+        				color: '#ff2032',
+        				value: sTargetYTD[3],
+        				width: '2',
+        				percentFrom: 0.375,
+        				percentTo: 0.5
+        			}, {
+        				color: '#ff2032',
+        				value: sTargetYTD[3],
+        				width: '2',
+        				percentFrom: 0.5,
+        				percentTo: 0.625
+        			},{
+        				color: '#ff2032',
+        				value: sTargetYTD[3],
+        				width: '2',
+        				percentFrom: 0.625,
+        				percentTo: 0.75
+        			}, {
+        				color: '#ff2032',
+        				value: sTargetYTD[3],
+        				width: '2',
+        				percentFrom:  0.75,
+        				percentTo: 0.875
+        			},{
+        				color: '#ff2032',
+        				value: sTargetYTD[3],
+        				width: '2',
+        				percentFrom:  0.875,
+        				percentTo: 1
+        			}]
+        		}
+
+        		$('#chartData table tr.chart-comparator-values td').on('click',function(){
+        			$('#chartData table tr.chart-comparator-values').removeClass('active-comparator');
+        			$(this).parent().addClass('active-comparator');
+        			chart1.xAxis[0].addPlotLine(makePlotLines(sComparatorYTD2));
+        		});
 
         		var sTargetYTD = [
-					valuesArray[8],
-					valuesArray[8],
-					valuesArray[8],
+					lowNumToHide,
+					lowNumToHide,
+					lowNumToHide,
 					valuesArray[8],
 					valuesArray[8],
 					valuesArray[8],
 					valuesArray[8],
 					valuesArray[8]
         		];
+
+        		var checkIfNullOrEmpty = function(text){
+        			var outText = "";
+        			if (text != lowNumToHide &&
+						text != 0){
+        				outText= text
+        			}
+					return outText
+        		}
+
+        		$('#chart-comparator-0').html(
+					checkIfNullOrEmpty(sComparatorYTD1[0])
+				);
+        		$('#chart-comparator-1').html(
+					checkIfNullOrEmpty(sComparatorYTD1[1])
+				);
+        		$('#chart-comparator-2').html(
+					checkIfNullOrEmpty(sComparatorYTD1[2])
+				);
+        		$('#chart-comparator-3').html(
+					checkIfNullOrEmpty(sComparatorYTD1[3])
+				);
+        		$('#chart-comparator-4').html(
+					checkIfNullOrEmpty(sComparatorYTD1[4])
+				);
+        		$('#chart-comparator-5').html(
+					checkIfNullOrEmpty(sComparatorYTD1[5])
+				);
+        		$('#chart-comparator-6').html(
+					checkIfNullOrEmpty(sComparatorYTD1[6])
+				);
+        		$('#chart-comparator-7').html(
+					checkIfNullOrEmpty(sComparatorYTD1[7])
+				);
+        		$('#chart-comparator-2-0').html(
+					checkIfNullOrEmpty(sComparatorYTD2[0])
+				);
+        		$('#chart-comparator-2-1').html(
+					checkIfNullOrEmpty(sComparatorYTD2[1])
+				);
+        		$('#chart-comparator-2-2').html(
+					checkIfNullOrEmpty(sComparatorYTD2[2])
+				);
+        		$('#chart-comparator-2-3').html(
+					checkIfNullOrEmpty(sComparatorYTD2[3])
+				);
+        		$('#chart-comparator-2-4').html(
+					checkIfNullOrEmpty(sComparatorYTD2[4])
+				);
+        		$('#chart-comparator-2-5').html(
+					checkIfNullOrEmpty(sComparatorYTD2[5])
+				);
+        		$('#chart-comparator-2-6').html(
+					checkIfNullOrEmpty(sComparatorYTD2[6])
+				);
+        		$('#chart-comparator-2-7').html(
+					checkIfNullOrEmpty(sComparatorYTD2[7])
+				);
+        		$('#chart-target-0').html(
+					checkIfNullOrEmpty(sTargetYTD[0])
+				);
+        		$('#chart-target-1').html(
+					checkIfNullOrEmpty(sTargetYTD[1])
+				);
+        		$('#chart-target-2').html(
+					checkIfNullOrEmpty(sTargetYTD[2])
+				);
+        		$('#chart-target-3').html(
+					checkIfNullOrEmpty(sTargetYTD[3])
+				);
+        		$('#chart-target-4').html(
+					checkIfNullOrEmpty(sTargetYTD[4])
+				);
+        		$('#chart-target-5').html(
+					checkIfNullOrEmpty(sTargetYTD[5])
+				);
+        		$('#chart-target-6').html(
+					checkIfNullOrEmpty(sTargetYTD[6])
+				);
+        		$('#chart-target-7').html(
+					checkIfNullOrEmpty(sTargetYTD[7])
+				);
 
         		var comparator_FY = valuesArray[9]
         		var target_FY = valuesArray[8]
@@ -924,56 +1218,8 @@
         					title: {
         						text: ''
         					},
-        					max: maxY,
-        					plotLines: [{
-        						color: '#ff6500',
-        						value: sComparatorYTD[0],
-        						width: '2',
-        						percentFrom: 0,
-        						percentTo: 0.25
-        					}, {
-        						color: '#ff6500',
-        						value: sComparatorYTD[1],
-        						width: '2',
-        						percentFrom: 0.25,
-        						percentTo: 0.5
-        					}, {
-        						color: '#ff6500',
-        						value: sComparatorYTD[2],
-        						width: '2',
-        						percentFrom: 0.5,
-        						percentTo: 0.75
-        					}, {
-        						color: '#ff6500',
-        						value: sComparatorYTD[3],
-        						width: '2',
-        						percentFrom: 0.75,
-        						percentTo: 1
-        					}, {
-        						color: '#ff2032',
-        						value: sTargetYTD[0],
-        						width: '2',
-        						percentFrom: 0,
-        						percentTo: 0.25
-        					}, {
-        						color: '#ff2032',
-        						value: sTargetYTD[1],
-        						width: '2',
-        						percentFrom: 0.25,
-        						percentTo: 0.5
-        					}, {
-        						color: '#ff2032',
-        						value: sTargetYTD[2],
-        						width: '2',
-        						percentFrom: 0.5,
-        						percentTo: 0.75
-        					}, {
-        						color: '#ff2032',
-        						value: sTargetYTD[3],
-        						width: '2',
-        						percentFrom: 0.75,
-        						percentTo: 1
-        					}]
+        					max: maxY
+        					//plotLines: makePlotLines(sComparatorYTD)
         				}],
         				series: [{
         					name: 'test',
