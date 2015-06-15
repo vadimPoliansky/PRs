@@ -423,6 +423,8 @@
 			}
 			#chartData table tr.chart-comparator-values td {
 				color:#ff6500;
+				cursor: pointer; 
+				cursor: hand;
 			}
 			#chartData table tr.active-comparator td, #chartData table tr.active-target td {
 				background:#1e283a;
@@ -676,7 +678,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="chart-comparator-values active-comparator">
+			<tr class="chart-comparator-values active-comparator" comparator="1">
 				<td>Comperator</td>
 				<td id="chart-comparator-0"></td>
 				<td id="chart-comparator-1"></td>
@@ -687,7 +689,7 @@
 				<td id="chart-comparator-6"></td>
 				<td id="chart-comparator-7"></td>
 			</tr>
-			<tr class="chart-comparator-values">
+			<tr class="chart-comparator-values" comparator="2">
 				<td>Comperator2</td>
 				<td id="chart-comparator-2-0"></td>
 				<td id="chart-comparator-2-1"></td>
@@ -728,19 +730,128 @@
 <script type="text/javascript" src="~/Scripts/mlpushmenu.js"></script>
 
 <script type="text/javascript">
-
     if (!$("html").hasClass("lt-ie9")) {
         new mlPushMenu(document.getElementById('menuFilter3D'), document.getElementById('trigger'));
     }
 
     $(document).ready(function ($) {
+    	
+    	var sComparatorYTD;
+    	var sComparatorYTD1;
+    	var sComparatorYTD2;
+    	var indicatorTitle
+    	var maxY;
+    	var ticks;
+    	var valuesArray;
+    	var sTargetYTD
+    	var s1;
+
+    	var makePlotLines = function(comparatorObjArr){
+    		return [{
+    			color: '#ff6500',
+    			value: comparatorObjArr[0],
+    			width: '2',
+    			percentFrom: 0,
+    			percentTo: 0.125
+    		}, {
+    			color: '#ff6500',
+    			value: comparatorObjArr[1],
+    			width: '2',
+    			percentFrom: 0.125,
+    			percentTo: 0.25
+    		}, {
+    			color: '#ff6500',
+    			value: comparatorObjArr[2],
+    			width: '2',
+    			percentFrom: 0.25,
+    			percentTo: 0.375
+    		}, {
+    			color: '#ff6500',
+    			value: comparatorObjArr[3],
+    			width: '2',
+    			percentFrom: 0.375,
+    			percentTo: 0.5
+    		}, {
+    			color: '#ff6500',
+    			value: comparatorObjArr[3],
+    			width: '2',
+    			percentFrom: 0.5,
+    			percentTo: 0.625
+    		},{
+    			color: '#ff6500',
+    			value: comparatorObjArr[3],
+    			width: '2',
+    			percentFrom: 0.625,
+    			percentTo: 0.75
+    		}, {
+    			color: '#ff6500',
+    			value: comparatorObjArr[3],
+    			width: '2',
+    			percentFrom:  0.75,
+    			percentTo: 0.875
+    		},{
+    			color: '#ff6500',
+    			value: comparatorObjArr[3],
+    			width: '2',
+    			percentFrom:  0.875,
+    			percentTo: 1
+    		},{
+    			color: '#ff2032',
+    			value: sTargetYTD[0],
+    			width: '2',
+    			percentFrom: 0,
+    			percentTo: 0.125
+    		}, {
+    			color: '#ff2032',
+    			value: sTargetYTD[1],
+    			width: '2',
+    			percentFrom: 0.125,
+    			percentTo: 0.25
+    		}, {
+    			color: '#ff2032',
+    			value: sTargetYTD[2],
+    			width: '2',
+    			percentFrom: 0.25,
+    			percentTo: 0.375
+    		}, {
+    			color: '#ff2032',
+    			value: sTargetYTD[3],
+    			width: '2',
+    			percentFrom: 0.375,
+    			percentTo: 0.5
+    		}, {
+    			color: '#ff2032',
+    			value: sTargetYTD[3],
+    			width: '2',
+    			percentFrom: 0.5,
+    			percentTo: 0.625
+    		},{
+    			color: '#ff2032',
+    			value: sTargetYTD[3],
+    			width: '2',
+    			percentFrom: 0.625,
+    			percentTo: 0.75
+    		}, {
+    			color: '#ff2032',
+    			value: sTargetYTD[3],
+    			width: '2',
+    			percentFrom:  0.75,
+    			percentTo: 0.875
+    		},{
+    			color: '#ff2032',
+    			value: sTargetYTD[3],
+    			width: '2',
+    			percentFrom:  0.875,
+    			percentTo: 1
+    		}]
+    	}
 
         $("#overlay").hide()
         $('#chartData').hide();
         $(".blockContent").on("click", function () {
         	var indicatorID = $(this).closest(".block").attr("indicatorID");
         	var currPath = window.location.pathname
-        	var indicatorTitle = $(this).closest(".block").children('li:first').children('div:first').children('.titleColumn').children('.title').text();
+        	indicatorTitle = $(this).closest(".block").children('li:first').children('div:first').children('.titleColumn').children('.title').text();
         	
         	//$('#ajax-loader').show();
 
@@ -764,7 +875,7 @@
         		var time = false;
         		var precision;
 
-        		var valuesArrayString = [
+        		valuesArrayString = [
 					data['FY_Q1'],
 					data['FY_Q2'],
 					data['FY_Q3'],
@@ -853,7 +964,7 @@
         		}
 
         		var maxYarray = Math.max.apply(Math, valuesArray) + 0.01;
-        		var maxY = maxYarray;
+        		maxY = maxYarray;
         		var maxLog = Math.pow(10, Math.floor(Math.log(maxY / 2) / Math.log(10))) / 2
         		if (maxY == 1) { precision = 1 }
         		maxY = Math.abs(maxYarray) > 1 ? Math.ceil(maxYarray / maxLog) * maxLog : maxYarray;
@@ -868,7 +979,7 @@
         		maxY = maxY % tickInterval === 0 ? maxY : maxY + tickInterval / 2;
         		maxY = maxY / maxYarray > 2 ? maxY / 2 : maxY;
 
-        		var s1 = [
+        		s1 = [
 					{y:valuesArray[4],color:'#368EBE'},
 					{y:valuesArray[5],color:'#368EBE'},
 					{y:valuesArray[6],color:'#368EBE'},
@@ -878,29 +989,23 @@
 					{y:valuesArray[3],coor:'#368EBE'},
 					{y:valuesArray[7],color:'#368EBE'}
         		];
-        		var s2 = [
-					valuesArray[4],
-					valuesArray[5],
-					valuesArray[6],
-					valuesArray[7],
-        		];
 
         		var sComparator = [
 					0,
 					0,
 					0,
-					valuesArray[9],
+					valuesArray[9]
         		];
 
         		var sTarget = [
 					0,
 					0,
 					0,
-					valuesArray[8],
+					valuesArray[8]
         		];
 
         		var lowNumToHide = -10000000000;
-        		var sComparatorYTD1 = [
+        		sComparatorYTD1 = [
 					lowNumToHide,
 					lowNumToHide,
 					lowNumToHide,
@@ -910,7 +1015,7 @@
 					valuesArray[9],
 					valuesArray[9]
         		];
-        		var sComparatorYTD2 = [
+        		sComparatorYTD2 = [
 					lowNumToHide,
 					lowNumToHide,
 					lowNumToHide,
@@ -920,115 +1025,9 @@
 					valuesArray[9]*0.5,
 					valuesArray[9]*0.5
         		];
-        		var sComparatorYTD = sComparatorYTD1;
+        		sComparatorYTD = sComparatorYTD1;
 
-        		var makePlotLines = function(comparatorObjArr){
-        			return [{
-        				color: '#ff6500',
-        				value: comparatorObjArr[0],
-        				width: '2',
-        				percentFrom: 0,
-        				percentTo: 0.125
-        			}, {
-        				color: '#ff6500',
-        				value: comparatorObjArr[1],
-        				width: '2',
-        				percentFrom: 0.125,
-        				percentTo: 0.25
-        			}, {
-        				color: '#ff6500',
-        				value: comparatorObjArr[2],
-        				width: '2',
-        				percentFrom: 0.25,
-        				percentTo: 0.375
-        			}, {
-        				color: '#ff6500',
-        				value: comparatorObjArr[3],
-        				width: '2',
-        				percentFrom: 0.375,
-        				percentTo: 0.5
-        			}, {
-        				color: '#ff6500',
-        				value: comparatorObjArr[3],
-        				width: '2',
-        				percentFrom: 0.5,
-        				percentTo: 0.625
-        			},{
-        				color: '#ff6500',
-        				value: comparatorObjArr[3],
-        				width: '2',
-        				percentFrom: 0.625,
-        				percentTo: 0.75
-        			}, {
-        				color: '#ff6500',
-        				value: comparatorObjArr[3],
-        				width: '2',
-        				percentFrom:  0.75,
-        				percentTo: 0.875
-        			},{
-        				color: '#ff6500',
-        				value: comparatorObjArr[3],
-        				width: '2',
-        				percentFrom:  0.875,
-        				percentTo: 1
-        			},{
-        				color: '#ff2032',
-        				value: sTargetYTD[0],
-        				width: '2',
-        				percentFrom: 0,
-        				percentTo: 0.125
-        			}, {
-        				color: '#ff2032',
-        				value: sTargetYTD[1],
-        				width: '2',
-        				percentFrom: 0.125,
-        				percentTo: 0.25
-        			}, {
-        				color: '#ff2032',
-        				value: sTargetYTD[2],
-        				width: '2',
-        				percentFrom: 0.25,
-        				percentTo: 0.375
-        			}, {
-        				color: '#ff2032',
-        				value: sTargetYTD[3],
-        				width: '2',
-        				percentFrom: 0.375,
-        				percentTo: 0.5
-        			}, {
-        				color: '#ff2032',
-        				value: sTargetYTD[3],
-        				width: '2',
-        				percentFrom: 0.5,
-        				percentTo: 0.625
-        			},{
-        				color: '#ff2032',
-        				value: sTargetYTD[3],
-        				width: '2',
-        				percentFrom: 0.625,
-        				percentTo: 0.75
-        			}, {
-        				color: '#ff2032',
-        				value: sTargetYTD[3],
-        				width: '2',
-        				percentFrom:  0.75,
-        				percentTo: 0.875
-        			},{
-        				color: '#ff2032',
-        				value: sTargetYTD[3],
-        				width: '2',
-        				percentFrom:  0.875,
-        				percentTo: 1
-        			}]
-        		}
-
-        		$('#chartData table tr.chart-comparator-values td').on('click',function(){
-        			$('#chartData table tr.chart-comparator-values').removeClass('active-comparator');
-        			$(this).parent().addClass('active-comparator');
-        			chart1.xAxis[0].addPlotLine(makePlotLines(sComparatorYTD2));
-        		});
-
-        		var sTargetYTD = [
+        		sTargetYTD = [
 					lowNumToHide,
 					lowNumToHide,
 					lowNumToHide,
@@ -1121,12 +1120,12 @@
 					checkIfNullOrEmpty(sTargetYTD[7])
 				);
 
-        		var comparator_FY = valuesArray[9]
-        		var target_FY = valuesArray[8]
+        		var comparator_FY = valuesArray[9];
+        		var target_FY = valuesArray[8];
 
-        		var target_4 = valuesArray[8]
+        		var target_4 = valuesArray[8];
 
-        		var ticks1 = ['@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName',
+        		ticks = ['@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName',
 								'@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName',
 								'@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName',
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q1',
@@ -1134,109 +1133,121 @@
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q3',
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4',
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD'];
-        		//var ticks2 = ['FY2010', 'FY2011', 'FY2012', 'FY2013 YTD'];
-        		var ticks2 = [
-					'a','b','c','d'
-        		];
 
-        		$(function () {
-
-        			Highcharts.setOptions({
-        				colors: ['#368EBE', "#0094fe"],
-        				chart: {
-        					renderTo: 'chartTest',
-        					type: 'column',
-        					backgroundColor: "#2D3947"
-        				},
-        				title: {
-        					style: {
-        						color: '#fff'
-        					}
-        				},
-        				subtitle: {
-        					style: {
-        						color: '#8c8c95'
-        					}
-        				},
-        				plotOptions: {
-        					column: {
-        						stacking: 'normal'
-        					},
-        					series: {
-        						states: {
-        							hover: {
-        								enabled: false
-        							}
-        						},
-        						dataLabels: {
-        							formatter:function() {
-        								if(this.y != 0) {
-        									return this.y;
-        								}
-        							},
-        							enabled: true,
-        							inside: true,
-        							color: '#fff'
-        						},
-        						borderWidth: 0,
-        						shadow: false
-        					}
-        				},
-        				tooltip: {
-        					enabled: false
-        				},
-        				xAxis: {
-        					labels: {
-        						style: {
-        							color: '#fff'
-        						}
-        					}
-        				},
-        				yAxis: {
-        					gridLineColor: '#5C5C63',
-        					gridLineWidth: 1,
-        					labels: {
-        						style: {
-        							color: '#fff'
-        						}
-        					}
-        				}
-        			});
-
-        			chart1 = new Highcharts.Chart({
-        				title: {
-        					text: indicatorTitle
-        				},
-        				subtitle: {
-        					text: '@FiscalYear.FYStrFull("FY_Header", fiscalYear)',
-        				},
-        				xAxis: {
-        					categories: ticks1,
-        					tickLength: 0,
-        				},
-        				yAxis: [{
-        					title: {
-        						text: ''
-        					},
-        					max: maxY
-        					//plotLines: makePlotLines(sComparatorYTD)
-        				}],
-        				series: [{
-        					name: 'test',
-        					data: s1,
-        					index: 50
-        				}],
-        				legend: {
-        					enabled: false
-        				},
-        				credits: [{
-        					enabled: 'false'
-        				}]
-        			});
-        		});
+        		makeChart(sComparatorYTD1, 1000);
         	});
         });
-        
+
+    	$('#chartData table tr.chart-comparator-values td').on('click',function(){
+    		$('#chartData table tr.chart-comparator-values').removeClass('active-comparator');
+    		$(this).parent().addClass('active-comparator');
+    		var comparatorSrc = $(this).parent().attr('comparator');
+    		if (comparatorSrc == 1){
+    			makeChart(sComparatorYTD1, 0);
+    		} else if(comparatorSrc == 2){
+    			makeChart(sComparatorYTD2, 0);
+    		}
+    	});
+
+    	var makeChart = function(comparatorArr, duration){
+    		$(function () {
+
+    			Highcharts.setOptions({
+    				colors: ['#368EBE', "#0094fe"],
+    				chart: {
+    					renderTo: 'chartTest',
+    					type: 'column',
+    					backgroundColor: "#2D3947"
+    				},
+    				title: {
+    					style: {
+    						color: '#fff'
+    					}
+    				},
+    				subtitle: {
+    					style: {
+    						color: '#8c8c95'
+    					}
+    				},
+    				plotOptions: {
+    					column: {
+    						stacking: 'normal'
+    					},
+    					series: {
+    						states: {
+    							hover: {
+    								enabled: false
+    							}
+    						},
+    						dataLabels: {
+    							formatter:function() {
+    								if(this.y != 0) {
+    									return this.y;
+    								}
+    							},
+    							enabled: true,
+    							inside: true,
+    							color: '#fff'
+    						},
+    						borderWidth: 0,
+    						shadow: false
+    					}
+    				},
+    				tooltip: {
+    					enabled: false
+    				},
+    				xAxis: {
+    					labels: {
+    						style: {
+    							color: '#fff'
+    						}
+    					}
+    				},
+    				yAxis: {
+    					gridLineColor: '#5C5C63',
+    					gridLineWidth: 1,
+    					labels: {
+    						style: {
+    							color: '#fff'
+    						}
+    					}
+    				}
+    			});
+    		});
+
+    		chart1 = new Highcharts.Chart({
+    			title: {
+    				text: indicatorTitle
+    			},
+    			subtitle: {
+    				text: '@FiscalYear.FYStrFull("FY_Header", fiscalYear)'
+        		},
+			    xAxis: {
+			        categories: ticks,
+			        tickLength: 0
+			    },
+			    yAxis: [{
+			        title: {
+			        	text: ''
+			        },
+			        max: maxY,
+			        plotLines: makePlotLines(comparatorArr)
+			    }],
+			    series: [{
+			        name: 'test',
+			        data: s1,
+			        index: 50
+			    }],
+			    legend: {
+			        enabled: false
+			    },
+			    credits: [{
+			        enabled: 'false'
+			    }]
+			});
+    	}
+    	
+    	
         if ($("html").hasClass("lt-ie9")) {
             $('#menuFilter').multilevelpushmenu({
                 fullCollapse: true,
