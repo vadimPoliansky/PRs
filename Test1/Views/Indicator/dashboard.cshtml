@@ -481,7 +481,7 @@
 
 	#panel-indicatorlist-overlay {
 		height:100%;
-		width:50%;da
+		width:50%;
 		background-color:white;
 	}
 
@@ -1140,7 +1140,12 @@
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4',
 								'@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD'];
 
-        		makeChart(sComparatorYTD1, 200);
+        		var comparatorSrc = $('.active-comparator').attr('comparator');
+        		if (comparatorSrc == 1){
+        			makeChart(sComparatorYTD1, 200);
+        		} else{
+        			makeChart(sComparatorYTD2, 200);
+        		}
         	});
         });
 
