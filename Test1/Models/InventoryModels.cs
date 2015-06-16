@@ -229,6 +229,16 @@ namespace IndInv.Models
 		public string CoE_Notes { get; set; }
 		public string CoE_Subtitle { get; set; }
 
+		public bool? FY_14_15_Draft { get; set; }
+		public bool? FY_15_16_Draft { get; set; }
+		public bool? FY_16_17_Draft { get; set; }
+		public bool? FY_17_18_Draft { get; set; }
+		public bool? FY_18_19_Draft { get; set; }
+		public bool? FY_19_20_Draft { get; set; }
+		public bool? FY_20_21_Draft { get; set; }
+		public bool? FY_21_22_Draft { get; set; }
+
+
         public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
         public virtual ICollection<Area_CoE_Maps> Area_CoE_Map { get; set; }
     }

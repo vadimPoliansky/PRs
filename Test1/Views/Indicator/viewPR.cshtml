@@ -69,7 +69,7 @@
                                         
 										<h3 class="prtitle"  coeID="@coe.CoE_ID">@Html.DisplayFor(modelItem => coe.CoE)<br /><small>@coe.CoE_Subtitle</small></h3>
 										<div class="large-10 columns" style="padding: 0">
-											<img class="pr-logo-image" src="~/Images/SHSheader.png" width="56%"/>
+										<img class="pr-logo-image" src="~/Images/SHSheader.png" width="56%"/>
 										</div>
 										<div class="large-1 columns" style="padding: 0">
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-Excel menu-hover'>View Excel</div>
@@ -77,6 +77,7 @@
 										<div class="large-1 columns" style="padding: 0">
 											<div coeID='@coe.CoE_ID' fiscalYear="@fiscalYear" class='export-button export-PDF menu-hover'>View PDF</div>
 										</div>
+										<label id="coe-draft-label"><input id="coe-draft" type="checkbox" name="is-draft" value="draft" @if (Model.isDraft) { <text>checked</text>} />Draft</label>
 										<table id="tbl_@coe.CoE_Abbr.Replace(" ","_").Replace("&","_")" class="PR" border="1" runat="server" >
 											<thead>
 											<tr class="prheader-1">
@@ -737,6 +738,15 @@
                 coeIDFilter = "&coeID=" + coeID;
             }
             window.open("viewPRPdf?fiscalYear=" + fiscalYear + coeIDFilter, "PDF");
+        });
+
+
+        $(document).on('click', '#coe-draft', function(e){
+        	var isDraft = $(this).is(":checked");
+			var coeID = @Model.allCoEs.FirstOrDefault().CoE_ID;
+        	$.post('setCoeDraft',{isDraft: isDraft, fiscalYear: @fiscalYear, coeID:coeID },function(result){
+
+        	});
         });
 
         $('.toggle-def').on('click', function(e){
@@ -3888,6 +3898,10 @@
 		width:100% !important;
 	}
 
+	#coe-draft, #coe-draft-label {
+		float:right;
+		margin: 5px;
+	}
 
 	/* Sticky Tab Bar for PR view only
 	#pushobjLazy {

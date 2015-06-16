@@ -19,6 +19,8 @@ namespace IndInv.Models.ViewModels
 		public List<Formats> allFormats { get; set; }
 		public List<Indicators> allIndicators { get; set; }
 
+		public Boolean isDraft { get; set; }
+
         public Int16 Fiscal_Year { get; set; }
         public Int16? Analyst_ID { get; set; }
 

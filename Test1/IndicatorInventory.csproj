@@ -232,6 +232,12 @@
     <Compile Include="ViewModels\valueVM.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\draft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\draft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\footer.png" />
     <Content Include="App_Data\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

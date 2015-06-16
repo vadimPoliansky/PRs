@@ -192,8 +192,13 @@ namespace IndInv.Controllers
             {
                 allCoEs = db.CoEs.Where(x=>x.CoE_ID != 0).ToList();
             }
-
             ModelState.Clear();
+
+			var obj = allCoEs.FirstOrDefault();
+            var type = obj.GetType();
+			//var test = type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").GetValue(obj, null) == null;
+			var isDraft = (bool)(type.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Draft").GetValue(obj,null) ?? false);
+
             var viewModel = new PRViewModel
             {
                 //allCoEs = db.CoEs.ToList(),
@@ -209,7 +214,8 @@ namespace IndInv.Controllers
                 allDirections = db.Color_Directions.ToList(),
                 allThresholds = db.Color_Thresholds.ToList(),
 				allFormats = db.Formats.ToList(),
-				allIndicators = null
+				allIndicators = null,
+				isDraft = isDraft
             };
 
             return View(viewModel);
@@ -1145,6 +1151,8 @@ namespace IndInv.Controllers
             string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
             string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
             string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
+			string picDraftPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/draft.png");
+			Image picDraft = Image.GetInstance(picDraftPath);
 
             var pdfDocument  = new iTextSharp.text.Document();
             var outStream = new MemoryStream();
@@ -1186,6 +1194,17 @@ namespace IndInv.Controllers
                 logo.ScalePercent(70,70);
 				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight-15);
                 writer.DirectContent.AddImage(logo);
+
+				var obj = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
+				var type = obj.GetType();
+				var isDraft = (bool)(type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").GetValue(obj, null) ?? false);
+				if (isDraft)
+				{
+					picDraft.Alignment = Element.ALIGN_CENTER;
+					picDraft.ScalePercent(70, 70);
+					picDraft.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width / 4, 0);
+					writer.DirectContent.AddImage(picDraft);
+				}
 
                 //logoOPEO.Alignment = Element.ALIGN_CENTER;
                 //logoOPEO.ScalePercent(20, 20);
@@ -2101,6 +2120,16 @@ namespace IndInv.Controllers
                 db.SaveChanges();
             }
         }
+
+		[HttpPost]
+		public void setCoEDraft(bool isDraft, Int16 fiscalYear, Int16 coeID)
+		{
+			var obj = db.CoEs.FirstOrDefault(x=>x.CoE_ID == coeID);
+            var type = obj.GetType();
+			type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").SetValue(obj, isDraft, null);
+			db.Entry(obj).State = EntityState.Modified;
+			db.SaveChanges();
+		}
 
         public ActionResult editFootnoteMaps(Int16 fiscalYear, Int16? indicatorID)
         {
