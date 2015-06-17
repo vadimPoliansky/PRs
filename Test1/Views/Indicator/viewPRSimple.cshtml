@@ -425,7 +425,7 @@
 				{
 					var tdClass = columns[i, 2];
 					if (skip) { tdClass = oldColumns[i, 2]; };
-					if (columns[i, 0] == "-") { tdClass += " prtdDef-centered"; }
+					//if (columns[i, 0] == "-") { tdClass += " prtdDef-centered"; }
                     <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></td>
 				}
 			}
