@@ -388,6 +388,8 @@ namespace IndInv.Helpers
 			float outScore;
 			string Target = inTarget;
 
+			if (Target == "-") { return "-"; }
+
 			str = Color.getNum(Target);
 			if (str == null) { return "TBD"; }
 			if (float.TryParse(str, out outScore)) { }
