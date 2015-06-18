@@ -392,6 +392,15 @@ namespace IndInv.Helpers
 
 			str = Color.getNum(Target);
 			if (str == null) { return "TBD"; }
+
+			var direction = ">";
+			if (Target != null){
+				if (Target.Length != 0) {
+					var sign = Target.Substring(0,1);
+					direction = sign;
+				}
+			}
+
 			if (float.TryParse(str, out outScore)) { }
 			else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
 			float targetScore = outScore;
@@ -404,6 +413,7 @@ namespace IndInv.Helpers
 				threshold_low = 0.99;
 			}
 
+			/*
 			var direction = ">";
 			if (Direction_ID == 2)
 			{
@@ -416,7 +426,7 @@ namespace IndInv.Helpers
 			else if (Direction_ID == 4)
 			{
 				direction = "≤";
-			}
+			}*/
 
 			if (Target != null)
 			{
