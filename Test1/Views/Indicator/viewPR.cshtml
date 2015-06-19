@@ -90,7 +90,7 @@
 												<th rowspan="1" colspan="5" class="col-header prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</th>
 												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</th>
-												<th rowspan="2" class="col-td prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
+												<th rowspan="2" class="col-td prheader prheader-1 remove-in-periop">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</th>
 												<th rowspan="2" class="col-comment prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comment").DisplayName</th>
 											</tr>
 
@@ -107,7 +107,7 @@
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
 												var colSpanArea = 15;
-												if (coeID ==60 || coeID == 61){
+												if (coeID ==60 || coeID == 61 || coeID==31){
 													colSpanArea--;
 												}			
 												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
@@ -290,7 +290,7 @@
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
-														"", 
+														"remove-in-periop", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 														rowSpan.ToString()
 													},
@@ -416,20 +416,25 @@
 										<table id="tbl" class="PRDef" border="1" style="border-collapse: collapse" runat="server">
 											<thead>
 											<tr class="prheader-1">
-												<th rowspan="1" class="col-uid prheader prheader-1"># </th>
+												<th rowspan="1" class="col-uid prheader prheader-1 unique-id-col"># </th>
 												<th rowspan="1" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
 												<th rowspan="1" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
 												<th rowspan="1" class="col-def prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</th>
 												<th rowspan="1" class="col-target-rationale prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</th>
-												<th rowspan="1" class="col-comparator-source prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
+												<th rowspan="1" class="col-comparator-source prheader prheader-1 remove-in-periop">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</th>
 											</tr>
 											</thead>
 
 											@{numCount = 1;}
 											@foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 											{
+												var colSpanArea = 6;
+												if (coeID == 31)
+												{
+													//colSpanArea--;
+												}	
 												<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-													<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+													<td class="prarea" colspan='@colSpanArea' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 														<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 														<br />
 														<div class="objective">
@@ -498,7 +503,7 @@
 												    {
 													    (string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
 													    "", 
-													    "prtdDef", 
+													    "prtdDef remove-in-periop", 
 													    FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"
 												    }};
 												    if (!skip)
@@ -615,6 +620,10 @@
 
     	if(@coeID == 60 || @coeID == 61){
     		$(".remove-in-corp").hide();
+    	}
+    	if (@coeID == 31){
+    		$(".PR .remove-in-periop").hide();
+    		
     	}
 
     	var delay = (function(){

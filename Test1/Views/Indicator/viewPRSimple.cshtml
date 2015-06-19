@@ -46,7 +46,7 @@
         <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
+        <td rowspan="2", class="prheader prheader-1 remove-in-periop">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator").DisplayName</td>
     </tr>
 
     <tr class="prheader-2 prheader-Final">
@@ -60,7 +60,7 @@
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
     {
 		var colSpanArea = 14;
-		if (coeID == 60 || coeID == 61)
+		if (coeID == 60 || coeID == 61 || coeID == 31)
 		{
 			colSpanArea--;
 		}	
@@ -244,7 +244,7 @@
 			{
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 				(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
-				"", 
+				"remove-in-periop", 
 				FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
 				rowSpan.ToString()
 			}};
@@ -350,14 +350,19 @@
     <td rowspan="1", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
     <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Definition_Calculation").DisplayName</td>
     <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target_Rationale").DisplayName</td>
-    <td rowspan="1", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
+    <td rowspan="1", class="prheader prheader-1 remove-in-periop">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator_Source").DisplayName</td>
     </tr>
 
     @{numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 	{
+		var colSpanArea = 5;
+		if (coeID == 31)
+		{
+			colSpanArea--;
+		}	
 		<tr class='prrow prrow-area' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID">
-			<td class="prarea" colspan='14' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
+			<td class="prarea" colspan='@colSpanArea' mapID="@area_map.Map_ID" area="@Html.DisplayTextFor(modelItem => area_map.Area.Area)">
 				<b>@Html.DisplayFor(modelItem => area_map.Area.Area)</b>
 				<br />
 			</td>
@@ -399,7 +404,7 @@
                     {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale").GetValue(indicator,null),
                      "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Rationale"},
                     {(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source").GetValue(indicator,null),
-                     "", "prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"},
+                     "", "remove-in-periop prtdDef", FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Source"},
                 };
 				if (!skip)
 				{
@@ -860,6 +865,9 @@
 		
     	if(@coeID == 60 || @coeID == 61){
     		$(".remove-in-corp").hide();
+    	}
+    	if(@coeID == 31){
+    		$(".remove-in-periop").hide();
     	}
 
         var objectiveColumnWidth = $('table').first().width() / 2
