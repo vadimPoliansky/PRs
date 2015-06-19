@@ -1276,10 +1276,10 @@ namespace IndInv.Controllers
 				options.Add("DisableJavascript", "false");
 				options.Add("PageSize", "Legal");
 				options.Add("UseLandscape", "true");
-				options.Add("Zoom", "1.1");
+				options.Add("Zoom", "1.0");
 				options.Add("MarginLeft", "2");
-				options.Add("MarginTop", "5");
-				options.Add("MarginBottomn", "1");
+				options.Add("MarginTop", "10");
+				options.Add("MarginBottomn", "5");
 				options.Add("MarginRight", "2");
 				//options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
 				byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
@@ -1338,7 +1338,7 @@ namespace IndInv.Controllers
 
 				logo.Alignment = Element.ALIGN_CENTER;
 				logo.ScalePercent(70, 70);
-				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
+				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight - 15);
 				writer.DirectContent.AddImage(logo);
 
 				var obj = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
