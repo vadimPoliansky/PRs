@@ -1297,47 +1297,60 @@ namespace IndInv.Controllers
 			string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
 			string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
 			string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
+			string picDraftPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/draft.png");
+			Image picDraft = Image.GetInstance(picDraftPath);
 
-			var pdfDocument = new iTextSharp.text.Document();
-			var outStream = new MemoryStream();
-			var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
+            var pdfDocument  = new iTextSharp.text.Document();
+            var outStream = new MemoryStream();
+            var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
+            
+            pdfDocument.Open();
+            var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
 
-			pdfDocument.Open();
-			var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
+            for (var page = 1; page <= reader.NumberOfPages; page++)
+            {
+                pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
+                pdfDocument.NewPage();
+                var importedPage = writer.GetImportedPage(reader, page);
+                var pageRotation = reader.GetPageRotation(page);
+                var pageWidth = reader.GetPageSizeWithRotation(page).Width;
+                var pageHeight = reader.GetPageSizeWithRotation(page).Height;
+                switch (pageRotation)
+                {
+                    case 0:
+                        writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+                        break;
 
-			for (var page = 1; page <= reader.NumberOfPages; page++)
-			{
-				pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
-				pdfDocument.NewPage();
-				var importedPage = writer.GetImportedPage(reader, page);
-				var pageRotation = reader.GetPageRotation(page);
-				var pageWidth = reader.GetPageSizeWithRotation(page).Width;
-				var pageHeight = reader.GetPageSizeWithRotation(page).Height;
-				switch (pageRotation)
+                    case 90:
+                        writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
+                        break;
+
+                    case 180:
+                        writer.DirectContent.AddTemplate(
+                            importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
+                        break;
+
+                    case 270:
+                        writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
+                        break;
+                }
+                pdfDocument.SetPageSize(pdfDocument.PageSize);
+
+                logo.Alignment = Element.ALIGN_CENTER;
+                logo.ScalePercent(70,70);
+				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight-15);
+                writer.DirectContent.AddImage(logo);
+
+				var obj = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
+				var type = obj.GetType();
+				var isDraft = (bool)(type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").GetValue(obj, null) ?? false);
+				if (isDraft)
 				{
-					case 0:
-						writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
-						break;
-
-					case 90:
-						writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
-						break;
-
-					case 180:
-						writer.DirectContent.AddTemplate(
-							importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
-						break;
-
-					case 270:
-						writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
-						break;
+					picDraft.Alignment = Element.ALIGN_CENTER;
+					picDraft.ScalePercent(70, 70);
+					picDraft.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width / 4, 0);
+					writer.DirectContent.AddImage(picDraft);
 				}
-				pdfDocument.SetPageSize(pdfDocument.PageSize);
-
-				logo.Alignment = Element.ALIGN_CENTER;
-				logo.ScalePercent(70, 70);
-				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight);
-				writer.DirectContent.AddImage(logo);
 
 				//logoOPEO.Alignment = Element.ALIGN_CENTER;
 				//logoOPEO.ScalePercent(20, 20);
