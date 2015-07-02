@@ -288,67 +288,77 @@
 														"col-left-border", 
 														FiscalYear.FYStrFull("FY_3",fiscalYear), 
 														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(indicator,null), 
 														"", 
 														FiscalYear.FYStrFull("FY_2",fiscalYear),
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(indicator,null),
 														"", 
 														FiscalYear.FYStrFull("FY_1",fiscalYear), 
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(indicator,null), 
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(indicator,null) + " Q1_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1",
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(indicator,null) + " Q2_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2", 
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(indicator,null) + " Q3_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3", 
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(indicator,null) + " Q4_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4", 
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(indicator,null) + " YTD_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD", 
-														"1"
+														"1",
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), 
 														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
-														rowSpan.ToString()
+														rowSpan.ToString(),
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), 
 														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
-														rowSpan.ToString()
+														rowSpan.ToString(),
+														indicator.Indicator_ID.ToString(), "1"
 													},
 													
 													{
@@ -357,75 +367,85 @@
 														"col-left-border", 
 														FiscalYear.FYStrFull("FY_3",fiscalYear), 
 														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear)).GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_2",fiscalYear) + "_Sup").GetValue(linkedIndicator,null), 
 														"", 
 														FiscalYear.FYStrFull("FY_2",fiscalYear),
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear)).GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_1",fiscalYear) + "_Sup").GetValue(linkedIndicator,null),
 														"", 
 														FiscalYear.FYStrFull("FY_1",fiscalYear), 
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Sup").GetValue(linkedIndicator,null), 
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1_Color").GetValue(linkedIndicator,null) + " Q1_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q1",
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Sup").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2_Color").GetValue(linkedIndicator,null) + " Q2_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q2", 
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Sup").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3_Color").GetValue(linkedIndicator,null) + " Q3_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q3", 
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Sup").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4_Color").GetValue(linkedIndicator,null) + " Q4_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Q4", 
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Sup").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD_Color").GetValue(linkedIndicator,null) + " YTD_Color", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "YTD", 
-														"1"
+														"1",
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(linkedIndicator,null), 
 														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
-														rowSpan.ToString()
+														rowSpan.ToString(),
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(linkedIndicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(linkedIndicator,null), 
 														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
-														rowSpan.ToString()
+														rowSpan.ToString(),
+														linkedIndicator.Indicator_ID.ToString(), "2"
 													},
-													
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
 														"col-left-border", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
-														rowSpan.ToString()
+														rowSpan.ToString(),
+														indicator.Indicator_ID.ToString(), "1"
 													}};
 													
 													ViewBag.PRCols = columns;
@@ -460,7 +480,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
+																<td align="center" indicatorID="@Html.Raw(columns[i, 5])" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])"/>
                                                                     <input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
                                                                     <div class="tdValue">@Html.Raw(columns[i, 0]) <sup>@Html.Raw(columns[i, 1])</sup></div>
@@ -474,7 +494,7 @@
 															if (allNValues.Contains(map)) { cls = "prtd"; };
 															if (columns[i, 4] != "0")
 															{
-																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="col-td prtd @Html.Raw(cls)">
+																<td align="center", style="display:none" indicatorID="@Html.Raw(columns[i, 5])", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="col-td prtd @Html.Raw(cls)">
                                                                     <input class="pr-input pr-input-val" value="" oldvalue=""/>
                                                                     <input class="pr-input pr-input-sup" value="" oldvalue=""/>
                                                                     <div class="tdValue"></div>
@@ -1061,10 +1081,10 @@
 		@{var html = "";
 			html += "<td class='prtd-uid unique-id-col'>#</td>";
 			html += "<td class='prtd-id'><a class='row-up'><i class='fa fa-sort-asc'></i></a>#<a class='row-down'><i class='fa fa-sort-desc'></i></a></td>";
-			html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
+			html += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text' dblView='1'></td>";
 			for (var i = 0; i < ViewBag.PRCols.GetLength(0); ++i)
 			{
-				html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text'>";
+				html += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "' type='text' dblView='" + ViewBag.PRCols[i, 6] + "'>";
 				html += "<input class='newrow-text' field='" + ViewBag.PRCols[i, 3] + "_Sup" + "' type='text'></td>";
 		}}
 		@{var htmlDef = "";
@@ -1073,7 +1093,7 @@
 			htmlDef += "<td class='newrow-td'><input class='newrow-text' field='Indicator' type='text'></td>";
 			for (var i = 0; i < ViewBag.PRColsDefs.GetLength(0); ++i)
 			{
-				htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text'>";
+				htmlDef += "<td class='newrow-td'><input class='newrow-text' field='" + ViewBag.PRColsDefs[i, 3] + "' type='text' dblView='" + ViewBag.PRCols[i, 6] + "'>";
 				htmlDef += "<td field='" + ViewBag.PRColsDefs[i, 3] + "', colspan='1', class='newrow-td'>";
 				htmlDef += "<textarea class='pr-input pr-input-def' value='' oldvalue=''></textarea>";
 				htmlDef += "<div class='tdValue'></div>";
@@ -1092,8 +1112,9 @@
 				htmlExist += "</td>";
 		}}
         function addNewIndicator(obj, newIndicatorID, undo, returningObj){
-            exist = (newIndicatorID !== null);
-            var coeID = obj.closest( "tr" ).attr("coeID");
+        	exist = (newIndicatorID !== null);
+        	var coeID = obj.closest( "tr" ).attr("coeID");
+			var coeID2 = @Model.coeID2;
             var areaID = obj.closest( "tr" ).attr("areaID");
             var indicatorID = obj.attr("indicatorID") || obj.closest("tr").attr("indicatorID");
             if (undo){
@@ -1112,15 +1133,22 @@
             		returningObj.show();
             	});
             }else{
-            	$.post('newIndicatorAtPR', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
+            	$.post('newIndicatorAtPRdbl', { fiscalYear: @ViewBag.fiscalYear, areaID: areaID, coeID: coeID, coeID2: coeID2, indicatorID: indicatorID, newIndicatorID: newIndicatorID}, function(returnedData){
             		htmlColumns = "@Html.Raw(html)";
             		htmlColumnsDef = "@Html.Raw(htmlDef)";
             		htmlExistColumns = "@Html.Raw(htmlExist)";
             		if (!exist){
             			clickedRow.after("<tr class='newrow prrow' indicatorID='" + returnedData.indicatorID + "' areaID='" + returnedData.newAreaID + "' mapID = '" + returnedData.mapID + "' coeID = '" + coeID + "' colorID='1' directionID='1' thresholdID='1'>" + (!definitions ? htmlColumns : htmlColumnsDef));
             			$(".newrow-text").on('change keyup paste',function(e){
-            				var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
+            				//var indicatorID = $(this).closest( "tr" ).attr("indicatorID");
             				var field = $(this).attr("field");
+            				var dblView = $(this).attr("dblView");
+            				var indicatorID = 0;
+            				if (dblView == 1){
+            					indicatorID = returnedData.indicatorID;
+            				} else{
+            					indicatorID = returnedData.indicatorID2;
+            				}
             				var parameters = {
             					indicatorID: indicatorID,
             					updateProperty: field,
@@ -1139,6 +1167,9 @@
             					}
             				}); 
             			});
+            			var tbody = obj.closest('tbody');
+            			var rows = tbody.find("> tr:not(.ui-sortable-placeholder)");
+            			sort(rows);
             		} else {
             			$('.justClicked').attr('mapid',returnedData.mapID);
             			$('.justClicked').addClass('clicked');

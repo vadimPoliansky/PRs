@@ -221,7 +221,7 @@ namespace IndInv.Controllers
             return View(viewModel);
         }
 
-		public ActionResult viewPRdbl(Int16 fiscalYear, Int16? analystID, Int16? coeID)
+		public ActionResult viewPRdbl(Int16 fiscalYear, Int16? analystID, Int16 coeID, Int16 coeID2)
 		{
 			var allMaps = new List<Indicator_CoE_Maps>();
 
@@ -234,16 +234,8 @@ namespace IndInv.Controllers
 				allMaps = db.Indicator_CoE_Maps.ToList();
 			}
 
-			var allCoEs = new List<CoEs>();
-			if (coeID.HasValue)
-			{
-				allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
-				allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
-			}
-			else
-			{
-				allCoEs = db.CoEs.Where(x => x.CoE_ID != 0).ToList();
-			}
+			var allCoEs = db.CoEs.Where(x => x.CoE_ID == coeID).ToList();
+			allMaps = allMaps.Where(x => x.CoE.CoE_ID == coeID || x.CoE_ID == 0).ToList();
 
 			ModelState.Clear();
 			var viewModel = new PRViewModel
@@ -261,7 +253,9 @@ namespace IndInv.Controllers
 				allColors = db.Color_Types.ToList(),
 				allDirections = db.Color_Directions.ToList(),
 				allThresholds = db.Color_Thresholds.ToList(),
-				allFormats = db.Formats.ToList()
+				allFormats = db.Formats.ToList(),
+
+				coeID2= coeID2
 			};
 
 			return View(viewModel);
@@ -3180,6 +3174,57 @@ namespace IndInv.Controllers
 			var colorID = (Int16)newMap.Indicator.GetType().GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(newMap.Indicator, null);
 
             return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID, colorID = colorID}, JsonRequestBehavior.AllowGet);
+        }
+
+		[HttpPost]
+		public JsonResult newIndicatorAtPRdbl(Int16 fiscalYear, Int16 areaID, Int16 coeID, Int16 coeID2)
+		{
+            Indicators indicator = new Indicators();
+			Indicators indicator2 = new Indicators();
+
+			indicator = db.Indicators.Create();
+			indicator2 = db.Indicators.Create();
+			db.Indicators.Add(indicator);
+			db.Indicators.Add(indicator2);
+			db.SaveChanges();
+            indicator.Area_ID = areaID;
+			indicator2.Area_ID = areaID;
+
+			var type = indicator.GetType();
+			var property = type.GetProperty(Helpers.FiscalYear.FYStrFull("FY_Color_ID", fiscalYear));
+			property.SetValue(indicator, Convert.ChangeType(1, property.PropertyType), null);
+			var type2 = indicator2.GetType();
+			var property2 = type.GetProperty(Helpers.FiscalYear.FYStrFull("FY_Color_ID", fiscalYear));
+			property2.SetValue(indicator2, Convert.ChangeType(1, property2.PropertyType), null);
+
+            indicator.Indicator = "";
+			indicator.Indicator_Link = indicator2.Indicator_ID;
+			db.Entry(indicator).State = EntityState.Modified;
+            db.SaveChanges();
+			indicator2.Indicator = "";
+			indicator2.Indicator_Link = indicator.Indicator_ID;
+			db.Entry(indicator2).State = EntityState.Modified;
+			db.SaveChanges();
+
+            var newMap = new Indicator_CoE_Maps();
+            newMap.Indicator_ID = indicator.Indicator_ID;
+            newMap.CoE_ID = coeID;
+            newMap.Fiscal_Year = fiscalYear;
+            db.Indicator_CoE_Maps.Add(newMap);
+            db.SaveChanges();
+
+			var newMap2 = new Indicator_CoE_Maps();
+			newMap2.Indicator_ID = indicator2.Indicator_ID;
+			newMap2.CoE_ID = coeID2;
+			newMap2.Fiscal_Year = fiscalYear;
+			db.Indicator_CoE_Maps.Add(newMap2);
+			db.SaveChanges();
+
+			var colorID = (Int16)newMap.Indicator.GetType().GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Color_ID").GetValue(newMap.Indicator, null);
+
+            return Json(new { indicatorID = indicator.Indicator_ID, mapID = newMap.Map_ID, newAreaID = indicator.Area_ID, colorID = colorID,
+							  indicatorID2 = indicator2.Indicator_ID, mapID2 = newMap2.Map_ID, newAreaID2 = indicator2.Area_ID, colorID2 = colorID
+							}, JsonRequestBehavior.AllowGet);
         }
 
 		[HttpPost]

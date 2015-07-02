@@ -687,7 +687,7 @@
 		    var toHideHeaders = [];
 		    $.each(toHide, function(index, value){
 		        var colHeader = $(this).find('.colHeader')[0].innerHTML;
-		        toHideHeaders.push(strip_tags(colHeader).toString().trim())
+		        toHideHeaders.push(strip_tags(colHeader).toString())//.trim())
 		    });
 		    var colHeaders = []
 		    var columns = [];
@@ -702,7 +702,7 @@
 		    	var currHeader = $IndInv.handsontable("getColHeader",i);
 		    	//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
 		    	var colWidth = $IndInv.handsontable("getColWidth",i)
-		        if (toHideHeaders.indexOf(strip_tags(currHeader,"").toString().trim()) === -1){
+		        if (toHideHeaders.indexOf(strip_tags(currHeader,"").toString()) === -1) {//.trim()) === -1){
 		            columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
 		            colHeaders.push(currHeader)
 		            colWidths.push(colWidth);
