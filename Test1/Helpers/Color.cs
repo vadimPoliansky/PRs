@@ -405,6 +405,8 @@ namespace IndInv.Helpers
 			else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
 			float targetScore = outScore;
 
+			if (targetScore == 0) { return "-"; }
+
 			double threshold_high = 1.1;
 			double threshold_low = 0.9;
 			if (Threshold_ID == 2)

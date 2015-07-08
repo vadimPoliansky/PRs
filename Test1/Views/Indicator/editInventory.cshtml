@@ -238,7 +238,8 @@
 
 	    var filterListChose = {
 	        Indicator_ID: ['Indicator_ID'],
-		    CoE: ['CoE'],
+	        CoE: ['CoE'],
+			Footnote: ['Footnote'],
 		    Indicator: ['Indicator',''],
 		    FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
 		    FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
@@ -247,10 +248,12 @@
 	        Indicator_ID: [],
 			CoE: [],
 			FY_Data_Source_MSH: [],
-			FY_Data_Source_Benchmark: []
+			FY_Data_Source_Benchmark: [],
+			Footnote: []
 		};
 		for (var prop in filterListChose){
 			if (prop === 'Indicator') continue;
+			if (prop === 'Footnotes') break;
 			if (filterListChose.hasOwnProperty(prop)){
 				for (var i=1, len=values.length; i<len; i++){
 					var field = filterListChose[prop][0];
@@ -327,42 +330,42 @@
         };
 
         var colHeadersOrg = [
-            "ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
-            "Indicator",
-			"Footnotes",
-            "CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
-            "@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-            "Sup",
-            "@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-            "Sup ",
-            "@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-            "Sup  ",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q1",
-            "Sup   ",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q2",
-            "Sup    ",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q3",
-            "Sup     ",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_Q4",
-            "Sup      ",
-            "@FiscalYear.FYStrFull("FY_",fiscalYear)" + "_YTD",
-            "Sup           ",
-            "Target",
-            "Sup        ",
-            "Comparator",
-            "Comparator" + "_Sup",
-            "Performance_Threshold",
-            "Sup          ",
-            "Definition_Calculation",
-            "Target_Rationale",
-            "Comparator_Source",
-			"Comparator_Q1",
-			"Comparator_Q2",
-			"Comparator_Q3",
-			"Comparator_Q4",
-            "Data_Source_MSH  <i field='FY_Data_Source_MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
-            "Data_Source_Benchmark <i field='FY_Data_Source_Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
-            "OPEO_Lead"
+            "A<br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
+            "B<br>Indicator",
+			"C<br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
+            "D<br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
+            "E<br>@FiscalYear.FYStrFull("FY_3",fiscalYear)",
+            "F<br>Sup",
+            "G<br>@FiscalYear.FYStrFull("FY_2",fiscalYear)",
+            "H<br>Sup ",
+            "I<br>@FiscalYear.FYStrFull("FY_1",fiscalYear)",
+            "J<br>Sup  ",
+            "K<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q1",
+            "L<br>Sup   ",
+            "M<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q2",
+            "N<br>Sup    ",
+            "O<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q3",
+            "P<br>Sup     ",
+            "Q<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q4",
+            "R<br>Sup      ",
+            "S<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " YTD",
+            "T<br>Sup           ",
+            "U<br>Target",
+            "V<br>Sup        ",
+            "W<br>Comparator",
+            "X<br>Comparator" + " Sup",
+            "Y<br>Performance Threshold",
+            "Z<br>Sup          ",
+            "AA<br>Definition Calculation",
+            "AB<br>Target Rationale",
+            "AC<br>Comparator Source",
+			"AD<br>Comparator Q1",
+			"AE<br>Comparator Q2",
+			"AF<br>Comparator Q3",
+			"AG<br>Comparator Q4",
+            "AH<br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
+            "AI<br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
+            "AJ<br>OPEO Lead"
         ];
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
@@ -662,7 +665,7 @@
 			});
 		}  
 
-		var showColumns = function(){
+		var showColumns = function(toUnhide){
 		    var colHeaders = colHeadersOrg
 		    var columns = columnsOrg;
 		    var colWidths = colWidthsOrg;
@@ -670,6 +673,13 @@
 		    var colHeadersOld = []
 		    var columnsOld = [];
 		    var colWidthsOld = []
+
+		    var firstCol, lastCol;
+		    if (toUnhide.length > 1){
+		    	firstCol = $(toUnhide[0]).find('.colHeader')[0].innerHTML;
+		    	lastCol = $(toUnhide[toUnhide.length - 1]).find('.colHeader')[0].innerHTML;
+		    }
+		    console.log(lastCol);
 
 		    var th = $('thead').children();
 		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
@@ -751,9 +761,9 @@
 
 		    $.each($IndInv.handsontable("getData"),function(index,data){
 		        if (field == "ID") { field = "Indicator_ID"; }
-
+		        console.log(data);
 		    	var filter = data[field];
-		    	if (filter === null) filter = "(Blank)";
+		    	if (filter == null) filter = "(Blank)";
 		    	if(filter.length !== 0 && filter !== "0"){
 		    		if (filterAvailable.indexOf(filter) === -1){
 		    			filterAvailable.push(filter);
@@ -891,7 +901,9 @@
 				showCol: {
 				    name: "Unhide Columns",
 				    callback: function(key,options){
-				        showColumns();
+				    	var toUnhide = $("th.ui-selected");
+				    	if (toUnhide.length === 0) toUnhide= $(this);
+				    	showColumns(toUnhide);
 				        unselect();
 				    }
 				}
@@ -1294,7 +1306,7 @@
         	var ajaxUrl = 'get' + field + 's';
         	$.get(ajaxUrl, function(data){
         		if (notFiscalYear){
-        			htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
+        			if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
         			jQuery.each(data, function (i, value) {
         				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
         			});

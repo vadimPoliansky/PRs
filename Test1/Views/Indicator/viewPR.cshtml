@@ -874,7 +874,9 @@
                         	var isString = isNaN(parseInt(value.replace('$','')));
                             if (!isString){
                             	value = value.replace(/[^\d\.\-]/g, "");
-                            	if(formatStr.indexOf('%') > 0 && value > 1) value = value / 100;
+                            	if(formatStr.indexOf('%') > 0 && value > 1) {
+                            		value = value / 100;
+                            	}
                             	formatedValue = numeral(value).format(formatStr);
                             }
                             cell.val(formatedValue);
@@ -1513,6 +1515,9 @@
             			updateValue = numeral(updateValue).format(formatStr);
             			updateValue = updateValue.substring(0,updateValue.length - 3);
             		} else {
+            			if(formatStr.indexOf('%') > 0 && updateValue > 1) {
+            				updateValue = updateValue / 100;
+            			}
             			updateValue = numeral(updateValue).format(formatStr);
             		}
                 }
@@ -2698,7 +2703,7 @@
             var ajaxUrl = 'get' + field + 's';
             $.get(ajaxUrl, function(data){
             	if (notFiscalYear){
-            		htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
+            		if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
             		jQuery.each(data, function (i, value) {
             			htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
             		});
