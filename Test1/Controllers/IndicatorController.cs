@@ -2890,6 +2890,7 @@ namespace IndInv.Controllers
                 viewModelItems = viewModelItems.Where(x => x.Indicator_ID == Int16.Parse(indicatorID)).ToList();
             }
 			var allFootnotes = db.Indicator_Footnote_Maps.ToList();
+
             var viewModel = viewModelItems.Where(x=>x.Indicator_N_Value != true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
             {
                 Indicator_ID = x.Indicator_ID,
@@ -2898,6 +2899,7 @@ namespace IndInv.Controllers
                         (x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "")
                       : "",
                 Indicator = x.Indicator,
+				Indicator_Type = x.Indicator_Type,
 				//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
 				Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z=>z.Footnote.Footnote_Symbol).ToList()),
                 FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
@@ -2956,6 +2958,77 @@ namespace IndInv.Controllers
 
             }).ToList();
 
+			for (var link_counter = 2; link_counter <= db.CoEs.Count(); link_counter++)
+			{
+				viewModel.AddRange(viewModelItems.Where(x => x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).Count() == link_counter).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
+				{
+					Indicator_ID = x.Indicator_ID,
+					Area_ID = x.Area_ID,
+					CoE = x.Indicator_CoE_Map != null ?
+							(x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).Skip(link_counter - 1).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).Skip(link_counter - 1).FirstOrDefault().CoE.CoE : "")
+						  : "",
+					Indicator = x.Indicator,
+					Indicator_Type = x.Indicator_Type,
+					//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
+					Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z => z.Footnote.Footnote_Symbol).ToList()),
+					FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
+					FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
+					FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),
+					FY_2_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD_Sup").GetValue(x, null),
+					FY_1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 1) + "_YTD").GetValue(x, null),
+					FY_1_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 1) + "_YTD_Sup").GetValue(x, null),
+					FY_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1").GetValue(x, null),
+					FY_Q1_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Sup").GetValue(x, null),
+					FY_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2").GetValue(x, null),
+					FY_Q2_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Sup").GetValue(x, null),
+					FY_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3").GetValue(x, null),
+					FY_Q3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Sup").GetValue(x, null),
+					FY_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4").GetValue(x, null),
+					FY_Q4_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Sup").GetValue(x, null),
+					FY_YTD = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD").GetValue(x, null),
+					FY_YTD_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Sup").GetValue(x, null),
+					FY_Target = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target").GetValue(x, null),
+					FY_Target_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Sup").GetValue(x, null),
+					FY_Comparator = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator").GetValue(x, null),
+					FY_Comparator_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Sup").GetValue(x, null),
+					FY_Comparator_Q1 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q1").GetValue(x, null),
+					FY_Comparator_Q2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q2").GetValue(x, null),
+					FY_Comparator_Q3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q3").GetValue(x, null),
+					FY_Comparator_Q4 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Q4").GetValue(x, null),
+					FY_Performance_Threshold = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(x, null),
+					FY_Performance_Threshold_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(x, null),
+
+					FY_Color_ID = (Int16)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Color_ID").GetValue(x, null),
+					FY_YTD_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Custom_Color").GetValue(x, null),
+					FY_Q1_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Custom_Color").GetValue(x, null),
+					FY_Q2_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Custom_Color").GetValue(x, null),
+					FY_Q3_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Custom_Color").GetValue(x, null),
+					FY_Q4_Custom_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Custom_Color").GetValue(x, null),
+
+					FY_Definition_Calculation = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Definition_Calculation").GetValue(x, null),
+					FY_Target_Rationale = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Rationale").GetValue(x, null),
+					FY_Comparator_Source = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Source").GetValue(x, null),
+
+					FY_Data_Source_MSH = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Data_Source_MSH").GetValue(x, null),
+					FY_Data_Source_Benchmark = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Data_Source_Benchmark").GetValue(x, null),
+					FY_OPEO_Lead = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_OPEO_Lead").GetValue(x, null),
+
+					FY_Q1_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Color").GetValue(x, null),
+					FY_Q2_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Color").GetValue(x, null),
+					FY_Q3_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(x, null),
+					FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
+					FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
+
+					Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
+					N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
+					N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
+
+					Fiscal_Year = fiscalYear,
+
+				}).ToList());
+			}
+			viewModel = viewModel.OrderBy(x=>x.Indicator_ID).ToList();
+
 			ModelState.Clear();
 			var viewModelNValues = db.Indicators.ToList().Where(x => x.Indicator_N_Value == true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
 			{
@@ -2965,6 +3038,7 @@ namespace IndInv.Controllers
 						(x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "")
 					  : "",
 				Indicator = x.Indicator,
+				Indicator_Type = x.Indicator_Type,
 				FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
 				FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
 				FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),

@@ -31,18 +31,21 @@
     var fiscalYear = Model.FirstOrDefault().Fiscal_Year;
 
     ViewBag.fiscalYear = fiscalYear;
+
 }
 <div class="menu-bar">
     <div class="row header-row">
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
-            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
+            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
+            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
-            <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
-            <div class="menu-hover menu-button menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
         </div>
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+			@if(Roles.IsUserInRole("Consultant")){
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
+			}
         </div>
     </div>
 </div>
@@ -62,6 +65,7 @@
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-wordwrap menu-hover'>Toggle Wordwrap </div>
     <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+	<div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
 </div>
 
 <script type="text/javascript">
@@ -237,7 +241,8 @@
 		var values = @Html.Raw(Json.Encode(Model));
 
 	    var filterListChose = {
-	        Indicator_ID: ['Indicator_ID'],
+	    	Indicator_ID: ['Indicator_ID'],
+	    	Indicator_Type: ['Indicator_Type'],
 	        CoE: ['CoE'],
 			Footnote: ['Footnote'],
 		    Indicator: ['Indicator',''],
@@ -245,7 +250,8 @@
 		    FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
 		}
 	    var filterListFull = {
-	        Indicator_ID: [],
+	    	Indicator_ID: [],
+	    	Indicator_Type: [],
 			CoE: [],
 			FY_Data_Source_MSH: [],
 			FY_Data_Source_Benchmark: [],
@@ -299,7 +305,7 @@
 				            if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
 				            	currCond = true;
 				            } else if(currValue == filterItem || filterItem == "" || 
-                                (field != "Indicator_ID" && ('' + currValue).toLowerCase().indexOf(filterItem) > -1)){
+                                (field != "Indicator_ID" && field != "Footnote" && ('' + currValue).toLowerCase().indexOf(filterItem) > -1)){
 				                currCond = true;
 				            }
 				        }
@@ -330,46 +336,48 @@
         };
 
         var colHeadersOrg = [
-            "A<br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
-            "B<br>Indicator",
-			"C<br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
-            "D<br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
-            "E<br>@FiscalYear.FYStrFull("FY_3",fiscalYear)",
-            "F<br>Sup",
-            "G<br>@FiscalYear.FYStrFull("FY_2",fiscalYear)",
-            "H<br>Sup ",
-            "I<br>@FiscalYear.FYStrFull("FY_1",fiscalYear)",
-            "J<br>Sup  ",
-            "K<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q1",
-            "L<br>Sup   ",
-            "M<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q2",
-            "N<br>Sup    ",
-            "O<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q3",
-            "P<br>Sup     ",
-            "Q<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " Q4",
-            "R<br>Sup      ",
-            "S<br>@FiscalYear.FYStrFull("FY_",fiscalYear)" + " YTD",
-            "T<br>Sup           ",
-            "U<br>Target",
-            "V<br>Sup        ",
-            "W<br>Comparator",
-            "X<br>Comparator" + " Sup",
-            "Y<br>Performance Threshold",
-            "Z<br>Sup          ",
-            "AA<br>Definition Calculation",
-            "AB<br>Target Rationale",
-            "AC<br>Comparator Source",
-			"AD<br>Comparator Q1",
-			"AE<br>Comparator Q2",
-			"AF<br>Comparator Q3",
-			"AG<br>Comparator Q4",
-            "AH<br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
-            "AI<br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
-            "AJ<br>OPEO Lead"
+            "<div class='column-letter'>A</div><br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
+            "<div class='column-letter'>B</div><br>Indicator",
+			"<div class='column-letter'>C</div><br>Type <i field='Indicator_Type' class='fa fa-filter filter-Indicator_Type filter-button' id='filter-Indicator_Type'></i>",
+			"<div class='column-letter'>D</div><br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
+            "<div class='column-letter'>E</div><br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
+            "<div class='column-letter'>F</div><br>@FiscalYear.FYStrFullFormated("FY_3",fiscalYear)",
+            "<div class='column-letter'>G</div><br>Sup",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_2",fiscalYear)",
+            "<div class='column-letter'>I</div><br>Sup ",
+            "<div class='column-letter'>J</div><br>@FiscalYear.FYStrFullFormated("FY_1",fiscalYear)",
+            "<div class='column-letter'>K</div><br>Sup  ",
+            "<div class='column-letter'>L</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q1",
+            "<div class='column-letter'>M</div><br>Sup   ",
+            "<div class='column-letter'>N</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q2",
+            "<div class='column-letter'>O</div><br>Sup    ",
+            "<div class='column-letter'>P</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q3",
+            "<div class='column-letter'>Q</div><br>Sup     ",
+            "<div class='column-letter'>R</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q4",
+            "<div class='column-letter'>S</div><br>Sup      ",
+            "<div class='column-letter'>T</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " YTD",
+            "<div class='column-letter'>U</div><br>Sup           ",
+            "<div class='column-letter'>V</div><br>Target",
+            "<div class='column-letter'>W</div><br>Sup        ",
+            "<div class='column-letter'>X</div><br>Comparator",
+            "<div class='column-letter'>Y</div><br>Comparator" + " Sup",
+            "<div class='column-letter'>Z</div><br>Performance Threshold",
+            "<div class='column-letter'>AA</div><br>Sup          ",
+            "<div class='column-letter'>AB</div><br>Definition Calculation",
+            "<div class='column-letter'>AC</div><br>Target Rationale",
+            "<div class='column-letter'>AD</div><br>Comparator Source",
+			"<div class='column-letter'>AE</div><br>Comparator Q1",
+			"<div class='column-letter'>AF</div><br>Comparator Q2",
+			"<div class='column-letter'>AG</div><br>Comparator Q3",
+			"<div class='column-letter'>AH</div><br>Comparator Q4",
+            "<div class='column-letter'>AI</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
+            "<div class='column-letter'>AJ</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
+            "<div class='column-letter'>AK</div><br>OPEO Lead"
         ];
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
-            {data:"Indicator", renderer:"tdRender"},
+            {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+			{data:"Indicator_Type", renderer:"tdRender"},
 			{data:"Footnote", renderer:"tdRender"},
             {data:"CoE", renderer:"tdRender"},
             {data:"FY_3", renderer:"tdRender"},
@@ -388,14 +396,14 @@
             {data:"FY_Q4_Sup", renderer:"tdRender"},
             {data:"FY_YTD", renderer:"qcolor"},
             {data:"FY_YTD_Sup", renderer:"tdRender"},
-            {data:"FY_Target", renderer:"tdRender"},
-            {data:"FY_Target_Sup", renderer:"tdRender"},
+            {data:"FY_Target", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"FY_Target_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_Comparator", renderer:"compSaved"},
             {data:"FY_Comparator_Sup", renderer:"tdRender"},
-            {data:"FY_Performance_Threshold", renderer:"tdRender"},
-            {data:"FY_Performance_Threshold_Sup", renderer:"tdRender"},
+            {data:"FY_Performance_Threshold", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"FY_Performance_Threshold_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_Definition_Calculation", renderer:"tdRender"},
-            {data:"FY_Target_Rationale", renderer:"tdRender"},
+            {data:"FY_Target_Rationale", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_Comparator_Source", renderer:"tdRender"},
 			{data:"FY_Comparator_Q1", renderer:"compSaved"},
 			{data:"FY_Comparator_Q2", renderer:"compSaved"},
@@ -405,7 +413,7 @@
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 75, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,150,200,100];
+	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,150,200,100];
 	    var changesOld = [];
 
 	    $IndInv .handsontable({
@@ -578,12 +586,13 @@
 		        	var directions = [];
 		        	var directionIDs = [];
 		        	changeColour = false;
-		        	@foreach(var direction in Model.FirstOrDefault().allDirections){
+		        	@foreach (var direction in Model.FirstOrDefault().allDirections)
+		   {
 					<text>
 		        	directions.push('@Html.Raw(direction.Direction)');
 		        	directionIDs.push('@Html.Raw(direction.Direction_ID)');
 		        	</text>
-					}
+		   }
 		        	var directionID = 1;
 		        	for(var i =0; i<directions.length; i++){
 		        		if (firstChar == directions[i]){
@@ -679,7 +688,6 @@
 		    	firstCol = $(toUnhide[0]).find('.colHeader')[0].innerHTML;
 		    	lastCol = $(toUnhide[toUnhide.length - 1]).find('.colHeader')[0].innerHTML;
 		    }
-		    console.log(lastCol);
 
 		    var th = $('thead').children();
 		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
@@ -761,7 +769,6 @@
 
 		    $.each($IndInv.handsontable("getData"),function(index,data){
 		        if (field == "ID") { field = "Indicator_ID"; }
-		        console.log(data);
 		    	var filter = data[field];
 		    	if (filter == null) filter = "(Blank)";
 		    	if(filter.length !== 0 && filter !== "0"){
@@ -776,6 +783,7 @@
 		    } else {
 		        filters = filterAvailable;
 		    }
+		    filters.sort();
 
 		    var newDiv = "<div id='filter-panel' class='filter-panel'>"
 		    newDiv += "<div class='filter-panel-header' id='filter-panel-header'>Filter by: " + field + "<i id='filter-panel-close' class='filter-panel-close fa fa-times'></i></div>"
@@ -1087,7 +1095,7 @@
 					"name": "Color Type",
 					"items": {
 						@foreach (var color in Model.FirstOrDefault().allColors)
-						{
+	  {
 						<text>
 						"Color_@color.Color_ID" : { "name": "Change to @color.Color_Type",
 							className: 'color-choice',
@@ -1100,14 +1108,14 @@
 							},
 						},
 						</text>
-						}
+	  }
 					},
 				},
 				"directionsSettings": {
 					"name": "Color Direction",
 					"items": {
 						@foreach (var direction in Model.FirstOrDefault().allDirections)
-						{
+	  {
 						<text>
                     	"Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
                     		className: 'color-choice',
@@ -1120,14 +1128,14 @@
 							},
 						},
 						</text>
-						}
+	  }
 					}
 				},
 				"thresholdSettings": {
 					"name": "Color Threshold",
 					"items": {
 						@foreach (var threshold in Model.FirstOrDefault().allThresholds)
-						{
+	  {
 						<text>
 						"Threshold_@threshold.Threshold_ID" : { "name": "Change to @threshold.Threshold",
 							className: 'color-choice',
@@ -1140,7 +1148,7 @@
 							}
 						},
 						</text>
-						}
+	  }
 					}
 				}
 			}
@@ -1603,6 +1611,10 @@ font-size:medium!important;
     .menu-refresh {
         float:right;
     }
+
+		.menu-button-left {
+		float:right;
+	}
 	    .menu-hover:hover {
         background-color:#ff6a00;
     }
@@ -1665,5 +1677,12 @@ font-size:medium!important;
 	}
 	#clear-filter {
 		float:right;
+	}
+
+	.handsontable th {
+		line-height: 13px !important;
+	}
+	.column-letter {
+		font-weight:700;
 	}
 </style>

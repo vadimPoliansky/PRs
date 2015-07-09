@@ -57,6 +57,44 @@ namespace IndInv.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+		//
+		// GET: /Account/Register
+
+		[AllowAnonymous]
+		public ActionResult Register2()
+		{
+			return View();
+		}
+
+		//
+		// POST: /Account/Register
+
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public ActionResult Register2(RegisterModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				// Attempt to register the user
+				try
+				{
+					WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
+					Roles.AddUserToRoles(model.UserName, new[] { "Consultant" });
+					WebSecurity.Login(model.UserName, model.Password);
+					return RedirectToAction("Index", "Home");
+				}
+				catch (MembershipCreateUserException e)
+				{
+					ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+				}
+			}
+
+			// If we got this far, something failed, redisplay form
+			return View(model);
+		}
+
+
         //
         // GET: /Account/Register
 
@@ -80,6 +118,7 @@ namespace IndInv.Controllers
                 try
                 {
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
+					Roles.AddUserToRoles(model.UserName, new[] { "Analyst" });
                     WebSecurity.Login(model.UserName, model.Password);
                     return RedirectToAction("Index", "Home");
                 }

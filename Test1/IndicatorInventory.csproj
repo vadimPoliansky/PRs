@@ -48,6 +48,10 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\..\..\..\Downloads\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="itextsharp, Version=4.1.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\itextsharp.dll</HintPath>
@@ -78,9 +82,6 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -922,6 +923,7 @@
     <Content Include="Views\Indicator\dashboard.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Views\Account\Register2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Movies\Index.cshtml" />

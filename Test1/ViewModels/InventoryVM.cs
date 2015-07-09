@@ -12,6 +12,7 @@ namespace IndInv.Models.ViewModels
         public Int16 Area_ID { get; set; }
         public string CoE {get; set; }
         public string Indicator { get; set; }
+		public string Indicator_Type { get; set; }
         public string FY_3 { get; set; }
         public string FY_3_Sup { get; set; }
         public string FY_2 { get; set; }
