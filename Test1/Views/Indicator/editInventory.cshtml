@@ -301,6 +301,7 @@
 				        for (var i=1, len=data.length; i<len; i++){
 				        	var filterItem = data[i].replace(/&amp;/g, '&');
 				        	var field = data[0];
+				        	if (field == "Indicator") {filterItem = filterItem.trim()};
 				            var currValue = datasrch[row][field];
 				            if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
 				            	currCond = true;
@@ -674,20 +675,24 @@
 			});
 		}  
 
+		var alphToNum = function(val) {
+			var base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, j, result = 0;
+
+			for (i = 0, j = val.length - 1; i < val.length; i += 1, j -= 1) {
+				result += Math.pow(base.length, j) * (base.indexOf(val[i]) + 1);
+			}
+
+			return result;
+		};
+
 		var showColumns = function(toUnhide){
-		    var colHeaders = colHeadersOrg
-		    var columns = columnsOrg;
-		    var colWidths = colWidthsOrg;
+			var colHeaders =[];
+		    var columns = [];
+		    var colWidths = [];
 
 		    var colHeadersOld = []
 		    var columnsOld = [];
 		    var colWidthsOld = []
-
-		    var firstCol, lastCol;
-		    if (toUnhide.length > 1){
-		    	firstCol = $(toUnhide[0]).find('.colHeader')[0].innerHTML;
-		    	lastCol = $(toUnhide[toUnhide.length - 1]).find('.colHeader')[0].innerHTML;
-		    }
 
 		    var th = $('thead').children();
 		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
@@ -697,6 +702,36 @@
 		        colHeadersOld.push(currHeader)
 		        colWidthsOld.push(colWidth);
 		    };
+		    if (toUnhide != null){
+		    	var firstCol, lastCol;
+		    	if (toUnhide.length > 1){
+		    		firstCol = alphToNum($(toUnhide[0]).children().children().children()[0].innerHTML);
+		    		lastCol = alphToNum($(toUnhide[toUnhide.length - 1]).children().children().children()[0].innerHTML);
+		    	}
+		    	for(var i =0, len = columnsOrg.length; i<=len; i++){
+		    		var currCol = columnsOrg[i];
+		    		var currHeader = colHeadersOrg[i];
+		    		var colWidth = colWidthsOrg[i];
+		    		var currColAlph = alphToNum($(currHeader).first().text());
+		    		console.log(currColAlph);
+		    		console.log(lastCol);
+		    		console.log(firstCol);
+		    		if (colHeadersOld.indexOf(currHeader) === -1 && currColAlph <lastCol && currColAlph > firstCol){
+		    			columns.push(currCol)
+		    			colHeaders.push(currHeader)
+		    			colWidths.push(colWidth);
+		    		}
+		    		if (colHeadersOld.indexOf(currHeader) !== -1){
+						columns.push(currCol);
+		    			colHeaders.push(currHeader);
+						colWidths.push(colWidth);
+		    		}
+		    	};
+		    } else {
+		    	var colHeaders = colHeadersOrg;
+		    	var columns = columnsOrg;
+		    	var colWidths = colWidthsOrg;
+		    }
 		    var table = $IndInv.handsontable('getInstance');
 		    updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
 		}
@@ -910,7 +945,7 @@
 				    name: "Unhide Columns",
 				    callback: function(key,options){
 				    	var toUnhide = $("th.ui-selected");
-				    	if (toUnhide.length === 0) toUnhide= $(this);
+				    	if (toUnhide.length === 0) toUnhide= null;
 				    	showColumns(toUnhide);
 				        unselect();
 				    }
