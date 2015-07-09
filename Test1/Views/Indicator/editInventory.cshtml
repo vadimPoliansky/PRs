@@ -62,7 +62,9 @@
 <div class="footer">
 	<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
     <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
-	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
+	@if(Roles.IsUserInRole("Consultant")){
+		<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
+	}
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-wordwrap menu-hover'>Toggle Wordwrap </div>
     <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 	<div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
@@ -367,10 +369,6 @@
             "<div class='column-letter'>AB</div><br>Definition Calculation",
             "<div class='column-letter'>AC</div><br>Target Rationale",
             "<div class='column-letter'>AD</div><br>Comparator Source",
-			"<div class='column-letter'>AE</div><br>Comparator Q1",
-			"<div class='column-letter'>AF</div><br>Comparator Q2",
-			"<div class='column-letter'>AG</div><br>Comparator Q3",
-			"<div class='column-letter'>AH</div><br>Comparator Q4",
             "<div class='column-letter'>AI</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
             "<div class='column-letter'>AJ</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
             "<div class='column-letter'>AK</div><br>OPEO Lead"
@@ -378,9 +376,9 @@
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
             {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-			{data:"Indicator_Type", renderer:"tdRender"},
-			{data:"Footnote", renderer:"tdRender"},
-            {data:"CoE", renderer:"tdRender"},
+			{data:"Indicator_Type", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+			{data:"Footnote", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_3", renderer:"tdRender"},
             {data:"FY_3_Sup", renderer:"tdRender"},
             {data:"FY_2", renderer:"tdRender"},
@@ -406,15 +404,11 @@
             {data:"FY_Definition_Calculation", renderer:"tdRender"},
             {data:"FY_Target_Rationale", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_Comparator_Source", renderer:"tdRender"},
-			{data:"FY_Comparator_Q1", renderer:"compSaved"},
-			{data:"FY_Comparator_Q2", renderer:"compSaved"},
-			{data:"FY_Comparator_Q3", renderer:"compSaved"},
-			{data:"FY_Comparator_Q4", renderer:"compSaved"},
             {data:"FY_Data_Source_MSH", renderer:"tdRender"},
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 	    ];
-	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,110,110,110,110,150,200,100];
+	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100];
 	    var changesOld = [];
 
 	    $IndInv .handsontable({
@@ -713,9 +707,6 @@
 		    		var currHeader = colHeadersOrg[i];
 		    		var colWidth = colWidthsOrg[i];
 		    		var currColAlph = alphToNum($(currHeader).first().text());
-		    		console.log(currColAlph);
-		    		console.log(lastCol);
-		    		console.log(firstCol);
 		    		if (colHeadersOld.indexOf(currHeader) === -1 && currColAlph <lastCol && currColAlph > firstCol){
 		    			columns.push(currCol)
 		    			colHeaders.push(currHeader)

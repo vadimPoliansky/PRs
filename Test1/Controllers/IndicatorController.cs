@@ -2105,7 +2105,7 @@ namespace IndInv.Controllers
         [HttpGet]
         public JsonResult getAnalysts()
         {
-            return Json(db.Analysts.Select(x => new { x.Analyst_ID, Analyst = x.First_Name }).ToList(), JsonRequestBehavior.AllowGet);
+            return Json(db.Analysts.OrderBy(x=>x.First_Name).Select(x => new { x.Analyst_ID, Analyst = x.First_Name }).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
