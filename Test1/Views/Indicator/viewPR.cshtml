@@ -2754,7 +2754,12 @@
             	if (notFiscalYear){
             		if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
             		jQuery.each(data, function (i, value) {
-            			htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
+            			htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>";
+            			if (field != "CoE") {
+            				htmlContent += value[field] + "</div>";
+            			}else if (field == "CoE"){
+            				htmlContent += value["CoE_Title"] + "</div>";
+            			}
             		});
             	}
             	else {

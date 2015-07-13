@@ -228,6 +228,7 @@ namespace IndInv.Models
 		public string CoE_Type { get; set; }
 		public string CoE_Notes { get; set; }
 		public string CoE_Subtitle { get; set; }
+		public string CoE_Title { get; set; }
 
 		public bool? FY_14_15_Draft { get; set; }
 		public bool? FY_15_16_Draft { get; set; }

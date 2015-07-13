@@ -2596,32 +2596,46 @@
         });
 
         $(document).on('click', '.menu-open', function(e){
-            var field = $(this).attr('field');
-            var buttonEle = $(this);
-            var menuBar =  $(this).closest('.menu-bar');
-            var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
-            var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
-            var ajaxUrl = 'get' + field + 's';
-            $.get(ajaxUrl, function(data){
-                htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"
-                jQuery.each(data, function (i, value) {
-                    htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>" + value[field] + "</div>"
-                });
-                htmlContent += "</div>";
-                $('.block').after(htmlContent);
-                $('.menu-dropdown').hide();
-                $('.menu-dropdown').slideDown('slow');
-                $('.menu-dropdown').css({
-                    left:  posX,
-                    top:   posY-115+$("#pushobjLazy").scrollTop()
-                });
-                $('body').unbind("click").click(function (evt) {
-                    $('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
-                    $('.menu-dropdown').remove()
-                    buttonEle.removeClass('menu-button-pressed');
-                });
-                buttonEle.addClass('menu-button-pressed');
-            });
+        	var field = $(this).attr('field');
+        	if (field != "Fiscal_Year") { notFiscalYear = true;} else {notFiscalYear = false;}
+        	var buttonEle = $(this);
+        	var menuBar =  $(this).closest('.menu-bar');
+        	var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
+        	var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
+        	var ajaxUrl = 'get' + field + 's';
+        	$.get(ajaxUrl, function(data){
+        		if (notFiscalYear){
+        			if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
+        			jQuery.each(data, function (i, value) {
+        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>";
+        				if (field != "CoE") {
+        					htmlContent += value[field] + "</div>";
+        				}else if (field == "CoE"){
+        					htmlContent += value["CoE_Title"] + "</div>";
+        				}
+        			});
+        		}
+        		else {
+        			jQuery.each(data, function (i, value) {
+        				//Use code Instead of ID
+        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_Code"] + "' field='" + field + "'>" + value[field] + "</div>"
+        			});
+        		}
+        		htmlContent += "</div>";
+        		$('.block').after(htmlContent);
+        		$('.menu-dropdown').hide();
+        		$('.menu-dropdown').slideDown('slow');
+        		$('.menu-dropdown').css({
+        			left:  posX,
+        			top:   posY-115+$("#pushobjLazy").scrollTop()
+        		});
+        		$('body').unbind("click").click(function (evt) {
+        			$('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
+        			$('.menu-dropdown').remove()
+        			buttonEle.removeClass('menu-button-pressed');
+        		});
+        		buttonEle.addClass('menu-button-pressed');
+        	});
         });
 
         $(document).on('click', '.menu-dropdown-button', function(e){

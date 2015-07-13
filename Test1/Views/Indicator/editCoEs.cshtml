@@ -51,19 +51,22 @@
         fixedColumnsLeft: 1,
         contextMenu: true,
         minSpareRows: 1,
-        colWidths: [300, 300, 300, 300, 300],
+        colWidths: [300, 300, 300, 300, 300, 300],
         colHeaders: [
             "CoE",
             "Abbr",
 			"Type",
             "Notes",
-            "Subtitle"
+            "Subtitle",
+			"Title"
         ],
         columns: [
             {data: 'CoE'},
             {data: 'CoE_Abbr'},
 			{data: 'CoE_Type'},
-            {data: 'CoE_Subtitle'}
+			{data: 'Notes'},
+            {data: 'CoE_Subtitle'},
+			{data: 'CoE_Title'}
         ],
         width: function () {
             if (maxed && availableWidth === void 0) {
@@ -105,7 +108,8 @@
             	CoE_Abbr: (changedParameter=="CoE_Abbr" ?  changedValue : newValue[0].CoE_Abbr),
             	CoE_Type: (changedParameter=="CoE_Type" ?  changedValue : newValue[0].CoE_Type),
             	CoE_Notes: (changedParameter=="CoE_Notes" ?  changedValue : newValue[0].CoE_Notes),
-            	CoE_Subtitle: (changedParameter=="CoE_Subtitle" ?  changedValue : newValue[0].CoE_Subtitle)
+            	CoE_Subtitle: (changedParameter=="CoE_Subtitle" ?  changedValue : newValue[0].CoE_Subtitle),
+            	CoE_Title: (changedParameter=="CoE_Title" ?  changedValue : newValue[0].CoE_Title),
             });
             $.ajax({
                 url: this.action,

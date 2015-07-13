@@ -51,7 +51,7 @@ namespace IndInv.Controllers
 
             return View(indexViewModel);*/
 
-			Response.Redirect("editInventory?fiscalYear=3");
+			Response.Redirect("indicator/editInventory?fiscalYear=3");
 			// return null;
         }
 
@@ -1892,7 +1892,8 @@ namespace IndInv.Controllers
                 CoE_Abbr = x.CoE_Abbr,
                 CoE_Notes = x.CoE_Notes,
                 CoE_Subtitle = x.CoE_Subtitle,
-                CoE_Type = x.CoE_Type
+                CoE_Type = x.CoE_Type,
+				CoE_Title = x.CoE_Title
             }).ToList();
             if (Request.IsAjaxRequest())
             {
@@ -1952,7 +1953,8 @@ namespace IndInv.Controllers
                         CoE_Abbr = newCoE.CoE_Abbr,
                         CoE_Notes = newCoE.CoE_Notes,
                         CoE_Subtitle = newCoE.CoE_Subtitle,
-                        CoE_Type = newCoE.CoE_Type
+                        CoE_Type = newCoE.CoE_Type,
+						CoE_Title = newCoE.CoE_Title
                     };
                     viewModel.Add(newViewModelItem);
 
@@ -1979,7 +1981,7 @@ namespace IndInv.Controllers
         }
 
         [HttpPost]
-        public ActionResult editCoEs(IList<CoEs> CoEChange, Int16 fiscalYear)
+        public ActionResult editCoEs(IList<CoEs> CoEChange)
         {
             var CoEID = CoEChange[0].CoE_ID;
             if (db.CoEs.Any(x => x.CoE_ID == CoEID))
@@ -2132,7 +2134,7 @@ namespace IndInv.Controllers
         [HttpGet]
         public JsonResult getCoEs()
         {
-            return Json(db.CoEs.OrderBy(x => x.CoE).Where(x => x.CoE_ID != 0).Select(x => new { x.CoE_ID, x.CoE }).ToList(), JsonRequestBehavior.AllowGet);
+            return Json(db.CoEs.OrderBy(x => x.CoE_Title).Where(x => x.CoE_ID != 0).Select(x => new { x.CoE_ID, x.CoE, x.CoE_Title}).ToList(), JsonRequestBehavior.AllowGet);
         }
 
 		[HttpGet]
