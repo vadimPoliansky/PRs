@@ -2084,6 +2084,43 @@ namespace IndInv.Controllers
 
         }
 
+		public ActionResult Query1(Int16 fiscalYear)
+		{
+			var allIndicators = db.Indicators.ToList();
+			foreach (var indicator in allIndicators)
+			{
+
+				var target = (string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target").GetValue(indicator, null);
+				if (target != null)
+				{
+					if(target.Length>1){
+						var direction = target.Substring(0,1);
+						Int16 directionID = 0;
+						if (direction == ">"){
+							directionID = 1;
+						}else if (direction == "≥"){
+							directionID = 2;
+						}else if (direction == "<"){
+							directionID = 3;
+						}else if (direction == "≤"){
+							directionID = 4;
+						}
+
+						if (directionID > 0)
+						{
+							indicator.FY_13_14_Direction_ID = directionID;
+							indicator.FY_14_15_Direction_ID = directionID;
+							indicator.FY_15_16_Direction_ID = directionID;
+							db.Entry(indicator).State = EntityState.Modified;
+							db.SaveChanges();
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
 		[HttpGet]
 		public JsonResult getFiscal_Years()
 		{
