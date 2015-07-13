@@ -8,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Data.Entity;
 using ClosedXML;
+using System.Web.Helpers;
 
 namespace IndInv
 {
@@ -27,6 +28,7 @@ namespace IndInv
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+			AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
             //GlobalConfiguration.Configuration.Filters.Add(new System.Web.Http.AuthorizeAttribute());
         }
 

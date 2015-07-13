@@ -31,9 +31,9 @@ namespace IndInv.Controllers
         // GET: /Indicator/
 
         [HttpGet]
-        public ActionResult Index(Int16? fiscalYear)
+        public void Index(Int16? fiscalYear)
         {
-            
+            /*
             if (!fiscalYear.HasValue)
             {
                 fiscalYear = 2;
@@ -49,7 +49,10 @@ namespace IndInv.Controllers
                 Fiscal_Year = fiscalYear.Value,
             };
 
-            return View(indexViewModel);
+            return View(indexViewModel);*/
+
+			Response.Redirect("editInventory?fiscalYear=3");
+			// return null;
         }
 
 		public ActionResult dashboard(Int16? fiscalYear)
