@@ -809,7 +809,6 @@
                             $(obj).addClass(data[c]);
                         }
                         if (c.indexOf("prTarget") !== -1 && rightClick){
-                        	console.log(rightClick);
                         	var newDirection = data.Direction;
 
                         	var currTarget = $(obj).children('.pr-input-val').val();
@@ -2694,21 +2693,32 @@
         });
 
         $(document).on('click', '.menu-spellcheck', function(e){
+        	$('.spellCheckFail').removeClass('spellCheckFail');
+        	params = [];
         	$.each($('.prtd, .prtd-title'),function(index,value){
         		var ele = $(this);
+        		var indicatorID = ele.attr('indicatorid');
+        		var field = ele.attr('field');
         		var eleVal = "";
         		if (ele.hasClass('prtd')){
         			eleVal = $(this).children('.tdValue').text();
         		} else {
         			eleVal = $(this).text();
-        		} 
-        		$.post('spellCheckTD',{value: eleVal},function(data){
-        			if(data == false){
-        				ele.addClass('spellCheckFail');
-        			} else {
-        				ele.removeClass('spellCheckFail');
-        			}
-        		});
+        		}
+        		params.push({Indicator_ID: indicatorID, Field: field, Value: eleVal });
+        	});
+        	$.ajax({
+        		url: 'spellCheckTD',
+        		type: 'POST',
+        		data: JSON.stringify(params),
+        		contentType: 'application/json; charset=utf-8',
+        		success: function (data) {
+        			$.each(data, function(index,value){
+        				$('table td[indicatorid="' + value.Indicator_ID + '"][field="' + value.Field + '"]').addClass('spellCheckFail');
+        			});
+        		},
+        		error: function (request){
+        		}
         	});
         });
 

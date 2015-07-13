@@ -215,6 +215,7 @@
     <Compile Include="ViewModels\AnalystVM.cs" />
     <Compile Include="ViewModels\CoE_NotesVM.cs" />
     <Compile Include="ViewModels\CoEsVM.cs" />
+    <Compile Include="ViewModels\TableCellsVM.cs" />
     <Compile Include="ViewModels\WordsVM.cs" />
     <Compile Include="ViewModels\IndicatorRowVM.cs" />
     <Compile Include="ViewModels\ObjectiveVM.cs" />

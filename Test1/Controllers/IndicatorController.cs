@@ -2385,38 +2385,48 @@ namespace IndInv.Controllers
 			return true;
 		}
 
-		public JsonResult spellCheckTD(string value)
+		[HttpPost]
+		public JsonResult spellCheckTD(List<TableCellsViewModel> tableCells)
 		{
-			bool correct = true;
-
-			Regex r = new Regex("^[a-zA-Z]*$");
-
-			using (NHunspell.Hunspell hunspell = new NHunspell.Hunspell(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.aff"), this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.dic")))
+			var incorrectCells = new List<TableCellsViewModel>();
+			foreach (var tableCell in tableCells)
 			{
-				var words = value.Split(' ');
-				foreach(var word in words){
-					var chkWord = word;
-					chkWord = chkWord.Replace("(", "");
-					chkWord = chkWord.Replace(")", "");
-					chkWord = chkWord.Replace("*", "");
-					chkWord = chkWord.Replace("/", "");
-					chkWord = chkWord.Replace("\\", "");
-					if (r.IsMatch(chkWord))
+				var value = tableCell.Value ?? "";
+				Regex r = new Regex("^[a-zA-Z]*$");
+
+				using (NHunspell.Hunspell hunspell = new NHunspell.Hunspell(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.aff"), this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/en_us.dic")))
+				{
+					var words = value.Split(' ');
+					foreach (var word in words)
 					{
-						if (!hunspell.Spell(chkWord))
+						var chkWord = word;
+						chkWord = chkWord.Replace("(", "");
+						chkWord = chkWord.Replace(")", "");
+						chkWord = chkWord.Replace("*", "");
+						chkWord = chkWord.Replace("/", "");
+						chkWord = chkWord.Replace("\\", "");
+						if (r.IsMatch(chkWord))
 						{
-							if (db.Words.Where(x=>x.Word == chkWord).Count() == 0)
+							if (!hunspell.Spell(chkWord))
 							{
-								if (!IsAllUpper(chkWord))
+								if (db.Words.Where(x => x.Word == chkWord).Count() == 0)
 								{
-									correct = false;
+									if (!IsAllUpper(chkWord))
+									{
+										//correct = false;
+										var incorrectCell = new TableCellsViewModel();
+										incorrectCell.Field = tableCell.Field;
+										incorrectCell.Indicator_ID = tableCell.Indicator_ID;
+										incorrectCell.Value = tableCell.Value;
+										incorrectCells.Add(incorrectCell);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			return Json(correct);
+			return Json(incorrectCells);
 		}
 
         [HttpGet]
