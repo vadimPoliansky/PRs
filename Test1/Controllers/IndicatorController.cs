@@ -2087,6 +2087,7 @@ namespace IndInv.Controllers
 		public ActionResult Query1(Int16 fiscalYear)
 		{
 			var allIndicators = db.Indicators.ToList();
+			var allDirections = db.Color_Directions.ToList();
 			foreach (var indicator in allIndicators)
 			{
 
@@ -2096,14 +2097,12 @@ namespace IndInv.Controllers
 					if(target.Length>1){
 						var direction = target.Substring(0,1);
 						Int16 directionID = 0;
-						if (direction == ">"){
-							directionID = 1;
-						}else if (direction == "≥"){
-							directionID = 2;
-						}else if (direction == "<"){
-							directionID = 3;
-						}else if (direction == "≤"){
-							directionID = 4;
+						foreach (var directionO in allDirections)
+						{
+							if (directionO.Direction == direction)
+							{
+								directionID = directionO.Direction_ID;
+							}
 						}
 
 						if (directionID > 0)
