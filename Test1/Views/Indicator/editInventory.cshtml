@@ -620,6 +620,9 @@
 		        var isString = isNaN(parseInt(changedValue.replace('$','')));
 		        if (!isString && changedParameter != "Footnote"){
 		        	if (formatStr !== null && formatStr !== ""){
+		        		if(formatStr.indexOf('%') > 0 && changedValue > 1) {
+		        			changedValue = changedValue / 100;
+		        		}
 		                changedValue = numeral(changedValue).format(formatStr);
 		            }
 		        }
