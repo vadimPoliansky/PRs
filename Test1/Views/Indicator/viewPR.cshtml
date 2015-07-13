@@ -293,27 +293,27 @@
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Target_Sup").GetValue(indicator,null), 
 														"prTarget", FiscalYear.FYStrFull("FY_",fiscalYear) + "Target", 
-														rowSpan.ToString()
+														"1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold_Sup").GetValue(indicator,null), 
 														"", FiscalYear.FYStrFull("FY_",fiscalYear) + "Performance_Threshold", 
-														rowSpan.ToString()
+														"1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator").GetValue(indicator,null),
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator_Sup").GetValue(indicator,null), 
 														"remove-in-periop", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comparator", 
-														rowSpan.ToString()
+														"1"
 													},
 													{
 														(string)indicatorType.GetProperty(FiscalYear.FYStrFull("FY_",fiscalYear) + "Comment").GetValue(indicator,null),
 														"",
 														"col-comment prtd-comment comment-col prtd-nosup", 
 														FiscalYear.FYStrFull("FY_",fiscalYear) + "Comment", 
-														rowSpan.ToString()
+														"1"
 													}
 													};
 					 ViewBag.PRCols = columns;
@@ -345,7 +345,7 @@
 						 {
 							 var cls = columns[i, 2];
 							 if (skip) { cls = oldColumns[i, 2]; };
-							 if (allNValues.Contains(map)) { cls = "prtd"; };
+							 //if (allNValues.Contains(map)) { cls = "prtd"; };
 							 if (columns[i, 4] != "0")
 							 {
 								 var tdValue = columns[i, 0];
@@ -1353,7 +1353,7 @@
                     switch(evt.keyCode)
                     {
                         // left arrow
-                        case 37:
+                    	case 37:
                             if (caretPos === 0){
                                 newTD = $(this).prevAll(':visible.pr-input-val').first();
                                 if (newTD.length !== 0){
@@ -1369,11 +1369,13 @@
                             }
                             break;
                             // right arrow
-                        case 39:
+                    	case 39:
+                    	case 9:
                             if (caretPos === textLen){
                                 newTD = $(this).nextAll(':visible.pr-input-sup').first();
                                 if (newTD.length !== 0){
                                 	newTD.select().focus();
+                                	evt.preventDefault();
                                 } else {
                                     newTD = $(this).parent().nextAll(':visible.prtd').first();
                                     if (newTD.length === 0){
@@ -1381,6 +1383,7 @@
                                     }
                                     tdToInput(element);
                                     updateVal(newTD);
+                                    evt.preventDefault();
                                 }
                             }
                             break;

@@ -371,7 +371,8 @@
             "<div class='column-letter'>AD</div><br>Comparator Source",
             "<div class='column-letter'>AI</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
             "<div class='column-letter'>AJ</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
-            "<div class='column-letter'>AK</div><br>OPEO Lead"
+            "<div class='column-letter'>AK</div><br>OPEO Lead",
+			"<div class='column-letter'>AL</div><br>Comment"
         ];
 	    var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender"},
@@ -407,8 +408,9 @@
             {data:"FY_Data_Source_MSH", renderer:"tdRender"},
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
+			@if (Roles.GetRolesForUser().Contains("Consultant")){ <text>, {data:"FY_Comment", renderer:"tdRender"} </text> }
 	    ];
-	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100];
+	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100,500];
 	    var changesOld = [];
 
 	    $IndInv .handsontable({
@@ -464,7 +466,7 @@
             	$.each(cells,function(index,row){
             		$.each(row,function(index,cell){
             			var numRaw = cell; //$IndInv.handsontable("getDataAtCell",row,col);
-            			if (numRaw !== null){
+            			if (numRaw != null){
             				var num = parseFloat(numRaw.replace('$','').replace(/[^\d\.\-]/g, ""));
             				if (!isNaN(num)){
             					selectedN +=1

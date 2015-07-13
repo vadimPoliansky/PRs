@@ -2960,6 +2960,8 @@ namespace IndInv.Controllers
                 FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
                 FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
+				FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
+
                 Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
 				N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
@@ -3028,6 +3030,8 @@ namespace IndInv.Controllers
 					FY_Q3_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(x, null),
 					FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
 					FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
+
+					FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
 
 					Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 					N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
@@ -3098,6 +3102,8 @@ namespace IndInv.Controllers
 				FY_Q3_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(x, null),
 				FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
 				FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
+
+				FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
 
 				Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,

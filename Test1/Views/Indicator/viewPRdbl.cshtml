@@ -17,20 +17,26 @@
 <div class="menu-bar">
     <div class="row header-row">
         <div class="large-6 columns">
-            <div id="menu-coe" class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>CoE</div>
-            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Analyst</div>
-            <div class="menu-hover menu-button menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
-            <div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
-            <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+            <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
+            <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
+			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
         </div>
         <div class="large-6 columns">
-            <div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+			@if(Roles.IsUserInRole("Consultant")){
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
+			}
         </div>
     </div>	
 </div>
 
 <div class="footer">
-                <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
+	<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
+	<div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
+	<div class="menu-hover menu-button menu-spellcheck"><i class="fa fa-check"></i>Spelling</div>
+	<div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
+    <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 </div>
 
 <div class="container">
@@ -2554,6 +2560,36 @@
             undoManager.redo();
         });
 
+        $(document).on('click', '.menu-spellcheck', function(e){
+        	$('.spellCheckFail').removeClass('spellCheckFail');
+        	params = [];
+        	$.each($('.prtd, .prtd-title'),function(index,value){
+        		var ele = $(this);
+        		var indicatorID = ele.attr('indicatorid');
+        		var field = ele.attr('field');
+        		var eleVal = "";
+        		if (ele.hasClass('prtd')){
+        			eleVal = $(this).children('.tdValue').text();
+        		} else {
+        			eleVal = $(this).text();
+        		}
+        		params.push({Indicator_ID: indicatorID, Field: field, Value: eleVal });
+        	});
+        	$.ajax({
+        		url: 'spellCheckTD',
+        		type: 'POST',
+        		data: JSON.stringify(params),
+        		contentType: 'application/json; charset=utf-8',
+        		success: function (data) {
+        			$.each(data, function(index,value){
+        				$('table td[indicatorid="' + value.Indicator_ID + '"][field="' + value.Field + '"]').addClass('spellCheckFail');
+        			});
+        		},
+        		error: function (request){
+        		}
+        	});
+        });
+
         $(document).on('click', '.menu-edit-footnotes', function(e){
             e.preventDefault();
             window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
@@ -3456,6 +3492,10 @@
         float:right;
     }
 
+	.menu-button-left {
+		float:right;
+	}
+
     .ui-selecting {
         outline:2px solid #ff6a00;
     }
@@ -3807,5 +3847,7 @@
 		width:95%;
     }*/
 
-
+	.spellCheckFail {
+		background-color:red;
+	}
 </style>
