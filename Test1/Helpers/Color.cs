@@ -87,6 +87,7 @@ namespace IndInv.Helpers
 				direction = "≤";
 			}
 
+			if (inStr != null) inStr = inStr.Replace("%", "");
 
 			str = Color.getNum(inStr);
 			if (str == null) { return "cssWhite"; }

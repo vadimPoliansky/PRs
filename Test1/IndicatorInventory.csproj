@@ -57,6 +57,9 @@
       <HintPath>lib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.2.0.20710.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
+    </Reference>
     <Reference Include="NHunspell">
       <HintPath>..\packages\NHunspell.1.2.5554.16953\lib\net\NHunspell.dll</HintPath>
     </Reference>
@@ -141,14 +144,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.Data.2.0.20710.0\lib\net40\WebMatrix.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.2.0.20710.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.WebData.2.0.20710.0\lib\net40\WebMatrix.WebData.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet, Version=4.0.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.0.3.12153\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
@@ -180,6 +175,10 @@
     <Reference Include="Antlr3.Runtime">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.WebData.2.0.20710.0\lib\net40\WebMatrix.WebData.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -215,6 +214,8 @@
     <Compile Include="ViewModels\AnalystVM.cs" />
     <Compile Include="ViewModels\CoE_NotesVM.cs" />
     <Compile Include="ViewModels\CoEsVM.cs" />
+    <Compile Include="ViewModels\Edit_Indicator_LinksVM.cs" />
+    <Compile Include="ViewModels\Indicator_LinksVM.cs" />
     <Compile Include="ViewModels\TableCellsVM.cs" />
     <Compile Include="ViewModels\WordsVM.cs" />
     <Compile Include="ViewModels\IndicatorRowVM.cs" />
@@ -286,6 +287,9 @@
     <Content Include="Images\logout.png" />
     <Content Include="Images\MountSinaiLogo.png" />
     <Content Include="Images\MountSinaiLogoB.png" />
+    <Content Include="Images\underline.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\x.png" />
     <Content Include="lib\ClosedXML.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -925,6 +929,8 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="Views\Account\Register2.cshtml" />
+    <Content Include="Views\Indicator\editIndicator_Links.cshtml" />
+    <Content Include="Views\Indicator\viewIndicator_Links.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Movies\Index.cshtml" />

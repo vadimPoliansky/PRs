@@ -8,6 +8,8 @@ namespace IndInv.Models.ViewModels
     public class InventoryViewModel
     {
         public Int16 Indicator_ID { get; set; }
+		public string Identifier { get; set; }
+		public string Area { get; set; }
 		public string Footnote { get; set; }
         public Int16 Area_ID { get; set; }
         public string CoE {get; set; }

@@ -1,13 +1,13 @@
 ﻿@using IndInv.Helpers
 @using IndInv.Models
 @using System.Globalization
-<script src="../../Scripts/jquery-1.11.0.min.js"></script>
+<script src="~/Scripts/jquery-1.11.0.min.js"></script>
 <script src="~/Scripts/CKEditor/ckeditor.js"></script>
-<script src="../../Scripts/jquery.handsontable.full.js"></script>
+<script src="~/Scripts/jquery.handsontable.full.js"></script>
 <script src="~/Scripts/undomanager.js"></script>
 <!--script src="~/Scripts/jquery.handsontable.full.min.js"></!--script-->
 <script type='text/javascript' src="http://wurfljs.com/wurfl.js"></script>
-<link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
+<link rel="stylesheet" media="screen" href="~/Scripts/jquery.handsontable.full.css" />
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
@@ -38,16 +38,17 @@
         <div class="large-6 columns">
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
-			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
+			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear)</div>
         </div>
         <div class="large-6 columns">
-			@if(Roles.IsUserInRole("Consultant")){
+			@if (Roles.IsUserInRole("Consultant"))
+   {
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
 			}
         </div>
-    </div>
+    </div>	
 </div>
 <div class="row">
 <label>Search Indicators:<input id="searchgrid" type="text" /></label>
@@ -244,6 +245,8 @@
 
 	    var filterListChose = {
 	    	Indicator_ID: ['Indicator_ID'],
+	    	Identifier: ['Identifier'],
+			Area: ['Area'],
 	    	Indicator_Type: ['Indicator_Type'],
 	        CoE: ['CoE'],
 			Footnote: ['Footnote'],
@@ -253,6 +256,8 @@
 		}
 	    var filterListFull = {
 	    	Indicator_ID: [],
+	    	Identifier: [],
+			Area: [],
 	    	Indicator_Type: [],
 			CoE: [],
 			FY_Data_Source_MSH: [],
@@ -266,7 +271,7 @@
 				for (var i=1, len=values.length; i<len; i++){
 					var field = filterListChose[prop][0];
 					var filterItem = values[i][field];
-					if (filterItem === null) continue;
+					if (filterItem == null) continue;
 					if(filterItem.length !== 0 && filterItem !== "0"){
 						if (filterListFull[field].indexOf(filterItem) === -1){
 							filterListFull[field].push(filterItem);
@@ -340,46 +345,50 @@
 
         var colHeadersOrg = [
             "<div class='column-letter'>A</div><br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
-            "<div class='column-letter'>B</div><br>Indicator",
-			"<div class='column-letter'>C</div><br>Type <i field='Indicator_Type' class='fa fa-filter filter-Indicator_Type filter-button' id='filter-Indicator_Type'></i>",
-			"<div class='column-letter'>D</div><br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
-            "<div class='column-letter'>E</div><br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
-            "<div class='column-letter'>F</div><br>@FiscalYear.FYStrFullFormated("FY_3",fiscalYear)",
-            "<div class='column-letter'>G</div><br>Sup",
-            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_2",fiscalYear)",
-            "<div class='column-letter'>I</div><br>Sup ",
-            "<div class='column-letter'>J</div><br>@FiscalYear.FYStrFullFormated("FY_1",fiscalYear)",
-            "<div class='column-letter'>K</div><br>Sup  ",
-            "<div class='column-letter'>L</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q1",
-            "<div class='column-letter'>M</div><br>Sup   ",
-            "<div class='column-letter'>N</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q2",
-            "<div class='column-letter'>O</div><br>Sup    ",
-            "<div class='column-letter'>P</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q3",
-            "<div class='column-letter'>Q</div><br>Sup     ",
-            "<div class='column-letter'>R</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q4",
-            "<div class='column-letter'>S</div><br>Sup      ",
-            "<div class='column-letter'>T</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " YTD",
-            "<div class='column-letter'>U</div><br>Sup           ",
-            "<div class='column-letter'>V</div><br>Target",
-            "<div class='column-letter'>W</div><br>Sup        ",
-            "<div class='column-letter'>X</div><br>Comparator",
-            "<div class='column-letter'>Y</div><br>Comparator" + " Sup",
-            "<div class='column-letter'>Z</div><br>Performance Threshold",
-            "<div class='column-letter'>AA</div><br>Sup          ",
-            "<div class='column-letter'>AB</div><br>Definition Calculation",
-            "<div class='column-letter'>AC</div><br>Target Rationale",
-            "<div class='column-letter'>AD</div><br>Comparator Source",
-            "<div class='column-letter'>AI</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
-            "<div class='column-letter'>AJ</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
-            "<div class='column-letter'>AK</div><br>OPEO Lead",
-			"<div class='column-letter'>AL</div><br>Comment"
-        ];
+			"<div class='column-letter'>B</div><br>Identifier <i field='Identifier' class='fa fa-filter filter-identifier filter-button' id='filter-identifier'></i>",
+			"<div class='column-letter'>C</div><br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
+            "<div class='column-letter'>D</div><br>Indicator",
+			"<div class='column-letter'>E</div><br>Area <i field='Area' class='fa fa-filter filter-Area filter-button' id='filter-Area'></i>",
+			"<div class='column-letter'>F</div><br>Type <i field='Indicator_Type' class='fa fa-filter filter-Indicator_Type filter-button' id='filter-Indicator_Type'></i>",
+			"<div class='column-letter'>G</div><br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_3",fiscalYear)",
+            "<div class='column-letter'>I</div><br>Sup",
+            "<div class='column-letter'>J</div><br>@FiscalYear.FYStrFullFormated("FY_2",fiscalYear)",
+            "<div class='column-letter'>K</div><br>Sup ",
+            "<div class='column-letter'>L</div><br>@FiscalYear.FYStrFullFormated("FY_1",fiscalYear)",
+            "<div class='column-letter'>M</div><br>Sup  ",
+            "<div class='column-letter'>N</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q1",
+            "<div class='column-letter'>O</div><br>Sup   ",
+            "<div class='column-letter'>P</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q2",
+            "<div class='column-letter'>Q</div><br>Sup    ",
+            "<div class='column-letter'>R</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q3",
+            "<div class='column-letter'>S</div><br>Sup     ",
+            "<div class='column-letter'>T</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q4",
+            "<div class='column-letter'>U</div><br>Sup      ",
+            "<div class='column-letter'>V</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " YTD",
+            "<div class='column-letter'>W</div><br>Sup           ",
+            "<div class='column-letter'>X</div><br>Target",
+            "<div class='column-letter'>Y</div><br>Sup        ",
+            "<div class='column-letter'>Z</div><br>Comparator",
+            "<div class='column-letter'>AA</div><br>Comparator" + " Sup",
+            "<div class='column-letter'>AB</div><br>Performance Threshold",
+            "<div class='column-letter'>AC</div><br>Sup          ",
+            "<div class='column-letter'>AD</div><br>Definition Calculation",
+            "<div class='column-letter'>AE</div><br>Target Rationale",
+            "<div class='column-letter'>AF</div><br>Comparator Source",
+            "<div class='column-letter'>AG</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
+            "<div class='column-letter'>AH</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
+            "<div class='column-letter'>AI</div><br>OPEO Lead",
+			"<div class='column-letter'>AJ</div><br>Comment"
+        ];								
 	    var columnsOrg = [
-            {data:"Indicator_ID", renderer:"tdRender"},
+            {data:"Indicator_ID", renderer:"tdRender", readOnly: true},
+			{data:"Identifier", renderer:"tdRender", readOnly: true},
+			{data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+			{data:"Area", renderer:"tdRender", readOnly: true},
 			{data:"Indicator_Type", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
 			{data:"Footnote", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-            {data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"FY_3", renderer:"tdRender"},
             {data:"FY_3_Sup", renderer:"tdRender"},
             {data:"FY_2", renderer:"tdRender"},
@@ -410,7 +419,7 @@
             {data:"FY_OPEO_Lead", renderer:"tdRender"}
 			@if (Roles.GetRolesForUser().Contains("Consultant")){ <text>, {data:"FY_Comment", renderer:"tdRender"} </text> }
 	    ];
-	    var colWidthsOrg = [50, 250, 100, 100, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100,500];
+		var colWidthsOrg = [50, 100, 150, 250, 100, 100, 100, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100,500];
 	    var changesOld = [];
 
 	    $IndInv .handsontable({
@@ -439,7 +448,7 @@
 				return maxed  ?  availableHeight*0.93: 300;
 			},
 			fixedRowsTop: 0,
-			fixedColumnsLeft: 2,
+			fixedColumnsLeft: 4,
 			manualColumnResize: true,
 			minSpareRows: 0,
 			contextMenu: false,
@@ -615,24 +624,39 @@
 		        		}
 		        	});
 		        }
+			
+				var formatableFields = [
+					"FY_3",
+					"FY_2",
+					"FY_1",
+					"FY_Q1",
+					"FY_Q2",
+					"FY_Q3",
+					"FY_Q4",
+					"FY_YTD",
+					"FY_Target",
+					"FY_Comparator"
+				] 
 
-		        var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
-		        var isString = isNaN(parseInt(changedValue.replace('$','')));
-		        if (!isString && changedParameter != "Footnote"){
-		        	if (formatStr !== null && formatStr !== ""){
-		        		if(formatStr.indexOf('%') > 0 && changedValue > 1) {
-		        			changedValue = changedValue / 100;
-		        		}
-		                changedValue = numeral(changedValue).format(formatStr);
-		            }
-		        }
+				if (formatableFields.indexOf(changedParameter) > 0){
+					var formatStr = $IndInv.handsontable("getDataAtRowProp", changedRow, "Format_Code");
+					var isString = isNaN(parseInt(changedValue.replace('$','')));
+					if (!isString && changedParameter != "Footnote"){
+						if (formatStr !== null && formatStr !== ""){
+							if(formatStr.indexOf('%') > 0 && changedValue > 1) {
+								changedValue = changedValue / 100;
+							}
+							changedValue = numeral(changedValue).format(formatStr);
+						}
+					}
+				}
 		        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
 		            var parameters = {
 		            	indicatorID: indicatorID,
 		                updateProperty: changedParameter,
 		                updateValue: changedValue,
 		                updateValueSup: changedValue,
-		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
+		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year
 		            };
 		        	$.ajaxSetup({ cache: false });
 		        	var ajaxUrl = changedParameter != "Footnote" ? this.action : "setValueFootnotes";
@@ -1383,9 +1407,9 @@
         	var id = $(this).attr('id');
         	if (id !== null){
         		if (field === "CoE"){
-        			window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+        			window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Fiscal_Year"){
             		currAddress = window.location.href
             		currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
@@ -1394,9 +1418,9 @@
             	}
 		} else {
 			if (field === "CoE"){
-				window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+				window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
+            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
             	}
 		}
         });

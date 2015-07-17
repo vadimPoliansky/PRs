@@ -21,6 +21,8 @@ namespace IndInv.Models
         [Display(Name = "Indicator Type")]
         public string Indicator_Type { get; set; }
 
+		public string Identifier { get; set; }
+
         public bool? Indicator_N_Value { get; set; }
         public Int16? Indicator_N_Value_ID { get; set; }
 
@@ -244,6 +246,59 @@ namespace IndInv.Models
         public virtual ICollection<Area_CoE_Maps> Area_CoE_Map { get; set; }
     }
 
+	public class Indicator_Links
+	{
+		[Key]
+		public Int16 Link_ID { get; set; }
+
+		public virtual ICollection<Indicator_Link_Indicators> Indicator_Link_Indicators { get; set; }
+		public virtual ICollection<Indicator_Link_Fields> Indicator_Link_Fields { get; set; }
+		
+	}
+
+	public class Indicator_Link_Indicators
+	{
+		[Key]
+		public Int16 Indicator_Link_Indicator_ID { get; set; }
+		public Int16 Indicator_ID { get; set; }
+		public Int16 Link_ID { get; set; }
+
+		public virtual Indicators Indicator {get;set;}
+		public virtual Indicator_Links Link { get; set; }
+	}
+
+	public class Indicator_Link_Fields
+	{
+		[Key]
+		public Int16 Indicator_Link_Field_ID {get;set;}
+		public Int16 Link_Field_ID { get; set; }
+		public Int16 Link_ID { get; set; }
+
+		public virtual Indicator_Links Indicator_Link { get; set; }
+		public virtual Link_Fields Link_Field { get; set; }
+
+	}
+
+	public class Link_Fields
+	{
+		[Key]
+		public Int16 Link_Field_ID { get; set; }
+		public string Link_Field { get; set; }
+
+		public virtual ICollection<Link_Fields_Properties> Link_Fields_Properties { get; set; }
+	}
+
+	public class Link_Fields_Properties
+	{
+		[Key]
+		public Int16 Link_Field_Property_ID { get; set; }
+		public Int16 Link_Field_ID { get; set; }
+		public string Link_Field_Property { get; set; }
+
+		public virtual Link_Fields Link_Field { get; set; }
+	}
+
+
     public class Indicator_CoE_Maps
     {
         [Key]
@@ -376,6 +431,12 @@ namespace IndInv.Models
         public DbSet<Indicator_CoE_Maps> Indicator_CoE_Maps { get; set; }
         public DbSet<Area_CoE_Maps> Area_CoE_Maps { get; set; }
         public DbSet<Indicator_Footnote_Maps> Indicator_Footnote_Maps { get; set; }
+
+		public DbSet<Indicator_Links> Indicator_Links { get; set; }
+		public DbSet<Link_Fields> Link_Fields { get; set; }
+		public DbSet<Link_Fields_Properties> Link_Fields_Properties { get; set; }
+		public DbSet<Indicator_Link_Indicators> Indicator_Link_Indicators { get; set; }
+		public DbSet<Indicator_Link_Fields> Indicator_Link_Fields { get; set; }
 
         public DbSet<Analysts> Analysts { get; set; }
 

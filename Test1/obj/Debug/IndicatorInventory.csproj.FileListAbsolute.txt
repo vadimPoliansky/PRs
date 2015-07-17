@@ -327,3 +327,4 @@ C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\en_US.dic
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\ajax-loader.gif
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\draft.png
 C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\App_Data\draft.png
+C:\Users\mnurvep\Desktop\AspNet\TestPR\Test1\bin\Images\underline.gif

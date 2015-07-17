@@ -84,7 +84,7 @@
 			   
 		string[,] oldColumns = null;
 		List<int> allColspans = new List<int>();
-		var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
+		var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE != null && d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
 		var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
 		var allMapsWithNValues = new List<Indicator_CoE_Maps>();
 		foreach (var nValue in allNValues)
@@ -368,7 +368,7 @@
 			</td>
 		</tr>
 		string[,] oldColumns = null;
-		foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+		foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE != null && d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
 		{
 			var indicatorTitle = ""; int? number = numCount; var skip = false;
 			if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)

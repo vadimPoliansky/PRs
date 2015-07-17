@@ -14,7 +14,7 @@ using IndInv.Models;
 namespace IndInv.Controllers
 {
     [Authorize]
-    [InitializeSimpleMembership]
+    //[InitializeSimpleMembership]
     public class AccountController : Controller
     {
         //

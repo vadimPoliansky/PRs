@@ -490,8 +490,8 @@ namespace IndInv.Controllers
 
             foreach (var coe in allCoes)
             {
-                var wsPRName = coe.CoE_Abbr;
-                var wsDefName = "Def_" + coe.CoE_Abbr;
+				var wsPRName = coe.CoE_Abbr != null && coe.CoE_Abbr != "" ? coe.CoE_Abbr : "Indicators";
+				var wsDefName = coe.CoE_Abbr != null && coe.CoE_Abbr != "" ? "Def_" + coe.CoE_Abbr : "Def_Indicators";
                 var wsPR = wb.Worksheets.Add(wsPRName);
                 var wsDef = wb.Worksheets.Add(wsDefName);
                 List<IXLWorksheet> wsList = new List<IXLWorksheet>();
@@ -639,7 +639,7 @@ namespace IndInv.Controllers
 
                         currentRow++;
 
-                        var allMaps = viewModel.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(areaMap.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
+                        var allMaps = viewModel.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(areaMap.Area)).Where(d => d.CoE.CoE != null && d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
                         var allNValues = new List<Indicator_CoE_Maps>();
                         if (ws.Name == wsPRName)
                         {
@@ -1684,6 +1684,62 @@ namespace IndInv.Controllers
 			return Json(new {objectiveString = objectiveString}, JsonRequestBehavior.AllowGet);
 		}
 
+		public ActionResult editIndicator_Links()
+		{
+			var viewModel = new Edit_Indicator_LinksViewModel()
+			{
+				allIndicator_Links = db.Indicator_Links.ToList(),
+				allIndicators = db.Indicators.OrderBy(x=>x.Indicator).Where(x=>x.Indicator != "").ToList(),
+				allFields = db.Link_Fields.ToList()
+			};
+
+			return View(viewModel);
+		}
+
+
+		public ActionResult viewIndicator_Links()
+		{
+			var viewModel = db.Indicator_Links.ToList();
+
+			return View(viewModel);
+		}
+
+		[HttpPost]
+		public JsonResult addIndicatorLinks(int[] Indicator_ID_List, int[] Field_ID_List)
+		{
+			var newLink = db.Indicator_Links.Create();
+			db.Indicator_Links.Add(newLink);
+			db.SaveChanges();
+
+			foreach(var fieldID in Field_ID_List){
+				var newLinkField = db.Indicator_Link_Fields.Create();
+				newLinkField.Link_ID = newLink.Link_ID;
+				newLinkField.Link_Field_ID = (Int16)fieldID;
+				db.Indicator_Link_Fields.Add(newLinkField);
+				db.SaveChanges();
+			}
+
+			foreach (var indicatorID in Indicator_ID_List)
+			{
+				var newLinkIndicator = db.Indicator_Link_Indicators.Create();
+				newLinkIndicator.Link_ID = newLink.Link_ID;
+				newLinkIndicator.Indicator_ID = (Int16)indicatorID;
+				db.Indicator_Link_Indicators.Add(newLinkIndicator);
+				db.SaveChanges();
+			}
+			return Json("");
+		}
+
+		[HttpPost]
+		public JsonResult deleteIndicatorLink(Int16 linkID)
+		{
+			var link = db.Indicator_Links.FirstOrDefault(x => x.Link_ID == linkID);
+			db.Indicator_Links.Remove(link);
+			db.SaveChanges();
+
+			return Json("");
+		}
+
 		[HttpGet]
 		public JsonResult editCoE_Notes(Int16 coeID)
 		{
@@ -2125,6 +2181,137 @@ namespace IndInv.Controllers
 			return null;
 		}
 
+		public ActionResult Query2()
+		{
+			var allIndicators = db.Indicators.ToList();
+			foreach (var indicator in allIndicators)
+			{
+				if (indicator.FY_13_14_Direction_ID == 0)
+				{
+					indicator.FY_13_14_Direction_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+				if (indicator.FY_14_15_Direction_ID == 0)
+				{
+					indicator.FY_14_15_Direction_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+				if (indicator.FY_15_16_Direction_ID == 0)
+				{
+					indicator.FY_15_16_Direction_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+				if (indicator.FY_13_14_Color_ID == 0)
+				{
+					indicator.FY_13_14_Color_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+				if (indicator.FY_14_15_Color_ID == 0)
+				{
+					indicator.FY_14_15_Color_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+				if (indicator.FY_15_16_Color_ID == 0)
+				{
+					indicator.FY_15_16_Color_ID = 1;
+					db.Entry(indicator).State = EntityState.Modified;
+					db.SaveChanges();
+				}
+			}
+
+			return null;
+		}
+
+		public ActionResult Query3()
+		{
+			var allIndicators = db.Indicators.ToList();
+			foreach (var indicator in allIndicators)
+			{
+				indicator.FY_10_11_YTD = indicator.FY_10_11_YTD != null ? indicator.FY_10_11_YTD.Replace("NULL", "") : null;
+				indicator.FY_10_11_YTD_Sup = indicator.FY_10_11_YTD_Sup != null ? indicator.FY_10_11_YTD_Sup.Replace("NULL", "") : null;
+				indicator.FY_11_12_YTD = indicator.FY_11_12_YTD != null ? indicator.FY_11_12_YTD.Replace("NULL", "") : null;
+				indicator.FY_11_12_YTD_Sup = indicator.FY_11_12_YTD_Sup != null ? indicator.FY_11_12_YTD_Sup.Replace("NULL", "") : null;
+				indicator.FY_12_13_YTD = indicator.FY_12_13_YTD != null ? indicator.FY_12_13_YTD.Replace("NULL", "") : null;
+				indicator.FY_12_13_YTD_Sup = indicator.FY_12_13_YTD_Sup != null ? indicator.FY_12_13_YTD_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q1 = indicator.FY_13_14_Q1 != null ? indicator.FY_13_14_Q1.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q1_Sup = indicator.FY_13_14_Q1_Sup != null ? indicator.FY_13_14_Q1_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q2 = indicator.FY_13_14_Q2 != null ? indicator.FY_13_14_Q2.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q2_Sup = indicator.FY_13_14_Q2_Sup != null ? indicator.FY_13_14_Q2_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q3 = indicator.FY_13_14_Q3 != null ? indicator.FY_13_14_Q3.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q3_Sup = indicator.FY_13_14_Q3_Sup != null ? indicator.FY_13_14_Q3_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q4 = indicator.FY_13_14_Q4 != null ? indicator.FY_13_14_Q4.Replace("NULL", "") : null;
+				indicator.FY_13_14_Q4_Sup = indicator.FY_13_14_Q4_Sup != null ? indicator.FY_13_14_Q4_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_YTD = indicator.FY_13_14_YTD != null ? indicator.FY_13_14_YTD.Replace("NULL", "") : null;
+				indicator.FY_13_14_YTD_Sup = indicator.FY_13_14_YTD_Sup != null ? indicator.FY_13_14_YTD_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Target = indicator.FY_13_14_Target != null ? indicator.FY_13_14_Target.Replace("NULL", "") : null;
+				indicator.FY_13_14_Target_Sup = indicator.FY_13_14_Target_Sup != null ? indicator.FY_13_14_Target_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Comparator = indicator.FY_13_14_Comparator != null ? indicator.FY_13_14_Comparator.Replace("NULL", "") : null;
+				indicator.FY_13_14_Comparator_Sup = indicator.FY_13_14_Comparator_Sup != null ? indicator.FY_13_14_Comparator_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Performance_Threshold_Sup = indicator.FY_13_14_Performance_Threshold_Sup != null ? indicator.FY_13_14_Performance_Threshold_Sup.Replace("NULL", "") : null;
+				indicator.FY_13_14_Definition_Calculation = indicator.FY_13_14_Definition_Calculation != null ? indicator.FY_13_14_Definition_Calculation.Replace("NULL", "") : null;
+				indicator.FY_13_14_Target_Rationale = indicator.FY_13_14_Target_Rationale != null ? indicator.FY_13_14_Target_Rationale.Replace("NULL", "") : null;
+				indicator.FY_13_14_Comparator_Source = indicator.FY_13_14_Comparator_Source != null ? indicator.FY_13_14_Comparator_Source.Replace("NULL", "") : null;
+				indicator.FY_13_14_Data_Source_MSH = indicator.FY_13_14_Data_Source_MSH != null ? indicator.FY_13_14_Data_Source_MSH.Replace("NULL", "") : null;
+				indicator.FY_13_14_Data_Source_Benchmark = indicator.FY_13_14_Data_Source_Benchmark != null ? indicator.FY_13_14_Data_Source_Benchmark.Replace("NULL", "") : null;
+				indicator.FY_13_14_OPEO_Lead = indicator.FY_13_14_OPEO_Lead != null ? indicator.FY_13_14_OPEO_Lead.Replace("NULL", "") : null;
+				indicator.FY_13_14_Comment = indicator.FY_13_14_Comment != null ? indicator.FY_13_14_Comment.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q1 = indicator.FY_14_15_Q1 != null ? indicator.FY_14_15_Q1.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q1_Sup = indicator.FY_14_15_Q1_Sup != null ? indicator.FY_14_15_Q1_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q2 = indicator.FY_14_15_Q2 != null ? indicator.FY_14_15_Q2.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q2_Sup = indicator.FY_14_15_Q2_Sup != null ? indicator.FY_14_15_Q2_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q3 = indicator.FY_14_15_Q3 != null ? indicator.FY_14_15_Q3.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q3_Sup = indicator.FY_14_15_Q3_Sup != null ? indicator.FY_14_15_Q3_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q4 = indicator.FY_14_15_Q4 != null ? indicator.FY_14_15_Q4.Replace("NULL", "") : null;
+				indicator.FY_14_15_Q4_Sup = indicator.FY_14_15_Q4_Sup != null ? indicator.FY_14_15_Q4_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_YTD = indicator.FY_14_15_YTD != null ? indicator.FY_14_15_YTD.Replace("NULL", "") : null;
+				indicator.FY_14_15_YTD_Sup = indicator.FY_14_15_YTD_Sup != null ? indicator.FY_14_15_YTD_Sup.Replace("NULL", "") : null; 
+				indicator.FY_14_15_Target = indicator.FY_14_15_Target != null ? indicator.FY_14_15_Target.Replace("NULL", "") : null;
+				indicator.FY_14_15_Target_Sup = indicator.FY_14_15_Target_Sup != null ? indicator.FY_14_15_Target_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Comparator = indicator.FY_14_15_Comparator != null ? indicator.FY_14_15_Comparator.Replace("NULL", "") : null;
+				indicator.FY_14_15_Comparator_Sup = indicator.FY_14_15_Comparator_Sup != null ? indicator.FY_14_15_Comparator_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Performance_Threshold_Sup = indicator.FY_14_15_Performance_Threshold_Sup != null ? indicator.FY_14_15_Performance_Threshold_Sup.Replace("NULL", "") : null;
+				indicator.FY_14_15_Definition_Calculation = indicator.FY_14_15_Definition_Calculation != null ? indicator.FY_14_15_Definition_Calculation.Replace("NULL", "") : null;
+				indicator.FY_14_15_Target_Rationale = indicator.FY_14_15_Target_Rationale != null ? indicator.FY_14_15_Target_Rationale.Replace("NULL", "") : null;
+				indicator.FY_14_15_Comparator_Source = indicator.FY_14_15_Comparator_Source != null ? indicator.FY_14_15_Comparator_Source.Replace("NULL", "") : null;
+				indicator.FY_14_15_Data_Source_MSH = indicator.FY_14_15_Data_Source_MSH != null ? indicator.FY_14_15_Data_Source_MSH.Replace("NULL", "") : null;
+				indicator.FY_14_15_Data_Source_Benchmark = indicator.FY_14_15_Data_Source_Benchmark != null ? indicator.FY_14_15_Data_Source_Benchmark.Replace("NULL", "") : null;
+				indicator.FY_14_15_OPEO_Lead = indicator.FY_14_15_OPEO_Lead != null ? indicator.FY_14_15_OPEO_Lead.Replace("NULL", "") : null;
+				indicator.FY_14_15_Comment = indicator.FY_14_15_Comment != null ? indicator.FY_14_15_Comment.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q1 = indicator.FY_15_16_Q1 != null ? indicator.FY_15_16_Q1.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q1_Sup = indicator.FY_15_16_Q1_Sup != null ? indicator.FY_15_16_Q1_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q2 = indicator.FY_15_16_Q2 != null ? indicator.FY_15_16_Q2.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q2_Sup = indicator.FY_15_16_Q2_Sup != null ? indicator.FY_15_16_Q2_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q3 = indicator.FY_15_16_Q3 != null ? indicator.FY_15_16_Q3.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q3_Sup = indicator.FY_15_16_Q3_Sup != null ? indicator.FY_15_16_Q3_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q4 = indicator.FY_15_16_Q4 != null ? indicator.FY_15_16_Q4.Replace("NULL", "") : null;
+				indicator.FY_15_16_Q4_Sup = indicator.FY_15_16_Q4_Sup != null ? indicator.FY_15_16_Q4_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_YTD = indicator.FY_15_16_YTD != null ? indicator.FY_15_16_YTD.Replace("NULL", "") : null;
+				indicator.FY_15_16_YTD_Sup = indicator.FY_15_16_YTD_Sup != null ? indicator.FY_15_16_YTD_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Target = indicator.FY_15_16_Target != null ? indicator.FY_15_16_Target.Replace("NULL", "") : null;
+				indicator.FY_15_16_Target_Sup = indicator.FY_15_16_Target_Sup != null ? indicator.FY_15_16_Target_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Comparator = indicator.FY_15_16_Comparator != null ? indicator.FY_15_16_Comparator.Replace("NULL", "") : null;
+				indicator.FY_15_16_Comparator_Sup = indicator.FY_15_16_Comparator_Sup != null ? indicator.FY_15_16_Comparator_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Performance_Threshold_Sup = indicator.FY_15_16_Performance_Threshold_Sup != null ? indicator.FY_15_16_Performance_Threshold_Sup.Replace("NULL", "") : null;
+				indicator.FY_15_16_Definition_Calculation = indicator.FY_15_16_Definition_Calculation != null ? indicator.FY_15_16_Definition_Calculation.Replace("NULL", "") : null;
+				indicator.FY_15_16_Target_Rationale = indicator.FY_15_16_Target_Rationale != null ? indicator.FY_15_16_Target_Rationale.Replace("NULL", "") : null;
+				indicator.FY_15_16_Comparator_Source = indicator.FY_15_16_Comparator_Source != null ? indicator.FY_15_16_Comparator_Source.Replace("NULL", "") : null;
+				indicator.FY_15_16_Data_Source_MSH = indicator.FY_15_16_Data_Source_MSH != null ? indicator.FY_15_16_Data_Source_MSH.Replace("NULL", "") : null;
+				indicator.FY_15_16_Data_Source_Benchmark = indicator.FY_15_16_Data_Source_Benchmark != null ? indicator.FY_15_16_Data_Source_Benchmark.Replace("NULL", "") : null;
+				indicator.FY_15_16_OPEO_Lead = indicator.FY_15_16_OPEO_Lead != null ? indicator.FY_15_16_OPEO_Lead.Replace("NULL", "") : null;
+				indicator.FY_15_16_Comment = indicator.FY_15_16_Comment != null ? indicator.FY_15_16_Comment.Replace("NULL", "") : null;
+				db.Entry(indicator).State = EntityState.Modified;
+				db.SaveChanges();
+			}
+
+
+			return null;
+		}
+
 		[HttpGet]
 		public JsonResult getFiscal_Years()
 		{
@@ -2430,8 +2617,13 @@ namespace IndInv.Controllers
 		public JsonResult spellCheckTD(List<TableCellsViewModel> tableCells)
 		{
 			var incorrectCells = new List<TableCellsViewModel>();
+
 			foreach (var tableCell in tableCells)
 			{
+				var isIncorrectCell = false;
+				var incorrectCell = new TableCellsViewModel();
+				var returnText = "";
+
 				var value = tableCell.Value ?? "";
 				Regex r = new Regex("^[a-zA-Z]*$");
 
@@ -2440,6 +2632,7 @@ namespace IndInv.Controllers
 					var words = value.Split(' ');
 					foreach (var word in words)
 					{
+						var returnWord = word + " ";
 						var chkWord = word;
 						chkWord = chkWord.Replace("(", "");
 						chkWord = chkWord.Replace(")", "");
@@ -2455,17 +2648,21 @@ namespace IndInv.Controllers
 									if (!IsAllUpper(chkWord))
 									{
 										//correct = false;
-										var incorrectCell = new TableCellsViewModel();
 										incorrectCell.Field = tableCell.Field;
 										incorrectCell.Indicator_ID = tableCell.Indicator_ID;
-										incorrectCell.Value = tableCell.Value;
-										incorrectCells.Add(incorrectCell);
+										returnWord = "<span class='misspell'>" + returnWord + "</span>" + " ";
+										returnText += returnWord;
+										returnWord = "";
+										isIncorrectCell = true;
 									}
 								}
 							}
 						}
+						returnText += returnWord;
+						incorrectCell.Value = returnText;
 					}
 				}
+				if (isIncorrectCell) incorrectCells.Add(incorrectCell);
 			}
 			return Json(incorrectCells);
 		}
@@ -2616,6 +2813,29 @@ namespace IndInv.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
+		public void updateLinks(Int16 indicatorID, string updateValue, string updateProperty, Int16 fiscalYear)
+		{
+			var allLinks = db.Indicator_Links.Where(x => x.Indicator_Link_Indicators.Any(y => y.Indicator_ID == indicatorID)).ToList();
+
+			var updatePropertyAbbr = FiscalYear.FYStrReverse(updateProperty, (int)fiscalYear);
+			foreach (var link in allLinks)
+			{
+				if (link.Indicator_Link_Fields.Any(x=>x.Link_Field.Link_Fields_Properties.Select(y => y.Link_Field_Property).Contains(updatePropertyAbbr)))
+				{
+					foreach (var link_indicator in link.Indicator_Link_Indicators.Where(x=>x.Indicator_ID != indicatorID))
+					{
+						var indicator = link_indicator.Indicator;
+						//var indicator = db.Indicators.FirstOrDefault(x => x.Indicator_ID == link.Indicator_ID_2);
+						var type = indicator.GetType();
+						var property = type.GetProperty(updateProperty);
+						property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
+						db.Entry(indicator).State = EntityState.Modified;
+						db.SaveChanges();
+					}
+				}
+			}
+		}
+
         [HttpPost]
 		public JsonResult setValueOld(Int16 indicatorID, string updateProperty, string updateValue, string updateValueSup, Int16 fiscalYear, bool? convertToFull)
         {
@@ -2652,6 +2872,8 @@ namespace IndInv.Controllers
             var type = indicator.GetType();
             var property = type.GetProperty(updateProperty);
 			property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
+
+			updateLinks(indicator.Indicator_ID, updateValue, updateProperty, fiscalYear);
 
             if (updateProperty != "Indicator")
             {
@@ -2951,6 +3173,8 @@ namespace IndInv.Controllers
                       : "",
                 Indicator = x.Indicator,
 				Indicator_Type = x.Indicator_Type,
+				Identifier = x.Identifier,
+				Area = x.Area.Area,
 				//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
 				Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z=>z.Footnote.Footnote_Symbol).ToList()),
                 FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
@@ -3022,6 +3246,8 @@ namespace IndInv.Controllers
 						  : "",
 					Indicator = x.Indicator,
 					Indicator_Type = x.Indicator_Type,
+					Identifier = x.Identifier,
+					Area = x.Area.Area,
 					//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
 					Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z => z.Footnote.Footnote_Symbol).ToList()),
 					FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
@@ -3094,6 +3320,8 @@ namespace IndInv.Controllers
 					  : "",
 				Indicator = x.Indicator,
 				Indicator_Type = x.Indicator_Type,
+				Identifier = x.Identifier,
+				Area = x.Area.Area,
 				FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
 				FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
 				FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),

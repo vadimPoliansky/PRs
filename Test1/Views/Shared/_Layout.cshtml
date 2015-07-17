@@ -5,13 +5,13 @@
 <!--[if gt IE 8]><!--><html xmlns="http://www.w3.org/1999/xhtml"><!--<![endif]-->
 <head>
 <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta http-equiv="X-UA-Compatible" content="IE=10; IE=9; IE=8; IE=7; IE=EDGE" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
 <!--link rel="stylesheet" href="//cdn.foundation5.zurb.com/foundation.css" /-->
 	<link href="~/Content/foundation.min.css" rel="stylesheet" />
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link href="~/Scripts/mlpushmenu.css" rel="stylesheet" />
-<script src="../../Scripts/vendor/modernizr.js"></script>
+<script src="~/Scripts/vendor/modernizr.js"></script>
 <script type="text/javascript" src="~/Scripts/modernizr.custom.js"></script>
 <title>Indicator Inventory</title>
 
@@ -75,12 +75,12 @@
 
     <!--[if !IE 8]><!-->
         <script src="http://cdn.foundation5.zurb.com/foundation.js"></script>
-        <script>window.Foundation || document.write('<script src="../../Scripts/foundation.min.js"><\/script>')</script>
+        <script>window.Foundation || document.write('<script src="~/Scripts/foundation.min.js"><\/script>')</script>
     <!--<![endif]-->
-    <link rel="stylesheet" href="../../Scripts/jquery.multilevelpushmenu.css" />
-    <script type="text/javascript" src="../../Scripts/jquery.multilevelpushmenu.js"></script>
+    <link rel="stylesheet" href="~/Scripts/jquery.multilevelpushmenu.css" />
+    <script type="text/javascript" src="~/Scripts/jquery.multilevelpushmenu.js"></script>
     <link href="~/Scripts/jquery.contextMenu.css" rel="stylesheet" />
-    <script type="text/javascript" src="../../Scripts/jquery.contextMenu.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.contextMenu.js"></script>
     <script>
         if( !$("html").hasClass("lt-ie9") ) {
             $(document).foundation();

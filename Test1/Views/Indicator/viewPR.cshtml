@@ -14,6 +14,7 @@
     }
     ViewBag.Buttons += "<div id='btn' class='btnSwitch' value=" + 0 + " parameter=analystID >" + "All" + "</div>";
     ViewBag.fiscalYear = Model.Fiscal_Year;
+	var fiscalYear = Model.Fiscal_Year;
 	var html = "";
 	var htmlDef = "";
 	var htmlExist = "";
@@ -23,10 +24,11 @@
         <div class="large-6 columns">
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
-			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>FY</div>
+			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear)</div>
         </div>
         <div class="large-6 columns">
-			@if(Roles.IsUserInRole("Consultant")){
+			@if (Roles.IsUserInRole("Consultant"))
+			{
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
@@ -58,7 +60,6 @@
 						<ul id=""class="list">
 							<div class="block" id="block">
 								@{var properties = ModelMetadataProviders.Current;
-		  var fiscalYear = Model.Fiscal_Year;
 		  var allFields = new List<string>();
 		  var allFieldClasses = new List<string>();
 								}
@@ -84,6 +85,7 @@
 										<table id="tbl_@coe.CoE_Abbr.Replace(" ", "_").Replace("&", "_")" class="PR" border="1" runat="server" >
 											<thead>
 											<tr class="prheader-1">
+												<th rowspan="2" class="col-uid prheader prheader-1 unique-id-col">#</th>
 												<th rowspan="2" class="col-uid prheader prheader-1 unique-id-col">#</th>
 												<th rowspan="2" class="col-id prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Number) </th>
 												<th rowspan="2" class="col-title prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </th>
@@ -137,7 +139,7 @@
 			   
 				 string[,] oldColumns = null;
 				 List<int> allColspans = new List<int>();
-				 var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
+				 var allMaps = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE != null && d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number).ToList();
 				 var allNValues = Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear && x.Indicator.Indicator_N_Value == true).ToList();
 				 var allMapsWithNValues = new List<Indicator_CoE_Maps>();
 				 foreach (var nValue in allNValues)
@@ -192,6 +194,9 @@
 														
 														<td rowspan="@rowSpan" class="col-uid prtd-uid unique-id-col" mapID="@map.Map_ID" >
 															@map.Indicator_ID
+														</td>
+			   											<td rowspan="@rowSpan" class="col-uid prtd-uid unique-id-col" mapID="@map.Map_ID" >
+															@map.Indicator.Identifier
 														</td>
 			   
 														<td rowspan="@rowSpan" class="col-id prtd-id" mapID="@map.Map_ID" >                
@@ -360,8 +365,8 @@
 									 }
 								 }
 																<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
-                                                                    <input class="pr-input pr-input-val" value="@Html.Raw(tdValue)" oldvalue="@Html.Raw(tdValue)"/>
-                                                                    <input class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
+                                                                    <input spellcheck="true" class="pr-input pr-input-val" value="@Html.Raw(tdValue)" oldvalue="@Html.Raw(tdValue)"/>
+                                                                    <input spellcheck="true" class="pr-input pr-input-sup" value="@Html.Raw(columns[i, 1])" oldvalue="@Html.Raw(columns[i, 1])"/>
                                                                     <div class="tdValue">@Html.Raw(tdValue) <sup>@Html.Raw(columns[i, 1])</sup></div>
 																</td>
 							 }
@@ -374,8 +379,8 @@
 							 if (columns[i, 4] != "0")
 							 {
 																<td align="center", style="display:none" indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="1", rowspan="@Html.Raw(columns[i, 4])", class="col-td prtd @Html.Raw(cls)">
-                                                                    <input class="pr-input pr-input-val" value="" oldvalue=""/>
-                                                                    <input class="pr-input pr-input-sup" value="" oldvalue=""/>
+                                                                    <input spellcheck="true" class="pr-input pr-input-val" value="" oldvalue=""/>
+                                                                    <input spellcheck="true" class="pr-input pr-input-sup" value="" oldvalue=""/>
                                                                     <div class="tdValue"></div>
 																</td>
 							 }
@@ -474,7 +479,7 @@
 													</td>
 												</tr>
 				 string[,] oldColumns = null;
-				 foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
+				 foreach (var map in Model.allMaps.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator.Area.Equals(area_map.Area)).Where(d => d.CoE.CoE != null && d.CoE.CoE.Contains(coe.CoE)).OrderBy(f => f.Number))
 				 {
 					 var indicatorTitle = map.Indicator.Indicator ?? ""; int? number = numCount; var skip = false;
 					 /*if (map.Indicator.Indicator != null && map.Indicator.Indicator.Contains("%SKIP%") == false)
@@ -553,7 +558,7 @@
 						var tdClass = columns[i, 2];
 						if (skip) { tdClass = oldColumns[i, 2]; };
 															    <td align="center", indicatorID="@map.Indicator_ID", field="@Html.Raw(columns[i, 3])", colspan="@colSpan", class="prtd @Html.Raw(tdClass)">
-                                                                    <textarea class="pr-input pr-input-def" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])">@Html.Raw(columns[i, 0])</textarea>
+                                                                    <textarea spellcheck="true" class="pr-input pr-input-def" value="@Html.Raw(columns[i, 0])" oldvalue="@Html.Raw(columns[i, 0])">@Html.Raw(columns[i, 0])</textarea>
                                                                     <div class="tdValue">@Html.Raw(columns[i, 0])</div>
                                                                 </td>
 					}
@@ -582,8 +587,8 @@
 
 <script type="text/javascript" src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js" ></script>
 <script src="~/Scripts/jquery.columnizer.js"></script>
-<script src="../../Scripts/jquery.handsontable.full.js"></script>
-<link rel="stylesheet" media="screen" href="../../Scripts/jquery.handsontable.full.css" />
+<script src="~/Scripts/jquery.handsontable.full.js"></script>
+<link rel="stylesheet" media="screen" href="~/Scripts/jquery.handsontable.full.css" />
 
 <script src="~/Scripts/CKEditor/ckeditor.js"></script>
 
@@ -598,7 +603,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
 
 <script type="text/javascript">
-    if (!window.jQuery) document.write('<script type="text/javascript" src="../../Scripts/jquery-1.11.0.min.js"><\/script>');
+    if (!window.jQuery) document.write('<script type="text/javascript" src="~/Scripts/jquery-1.11.0.min.js"><\/script>');
 </script>
 
 <script type="text/javascript">
@@ -1320,7 +1325,24 @@
         }
         $(document).on('dblclick','table td.prtd', function (e) {
             if (!$(e.target).hasClass('pr-input')){
-                updateVal($(this));
+            	var field = $(e.target).attr('field');
+            	if (field == null){
+            		field =$(e.target).parent().attr('field');
+            	}
+            	@if (Roles.IsUserInRole("Analyst")){ 
+				<text>
+            	if (field != "@Html.Raw(FiscalYear.FYStrFull("FY_",fiscalYear)+"Target")" 
+            			//&& field != "@Html.Raw(FiscalYear.FYStrFull("FY_",fiscalYear)+"Comparator")"
+						&& field != "@Html.Raw(FiscalYear.FYStrFull("FY_",fiscalYear)+"Performance_Threshold")"
+					) {
+            			updateVal($(this));
+            		}
+				</text>
+				} else {
+				<text>
+            		updateVal($(this));
+				</text>
+				}
             }
         });
         function updateVal(element, sup) {
@@ -1592,7 +1614,11 @@
     			$.get('getValue', { indicatorID: indicatorID.value, field: field.value, fiscalYear: @Model.Fiscal_Year}, function (data) {
     				var value = data.Value || "";
     				var value2 = data.Value_Sup || "";
-    				updateValOLD(currentEle, value, value2, indicatorID.value, field.value);
+
+					@if (Roles.IsUserInRole("Analyst")){ 
+					} else {
+						@:updateValOLD(currentEle, value, value2, indicatorID.value, field.value);
+					}
     			});
     		}
 
@@ -1749,7 +1775,7 @@
         		//$('#edit-objective-panel').drags();
         	});
         });
-
+		@if (Roles.IsUserInRole("Consultant")){ <text>
         $(".prarea").dblclick(function (e) {
         	//var mapID = e.target.attributes.getNamedItem('mapID');
         	var mapID = $(e.target).closest('.prarea').attr('mapID');
@@ -1839,6 +1865,8 @@
         		}
         	});
         });
+		</text>
+		}
         function updateObjVal(currentEle, mapID, value) {
             $(currentEle).html('<textarea id="newEdit" mapID ="' + mapID + 
                                     '" value="' + value + 
@@ -1990,7 +2018,8 @@
             });
         }
 
-@if(Roles.IsUserInRole("Consultant")){
+@if (Roles.IsUserInRole("Consultant"))
+{
 <text>
         $('#the-node').contextMenu({
         	selector: 'td:not(:has(input:visible)):not(:has(textarea:visible))', 
@@ -2002,7 +2031,7 @@
         				},
 
         				items: {
-        					"viewUID": {name: "Show/Hide Unique ID",
+        					"viewUID": {name: "Toggle Unique ID",
         						callback: function(key, options){
         							var uidCol = $('.col-uid');
         							var colWidth = parseInt(uidCol.css('width'));
@@ -2017,7 +2046,7 @@
         						}
         					},
 
-        					"viewComments": {name: "Show/Hide Comments",
+        					"viewComments": {name: "Toggle Comments",
         						callback: function(key, options){
         							var commentCol = $('.col-comment');
         							var colWidth = parseInt(commentCol.css('width'));
@@ -2717,7 +2746,14 @@
         		contentType: 'application/json; charset=utf-8',
         		success: function (data) {
         			$.each(data, function(index,value){
-        				$('table td[indicatorid="' + value.Indicator_ID + '"][field="' + value.Field + '"]').addClass('spellCheckFail');
+        				var tdCell = $('table td[indicatorid="' + value.Indicator_ID + '"][field="' + value.Field + '"]');
+        				tdCell.addClass('spellCheckFail');
+        				var tdValue = tdCell.children('.tdValue');
+        				if (tdValue.length > 0){
+        					tdValue.html(value.Value);
+        				} else {
+        					tdCell.html(value.Value);
+        				}
         			});
         		},
         		error: function (request){
@@ -2738,6 +2774,11 @@
     	$(document).on('click', '.menu-edit-dictionary', function(e){
     		e.preventDefault();
     		window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
+
+    	$(document).on('click', '.menu-edit-indictorlinks', function(e){
+    		e.preventDefault();
+    		window.open("editIndicatorLinks", "popupWindow", "width=900,height=1000,scrollbars=yes");
 		});
 
 
@@ -2790,9 +2831,9 @@
             var id = $(this).attr('id');
             if (id !== null){
             	if (field === "CoE"){
-            		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            		window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Fiscal_Year"){
             		currAddress = window.location.href
             		currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
@@ -2801,9 +2842,9 @@
             	}
             } else {
             	if (field === "CoE"){
-            		window.location.href = "/indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
+            		window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
             	} else if (field === "Analyst"){
-            		window.location.href = "/indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
+            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
             	}
             }
         });
@@ -3365,9 +3406,11 @@
 		background-color:lightgray !important;
 		text-align:inherit;
         float:left;
+		margin:0 !important;
 	}
     .pr-input-def {
         width:100% !important;
+		margin:0 !important;
     }
 
 	textarea {
@@ -3960,7 +4003,10 @@
 	}
 
 	.spellCheckFail {
-		background-color:red;
+		background-color:#EEDADA;
+	}
+	.misspell {
+		background: url(../Images/underline.gif) bottom repeat-x;
 	}
 
 	.prtd-nosup > .pr-input-sup {
