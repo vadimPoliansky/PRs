@@ -33,6 +33,7 @@
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
 			}
+			<div class="menu-hover menu-button menu-button-left menu-edit-indicatorlinks"><i class="fa fa-pencil-square-o"></i>Edit Links</div>
         </div>
     </div>	
 </div>
@@ -2776,9 +2777,9 @@
     		window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
 		});
 
-    	$(document).on('click', '.menu-edit-indictorlinks', function(e){
+    	$(document).on('click', '.menu-edit-indicatorlinks', function(e){
     		e.preventDefault();
-    		window.open("editIndicatorLinks", "popupWindow", "width=900,height=1000,scrollbars=yes");
+    		window.open("editIndicator_Links", "popupWindow", "scrollbars=yes");
 		});
 
 

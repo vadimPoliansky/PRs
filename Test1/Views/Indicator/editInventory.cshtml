@@ -1359,6 +1359,17 @@
             window.open("editCoEs", "popupWindow", "width=900,height=1000,scrollbars=yes");
         });
 
+        $(document).on('click', '.menu-edit-dictionary', function(e){
+        	e.preventDefault();
+        	window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		    	});
+
+		$(document).on('click', '.menu-edit-indicatorlinks', function(e){
+			e.preventDefault();
+			window.open("editIndicator_Links", "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
+
+
         $(document).on('click', '.menu-open', function(e){
         	var field = $(this).attr('field');
         	if (field != "Fiscal_Year") { notFiscalYear = true;} else {notFiscalYear = false;}
