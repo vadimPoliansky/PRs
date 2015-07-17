@@ -1,4 +1,4 @@
-﻿@model List<IndInv.Models.Indicator_Links>
+﻿@model IndInv.Models.ViewModels.Edit_Indicator_LinksViewModel
 
 @{
     ViewBag.Title = "viewIndicator_Links";
@@ -17,12 +17,15 @@
 				Fields
 			</th>
 			<th>
-				Delete
+				View Indicators
+			</th>
+			<th>
+				Remove Linkage
 			</th>
 		</tr>
 	</thead>
 	<tbody>
-@foreach (var link in Model)
+@foreach (var link in Model.allIndicator_Links)
 {
 	<tr class="indicator-link">
 		<td class="indicator-link-container">
@@ -32,7 +35,10 @@
 			@foreach (var indicator in link.Indicator_Link_Indicators)
 			{
 				<div class="indicator-link-indicator">
-					@indicator.Indicator_ID - @indicator.Indicator.Indicator
+					@(indicator.Indicator.Indicator_ID 
+			+ ( indicator.Indicator.Indicator_CoE_Map.Count > 0 ? " - " + indicator.Indicator.Indicator_CoE_Map.FirstOrDefault().CoE.CoE_Abbr : " ")
+			+ " - " + indicator.Indicator.Indicator
+		)
 				</div>
 			}
 		</td>
@@ -44,8 +50,11 @@
 				</div>
 			}
 		</td>
+		<td class="indicator-link-view-container">
+			<button class="view-link" linkid="@link.Link_ID">View Indicators</button>
+		</td>
 		<td class="indicator-link-delete-container">
-			<button class="delete-link" linkid="@link.Link_ID">Delete</button>
+			<button class="delete-link" linkid="@link.Link_ID">Remove Linkage</button>
 		</td>
 	</tr>
 }
@@ -69,6 +78,12 @@
 		$.post('deleteIndicatorLink', { linkID: linkID }, function (result) {
 			tr.remove();
 		});
+	});
+
+	$('.view-link').on('click', function (e) {
+		var linkID = $(this).attr('linkid');
+		w = window.open("editInventory?fiscalYear=" + @Model.Fiscal_Year + "&Link_ID=" + linkID, '', '');
+		//opener.location.href = "editInventory?fiscalYear=" + @Model.Fiscal_Year + "&Link_ID=" + linkID;
 	});
 
 	$('#back-btn').on('click', function (e) {

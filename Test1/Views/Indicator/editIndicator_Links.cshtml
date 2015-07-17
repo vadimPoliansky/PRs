@@ -12,7 +12,7 @@
 @foreach (var indicator in Model.allIndicators)
  {
 	<text>
-		<li class="indicator-list-item" indicatorid="@indicator.Indicator_ID">@Html.Raw(indicator.Indicator_ID 
+		<li class="indicator-list-item" indicatorid="@indicator.Indicator_ID">@(indicator.Indicator_ID 
 			+ ( indicator.Indicator_CoE_Map.Count > 0 ? " - " + indicator.Indicator_CoE_Map.FirstOrDefault().CoE.CoE_Abbr : " ")
 			+ " - " + indicator.Indicator
 		)</li>
@@ -25,7 +25,10 @@
 </ul>
 	<div class="field-item-container">
 	@foreach(var linkField in Model.allFields){
+		if(linkField.Link_Field_ID == 2 && Roles.IsUserInRole("Analyst")){
+		}else {
 		@:<div class="field-item"><input type="checkbox" class="field-item-check" name="Link_Field" value="@linkField.Link_Field_ID" />@linkField.Link_Field</div>
+		}
 	}
 	</div>
 </div>
@@ -112,7 +115,7 @@
 
 		$(document).on('click', '#view-links', function (e) {
 			e.preventDefault();
-			window.open("viewIndicator_Links", "popupWindow", "scrollbars=yes");
+			window.open("viewIndicator_Links?fiscalYear=" + @Model.Fiscal_Year, "popupWindow", "scrollbars=yes");
 		});
 	});
 </script>
@@ -124,6 +127,14 @@
 		text-align:center;
 	}
 
+	.indicator-list-item.ui-sortable-handle {
+    font-size: 0.8em;
+    margin: 5px;
+}
+
+	.sample-item {
+		font-style:oblique;
+	}
 	#submit-links{
 		float:right;
 	}
@@ -141,10 +152,12 @@
 	}
 
 	.indicator-list, .field-item-container {
-		width:32%;
+		width:30%;
 		float:left;
 		height: 80%;
 		overflow: scroll;
+		border: 1px solid #dadada;
+		margin-left: 1.1rem;
 	}
 	.field-item-container {
 		overflow:visible;
@@ -156,11 +169,14 @@
 	.field-item {
 		font-size:0.5em;
 		width:100%;
+		    margin: 14px;
+    width: 90%;
 	}
 
 	.search-filtered {
 		height:0;
 		color: white;
+		margin: 0 !important;
 	}
 
 	.container {

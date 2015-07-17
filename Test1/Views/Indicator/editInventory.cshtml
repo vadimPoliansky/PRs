@@ -47,6 +47,8 @@
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
 			}
+			<div class="menu-hover menu-button menu-button-left menu-edit-indicatorlinks"><i class="fa fa-pencil-square-o"></i>Edit Links</div>
+			
         </div>
     </div>	
 </div>
@@ -240,11 +242,12 @@
 		$window.on('resize', calculateSize);
 		//setInterval(calculateSize, 5000)
 
+		var values  =[];
 
-		var values = @Html.Raw(Json.Encode(Model));
 
 	    var filterListChose = {
 	    	Indicator_ID: ['Indicator_ID'],
+			Link_ID: ['Link_ID'],
 	    	Identifier: ['Identifier'],
 			Area: ['Area'],
 	    	Indicator_Type: ['Indicator_Type'],
@@ -256,6 +259,7 @@
 		}
 	    var filterListFull = {
 	    	Indicator_ID: [],
+	    	Link_ID: [],
 	    	Identifier: [],
 			Area: [],
 	    	Indicator_Type: [],
@@ -342,6 +346,16 @@
         	elTH.removeClass('filtered')
         	doFilter();
         };
+
+
+        var refreshView = function(){
+        	$.get('editInventory',{AnalystID: "@Model.FirstOrDefault().Analyst_ID", fiscalYear: @Model.FirstOrDefault().Fiscal_Year, Link_ID: @Model.FirstOrDefault().Link_ID },function(result){
+						values = result;
+						$IndInv.handsontable('loadData', values);
+						doFilter();
+					});
+				}
+		refreshView();
 
         var colHeadersOrg = [
             "<div class='column-letter'>A</div><br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
@@ -867,7 +881,7 @@
 		        top:   currentMousePos.y
 		    });
 
-		    $('#filter-panel-header').drags();
+		    //$('#filter-panel-header').drags();
 
 		    addFilterItem = function(ele, force){
 		    	var filterItem = $(ele).children()[0].innerHTML;
@@ -1339,7 +1353,7 @@
         };
 
         $(document).on('click', '.menu-refresh', function(e){
-        	location.reload();
+        	refreshView();
         });
 
         $(document).on('click', '.menu-undo', function(e){
@@ -1366,7 +1380,56 @@
 
 		$(document).on('click', '.menu-edit-indicatorlinks', function(e){
 			e.preventDefault();
-			window.open("editIndicator_Links", "popupWindow", "width=900,height=1000,scrollbars=yes");
+			window.open("editIndicator_Links?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
+
+		$(document).on('click', '.menu-export', function(e){
+			$.ajax({
+				url: 'inventoryToExcel',
+				type: 'POST',
+				data: JSON.stringify({indicatorList: $IndInv.handsontable("getData"), fiscalYear: @Model.FirstOrDefault().Fiscal_Year}),
+		        contentType: 'application/json; charset=utf-8',
+		        success: function(response, status, xhr) {
+		        	// check for a filename
+		        	console.log("a");
+		        	var filename = "";
+		        	var disposition = xhr.getResponseHeader('Content-Disposition');
+		        	if (disposition && disposition.indexOf('attachment') !== -1) {
+		        		var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+		        		var matches = filenameRegex.exec(disposition);
+		        		if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+		        	}
+
+		        	var type = xhr.getResponseHeader('Content-Type');
+		        	var blob = new Blob([response], { type: type });
+
+		        	if (typeof window.navigator.msSaveBlob !== 'undefined') {
+		        		// IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+		        		window.navigator.msSaveBlob(blob, filename);
+		        	} else {
+		        		var URL = window.URL || window.webkitURL;
+		        		var downloadUrl = URL.createObjectURL(blob);
+
+		        		if (filename) {
+		        			// use HTML5 a[download] attribute to specify filename
+		        			var a = document.createElement("a");
+		        			// safari doesn't support this yet
+		        			if (typeof a.download === 'undefined') {
+		        				window.location = downloadUrl;
+		        			} else {
+		        				a.href = downloadUrl;
+		        				a.download = filename;
+		        				document.body.appendChild(a);
+		        				a.click();
+		        			}
+		        		} else {
+		        			window.location = downloadUrl;
+		        		}
+
+		        		setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+		        	}
+		        }
+		    });
 		});
 
 

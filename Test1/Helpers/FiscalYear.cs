@@ -60,7 +60,7 @@ namespace IndInv.Helpers
 
 		public static string FYStrReverse(string fyStr, int fiscalYear)
 		{
-			return fyStr.Replace(FYStr(fiscalYear, 0), "FY_").Replace("__","_");
+			return fyStr.Replace(FYStr(fiscalYear, 0), "FY_").Replace("__","_").Replace("_Sup","");
 		}
 
         public static string FYStrFullFormated(string fyStr, int fiscalYear)

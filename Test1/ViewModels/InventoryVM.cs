@@ -66,6 +66,8 @@ namespace IndInv.Models.ViewModels
         public string FY_YTD_Color { get; set; }
 
         public int Fiscal_Year { get; set; }
+		public int Analyst_ID { get; set; }
+		public int Link_ID { get; set; }
 
         public List<Analysts> allAnalysts { get; set; }
 		public List<Color_Directions> allDirections { get; set; }

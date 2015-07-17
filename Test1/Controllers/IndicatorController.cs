@@ -1684,22 +1684,29 @@ namespace IndInv.Controllers
 			return Json(new {objectiveString = objectiveString}, JsonRequestBehavior.AllowGet);
 		}
 
-		public ActionResult editIndicator_Links()
+		public ActionResult editIndicator_Links(Int16 fiscalYear)
 		{
 			var viewModel = new Edit_Indicator_LinksViewModel()
 			{
 				allIndicator_Links = db.Indicator_Links.ToList(),
 				allIndicators = db.Indicators.OrderBy(x=>x.Indicator).Where(x=>x.Indicator != "").ToList(),
-				allFields = db.Link_Fields.ToList()
+				allFields = db.Link_Fields.ToList(),
+				Fiscal_Year = fiscalYear
 			};
 
 			return View(viewModel);
 		}
 
 
-		public ActionResult viewIndicator_Links()
+		public ActionResult viewIndicator_Links(Int16 fiscalYear)
 		{
-			var viewModel = db.Indicator_Links.ToList();
+			var viewModel = new Edit_Indicator_LinksViewModel()
+			{
+				allIndicator_Links = db.Indicator_Links.ToList(),
+				allIndicators = db.Indicators.OrderBy(x => x.Indicator).Where(x => x.Indicator != "").ToList(),
+				allFields = db.Link_Fields.ToList(),
+				Fiscal_Year = fiscalYear
+			};
 
 			return View(viewModel);
 		}
@@ -2044,7 +2051,7 @@ namespace IndInv.Controllers
             {
                 if (ModelState.IsValid)
                 {
-					CoEChange[0].CoE_Abbr = "";
+					// CoEChange[0].CoE_Abbr = "";
                     db.Entry(CoEChange[0]).State = EntityState.Modified;
                     db.SaveChanges();
 					return new EmptyResult();
@@ -3058,6 +3065,7 @@ namespace IndInv.Controllers
             };
             return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
+
         [HttpPost]
         public ActionResult changeThreshold(Int16 indicatorID, Int16 thresholdID, Int16 fiscalYear)
         {
@@ -3136,14 +3144,128 @@ namespace IndInv.Controllers
             return Json(viewModel, JsonRequestBehavior.AllowGet);
         }
 
+		[HttpPost]
+		public ActionResult inventoryToExcel (List<InventoryViewModel> indicatorList, int fiscalYear){
+			var wb = new XLWorkbook();
+			var wsName = "output";
+			var ws = wb.Worksheets.Add(wsName);
+
+			var columnHeaders = new string[,]{
+                            {"Number",""},
+                            {"Indicator",""},
+                            {FiscalYear.FYStrFull("FY_3", fiscalYear), ""},
+                            {FiscalYear.FYStrFull("FY_2", fiscalYear),""},
+                            {FiscalYear.FYStrFull("FY_1", fiscalYear),""},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q1"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q2"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q3"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q4"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear),"YTD"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Target",""},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold",""},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator",""}
+                        };
+
+			var startRow = 2;
+			var currentRow = startRow;
+			foreach (var indicator in indicatorList)
+			{
+				string[,] columnIndicators = new string[,]{
+					{indicator.Indicator_ID.ToString(), ""
+					},
+					{indicator.Identifier, ""
+					},
+					{indicator.CoE, ""
+					},
+					{indicator.Indicator, indicator.Footnote
+					},
+					{indicator.Area, ""
+					},
+					{indicator.Indicator_Type, ""
+					},
+					{indicator.FY_3, indicator.FY_3_Sup
+					},
+					{indicator.FY_2, indicator.FY_2_Sup
+					},
+					{indicator.FY_1, indicator.FY_1_Sup
+					},
+					{indicator.FY_Q1, indicator.FY_Q1_Sup
+					},
+					{indicator.FY_Q2, indicator.FY_Q2_Sup
+					},
+					{indicator.FY_Q3, indicator.FY_Q3_Sup
+					},
+					{indicator.FY_Q4, indicator.FY_Q4_Sup
+					},
+					{indicator.FY_YTD, indicator.FY_YTD
+					},
+					{indicator.FY_Target, indicator.FY_Target_Sup
+					},
+					{indicator.FY_Comparator, indicator.FY_Comparator_Sup
+					},
+					{indicator.FY_Performance_Threshold, indicator.FY_Performance_Threshold_Sup
+					},
+					{indicator.FY_Definition_Calculation, ""
+					},
+					{indicator.FY_Target_Rationale, ""
+					},
+					{indicator.FY_Comparator_Source, ""
+					},
+				};
+
+				for (var i = 0; i <= columnIndicators.GetUpperBound(0); i++){
+					var cell = ws.Cell(currentRow, 1 + i);
+					var cellValue = columnIndicators[i,0];
+					var cellValueSup = columnIndicators[i,1];
+
+					cell.Value = "'" + cellValue;
+                    if (columnIndicators[i, 1] != null)
+                    {
+                        cell.RichText.AddText(columnIndicators[i, 1]).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
+                    }
+				}
+
+				currentRow++;
+			}
+
+			MemoryStream preImage = new MemoryStream();
+			wb.SaveAs(preImage);
+
+			//Aspose.Cells.Workbook test = new Aspose.Cells.Workbook(preImage);
+			//test.Save(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.pdf"), Aspose.Cells.SaveFormat.Pdf);
+
+			MemoryStream postImage = new MemoryStream();
+			SLDocument postImageWb = new SLDocument(preImage);
+
+			// Prepare the response
+			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
+			httpResponse.Clear();
+			httpResponse.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.xlsx\"");
+			//httpResponse.ContentType = "application/pdf";
+			//httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
+
+			// Flush the workbook to the Response.OutputStream
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				postImageWb.SaveAs(memoryStream);
+				memoryStream.WriteTo(httpResponse.OutputStream);
+				memoryStream.Close();
+			}
+
+			httpResponse.End();
+
+			return View();
+		}
+
         [HttpGet]
-        public ActionResult editInventory(String indicatorID, Int16? analystID, int fiscalYear)
+        public ActionResult editInventory(String indicatorID, Int16? analystID, int fiscalYear, Int16? Link_ID)
         {
             //}
             //var viewModelItems = db.Indicators.Where(x => x.Area_ID.Equals(1)).Where(y => y.Indicator_CoE_Map.Any(x => x.CoE_ID.Equals(10) || x.CoE_ID.Equals(27) || x.CoE_ID.Equals(30) || x.CoE_ID.Equals(40) || x.CoE_ID.Equals(50))).ToArray();
-
+			var allLinks = db.Indicator_Links.ToList();
             var viewModelItems = new List<Indicators>();
-            if (analystID.HasValue)
+            if (analystID.HasValue && analystID.Value > 0)
             {
                 //viewModelItems = db.Indicators.Where(x => x.Analyst_ID == analystID).ToList();
                 var analystName = db.Analysts.FirstOrDefault(x=>x.Analyst_ID == analystID).First_Name;
@@ -3162,6 +3284,10 @@ namespace IndInv.Controllers
             {
                 viewModelItems = viewModelItems.Where(x => x.Indicator_ID == Int16.Parse(indicatorID)).ToList();
             }
+			if (Link_ID.HasValue && Link_ID > 0)
+			{
+				viewModelItems = db.Indicator_Links.FirstOrDefault(x => x.Link_ID == Link_ID).Indicator_Link_Indicators.Select(x => x.Indicator).ToList();
+			}
 			var allFootnotes = db.Indicator_Footnote_Maps.ToList();
 
             var viewModel = viewModelItems.Where(x=>x.Indicator_N_Value != true).OrderBy(x => x.Indicator_ID).Select(x => new InventoryViewModel
@@ -3232,6 +3358,8 @@ namespace IndInv.Controllers
 				N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
 
                 Fiscal_Year = fiscalYear,
+				Analyst_ID = analystID.HasValue ? analystID.Value : 0,
+				Link_ID = Link_ID.HasValue ? Link_ID.Value : 0
 
             }).ToList();
 
@@ -3305,6 +3433,8 @@ namespace IndInv.Controllers
 					N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
 
 					Fiscal_Year = fiscalYear,
+					Analyst_ID = analystID.HasValue ? analystID.Value : 0,
+					Link_ID = Link_ID.HasValue ? Link_ID.Value : 0
 
 				}).ToList());
 			}
@@ -3379,6 +3509,8 @@ namespace IndInv.Controllers
 				N_Value_ID = x.Indicator_N_Value_ID == null ? "" : x.Indicator_N_Value_ID.ToString(),
 
 				Fiscal_Year = fiscalYear,
+				Analyst_ID = analystID.HasValue ? analystID.Value : 0,
+				Link_ID = Link_ID.HasValue ? Link_ID.Value : 0
 
 			}).ToList();
 
@@ -3436,7 +3568,7 @@ namespace IndInv.Controllers
             {
                 var property = indicator.GetType().GetProperty(updatePropertyFull);
                 property.SetValue(indicator, Convert.ChangeType(updateValue, property.PropertyType), null);
-
+				updateLinks(indicator.Indicator_ID, updateValue, updatePropertyFull, (Int16)fiscalYear);
                 if (ModelState.IsValid)
                 {
                     db.Entry(indicator).State = EntityState.Modified;
