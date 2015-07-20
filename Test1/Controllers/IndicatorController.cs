@@ -103,7 +103,7 @@ namespace IndInv.Controllers
                 string[] searchStrings;
                 searchStrings = searchString.Split(' ');
                 foreach (var sS in searchStrings)
-                {
+				{
                     indicatorList = indicatorList.Where(s => s.Indicator != null && s.Indicator.ToLower().Contains(sS.ToLower())).ToList();
                 }
             }
@@ -424,6 +424,22 @@ namespace IndInv.Controllers
 
         }
 
+		public static class ExcelGlobalVariables
+		{
+			public static ClosedXML.Excel.XLColor prBlue { get { return XLColor.FromArgb(0, 51, 102); } }
+			public static ClosedXML.Excel.XLColor prGreen { get { return XLColor.FromArgb(0, 118, 53); } }
+			public static ClosedXML.Excel.XLColor prYellow { get { return XLColor.FromArgb(255, 192, 0); } }
+			public static ClosedXML.Excel.XLColor prRed { get { return XLColor.FromArgb(255, 0, 0); } }
+			public static ClosedXML.Excel.XLColor prHeader1Fill { get { return prBlue; } }
+			public static ClosedXML.Excel.XLColor prHeader1Font { get { return XLColor.White; } }
+			public static ClosedXML.Excel.XLColor prHeader2Fill { get { return XLColor.White; } }
+			public static ClosedXML.Excel.XLColor prHeader2Font { get { return XLColor.White; } }
+
+			public static ClosedXML.Excel.XLColor prBorder { get { return XLColor.FromArgb(0, 0, 0); } }
+			public static ClosedXML.Excel.XLColor prAreaFill { get { return XLColor.FromArgb(192, 192, 192); } }
+			public static ClosedXML.Excel.XLColor prAreaFont { get { return XLColor.Black; } }
+		}
+
         public ActionResult viewPRExcel(Int16 fiscalYear, Int16? coeID)
         {
             ModelState.Clear();
@@ -438,17 +454,17 @@ namespace IndInv.Controllers
             // Create the workbook
             var wb = new XLWorkbook();
 
-            var prBlue = XLColor.FromArgb(0, 51, 102);
-            var prGreen = XLColor.FromArgb(0, 118, 53);
-            var prYellow = XLColor.FromArgb(255, 192, 0);
-            var prRed = XLColor.FromArgb(255, 0, 0);
-            var prHeader1Fill = prBlue;
-            var prHeader1Font = XLColor.White;
-            var prHeader2Fill = XLColor.White;
-            var prHeader2Font = XLColor.Black;
-            var prBorder = XLColor.FromArgb(0, 0, 0);
-            var prAreaFill = XLColor.FromArgb(192, 192, 192);
-            var prAreaFont = XLColor.Black;
+			var prBlue = ExcelGlobalVariables.prBlue;// XLColor.FromArgb(0, 51, 102);
+			var prGreen = ExcelGlobalVariables.prGreen;//XLColor.FromArgb(0, 118, 53);
+			var prYellow = ExcelGlobalVariables.prYellow; //XLColor.FromArgb(255, 192, 0);
+			var prRed = ExcelGlobalVariables.prRed;// XLColor.FromArgb(255, 0, 0);
+			var prHeader1Fill = ExcelGlobalVariables.prHeader1Fill;//prBlue;
+			var prHeader1Font = ExcelGlobalVariables.prHeader1Font;//XLColor.White;
+			var prHeader2Fill = ExcelGlobalVariables.prHeader2Fill;//XLColor.White;
+			var prHeader2Font = ExcelGlobalVariables.prHeader2Font;//XLColor.Black;
+            var prBorder = ExcelGlobalVariables.prBorder;//XLColor.FromArgb(0, 0, 0);
+            var prAreaFill = ExcelGlobalVariables.prAreaFill;//XLColor.FromArgb(192, 192, 192);
+			var prAreaFont = ExcelGlobalVariables.prAreaFont;//XLColor.Black;
             var prBorderWidth = XLBorderStyleValues.Thin;
             var prFontSize = 10;
             var prTitleFont = 20;
@@ -474,9 +490,6 @@ namespace IndInv.Controllers
 
             var prFootnoteCharsNewLine = 125;
             var prObjectivesCharsNewLine = 226;
-
-            //DELETE THIS
-            //coeID = null;
 
             var allCoes = new List<CoEs>();
             if (coeID != 0 && coeID != null)
@@ -3145,71 +3158,137 @@ namespace IndInv.Controllers
         }
 
 		[HttpPost]
-		public ActionResult inventoryToExcel (List<InventoryViewModel> indicatorList, int fiscalYear){
+		public JsonResult inventoryToExcel(List<InventoryViewModel> indicatorList, int fiscalYear)
+		{
 			var wb = new XLWorkbook();
 			var wsName = "output";
 			var ws = wb.Worksheets.Add(wsName);
 
+			var allIndicators = db.Indicators.ToList();
+
 			var columnHeaders = new string[,]{
-                            {"Number",""},
-                            {"Indicator",""},
-                            {FiscalYear.FYStrFull("FY_3", fiscalYear), ""},
-                            {FiscalYear.FYStrFull("FY_2", fiscalYear),""},
-                            {FiscalYear.FYStrFull("FY_1", fiscalYear),""},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q1"},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q2"},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q3"},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear),"Q4"},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear),"YTD"},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Target",""},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold",""},
-                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator",""}
+                            {"Number"},
+                            {"Identifier"},
+							{"CoE"},
+							{"Indicator"},
+							{"Area"},
+							{"Type"},
+                            {FiscalYear.FYStrFull("FY_3", fiscalYear)},
+                            {FiscalYear.FYStrFull("FY_2", fiscalYear)},
+                            {FiscalYear.FYStrFull("FY_1", fiscalYear)},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Q1"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Q2"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Q3"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Q4"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "YTD"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Target"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold"},
+                            {FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator"},
+							{"Definition"},
+							{"Target Rationale"},
+							{"Comparator Source"}
                         };
 
-			var startRow = 2;
-			var currentRow = startRow;
-			foreach (var indicator in indicatorList)
+			var headerRow = 1;
+			var currentRow = headerRow;
+			for (var i = 0; i <= columnHeaders.GetUpperBound(0); i++)
 			{
+				var cell = ws.Cell(currentRow, 1 + i);
+				var cellValue = columnHeaders[i, 0];
+				cell.Value = "'" + cellValue;
+
+				cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+				cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+				cell.Style.Fill.BackgroundColor = ExcelGlobalVariables.prHeader1Fill;
+				cell.Style.Font.FontColor = ExcelGlobalVariables.prHeader1Font;
+			}
+
+			var startRow = 2;
+			currentRow = startRow;
+			foreach (var indicatorListItem in indicatorList)
+			{
+				var indicator = allIndicators.FirstOrDefault(x => x.Indicator_ID == indicatorListItem.Indicator_ID);
 				string[,] columnIndicators = new string[,]{
-					{indicator.Indicator_ID.ToString(), ""
+					{indicator.Indicator_ID.ToString(),
+						"",
+						"cssWhite"
 					},
-					{indicator.Identifier, ""
+					{indicator.Identifier,
+						"",
+						"cssWhite"
 					},
-					{indicator.CoE, ""
+					{indicator.Indicator_CoE_Map != null ?
+							(indicator.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? indicator.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : ""):
+							"",
+						"",
+						"cssWhite"
 					},
-					{indicator.Indicator, indicator.Footnote
+					{indicator.Indicator, 
+						string.Join(",", indicator.Indicator_Footnote_Map.Select(z=>z.Footnote.Footnote_Symbol).ToList()),
+						"cssWhite"
 					},
-					{indicator.Area, ""
+					{indicator.Area.Area, "",
+						"cssWhite"
 					},
-					{indicator.Indicator_Type, ""
+					{indicator.Indicator_Type, "",
+						"cssWhite"
 					},
-					{indicator.FY_3, indicator.FY_3_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_2, indicator.FY_2_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_1, indicator.FY_1_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 1) + "_YTD").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 1) + "_YTD_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_Q1, indicator.FY_Q1_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Sup").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q1_Color").GetValue(indicator, null)
 					},
-					{indicator.FY_Q2, indicator.FY_Q2_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Sup").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q2_Color").GetValue(indicator, null)
 					},
-					{indicator.FY_Q3, indicator.FY_Q3_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Sup").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q3_Color").GetValue(indicator, null)
 					},
-					{indicator.FY_Q4, indicator.FY_Q4_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Sup").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(indicator, null)
 					},
-					{indicator.FY_YTD, indicator.FY_YTD
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Sup").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(indicator, null)
 					},
-					{indicator.FY_Target, indicator.FY_Target_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_Comparator, indicator.FY_Comparator_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Performance_Threshold_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_Performance_Threshold, indicator.FY_Performance_Threshold_Sup
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator").GetValue(indicator, null),
+						(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Sup").GetValue(indicator, null),
+						"cssWhite"
 					},
-					{indicator.FY_Definition_Calculation, ""
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Definition_Calculation").GetValue(indicator, null),
+						"",
+						"cssWhite"
 					},
-					{indicator.FY_Target_Rationale, ""
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Target_Rationale").GetValue(indicator, null),
+						"",
+						"cssWhite"
 					},
-					{indicator.FY_Comparator_Source, ""
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comparator_Source").GetValue(indicator, null),
+						"",
+						"cssWhite"
 					},
 				};
 
@@ -3223,32 +3302,60 @@ namespace IndInv.Controllers
                     {
                         cell.RichText.AddText(columnIndicators[i, 1]).VerticalAlignment = XLFontVerticalTextAlignmentValues.Superscript;
                     }
+					switch (columnIndicators[i, 2])
+					{
+						case "cssWhite":
+							cell.RichText.SetFontColor(XLColor.Black);
+							cell.Style.Fill.BackgroundColor = XLColor.White;
+							break;
+						case "cssGreen":
+							cell.RichText.SetFontColor(XLColor.White);
+							cell.Style.Fill.BackgroundColor = ExcelGlobalVariables.prGreen;
+							break;
+						case "cssYellow":
+							cell.RichText.SetFontColor(XLColor.Black);
+							cell.Style.Fill.BackgroundColor = ExcelGlobalVariables.prYellow;
+							break;
+						case "cssRed":
+							cell.RichText.SetFontColor(XLColor.White);
+							cell.Style.Fill.BackgroundColor = ExcelGlobalVariables.prRed;
+							break;
+					}
+					cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 				}
 
 				currentRow++;
 			}
 
-			MemoryStream preImage = new MemoryStream();
-			wb.SaveAs(preImage);
+			ws.Columns().AdjustToContents();
 
-			//Aspose.Cells.Workbook test = new Aspose.Cells.Workbook(preImage);
-			//test.Save(this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.pdf"), Aspose.Cells.SaveFormat.Pdf);
+			var rand = new Random();
+			var fileName = "export" +  DateTime.Now.ToString("yyyymmddhhmmssffff") + rand.Next(1, 99).ToString() + ".xlsx";
+			var filePath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/" + fileName);
+			//var fileStream = System.IO.File.Create(filePath);
 
-			MemoryStream postImage = new MemoryStream();
-			SLDocument postImageWb = new SLDocument(preImage);
+			wb.SaveAs(filePath);
 
-			// Prepare the response
+			return Json(fileName, JsonRequestBehavior.AllowGet) ;
+		}
+
+		public ActionResult getFile(string fileName){
+			var filePath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/" + fileName);
+			var fileStream = new System.IO.FileStream(filePath, FileMode.Open, System.IO.FileAccess.Read);
+
 			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
 			httpResponse.Clear();
 			httpResponse.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.xlsx\"");
+			httpResponse.AddHeader("content-disposition", "attachment;filename=\"" + fileName  + "\"");
 			//httpResponse.ContentType = "application/pdf";
 			//httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
+
+			System.IO.File.Delete(@filePath);
 
 			// Flush the workbook to the Response.OutputStream
 			using (MemoryStream memoryStream = new MemoryStream())
 			{
-				postImageWb.SaveAs(memoryStream);
+				fileStream.CopyTo(memoryStream);
 				memoryStream.WriteTo(httpResponse.OutputStream);
 				memoryStream.Close();
 			}
@@ -3899,4 +4006,5 @@ namespace IndInv.Controllers
         }
     }
 }
+
 
