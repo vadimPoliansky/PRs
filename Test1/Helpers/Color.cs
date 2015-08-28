@@ -46,8 +46,14 @@ namespace IndInv.Helpers
 				numStr = str.Substring(minPos, maxPos - minPos + 1).Replace(",", "").Replace("$", "");
 				if (numStr.IndexOf(":") > 0)
 				{
-					TimeSpan timespan = TimeSpan.Parse(numStr);
-					numStr = timespan.TotalHours.ToString();
+					TimeSpan timespan;
+					if (TimeSpan.TryParse(numStr, out timespan))
+					{
+						numStr = timespan.TotalHours.ToString();
+					}
+					else
+					{
+					}
 				}
 			}
 			//string num = numStr;
@@ -403,7 +409,12 @@ namespace IndInv.Helpers
 			}
 
 			if (float.TryParse(str, out outScore)) { }
-			else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) { outScore = float.Parse(str.Replace(":", "")); }
+			else if (str != null && str.Length != 0 && str.IndexOf(":") != -1) {
+				if (float.TryParse(str.Replace(":", ""), out outScore)){
+					outScore = float.Parse(str.Replace(":", "")); 
+				}else {
+				}
+			}
 			float targetScore = outScore;
 
 			if (targetScore == 0) { return "-"; }

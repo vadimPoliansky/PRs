@@ -141,7 +141,7 @@
 					<a class="row-down"><i class="fa fa-sort-desc"></i></a>
 				</td>
 			   
-				<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title prcol-id">@indicatorTitle
+				<td rowspan="@rowSpan" indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-title prcol-id">@Html.Raw(indicatorTitle)
 					@{var footnoteString = "";
 					foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))
 					{
@@ -385,7 +385,7 @@
             <tr class='prrow' areaID="@area_map.Area_ID" coeID="@coe.CoE_ID" mapID="@map.Map_ID" style="background-color:White">
             <td class="prtd-id-def" style="min-width:1%;" >@number</td>
             @{numCount++;}
-            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef prcol-id">@indicatorTitle
+            <td indicatorID="@map.Indicator_ID" field="Indicator" class="prtd-titleDef prcol-id">@Html.Raw(indicatorTitle)
             <sup>
             @{int j = 0;}
             @foreach (var footnote in map.Indicator.Indicator_Footnote_Map.Where(x => x.Fiscal_Year == fiscalYear).Where(e => e.Indicator_ID == map.Indicator_ID).OrderBy(e => e.Indicator_ID))

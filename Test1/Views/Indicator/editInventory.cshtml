@@ -35,12 +35,12 @@
 }
 <div class="menu-bar">
     <div class="row header-row">
-        <div class="large-6 columns">
+        <div class="large-5 columns">
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear)</div>
         </div>
-        <div class="large-6 columns">
+        <div class="large-7 columns">
 			@if (Roles.IsUserInRole("Consultant"))
    {
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
@@ -245,24 +245,24 @@
 		var values  =[];
 
 
-	    var filterListChose = {
-	    	Indicator_ID: ['Indicator_ID'],
+		var filterListChose = {
+			Indicator_ID: ['Indicator_ID'],
 			Link_ID: ['Link_ID'],
-	    	Identifier: ['Identifier'],
+			Identifier: ['Identifier'],
 			Area: ['Area'],
-	    	Indicator_Type: ['Indicator_Type'],
-	        CoE: ['CoE'],
+			Indicator_Type: ['Indicator_Type'],
+			CoE: ['CoE'],
 			Footnote: ['Footnote'],
-		    Indicator: ['Indicator',''],
-		    FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
-		    FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
+			Indicator: ['Indicator',''],
+			FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
+			FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
 		}
-	    var filterListFull = {
-	    	Indicator_ID: [],
-	    	Link_ID: [],
-	    	Identifier: [],
+		var filterListFull = {
+			Indicator_ID: [],
+			Link_ID: [],
+			Identifier: [],
 			Area: [],
-	    	Indicator_Type: [],
+			Indicator_Type: [],
 			CoE: [],
 			FY_Data_Source_MSH: [],
 			FY_Data_Source_Benchmark: [],
@@ -286,78 +286,78 @@
 		}
 
 		var delay = (function(){
-		    var timer = 0;
-		    return function(callback, ms){
-		        clearTimeout (timer);
-		        timer = setTimeout(callback, ms);
-		    };
+			var timer = 0;
+			return function(callback, ms){
+				clearTimeout (timer);
+				timer = setTimeout(callback, ms);
+			};
 		})();
 		$('#searchgrid').on('keyup', function (event) {
-		    var searchText = $(this).val().toLowerCase();
-		    filterListChose['Indicator'][1] = searchText;
-		    delay(function(){
-		        doFilter();
-		    }, 500);
+			var searchText = $(this).val().toLowerCase();
+			filterListChose['Indicator'][1] = searchText;
+			delay(function(){
+				doFilter();
+			}, 500);
 		});
-        var doFilter = function(){
+		var doFilter = function(){
 			var datasrch = jQuery.makeArray(values);
 			var searcharray = [];
 			for (row = 0, r_len = datasrch.length; row < r_len; row++) {
 				var condArr=[];
-			    $.each(filterListChose, function(index,data){
-                    var currCond = false;
-				    if (data.length === 1) {
-				        currCond = true;
-				    } else {
-				        for (var i=1, len=data.length; i<len; i++){
-				        	var filterItem = data[i].replace(/&amp;/g, '&');
-				        	var field = data[0];
-				        	if (field == "Indicator") {filterItem = filterItem.trim()};
-				            var currValue = datasrch[row][field];
-				            if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
-				            	currCond = true;
-				            } else if(currValue == filterItem || filterItem == "" || 
+				$.each(filterListChose, function(index,data){
+					var currCond = false;
+					if (data.length === 1) {
+						currCond = true;
+					} else {
+						for (var i=1, len=data.length; i<len; i++){
+							var filterItem = data[i].replace(/&amp;/g, '&');
+							var field = data[0];
+							if (field == "Indicator") {filterItem = filterItem.trim()};
+							var currValue = datasrch[row][field];
+							if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
+								currCond = true;
+							} else if(currValue == filterItem || filterItem == "" || 
                                 (field != "Indicator_ID" && field != "Footnote" && ('' + currValue).toLowerCase().indexOf(filterItem) > -1)){
-				                currCond = true;
-				            }
-				        }
-				    }
-				    condArr.push(currCond);
-			    });
+								currCond = true;
+							}
+						}
+					}
+					condArr.push(currCond);
+				});
 				var allTrue = true;
 				for (var i =0, len = condArr.length; i<len;i++){
-				    if (condArr[i] !== true){
-				        allTrue = false;
-				    }
+					if (condArr[i] !== true){
+						allTrue = false;
+					}
 				}
 				if (allTrue){
-				    searcharray.push(datasrch[row]);
+					searcharray.push(datasrch[row]);
 				}
 			};
 			if (searcharray.length !== 0){
-			    $IndInv.handsontable('loadData', searcharray);
+				$IndInv.handsontable('loadData', searcharray);
 			} else {
-			    $IndInv.handsontable('loadData', values);
+				$IndInv.handsontable('loadData', values);
 			}
-        };
-        clearFilter =  function(field, elTH){
-        	filterListChose[field] = [field];
-        	$('#filter-list > .clicked').removeClass('clicked');
-        	elTH.removeClass('filtered')
-        	doFilter();
-        };
+		};
+		clearFilter =  function(field, elTH){
+			filterListChose[field] = [field];
+			$('#filter-list > .clicked').removeClass('clicked');
+			elTH.removeClass('filtered')
+			doFilter();
+		};
 
 
-        var refreshView = function(){
-        	$.get('editInventory',{AnalystID: "@Model.FirstOrDefault().Analyst_ID", fiscalYear: @Model.FirstOrDefault().Fiscal_Year, Link_ID: @Model.FirstOrDefault().Link_ID },function(result){
-						values = result;
-						$IndInv.handsontable('loadData', values);
-						doFilter();
-					});
-				}
+		var refreshView = function(){
+			$.get('editInventory',{AnalystID: "@Model.FirstOrDefault().Analyst_ID", fiscalYear: @Model.FirstOrDefault().Fiscal_Year, Link_ID: @Model.FirstOrDefault().Link_ID },function(result){
+        		values = result;
+        		$IndInv.handsontable('loadData', values);
+        		doFilter();
+        	});
+        }
 		refreshView();
 
-        var colHeadersOrg = [
+		var colHeadersOrg = [
             "<div class='column-letter'>A</div><br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
 			"<div class='column-letter'>B</div><br>Identifier <i field='Identifier' class='fa fa-filter filter-identifier filter-button' id='filter-identifier'></i>",
 			"<div class='column-letter'>C</div><br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
@@ -390,14 +390,14 @@
             "<div class='column-letter'>AD</div><br>Definition Calculation",
             "<div class='column-letter'>AE</div><br>Target Rationale",
             "<div class='column-letter'>AF</div><br>Comparator Source",
-            "<div class='column-letter'>AG</div><br>Data Source MSH  <i field='FY Data Source MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
-            "<div class='column-letter'>AH</div><br>Data Source Benchmark <i field='FY Data Source Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
+            "<div class='column-letter'>AG</div><br>Data Source MSH  <i field='FY_Data_Source_MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
+            "<div class='column-letter'>AH</div><br>Data Source Benchmark <i field='FY_Data_Source_Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
             "<div class='column-letter'>AI</div><br>OPEO Lead",
 			"<div class='column-letter'>AJ</div><br>Comment"
         ];								
-	    var columnsOrg = [
+		var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender", readOnly: true},
-			{data:"Identifier", renderer:"tdRender", readOnly: true},
+			{data:"Identifier", renderer:"tdRender"},//, readOnly: true},
 			{data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
             {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
 			{data:"Area", renderer:"tdRender", readOnly: true},
@@ -434,12 +434,12 @@
 			@if (Roles.GetRolesForUser().Contains("Consultant")){ <text>, {data:"FY_Comment", renderer:"tdRender"} </text> }
 	    ];
 		var colWidthsOrg = [50, 100, 150, 250, 100, 100, 100, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100,500];
-	    var changesOld = [];
+		var changesOld = [];
 
-	    $IndInv .handsontable({
-	    	jqte: false,
-	    	wordwrap: false,
-	    	currentRowClassName : 'wrapOn',
+		$IndInv .handsontable({
+			jqte: false,
+			wordwrap: false,
+			currentRowClassName : 'wrapOn',
 			clickBeginsEditing : WURFL.is_mobile? true:false,
 			data: values,
 			startRows: 1,
@@ -469,8 +469,8 @@
 			rowHeaders: false,
 			colHeaders: colHeadersOrg,
 			columns: columnsOrg,
-            colWidths : colWidthsOrg,
-            afterChange: function (change, source) {
+			colWidths : colWidthsOrg,
+			afterChange: function (change, source) {
 				if (source === 'loadData') {
 					return;
 				} else {
@@ -480,31 +480,31 @@
 				}
 				unselect();
 			},
-            afterSelection: function(r,c,r2,c2){
-            	selectedSum =0;
-            	selectedAverage =0;
-            	selectedN =0;
-            	selectedDec =0;
-            	var cells = $IndInv.handsontable("getData",r,c,r2,c2);
-            	$.each(cells,function(index,row){
-            		$.each(row,function(index,cell){
-            			var numRaw = cell; //$IndInv.handsontable("getDataAtCell",row,col);
-            			if (numRaw != null){
-            				var num = parseFloat(numRaw.replace('$','').replace(/[^\d\.\-]/g, ""));
-            				if (!isNaN(num)){
-            					selectedN +=1
-            					selectedSum += num;
-            					selectedAverage = selectedSum / selectedN;
-            					if (num.countDecimals() > selectedDec){
-            						selectedDec = num.countDecimals();
-            					}
-            				}
-            			}
-            		});
-            	});
-            	calcRefresh();
-            	unselect();
-            },
+			afterSelection: function(r,c,r2,c2){
+				selectedSum =0;
+				selectedAverage =0;
+				selectedN =0;
+				selectedDec =0;
+				var cells = $IndInv.handsontable("getData",r,c,r2,c2);
+				$.each(cells,function(index,row){
+					$.each(row,function(index,cell){
+						var numRaw = cell; //$IndInv.handsontable("getDataAtCell",row,col);
+						if (numRaw != null){
+							var num = parseFloat(numRaw.replace('$','').replace(/[^\d\.\-]/g, ""));
+							if (!isNaN(num)){
+								selectedN +=1
+								selectedSum += num;
+								selectedAverage = selectedSum / selectedN;
+								if (num.countDecimals() > selectedDec){
+									selectedDec = num.countDecimals();
+								}
+							}
+						}
+					});
+				});
+				calcRefresh();
+				unselect();
+			},
 			afterDeselect: function(){
 				selectedSum =0;
 				selectedAverage =0;
@@ -514,53 +514,53 @@
 				unselect();
 			},
 			afterChange: function (change, source) {
-			    if (source === 'loadData' || source === 'set' || change === null) {
-			        return;
-			    } else {
-			        var changes = [];
-			        var changesOld = [];
-			        changes = change;
-			        for(var i =0, len = changes.length; i<len; i++){
-			            var currChange = changes[i];
-			            var currChangeOld = [];
-			            currChangeOld.push(currChange[0]);
-			            currChangeOld.push(currChange[1]);
-			            currChangeOld.push(currChange[3]);
-			            currChangeOld.push(currChange[2]);
-			            changesOld.push(currChangeOld);
-			        }
-			        updateIndicatorUndoable(changes, changesOld);
-			    }
+				if (source === 'loadData' || source === 'set' || change === null) {
+					return;
+				} else {
+					var changes = [];
+					var changesOld = [];
+					changes = change;
+					for(var i =0, len = changes.length; i<len; i++){
+						var currChange = changes[i];
+						var currChangeOld = [];
+						currChangeOld.push(currChange[0]);
+						currChangeOld.push(currChange[1]);
+						currChangeOld.push(currChange[3]);
+						currChangeOld.push(currChange[2]);
+						changesOld.push(currChangeOld);
+					}
+					updateIndicatorUndoable(changes, changesOld);
+				}
 			},
 			beforeRemoveRow : function (index, amount){
 				deleteIndicator(index);
 			}
 		});
 
-	    $('.toggle-format').on('click',function(e){
-	    	var table = $IndInv.handsontable('getInstance');
-	    	table.updateSettings({
-	    		jqte: true
-	    	});
-	    });
+		$('.toggle-format').on('click',function(e){
+			var table = $IndInv.handsontable('getInstance');
+			table.updateSettings({
+				jqte: true
+			});
+		});
 
-	    $('.toggle-wordwrap').on('click',function(e){
-	    	var table = $IndInv.handsontable('getInstance');
-	    	var wordwrap = $('#dataTable').hasClass('wordwrap');
-	    	if (wordwrap){
-	    		table.updateSettings({
-	    			wordwrap: false
-	    		});
-	    		$('#dataTable').removeClass('wordwrap');
-	    		$('#dataTable').addClass('nowrap');
-	    	} else {
-	    		table.updateSettings({
-	    			wordwrap: true
-	    		});
-	    		$('#dataTable').addClass('wordwrap');
-	    		$('#dataTable').removeClass('nowrap');
-	    	}
-	    });
+		$('.toggle-wordwrap').on('click',function(e){
+			var table = $IndInv.handsontable('getInstance');
+			var wordwrap = $('#dataTable').hasClass('wordwrap');
+			if (wordwrap){
+				table.updateSettings({
+					wordwrap: false
+				});
+				$('#dataTable').removeClass('wordwrap');
+				$('#dataTable').addClass('nowrap');
+			} else {
+				table.updateSettings({
+					wordwrap: true
+				});
+				$('#dataTable').addClass('wordwrap');
+				$('#dataTable').removeClass('nowrap');
+			}
+		});
 
 		Number.prototype.countDecimals = function () {
 			if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
@@ -580,32 +580,32 @@
 		$IndInv.handsontable('render');
 
 		updateIndicatorUndoable = function(changes, changesOld){
-		    updateIndicator(changes)
-		    undoManager.add({
-		        undo: function(){
-		            updateIndicator(changesOld)
-		        },
-		        redo: function(){
-		            updateIndicator(changes)
-		        }
-		    });
+			updateIndicator(changes)
+			undoManager.add({
+				undo: function(){
+					updateIndicator(changesOld)
+				},
+				redo: function(){
+					updateIndicator(changes)
+				}
+			});
 		};
 		$.ajaxSetup({ cache: false });
 		function updateIndicator(changes){
 			for (var i = 0; i< changes.length; ++i){
-		        var change = changes[i];
-		        var changedRow = change[0]
-		        var changedParameter = change[1];
-		        var changedValue = change[3];
-		        if (changedValue === null) changedValue = "";
-		        var indicatorID = $IndInv.handsontable('getDataAtCell',changedRow,0);
+				var change = changes[i];
+				var changedRow = change[0]
+				var changedParameter = change[1];
+				var changedValue = change[3];
+				if (changedValue === null) changedValue = "";
+				var indicatorID = $IndInv.handsontable('getDataAtCell',changedRow,0);
 
-		        if (changedParameter == "FY_Target"){
-		        	var firstChar = changedValue.substr(0,1);
-		        	var first2Char = changedValue.substr(0,2);
-		        	var directions = [];
-		        	var directionIDs = [];
-		        	changeColour = false;
+				if (changedParameter == "FY_Target"){
+					var firstChar = changedValue.substr(0,1);
+					var first2Char = changedValue.substr(0,2);
+					var directions = [];
+					var directionIDs = [];
+					changeColour = false;
 		        	@foreach (var direction in Model.FirstOrDefault().allDirections)
 		   {
 					<text>
@@ -637,7 +637,7 @@
 		        		success: function (result) {
 		        		}
 		        	});
-		        }
+				}
 			
 				var formatableFields = [
 					"FY_3",
@@ -657,44 +657,51 @@
 					var isString = isNaN(parseInt(changedValue.replace('$','')));
 					if (!isString && changedParameter != "Footnote"){
 						if (formatStr !== null && formatStr !== ""){
-							if(formatStr.indexOf('%') > 0 && changedValue > 1) {
-								changedValue = changedValue / 100;
+							var isTime = (formatStr === '00:00:00')
+							if (isTime) {
+								changedValue = numeral().unformat(changedValue + ":00");
+								changedValue = numeral(changedValue).format(formatStr);
+								changedValue = changedValue.substring(0,changedValue.length - 3);
+							} else {
+								if(formatStr.indexOf('%') > 0 && changedValue > 1) {
+									changedValue = changedValue / 100;
+								}
+								changedValue = numeral(changedValue).format(formatStr);
 							}
-							changedValue = numeral(changedValue).format(formatStr);
 						}
 					}
 				}
-		        if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
-		            var parameters = {
-		            	indicatorID: indicatorID,
-		                updateProperty: changedParameter,
-		                updateValue: changedValue,
-		                updateValueSup: changedValue,
-		                fiscalYear: @Model.FirstOrDefault().Fiscal_Year
-		            };
-		        	$.ajaxSetup({ cache: false });
-		        	var ajaxUrl = changedParameter != "Footnote" ? this.action : "setValueFootnotes";
-		            $.ajax({
-		            	url: ajaxUrl,
-		                type: 'POST',
-		                data: JSON.stringify(parameters),
-		                contentType: 'application/json; charset=utf-8',
-		                success: function (result) {
-		                	$.get('getIndicatorColor', {indicatorID : indicatorID, fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
+				if (changedParameter != "FY_Q1_Color" && changedParameter != "FY_Q2_Color" && changedParameter != "FY_Q3_Color" && changedParameter != "FY_Q4_Color" && changedParameter != "FY_YTD_Color"){
+					var parameters = {
+						indicatorID: indicatorID,
+						updateProperty: changedParameter,
+						updateValue: changedValue,
+						updateValueSup: changedValue,
+						fiscalYear: @Model.FirstOrDefault().Fiscal_Year
+		                };
+					$.ajaxSetup({ cache: false });
+					var ajaxUrl = changedParameter != "Footnote" ? this.action : "setValueFootnotes";
+					$.ajax({
+						url: ajaxUrl,
+						type: 'POST',
+						data: JSON.stringify(parameters),
+						contentType: 'application/json; charset=utf-8',
+						success: function (result) {
+							$.get('getIndicatorColor', {indicatorID : indicatorID, fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.Q1_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.Q2_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.Q3_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.Q4_Color, 'set');
 		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.YTD_Color, 'set');
-		                    });
+		                	});
 		                },
 		                error: function (request){
 		                }
 		            });
-		        }
-		        $IndInv.handsontable("setDataAtRowProp", changedRow, changedParameter, changedValue, 'set');
-		    }
-		}
+					}
+					$IndInv.handsontable("setDataAtRowProp", changedRow, changedParameter, changedValue, 'set');
+				}
+			}
 
 		function deleteIndicator(index){
 			var parameters = {
@@ -724,93 +731,93 @@
 
 		var showColumns = function(toUnhide){
 			var colHeaders =[];
-		    var columns = [];
-		    var colWidths = [];
+			var columns = [];
+			var colWidths = [];
 
-		    var colHeadersOld = []
-		    var columnsOld = [];
-		    var colWidthsOld = []
+			var colHeadersOld = []
+			var columnsOld = [];
+			var colWidthsOld = []
 
-		    var th = $('thead').children();
-		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
-		        var currHeader = $IndInv.handsontable("getColHeader",i);
-		        var colWidth = th.find(':contains(' + currHeader + ')').first().width();
-		        columnsOld.push( { data : $IndInv.handsontable("colToProp",i) })
-		        colHeadersOld.push(currHeader)
-		        colWidthsOld.push(colWidth);
-		    };
-		    if (toUnhide != null){
-		    	var firstCol, lastCol;
-		    	if (toUnhide.length > 1){
-		    		firstCol = alphToNum($(toUnhide[0]).children().children().children()[0].innerHTML);
-		    		lastCol = alphToNum($(toUnhide[toUnhide.length - 1]).children().children().children()[0].innerHTML);
-		    	}
-		    	for(var i =0, len = columnsOrg.length; i<=len; i++){
-		    		var currCol = columnsOrg[i];
-		    		var currHeader = colHeadersOrg[i];
-		    		var colWidth = colWidthsOrg[i];
-		    		var currColAlph = alphToNum($(currHeader).first().text());
-		    		if (colHeadersOld.indexOf(currHeader) === -1 && currColAlph <lastCol && currColAlph > firstCol){
-		    			columns.push(currCol)
-		    			colHeaders.push(currHeader)
-		    			colWidths.push(colWidth);
-		    		}
-		    		if (colHeadersOld.indexOf(currHeader) !== -1){
-						columns.push(currCol);
-		    			colHeaders.push(currHeader);
+			var th = $('thead').children();
+			for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+				var currHeader = $IndInv.handsontable("getColHeader",i);
+				var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+				columnsOld.push( { data : $IndInv.handsontable("colToProp",i) })
+				colHeadersOld.push(currHeader)
+				colWidthsOld.push(colWidth);
+			};
+			if (toUnhide != null){
+				var firstCol, lastCol;
+				if (toUnhide.length > 1){
+					firstCol = alphToNum($(toUnhide[0]).children().children().children()[0].innerHTML);
+					lastCol = alphToNum($(toUnhide[toUnhide.length - 1]).children().children().children()[0].innerHTML);
+				}
+				for(var i =0, len = columnsOrg.length; i<=len; i++){
+					var currCol = columnsOrg[i];
+					var currHeader = colHeadersOrg[i];
+					var colWidth = colWidthsOrg[i];
+					var currColAlph = alphToNum($(currHeader).first().text());
+					if (colHeadersOld.indexOf(currHeader) === -1 && currColAlph <lastCol && currColAlph > firstCol){
+						columns.push(currCol)
+						colHeaders.push(currHeader)
 						colWidths.push(colWidth);
-		    		}
-		    	};
-		    } else {
-		    	var colHeaders = colHeadersOrg;
-		    	var columns = columnsOrg;
-		    	var colWidths = colWidthsOrg;
-		    }
-		    var table = $IndInv.handsontable('getInstance');
-		    updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+					}
+					if (colHeadersOld.indexOf(currHeader) !== -1){
+						columns.push(currCol);
+						colHeaders.push(currHeader);
+						colWidths.push(colWidth);
+					}
+				};
+			} else {
+				var colHeaders = colHeadersOrg;
+				var columns = columnsOrg;
+				var colWidths = colWidthsOrg;
+			}
+			var table = $IndInv.handsontable('getInstance');
+			updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
 		}
 
 		var hideColumns = function(toHide){
-		    var toHideHeaders = [];
-		    $.each(toHide, function(index, value){
-		        var colHeader = $(this).find('.colHeader')[0].innerHTML;
-		        toHideHeaders.push(strip_tags(colHeader).toString())//.trim())
-		    });
-		    var colHeaders = []
-		    var columns = [];
-		    var colWidths = []
+			var toHideHeaders = [];
+			$.each(toHide, function(index, value){
+				var colHeader = $(this).find('.colHeader')[0].innerHTML;
+				toHideHeaders.push(strip_tags(colHeader).toString())//.trim())
+			});
+			var colHeaders = []
+			var columns = [];
+			var colWidths = []
 
-		    var colHeadersOld = []
-		    var columnsOld = [];
-		    var colWidthsOld = []
+			var colHeadersOld = []
+			var columnsOld = [];
+			var colWidthsOld = []
 
-		    //var th = $('thead').children();
-		    for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
-		    	var currHeader = $IndInv.handsontable("getColHeader",i);
-		    	//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
-		    	var colWidth = $IndInv.handsontable("getColWidth",i)
-		        if (toHideHeaders.indexOf(strip_tags(currHeader,"").toString()) === -1) {//.trim()) === -1){
-		            columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
-		            colHeaders.push(currHeader)
-		            colWidths.push(colWidth);
-		        }
-		        columnsOld.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
-		        colHeadersOld.push(currHeader)
-		        colWidthsOld.push(colWidth);
-		    };
-		    var table = $IndInv.handsontable('getInstance');
-		    updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+			//var th = $('thead').children();
+			for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+				var currHeader = $IndInv.handsontable("getColHeader",i);
+				//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+				var colWidth = $IndInv.handsontable("getColWidth",i)
+				if (toHideHeaders.indexOf(strip_tags(currHeader,"").toString()) === -1) {//.trim()) === -1){
+					columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+					colHeaders.push(currHeader)
+					colWidths.push(colWidth);
+				}
+				columnsOld.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+				colHeadersOld.push(currHeader)
+				colWidthsOld.push(colWidth);
+			};
+			var table = $IndInv.handsontable('getInstance');
+			updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
 		};
 		updateColumnsUndoable = function(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld){
-		    updateColumns(table, columns,colHeaders,colWidths);
-		    undoManager.add({
-		        undo: function(){
-		            updateColumns(table, columnsOld,colHeadersOld,colWidthsOld);
-		        },
-		        redo: function(){
-		            updateColumns(table, columns,colHeaders,colWidths);
-		        }
-		    });
+			updateColumns(table, columns,colHeaders,colWidths);
+			undoManager.add({
+				undo: function(){
+					updateColumns(table, columnsOld,colHeadersOld,colWidthsOld);
+				},
+				redo: function(){
+					updateColumns(table, columns,colHeaders,colWidths);
+				}
+			});
 		};
 
 		var selectedCellsRange;
@@ -819,146 +826,146 @@
 		});
 
 		var selectHeader = $('table > thead').selectable({
-		    distance: 1,
-		    fiter:'.prheader',
-		    start: function(event, ui){
+			distance: 1,
+			fiter:'.prheader',
+			start: function(event, ui){
 		        
-		    }
+			}
 		})
 		var unselect = function(){$('th.ui-selected').removeClass('ui-selected')};
 
 		$(document).on('click','.filter-button', function(e){
-		    var el = $(this);
-		    var elTH = $(this).closest('th');
-		    var filtered = elTH.hasClass('filtered')
-		    var filters = [];
-		    var filterAvailable = [];
-		    var field = el.attr('field');//that.innerHTML;//$(this).find('.colHeader')[0].innerHTML;
-		    var dataArr = [];
+			var el = $(this);
+			var elTH = $(this).closest('th');
+			var filtered = elTH.hasClass('filtered')
+			var filters = [];
+			var filterAvailable = [];
+			var field = el.attr('field');//that.innerHTML;//$(this).find('.colHeader')[0].innerHTML;
+			var dataArr = [];
 
-		    $.each($IndInv.handsontable("getData"),function(index,data){
-		        if (field == "ID") { field = "Indicator_ID"; }
-		    	var filter = data[field];
-		    	if (filter == null) filter = "(Blank)";
-		    	if(filter.length !== 0 && filter !== "0"){
-		    		if (filterAvailable.indexOf(filter) === -1){
-		    			filterAvailable.push(filter);
-		    		}
-		        }
-		    });
+			$.each($IndInv.handsontable("getData"),function(index,data){
+				if (field == "ID") { field = "Indicator_ID"; }
+				var filter = data[field];
+				if (filter == null) filter = "(Blank)";
+				if(filter.length !== 0 && filter !== "0"){
+					if (filterAvailable.indexOf(filter) === -1){
+						filterAvailable.push(filter);
+					}
+				}
+			});
 
-		    if (filtered){
-		        filters = filterListFull[field]
-		    } else {
-		        filters = filterAvailable;
-		    }
-		    filters.sort();
+			if (filtered){
+				filters = filterListFull[field]
+			} else {
+				filters = filterAvailable;
+			}
+			filters.sort();
 
-		    var newDiv = "<div id='filter-panel' class='filter-panel'>"
-		    newDiv += "<div class='filter-panel-header' id='filter-panel-header'>Filter by: " + field + "<i id='filter-panel-close' class='filter-panel-close fa fa-times'></i></div>"
-		    newDiv += "<div class='row'>"
+			var newDiv = "<div id='filter-panel' class='filter-panel'>"
+			newDiv += "<div class='filter-panel-header' id='filter-panel-header'>Filter by: " + field + "<i id='filter-panel-close' class='filter-panel-close fa fa-times'></i></div>"
+			newDiv += "<div class='row'>"
 			newDiv += "<div class='filter-panel-search'>"
-				newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
-				newDiv += "<div id='clear-filter'><i class='fa fa-eraser'></i></div>"
+			newDiv += "<input class='search' id='search_filter' name='Search' type='search' placeholder='Search' />"
+			newDiv += "<div id='clear-filter'><i class='fa fa-eraser'></i></div>"
 			newDiv += "</div>"
-		    newDiv += "<div class='filter-list' id='filter-list'>"
-		    $.each(filters, function(index,value){
-		        var checked = "";
-		        if (filtered){
-		            if(filterAvailable.indexOf(value) !== -1){
-		                checked = "clicked"
-		            }
-		        }
-		        newDiv += "<div class='filter-item " + checked + "'><div class='filter-title'>" + value + "</div></div>";
-		    });
-		    newDiv += "</div>"
-		    newDiv += "</div>"
-		    $('.header').after(newDiv);
-		    var leftOverflow = currentMousePos.x + $('#filter-panel').width() - $('.header').width();
-		    leftOverflow = leftOverflow > 0 ? leftOverflow : 0;
-		    $('#filter-panel').css({
-		    	left:  currentMousePos.x - leftOverflow,
-		        top:   currentMousePos.y
-		    });
+			newDiv += "<div class='filter-list' id='filter-list'>"
+			$.each(filters, function(index,value){
+				var checked = "";
+				if (filtered){
+					if(filterAvailable.indexOf(value) !== -1){
+						checked = "clicked"
+					}
+				}
+				newDiv += "<div class='filter-item " + checked + "'><div class='filter-title'>" + value + "</div></div>";
+			});
+			newDiv += "</div>"
+			newDiv += "</div>"
+			$('.header').after(newDiv);
+			var leftOverflow = currentMousePos.x + $('#filter-panel').width() - $('.header').width();
+			leftOverflow = leftOverflow > 0 ? leftOverflow : 0;
+			$('#filter-panel').css({
+				left:  currentMousePos.x - leftOverflow,
+				top:   currentMousePos.y
+			});
 
-		    //$('#filter-panel-header').drags();
+			//$('#filter-panel-header').drags();
 
-		    addFilterItem = function(ele, force){
-		    	var filterItem = $(ele).children()[0].innerHTML;
-		    	if (!$(ele).hasClass('clicked') || force){
-		    	    $(ele).addClass('clicked');
-		    	    if (filterListChose[field].indexOf(filterItem) === -1){
-		    	        filterListChose[field].push(filterItem);
-		    	        doFilter();
-		    	    }
-		    	} else {
-		    		$(ele).removeClass('clicked');
-		    		filterListChose[field] = $.grep(filterListChose[field], function(value){
-		    			return value != filterItem;
-		    		});
-		    		doFilter();
-		    	}
-		    	if(filterListChose[field].length !== 1){
-		    		elTH.addClass('filtered');
-		    	}else {
-		    		elTH.removeClass('filtered');
-		    	}
-		    }
+			addFilterItem = function(ele, force){
+				var filterItem = $(ele).children()[0].innerHTML;
+				if (!$(ele).hasClass('clicked') || force){
+					$(ele).addClass('clicked');
+					if (filterListChose[field].indexOf(filterItem) === -1){
+						filterListChose[field].push(filterItem);
+						doFilter();
+					}
+				} else {
+					$(ele).removeClass('clicked');
+					filterListChose[field] = $.grep(filterListChose[field], function(value){
+						return value != filterItem;
+					});
+					doFilter();
+				}
+				if(filterListChose[field].length !== 1){
+					elTH.addClass('filtered');
+				}else {
+					elTH.removeClass('filtered');
+				}
+			}
 
-		    $('#search_filter').focus();
-		    $('#search_filter').on('keyup change search click', function (e) {
-		    	if (e.which === 13){
-		    		$.each( $('#filter-list').children(":visible"),function(index,value){
-		    			addFilterItem(this, true);
-		    		});
-		    	}
-		        var valThis = $(this).val().toLowerCase();
-		        if (valThis == "") {
-		            $('.filter-item').removeClass('textFiltered');
-		        } else {
-		        	if (field != "Indicator_ID"){
-		        		$('.filter-item').each(function () {
-		        			var text = $(this).text().toLowerCase();
-		        			var listItems;
-		        			if (text.indexOf(valThis) >= 0) {
-		        				$(this).removeClass('textFiltered');
-		        			} else {
-		        				$(this).addClass('textFiltered');
-		        			}
-		        		});
-		        	} else {
-		        		$('.filter-item').each(function () {
-		        			var text = $(this).text().toLowerCase();
-		        			var listItems;
-		        			if (text == valThis) {
-		        				$(this).removeClass('textFiltered');
-		        			} else {
-		        				$(this).addClass('textFiltered');
-		        			}
-		        		});
-		        	}
-		        };
-		        $('.filter-item').show();
-		        $('.textFiltered').hide();
-		    });
+			$('#search_filter').focus();
+			$('#search_filter').on('keyup change search click', function (e) {
+				if (e.which === 13){
+					$.each( $('#filter-list').children(":visible"),function(index,value){
+						addFilterItem(this, true);
+					});
+				}
+				var valThis = $(this).val().toLowerCase();
+				if (valThis == "") {
+					$('.filter-item').removeClass('textFiltered');
+				} else {
+					if (field != "Indicator_ID"){
+						$('.filter-item').each(function () {
+							var text = $(this).text().toLowerCase();
+							var listItems;
+							if (text.indexOf(valThis) >= 0) {
+								$(this).removeClass('textFiltered');
+							} else {
+								$(this).addClass('textFiltered');
+							}
+						});
+					} else {
+						$('.filter-item').each(function () {
+							var text = $(this).text().toLowerCase();
+							var listItems;
+							if (text == valThis) {
+								$(this).removeClass('textFiltered');
+							} else {
+								$(this).addClass('textFiltered');
+							}
+						});
+					}
+				};
+				$('.filter-item').show();
+				$('.textFiltered').hide();
+			});
 
-		    $('#clear-filter').on('click',function(){
-		    	clearFilter(field, elTH);
-		    });
+			$('#clear-filter').on('click',function(){
+				clearFilter(field, elTH);
+			});
 
-		    var filterPanel = $('#filter-panel');
-		    $(document, '#filter-panel-close').on('mousedown', function(e){
-		    	if ($(e.target).closest('.filter-panel').length > 0  && !!!$(e.target).hasClass('filter-panel-close')){
+			var filterPanel = $('#filter-panel');
+			$(document, '#filter-panel-close').on('mousedown', function(e){
+				if ($(e.target).closest('.filter-panel').length > 0  && !!!$(e.target).hasClass('filter-panel-close')){
 
-		    	}else {
-		    		filterPanel.undrags();
-		    		filterPanel.remove();
-		    	}
-		    });
+				}else {
+					filterPanel.undrags();
+					filterPanel.remove();
+				}
+			});
 
-		    $('.filter-item').on('click', function(){
-		    	addFilterItem(this);
-		    });
+			$('.filter-item').on('click', function(){
+				addFilterItem(this);
+			});
 		});
 
 		$('#the-node2').contextMenu({
@@ -967,22 +974,22 @@
 			},
 			items: {
 				hideCol: {
-				    name: "Hide Column",
-				    callback: function(key,options){
-				        var toHide = $("th.ui-selected");
-				        if (toHide.length === 0) toHide= $(this);
-				        hideColumns(toHide);
-				        unselect();
-				    }
+					name: "Hide Column",
+					callback: function(key,options){
+						var toHide = $("th.ui-selected");
+						if (toHide.length === 0) toHide= $(this);
+						hideColumns(toHide);
+						unselect();
+					}
 				},
 				showCol: {
-				    name: "Unhide Columns",
-				    callback: function(key,options){
-				    	var toUnhide = $("th.ui-selected");
-				    	if (toUnhide.length === 0) toUnhide= null;
-				    	showColumns(toUnhide);
-				        unselect();
-				    }
+					name: "Unhide Columns",
+					callback: function(key,options){
+						var toUnhide = $("th.ui-selected");
+						if (toUnhide.length === 0) toUnhide= null;
+						showColumns(toUnhide);
+						unselect();
+					}
 				}
 
 			}
@@ -1186,16 +1193,16 @@
 						@foreach (var direction in Model.FirstOrDefault().allDirections)
 	  {
 						<text>
-                    	"Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
-                    		className: 'color-choice',
-                    		callback:function(key, options){
-                    			var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
-                    			var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
-                    			var directionID= @direction.Direction_ID;
+						"Direction_@direction.Direction_ID" : { "name": "Change to @direction.Direction",
+							className: 'color-choice',
+							callback:function(key, options){
+								var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
+								var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
+								var directionID= @direction.Direction_ID;
                     			var oldDirectionID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Direction_ID"); //$(this).closest('tr').attr('colorID');
                     			changeDirectionUndoable(indicatorID, directionID, oldDirectionID,row);
-							},
-						},
+                    		},
+                    	},
 						</text>
 	  }
 					}
@@ -1259,18 +1266,18 @@
 					updateValue: values[index],
 					updateValueSup: "%NULL%",
 					fiscalYear: @Model.FirstOrDefault().Fiscal_Year,
-    			};
-    			$.ajax({
-    				url: 'setValue',
-    				type: 'POST',
-    				data: JSON.stringify(parameters),
-    				contentType: 'application/json; charset=utf-8',
-    				success: function (result) {
-    				},
-    				error: function (request){
-    				}
-    			});
-    		});
+				};
+				$.ajax({
+					url: 'setValue',
+					type: 'POST',
+					data: JSON.stringify(parameters),
+					contentType: 'application/json; charset=utf-8',
+					success: function (result) {
+					},
+					error: function (request){
+					}
+				});
+			});
 		};
 
 		addNValuesUndoable = function(row, indicatorID){
@@ -1310,7 +1317,7 @@
 
 				var orgTitle = $IndInv.handsontable("getDataAtRowProp",row,"Indicator");
 				$IndInv.handsontable("setDataAtRowProp",row + 1,"Indicator","N-Values: " + orgTitle,"set");
-    		});
+			});
 		}
 		removeNValues = function(row, indicatorID){
 			$IndInv.handsontable('alter','remove_row', row + 1);
@@ -1342,41 +1349,41 @@
 			undoManager.redo();
 		});
 
-	    //$('#showColor').on('click', function () {
-        var updateColumns = function(table, columns, colHeaders, colWidths){
-		    table.updateSettings({
-		        strechH: 'last',
-		        colWidths: colWidths,//[50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100],
-		        colHeaders: colHeaders,
-		        columns: columns
-		    });
-        };
+		//$('#showColor').on('click', function () {
+		var updateColumns = function(table, columns, colHeaders, colWidths){
+			table.updateSettings({
+				strechH: 'last',
+				colWidths: colWidths,//[50, 250, 150, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,500,500,500,100,100,100,100,100,100,100],
+				colHeaders: colHeaders,
+				columns: columns
+			});
+		};
 
-        $(document).on('click', '.menu-refresh', function(e){
-        	refreshView();
-        });
+		$(document).on('click', '.menu-refresh', function(e){
+			refreshView();
+		});
 
-        $(document).on('click', '.menu-undo', function(e){
-        	undoManager.undo();
-        });
-        $(document).on('click', '.menu-redo', function(e){
-        	undoManager.redo();
-        });
+		$(document).on('click', '.menu-undo', function(e){
+			undoManager.undo();
+		});
+		$(document).on('click', '.menu-redo', function(e){
+			undoManager.redo();
+		});
 
-        $(document).on('click', '.menu-edit-footnotes', function(e){
-        	e.preventDefault();
-        	window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
-        });
+		$(document).on('click', '.menu-edit-footnotes', function(e){
+			e.preventDefault();
+			window.open("editFootnotes", "popupWindow", "width=900,height=700,scrollbars=yes");
+		});
 
-        $(document).on('click', '.menu-edit-coes', function(e){
-            e.preventDefault();
-            window.open("editCoEs", "popupWindow", "width=900,height=1000,scrollbars=yes");
-        });
+		$(document).on('click', '.menu-edit-coes', function(e){
+			e.preventDefault();
+			window.open("editCoEs", "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
 
-        $(document).on('click', '.menu-edit-dictionary', function(e){
-        	e.preventDefault();
-        	window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
-		    	});
+		$(document).on('click', '.menu-edit-dictionary', function(e){
+			e.preventDefault();
+			window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+        });
 
 		$(document).on('click', '.menu-edit-indicatorlinks', function(e){
 			e.preventDefault();
@@ -1399,65 +1406,75 @@
 				url: 'inventoryToExcel',
 				type: 'POST',
 				data: JSON.stringify({indicatorList: parameters, fiscalYear: @Model.FirstOrDefault().Fiscal_Year}),
-		        contentType: 'application/json; charset=utf-8',
-		        success: function(filename) {
-		        	window.open("getFile?filename=" + filename, "Excel");
-		        }
-		    });
+				contentType: 'application/json; charset=utf-8',
+				success: function(filename) {
+					window.open("getFile?filename=" + filename, "Excel");
+				}
+			});
 		});
 
 
-        $(document).on('click', '.menu-open', function(e){
-        	var field = $(this).attr('field');
-        	if (field != "Fiscal_Year") { notFiscalYear = true;} else {notFiscalYear = false;}
-        	var buttonEle = $(this);
-        	var menuBar =  $(this).closest('.menu-bar');
-        	var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
-        	var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
-        	var ajaxUrl = 'get' + field + 's';
-        	$.get(ajaxUrl, function(data){
-        		if (notFiscalYear){
-        			if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
-        			jQuery.each(data, function (i, value) {
-        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_ID"] + "' field='" + field + "'>";
-        				if (field != "CoE") {
-        					htmlContent += value[field] + "</div>";
-        				}else if (field == "CoE"){
-        					htmlContent += value["CoE_Title"] + "</div>";
-        				}
-        			});
-        		}
-        		else {
-        			jQuery.each(data, function (i, value) {
-        				//Use code Instead of ID
-        				htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_Code"] + "' field='" + field + "'>" + value[field] + "</div>"
-        			});
-        		}
-        		htmlContent += "</div>";
-        		$('.rowLong').after(htmlContent);
-        		$('.menu-dropdown').hide();
-        		$('.menu-dropdown').slideDown('slow');
-        		$('.menu-dropdown').css({
-        			left:  posX,
-        			top:   posY+6
-        		});
-        		$('body').unbind("click").click(function (evt) {
-        			$('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
-        			$('.menu-dropdown').remove()
-        			buttonEle.removeClass('menu-button-pressed');
-        		});
-        		buttonEle.addClass('menu-button-pressed');
-        	});
-        });
+		$(document).on('click', '.menu-open', function(e){
+			var field = $(this).attr('field');
+			if (field != "Fiscal_Year") { notFiscalYear = true;} else {notFiscalYear = false;}
+			var buttonEle = $(this);
+			var menuBar =  $(this).closest('.menu-bar');
+			var posX = buttonEle.offset().left, posY = buttonEle.offset().top + buttonEle.height();
+			var htmlContent ="<div class='menu-dropdown' id='menu-dropdown'>";
+			var ajaxUrl = 'get' + field + 's';
+			$.get(ajaxUrl, function(data){
+				if (notFiscalYear){
+					if(field != "CoE") { htmlContent += "<div class='menu-hover menu-dropdown-button' field='" + field + "'>All</div>"; }
+					jQuery.each(data, function (i, value) {
+						if (value['Linked_CoE'] != true){
+							htmlContent += "<div class='menu-hover menu-dropdown-button' id1='0' id ='" + value[field + "_ID"] + "' field='" + field + "'>";
+						} else {
+							htmlContent += "<div class='menu-hover menu-dropdown-button' id1 ='" + value[field + "_ID_1"] + "' id2='" + value[field + "_ID_2"] + "' field='" + field + "'>";
+						}
+						if (field != "CoE") {
+							htmlContent += value[field] + "</div>";
+						}else if (field == "CoE"){
+							htmlContent += value["CoE_Title"] + "</div>";
+						}
+					});
+				}
+				else {
+					jQuery.each(data, function (i, value) {
+						//Use code Instead of ID
+						htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_Code"] + "' field='" + field + "'>" + value[field] + "</div>"
+					});
+				}
+				htmlContent += "</div>";
+				$('.rowLong').after(htmlContent);
+				$('.menu-dropdown').hide();
+				$('.menu-dropdown').slideDown('slow');
+				$('.menu-dropdown').css({
+					left:  posX,
+					top:   posY+6
+				});
+				$('body').unbind("click").click(function (evt) {
+					$('.menu-dropdown').slideUp('slow',function() { $(this).remove()});
+					$('.menu-dropdown').remove()
+					buttonEle.removeClass('menu-button-pressed');
+				});
+				buttonEle.addClass('menu-button-pressed');
+			});
+		});
 
-        $(document).on('click', '.menu-dropdown-button', function(e){
-        	var field = $(this).attr('field')
-        	var id = $(this).attr('id');
-        	if (id !== null){
-        		if (field === "CoE"){
-        			window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
-            	} else if (field === "Analyst"){
-            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+		$(document).on('click', '.menu-dropdown-button', function(e){
+			var field = $(this).attr('field')
+			var id = $(this).attr('id');
+			var id1 = $(this).attr('id1');
+			var id2 = $(this).attr('id1');
+			if (id !== null){
+				if (field === "CoE"){
+					if (id1 == 0){
+						window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
+        			} else {
+        				window.location.href = "../indicator/viewPRdbl?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id1 + "&" + field + "ID2=" + id2;
+        			}
+				} else if (field === "Analyst"){
+					window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
             	} else if (field === "Fiscal_Year"){
             		currAddress = window.location.href
             		currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
@@ -1467,8 +1484,8 @@
 		} else {
 			if (field === "CoE"){
 				window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
-            	} else if (field === "Analyst"){
-            		window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
+			} else if (field === "Analyst"){
+				window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
             	}
 		}
         });
@@ -1481,7 +1498,7 @@
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
-            });
+			});
 		}
 		function changeColorUndoable(indicatorID, colorID, oldColorID, row){
 			changeColor(indicatorID, colorID, row);
@@ -1497,12 +1514,12 @@
 
 		function changeDirection(indicatorID, directionID, row){
 			$.post('changeDirection',{indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }, function(clrData){
-            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q1_Color", clrData.Q1_Color, 'set');
-            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q2_Color", clrData.Q2_Color, 'set');
-            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
-            	$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
-            	$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
-            });
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q1_Color", clrData.Q1_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q2_Color", clrData.Q2_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
+				$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
+			});
 		}
 		function changeDirectionUndoable(indicatorID, directionID, oldDirectionID, row){
 			changeDirection(indicatorID, directionID, row);
@@ -1523,7 +1540,7 @@
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q3_Color", clrData.Q3_Color, 'set');
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_Q4_Color", clrData.Q4_Color, 'set');
 				$IndInv.handsontable("setDataAtRowProp", row, "FY_YTD_Color", clrData.YTD_Color, 'set');
-            });
+			});
 		}
 		function changeThresholdUndoable(indicatorID, thresholdID, oldThresholdID, row){
 			changeThreshold(indicatorID, thresholdID, row);
