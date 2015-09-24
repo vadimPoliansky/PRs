@@ -85,8 +85,6 @@ namespace IndInv.Models
 		public string FY_13_14_Data_Source_Benchmark { get; set; }
 		[Display(Name = "OPEO Lead")]
 		public string FY_13_14_OPEO_Lead { get; set; }
-		[Display(Name = "Comments")]
-		public string FY_13_14_Comment { get; set; }
 
 		public virtual string FY_13_14_Q1_Color { get { return Color.getColor(FY_13_14_Q1, FY_13_14_Target, FY_13_14_Q1_Sup, FY_13_14_Q1_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
 		public virtual string FY_13_14_Q2_Color { get { return Color.getColor(FY_13_14_Q2, FY_13_14_Target, FY_13_14_Q2_Sup, FY_13_14_Q2_Custom_Color, FY_13_14_Color_ID, false, this, FY_13_14_Threshold_ID, FY_13_14_Direction_ID, 1); } }
@@ -145,14 +143,12 @@ namespace IndInv.Models
 		public string FY_14_15_Data_Source_Benchmark { get; set; }
 		[Display(Name = "OPEO Lead")]
 		public string FY_14_15_OPEO_Lead { get; set; }
-		[Display(Name = "Comments")]
-		public string FY_14_15_Comment { get; set; }
 
-		public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_13_14_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
-		public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_13_14_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
-		public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_13_14_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
-		public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_13_14_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
-		public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_13_14_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_Q1_Color { get { return Color.getColor(FY_14_15_Q1, FY_14_15_Target, FY_14_15_Q1_Sup, FY_14_15_Q1_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_Q2_Color { get { return Color.getColor(FY_14_15_Q2, FY_14_15_Target, FY_14_15_Q2_Sup, FY_14_15_Q2_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_Q3_Color { get { return Color.getColor(FY_14_15_Q3, FY_14_15_Target, FY_14_15_Q3_Sup, FY_14_15_Q3_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_Q4_Color { get { return Color.getColor(FY_14_15_Q4, FY_14_15_Target, FY_14_15_Q4_Sup, FY_14_15_Q4_Custom_Color, FY_14_15_Color_ID, false, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
+		public virtual string FY_14_15_YTD_Color { get { return Color.getColor(FY_14_15_YTD, FY_14_15_Target, FY_14_15_YTD, FY_14_15_YTD_Custom_Color, FY_14_15_Color_ID, true, this, FY_14_15_Threshold_ID, FY_14_15_Direction_ID, 2); } }
 
 
 		[Display(Name = "Q1")]
@@ -204,14 +200,407 @@ namespace IndInv.Models
 		public string FY_15_16_Data_Source_Benchmark { get; set; }
 		[Display(Name = "OPEO Lead")]
 		public string FY_15_16_OPEO_Lead { get; set; }
-		[Display(Name = "Comments")]
-		public string FY_15_16_Comment { get; set; }
 
-		public virtual string FY_15_16_Q1_Color { get { return Color.getColor(FY_15_16_Q1, FY_15_16_Target, FY_13_14_Q1_Sup, FY_15_16_Q1_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
-		public virtual string FY_15_16_Q2_Color { get { return Color.getColor(FY_15_16_Q2, FY_15_16_Target, FY_13_14_Q2_Sup, FY_15_16_Q2_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
-		public virtual string FY_15_16_Q3_Color { get { return Color.getColor(FY_15_16_Q3, FY_15_16_Target, FY_13_14_Q3_Sup, FY_15_16_Q3_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
-		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_13_14_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
-		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_13_14_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+		public virtual string FY_15_16_Q1_Color { get { return Color.getColor(FY_15_16_Q1, FY_15_16_Target, FY_15_16_Q1_Sup, FY_15_16_Q1_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+		public virtual string FY_15_16_Q2_Color { get { return Color.getColor(FY_15_16_Q2, FY_15_16_Target, FY_15_16_Q2_Sup, FY_15_16_Q2_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+		public virtual string FY_15_16_Q3_Color { get { return Color.getColor(FY_15_16_Q3, FY_15_16_Target, FY_15_16_Q3_Sup, FY_15_16_Q3_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+		public virtual string FY_15_16_Q4_Color { get { return Color.getColor(FY_15_16_Q4, FY_15_16_Target, FY_15_16_Q4_Sup, FY_15_16_Q4_Custom_Color, FY_15_16_Color_ID, false, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+		public virtual string FY_15_16_YTD_Color { get { return Color.getColor(FY_15_16_YTD, FY_15_16_Target, FY_15_16_YTD, FY_15_16_YTD_Custom_Color, FY_15_16_Color_ID, true, this, FY_15_16_Threshold_ID, FY_15_16_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_16_17_Q1 { get; set; }
+		public string FY_16_17_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_16_17_Q2 { get; set; }
+		public string FY_16_17_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_16_17_Q3 { get; set; }
+		public string FY_16_17_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_16_17_Q4 { get; set; }
+		public string FY_16_17_Q4_Sup { get; set; }
+		[Display(Name = "FY 16/17")]
+		public string FY_16_17_YTD { get; set; }
+		public string FY_16_17_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_16_17_Target { get; set; }
+		public string FY_16_17_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_16_17_Comparator { get; set; }
+		public string FY_16_17_Comparator_Sup { get; set; }
+		public string FY_16_17_Comparator_Q1 { get; set; }
+		public string FY_16_17_Comparator_Q2 { get; set; }
+		public string FY_16_17_Comparator_Q3 { get; set; }
+		public string FY_16_17_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_16_17_Performance_Threshold { get; set; }
+		public virtual string FY_16_17_Performance_Threshold { get { return Color.getThreshold(FY_16_17_Target, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 2); } }
+		public string FY_16_17_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_16_17_Color_ID { get; set; }
+		public Int16 FY_16_17_Threshold_ID { get; set; }
+		public Int16 FY_16_17_Direction_ID { get; set; }
+		public string FY_16_17_YTD_Custom_Color { get; set; }
+		public string FY_16_17_Q1_Custom_Color { get; set; }
+		public string FY_16_17_Q2_Custom_Color { get; set; }
+		public string FY_16_17_Q3_Custom_Color { get; set; }
+		public string FY_16_17_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_16_17_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_16_17_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_16_17_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_16_17_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_16_17_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_16_17_OPEO_Lead { get; set; }
+
+		public virtual string FY_16_17_Q1_Color { get { return Color.getColor(FY_16_17_Q1, FY_16_17_Target, FY_13_14_Q1_Sup, FY_16_17_Q1_Custom_Color, FY_16_17_Color_ID, false, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 3); } }
+		public virtual string FY_16_17_Q2_Color { get { return Color.getColor(FY_16_17_Q2, FY_16_17_Target, FY_13_14_Q2_Sup, FY_16_17_Q2_Custom_Color, FY_16_17_Color_ID, false, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 3); } }
+		public virtual string FY_16_17_Q3_Color { get { return Color.getColor(FY_16_17_Q3, FY_16_17_Target, FY_13_14_Q3_Sup, FY_16_17_Q3_Custom_Color, FY_16_17_Color_ID, false, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 3); } }
+		public virtual string FY_16_17_Q4_Color { get { return Color.getColor(FY_16_17_Q4, FY_16_17_Target, FY_13_14_Q4_Sup, FY_16_17_Q4_Custom_Color, FY_16_17_Color_ID, false, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 3); } }
+		public virtual string FY_16_17_YTD_Color { get { return Color.getColor(FY_16_17_YTD, FY_16_17_Target, FY_13_14_YTD, FY_16_17_YTD_Custom_Color, FY_16_17_Color_ID, true, this, FY_16_17_Threshold_ID, FY_16_17_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_17_18_Q1 { get; set; }
+		public string FY_17_18_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_17_18_Q2 { get; set; }
+		public string FY_17_18_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_17_18_Q3 { get; set; }
+		public string FY_17_18_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_17_18_Q4 { get; set; }
+		public string FY_17_18_Q4_Sup { get; set; }
+		[Display(Name = "FY 17/18")]
+		public string FY_17_18_YTD { get; set; }
+		public string FY_17_18_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_17_18_Target { get; set; }
+		public string FY_17_18_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_17_18_Comparator { get; set; }
+		public string FY_17_18_Comparator_Sup { get; set; }
+		public string FY_17_18_Comparator_Q1 { get; set; }
+		public string FY_17_18_Comparator_Q2 { get; set; }
+		public string FY_17_18_Comparator_Q3 { get; set; }
+		public string FY_17_18_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_17_18_Performance_Threshold { get; set; }
+		public virtual string FY_17_18_Performance_Threshold { get { return Color.getThreshold(FY_17_18_Target, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 2); } }
+		public string FY_17_18_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_17_18_Color_ID { get; set; }
+		public Int16 FY_17_18_Threshold_ID { get; set; }
+		public Int16 FY_17_18_Direction_ID { get; set; }
+		public string FY_17_18_YTD_Custom_Color { get; set; }
+		public string FY_17_18_Q1_Custom_Color { get; set; }
+		public string FY_17_18_Q2_Custom_Color { get; set; }
+		public string FY_17_18_Q3_Custom_Color { get; set; }
+		public string FY_17_18_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_17_18_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_17_18_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_17_18_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_17_18_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_17_18_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_17_18_OPEO_Lead { get; set; }
+
+		public virtual string FY_17_18_Q1_Color { get { return Color.getColor(FY_17_18_Q1, FY_17_18_Target, FY_13_14_Q1_Sup, FY_17_18_Q1_Custom_Color, FY_17_18_Color_ID, false, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 3); } }
+		public virtual string FY_17_18_Q2_Color { get { return Color.getColor(FY_17_18_Q2, FY_17_18_Target, FY_13_14_Q2_Sup, FY_17_18_Q2_Custom_Color, FY_17_18_Color_ID, false, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 3); } }
+		public virtual string FY_17_18_Q3_Color { get { return Color.getColor(FY_17_18_Q3, FY_17_18_Target, FY_13_14_Q3_Sup, FY_17_18_Q3_Custom_Color, FY_17_18_Color_ID, false, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 3); } }
+		public virtual string FY_17_18_Q4_Color { get { return Color.getColor(FY_17_18_Q4, FY_17_18_Target, FY_13_14_Q4_Sup, FY_17_18_Q4_Custom_Color, FY_17_18_Color_ID, false, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 3); } }
+		public virtual string FY_17_18_YTD_Color { get { return Color.getColor(FY_17_18_YTD, FY_17_18_Target, FY_13_14_YTD, FY_17_18_YTD_Custom_Color, FY_17_18_Color_ID, true, this, FY_17_18_Threshold_ID, FY_17_18_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_18_19_Q1 { get; set; }
+		public string FY_18_19_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_18_19_Q2 { get; set; }
+		public string FY_18_19_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_18_19_Q3 { get; set; }
+		public string FY_18_19_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_18_19_Q4 { get; set; }
+		public string FY_18_19_Q4_Sup { get; set; }
+		[Display(Name = "FY 18/19")]
+		public string FY_18_19_YTD { get; set; }
+		public string FY_18_19_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_18_19_Target { get; set; }
+		public string FY_18_19_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_18_19_Comparator { get; set; }
+		public string FY_18_19_Comparator_Sup { get; set; }
+		public string FY_18_19_Comparator_Q1 { get; set; }
+		public string FY_18_19_Comparator_Q2 { get; set; }
+		public string FY_18_19_Comparator_Q3 { get; set; }
+		public string FY_18_19_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_18_19_Performance_Threshold { get; set; }
+		public virtual string FY_18_19_Performance_Threshold { get { return Color.getThreshold(FY_18_19_Target, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 2); } }
+		public string FY_18_19_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_18_19_Color_ID { get; set; }
+		public Int16 FY_18_19_Threshold_ID { get; set; }
+		public Int16 FY_18_19_Direction_ID { get; set; }
+		public string FY_18_19_YTD_Custom_Color { get; set; }
+		public string FY_18_19_Q1_Custom_Color { get; set; }
+		public string FY_18_19_Q2_Custom_Color { get; set; }
+		public string FY_18_19_Q3_Custom_Color { get; set; }
+		public string FY_18_19_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_18_19_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_18_19_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_18_19_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_18_19_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_18_19_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_18_19_OPEO_Lead { get; set; }
+
+		public virtual string FY_18_19_Q1_Color { get { return Color.getColor(FY_18_19_Q1, FY_18_19_Target, FY_13_14_Q1_Sup, FY_18_19_Q1_Custom_Color, FY_18_19_Color_ID, false, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 3); } }
+		public virtual string FY_18_19_Q2_Color { get { return Color.getColor(FY_18_19_Q2, FY_18_19_Target, FY_13_14_Q2_Sup, FY_18_19_Q2_Custom_Color, FY_18_19_Color_ID, false, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 3); } }
+		public virtual string FY_18_19_Q3_Color { get { return Color.getColor(FY_18_19_Q3, FY_18_19_Target, FY_13_14_Q3_Sup, FY_18_19_Q3_Custom_Color, FY_18_19_Color_ID, false, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 3); } }
+		public virtual string FY_18_19_Q4_Color { get { return Color.getColor(FY_18_19_Q4, FY_18_19_Target, FY_13_14_Q4_Sup, FY_18_19_Q4_Custom_Color, FY_18_19_Color_ID, false, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 3); } }
+		public virtual string FY_18_19_YTD_Color { get { return Color.getColor(FY_18_19_YTD, FY_18_19_Target, FY_13_14_YTD, FY_18_19_YTD_Custom_Color, FY_18_19_Color_ID, true, this, FY_18_19_Threshold_ID, FY_18_19_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_19_20_Q1 { get; set; }
+		public string FY_19_20_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_19_20_Q2 { get; set; }
+		public string FY_19_20_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_19_20_Q3 { get; set; }
+		public string FY_19_20_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_19_20_Q4 { get; set; }
+		public string FY_19_20_Q4_Sup { get; set; }
+		[Display(Name = "FY 19/20")]
+		public string FY_19_20_YTD { get; set; }
+		public string FY_19_20_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_19_20_Target { get; set; }
+		public string FY_19_20_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_19_20_Comparator { get; set; }
+		public string FY_19_20_Comparator_Sup { get; set; }
+		public string FY_19_20_Comparator_Q1 { get; set; }
+		public string FY_19_20_Comparator_Q2 { get; set; }
+		public string FY_19_20_Comparator_Q3 { get; set; }
+		public string FY_19_20_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_19_20_Performance_Threshold { get; set; }
+		public virtual string FY_19_20_Performance_Threshold { get { return Color.getThreshold(FY_19_20_Target, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 2); } }
+		public string FY_19_20_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_19_20_Color_ID { get; set; }
+		public Int16 FY_19_20_Threshold_ID { get; set; }
+		public Int16 FY_19_20_Direction_ID { get; set; }
+		public string FY_19_20_YTD_Custom_Color { get; set; }
+		public string FY_19_20_Q1_Custom_Color { get; set; }
+		public string FY_19_20_Q2_Custom_Color { get; set; }
+		public string FY_19_20_Q3_Custom_Color { get; set; }
+		public string FY_19_20_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_19_20_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_19_20_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_19_20_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_19_20_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_19_20_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_19_20_OPEO_Lead { get; set; }
+
+		public virtual string FY_19_20_Q1_Color { get { return Color.getColor(FY_19_20_Q1, FY_19_20_Target, FY_13_14_Q1_Sup, FY_19_20_Q1_Custom_Color, FY_19_20_Color_ID, false, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 3); } }
+		public virtual string FY_19_20_Q2_Color { get { return Color.getColor(FY_19_20_Q2, FY_19_20_Target, FY_13_14_Q2_Sup, FY_19_20_Q2_Custom_Color, FY_19_20_Color_ID, false, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 3); } }
+		public virtual string FY_19_20_Q3_Color { get { return Color.getColor(FY_19_20_Q3, FY_19_20_Target, FY_13_14_Q3_Sup, FY_19_20_Q3_Custom_Color, FY_19_20_Color_ID, false, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 3); } }
+		public virtual string FY_19_20_Q4_Color { get { return Color.getColor(FY_19_20_Q4, FY_19_20_Target, FY_13_14_Q4_Sup, FY_19_20_Q4_Custom_Color, FY_19_20_Color_ID, false, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 3); } }
+		public virtual string FY_19_20_YTD_Color { get { return Color.getColor(FY_19_20_YTD, FY_19_20_Target, FY_13_14_YTD, FY_19_20_YTD_Custom_Color, FY_19_20_Color_ID, true, this, FY_19_20_Threshold_ID, FY_19_20_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_20_21_Q1 { get; set; }
+		public string FY_20_21_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_20_21_Q2 { get; set; }
+		public string FY_20_21_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_20_21_Q3 { get; set; }
+		public string FY_20_21_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_20_21_Q4 { get; set; }
+		public string FY_20_21_Q4_Sup { get; set; }
+		[Display(Name = "FY 20/21")]
+		public string FY_20_21_YTD { get; set; }
+		public string FY_20_21_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_20_21_Target { get; set; }
+		public string FY_20_21_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_20_21_Comparator { get; set; }
+		public string FY_20_21_Comparator_Sup { get; set; }
+		public string FY_20_21_Comparator_Q1 { get; set; }
+		public string FY_20_21_Comparator_Q2 { get; set; }
+		public string FY_20_21_Comparator_Q3 { get; set; }
+		public string FY_20_21_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_20_21_Performance_Threshold { get; set; }
+		public virtual string FY_20_21_Performance_Threshold { get { return Color.getThreshold(FY_20_21_Target, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 2); } }
+		public string FY_20_21_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_20_21_Color_ID { get; set; }
+		public Int16 FY_20_21_Threshold_ID { get; set; }
+		public Int16 FY_20_21_Direction_ID { get; set; }
+		public string FY_20_21_YTD_Custom_Color { get; set; }
+		public string FY_20_21_Q1_Custom_Color { get; set; }
+		public string FY_20_21_Q2_Custom_Color { get; set; }
+		public string FY_20_21_Q3_Custom_Color { get; set; }
+		public string FY_20_21_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_20_21_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_20_21_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_20_21_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_20_21_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_20_21_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_20_21_OPEO_Lead { get; set; }
+
+		public virtual string FY_20_21_Q1_Color { get { return Color.getColor(FY_20_21_Q1, FY_20_21_Target, FY_13_14_Q1_Sup, FY_20_21_Q1_Custom_Color, FY_20_21_Color_ID, false, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 3); } }
+		public virtual string FY_20_21_Q2_Color { get { return Color.getColor(FY_20_21_Q2, FY_20_21_Target, FY_13_14_Q2_Sup, FY_20_21_Q2_Custom_Color, FY_20_21_Color_ID, false, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 3); } }
+		public virtual string FY_20_21_Q3_Color { get { return Color.getColor(FY_20_21_Q3, FY_20_21_Target, FY_13_14_Q3_Sup, FY_20_21_Q3_Custom_Color, FY_20_21_Color_ID, false, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 3); } }
+		public virtual string FY_20_21_Q4_Color { get { return Color.getColor(FY_20_21_Q4, FY_20_21_Target, FY_13_14_Q4_Sup, FY_20_21_Q4_Custom_Color, FY_20_21_Color_ID, false, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 3); } }
+		public virtual string FY_20_21_YTD_Color { get { return Color.getColor(FY_20_21_YTD, FY_20_21_Target, FY_13_14_YTD, FY_20_21_YTD_Custom_Color, FY_20_21_Color_ID, true, this, FY_20_21_Threshold_ID, FY_20_21_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_21_22_Q1 { get; set; }
+		public string FY_21_22_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_21_22_Q2 { get; set; }
+		public string FY_21_22_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_21_22_Q3 { get; set; }
+		public string FY_21_22_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_21_22_Q4 { get; set; }
+		public string FY_21_22_Q4_Sup { get; set; }
+		[Display(Name = "FY 21/22")]
+		public string FY_21_22_YTD { get; set; }
+		public string FY_21_22_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_21_22_Target { get; set; }
+		public string FY_21_22_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_21_22_Comparator { get; set; }
+		public string FY_21_22_Comparator_Sup { get; set; }
+		public string FY_21_22_Comparator_Q1 { get; set; }
+		public string FY_21_22_Comparator_Q2 { get; set; }
+		public string FY_21_22_Comparator_Q3 { get; set; }
+		public string FY_21_22_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_21_22_Performance_Threshold { get; set; }
+		public virtual string FY_21_22_Performance_Threshold { get { return Color.getThreshold(FY_21_22_Target, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 2); } }
+		public string FY_21_22_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_21_22_Color_ID { get; set; }
+		public Int16 FY_21_22_Threshold_ID { get; set; }
+		public Int16 FY_21_22_Direction_ID { get; set; }
+		public string FY_21_22_YTD_Custom_Color { get; set; }
+		public string FY_21_22_Q1_Custom_Color { get; set; }
+		public string FY_21_22_Q2_Custom_Color { get; set; }
+		public string FY_21_22_Q3_Custom_Color { get; set; }
+		public string FY_21_22_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_21_22_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_21_22_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_21_22_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_21_22_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_21_22_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_21_22_OPEO_Lead { get; set; }
+
+		public virtual string FY_21_22_Q1_Color { get { return Color.getColor(FY_21_22_Q1, FY_21_22_Target, FY_13_14_Q1_Sup, FY_21_22_Q1_Custom_Color, FY_21_22_Color_ID, false, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 3); } }
+		public virtual string FY_21_22_Q2_Color { get { return Color.getColor(FY_21_22_Q2, FY_21_22_Target, FY_13_14_Q2_Sup, FY_21_22_Q2_Custom_Color, FY_21_22_Color_ID, false, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 3); } }
+		public virtual string FY_21_22_Q3_Color { get { return Color.getColor(FY_21_22_Q3, FY_21_22_Target, FY_13_14_Q3_Sup, FY_21_22_Q3_Custom_Color, FY_21_22_Color_ID, false, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 3); } }
+		public virtual string FY_21_22_Q4_Color { get { return Color.getColor(FY_21_22_Q4, FY_21_22_Target, FY_13_14_Q4_Sup, FY_21_22_Q4_Custom_Color, FY_21_22_Color_ID, false, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 3); } }
+		public virtual string FY_21_22_YTD_Color { get { return Color.getColor(FY_21_22_YTD, FY_21_22_Target, FY_13_14_YTD, FY_21_22_YTD_Custom_Color, FY_21_22_Color_ID, true, this, FY_21_22_Threshold_ID, FY_21_22_Direction_ID, 3); } }
+
+		[Display(Name = "Q1")]
+		public string FY_22_23_Q1 { get; set; }
+		public string FY_22_23_Q1_Sup { get; set; }
+		[Display(Name = "Q2")]
+		public string FY_22_23_Q2 { get; set; }
+		public string FY_22_23_Q2_Sup { get; set; }
+		[Display(Name = "Q3")]
+		public string FY_22_23_Q3 { get; set; }
+		public string FY_22_23_Q3_Sup { get; set; }
+		[Display(Name = "Q4")]
+		public string FY_22_23_Q4 { get; set; }
+		public string FY_22_23_Q4_Sup { get; set; }
+		[Display(Name = "FY 22/23")]
+		public string FY_22_23_YTD { get; set; }
+		public string FY_22_23_YTD_Sup { get; set; }
+		[Display(Name = "Target")]
+		public string FY_22_23_Target { get; set; }
+		public string FY_22_23_Target_Sup { get; set; }
+		[Display(Name = "Comparator")]
+		public string FY_22_23_Comparator { get; set; }
+		public string FY_22_23_Comparator_Sup { get; set; }
+		public string FY_22_23_Comparator_Q1 { get; set; }
+		public string FY_22_23_Comparator_Q2 { get; set; }
+		public string FY_22_23_Comparator_Q3 { get; set; }
+		public string FY_22_23_Comparator_Q4 { get; set; }
+		[Display(Name = "Performance Threshold")]
+		//		public string FY_22_23_Performance_Threshold { get; set; }
+		public virtual string FY_22_23_Performance_Threshold { get { return Color.getThreshold(FY_22_23_Target, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 2); } }
+		public string FY_22_23_Performance_Threshold_Sup { get; set; }
+		public Int16 FY_22_23_Color_ID { get; set; }
+		public Int16 FY_22_23_Threshold_ID { get; set; }
+		public Int16 FY_22_23_Direction_ID { get; set; }
+		public string FY_22_23_YTD_Custom_Color { get; set; }
+		public string FY_22_23_Q1_Custom_Color { get; set; }
+		public string FY_22_23_Q2_Custom_Color { get; set; }
+		public string FY_22_23_Q3_Custom_Color { get; set; }
+		public string FY_22_23_Q4_Custom_Color { get; set; }
+		[Display(Name = "Definition/Calculation/Notes")]
+		public string FY_22_23_Definition_Calculation { get; set; }
+		[Display(Name = "Target Rationale")]
+		public string FY_22_23_Target_Rationale { get; set; }
+		[Display(Name = "Comparator Source")]
+		public string FY_22_23_Comparator_Source { get; set; }
+		[Display(Name = "Data Source MSH")]
+		public string FY_22_23_Data_Source_MSH { get; set; }
+		[Display(Name = "Data Source Benchmark")]
+		public string FY_22_23_Data_Source_Benchmark { get; set; }
+		[Display(Name = "OPEO Lead")]
+		public string FY_22_23_OPEO_Lead { get; set; }
+
+		[Display(Name = "Comments")]
+		public string Comment { get; set; }
+
+		public virtual string FY_22_23_Q1_Color { get { return Color.getColor(FY_22_23_Q1, FY_22_23_Target, FY_13_14_Q1_Sup, FY_22_23_Q1_Custom_Color, FY_22_23_Color_ID, false, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 3); } }
+		public virtual string FY_22_23_Q2_Color { get { return Color.getColor(FY_22_23_Q2, FY_22_23_Target, FY_13_14_Q2_Sup, FY_22_23_Q2_Custom_Color, FY_22_23_Color_ID, false, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 3); } }
+		public virtual string FY_22_23_Q3_Color { get { return Color.getColor(FY_22_23_Q3, FY_22_23_Target, FY_13_14_Q3_Sup, FY_22_23_Q3_Custom_Color, FY_22_23_Color_ID, false, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 3); } }
+		public virtual string FY_22_23_Q4_Color { get { return Color.getColor(FY_22_23_Q4, FY_22_23_Target, FY_13_14_Q4_Sup, FY_22_23_Q4_Custom_Color, FY_22_23_Color_ID, false, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 3); } }
+		public virtual string FY_22_23_YTD_Color { get { return Color.getColor(FY_22_23_YTD, FY_22_23_Target, FY_13_14_YTD, FY_22_23_YTD_Custom_Color, FY_22_23_Color_ID, true, this, FY_22_23_Threshold_ID, FY_22_23_Direction_ID, 3); } }
 
 		public Int16? Indicator_Link { get; set; }
 
@@ -240,6 +629,7 @@ namespace IndInv.Models
 		public bool? FY_19_20_Draft { get; set; }
 		public bool? FY_20_21_Draft { get; set; }
 		public bool? FY_21_22_Draft { get; set; }
+		public bool? FY_22_23_Draft { get; set; }
 
 
 		public virtual ICollection<Indicator_CoE_Maps> Indicator_CoE_Map { get; set; }
@@ -267,6 +657,7 @@ namespace IndInv.Models
 		public bool? FY_19_20_Draft { get; set; }
 		public bool? FY_20_21_Draft { get; set; }
 		public bool? FY_21_22_Draft { get; set; }
+		public bool? FY_22_23_Draft { get; set; }
 
 		public virtual ICollection<Link_CoE_Maps> Link_CoE_Maps { get; set; }
 	}

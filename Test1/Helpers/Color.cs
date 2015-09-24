@@ -398,7 +398,7 @@ namespace IndInv.Helpers
 			if (Target == "-") { return "-"; }
 
 			str = Color.getNum(Target);
-			if (str == null) { return "TBD"; }
+			if (str == null) { return "NA"; }
 
 			var direction = ">";
 			if (Target != null){
@@ -470,7 +470,7 @@ namespace IndInv.Helpers
 				}
 				else
 				{
-					return "TBD";
+					return "NA";
 				}
 			}
 			else

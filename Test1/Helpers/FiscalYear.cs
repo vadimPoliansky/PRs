@@ -14,22 +14,7 @@ namespace IndInv.Helpers
 
 
         public static int FYInt(int fiscalYear){
-            if (fiscalYear == 1)
-            {
-                return 13;
-            }
-            else if (fiscalYear == 2)
-            {
-                return 14;
-			}
-			else if (fiscalYear == 3)
-			{
-				return 15;
-			}
-            else
-            {
-                return 14;
-            }
+			return fiscalYear + 12;
         }
 
         public static string FYStrFull(string fyStr, int fiscalYear)

@@ -24,6 +24,7 @@ namespace IndInv.Models.ViewModels
         public Int16 Fiscal_Year { get; set; }
         public Int16? Analyst_ID { get; set; }
 
+		public Int16 coeID { get; set; }
 		public Int16? coeID2 { get; set; }
 
     }

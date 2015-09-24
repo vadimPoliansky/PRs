@@ -18,6 +18,8 @@ using System.Collections.Specialized;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Data.Objects.SqlClient;
+using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Core;
 
 
 namespace IndInv.Controllers
@@ -53,6 +55,139 @@ namespace IndInv.Controllers
 
 			Response.Redirect("indicator/editInventory?fiscalYear=3");
 			// return null;
+		}
+
+		public ActionResult addFiscalYear()
+		{
+			return View();
+		}
+
+		public ActionResult addFiscalYearCmd()
+		{
+			var oldFiscalYearCode = db.Fiscal_Years.Max(x=> x.Fiscal_Year_Code);
+			var newFiscalYearCode = oldFiscalYearCode + 1;
+			var newFiscalYearStr = FiscalYear.FYStr(newFiscalYearCode, 0).Replace("_", "");
+
+			var newFiscalYear = new Fiscal_Years()
+			{
+				Fiscal_Year = newFiscalYearStr,
+				Fiscal_Year_Code = (Int16)newFiscalYearCode,
+			};
+
+			db.Fiscal_Years.Add(newFiscalYear);
+
+			var allIndicatorCoEMaps = db.Indicator_CoE_Maps.Where(x => x.Fiscal_Year == oldFiscalYearCode);
+			foreach (var map in allIndicatorCoEMaps)
+			{
+				var newMap = new Indicator_CoE_Maps()
+				{
+					CoE_ID = map.CoE_ID,
+					Indicator_ID = map.Indicator_ID,
+					Fiscal_Year = (Int16)newFiscalYearCode,
+					Number = map.Number
+				};
+				db.Indicator_CoE_Maps.Add(newMap);
+			}
+			db.SaveChanges();
+
+			var allIndicatorFootnoteMaps = db.Indicator_Footnote_Maps.Where(x => x.Fiscal_Year == oldFiscalYearCode);
+			foreach(var map in allIndicatorFootnoteMaps)
+			{
+				var newMap = new Indicator_Footnote_Maps()
+				{
+					Fiscal_Year = (Int16)newFiscalYearCode,
+					Footnote_ID = map.Footnote_ID,
+					Indicator_ID = map.Indicator_ID,
+				};
+				db.Indicator_Footnote_Maps.Add(newMap);
+			}
+			db.SaveChanges();
+
+			var allAreaCoEMaps = db.Area_CoE_Maps.Where(x => x.Fiscal_Year == oldFiscalYearCode);
+			foreach(var map in allAreaCoEMaps)
+			{
+				var newMap = new Area_CoE_Maps()
+				{
+					Area_ID = map.Area_ID,
+					CoE_ID = map.CoE_ID,
+					Fiscal_Year = (Int16)newFiscalYearCode,
+					Objective = map.Objective
+				};
+				db.Area_CoE_Maps.Add(newMap);
+			}
+			db.SaveChanges();
+
+			foreach (var indicator in db.Indicators)
+			{
+
+				var type = indicator.GetType();
+				var oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Threshold_ID");
+				var oldValue = oldProperty.GetValue(indicator, null);
+				var newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Threshold_ID");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Direction_ID");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Direction_ID");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Color_ID");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Color_ID");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Definition_Calculation");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Definition_Calculation");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Target_Rationale");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Target_Rationale");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Comparator_Source");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Comparator_Source");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_OPEO_Lead");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_OPEO_Lead");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Data_Source_MSH");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Data_Source_MSH");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+
+
+				type = indicator.GetType();
+				oldProperty = type.GetProperty(FiscalYear.FYStr(oldFiscalYearCode, 0) + "_Data_Source_Benchmark");
+				oldValue = oldProperty.GetValue(indicator, null);
+				newProperty = type.GetProperty(FiscalYear.FYStr(newFiscalYearCode, 0) + "_Data_Source_Benchmark");
+				newProperty.SetValue(indicator, Convert.ChangeType(oldValue, newProperty.PropertyType), null);
+				db.Entry(indicator).State = EntityState.Modified;
+			}
+
+			db.SaveChanges();
+
+			return View();
 		}
 
 		public ActionResult dashboard(Int16? fiscalYear)
@@ -291,6 +426,7 @@ namespace IndInv.Controllers
 				allThresholds = db.Color_Thresholds.ToList(),
 				allFormats = db.Formats.ToList(),
 
+				coeID = coeID,
 				coeID2 = coeID2
 			};
 
@@ -466,7 +602,8 @@ namespace IndInv.Controllers
 			public static ClosedXML.Excel.XLColor prHeader1Fill { get { return prBlue; } }
 			public static ClosedXML.Excel.XLColor prHeader1Font { get { return XLColor.White; } }
 			public static ClosedXML.Excel.XLColor prHeader2Fill { get { return XLColor.White; } }
-			public static ClosedXML.Excel.XLColor prHeader2Font { get { return XLColor.White; } }
+			public static ClosedXML.Excel.XLColor prHeader2Font { get { return XLColor.Black; } }
+            public static ClosedXML.Excel.XLColor prHeader2Border { get { return XLColor.Black; } }
 
 			public static ClosedXML.Excel.XLColor prBorder { get { return XLColor.FromArgb(0, 0, 0); } }
 			public static ClosedXML.Excel.XLColor prAreaFill { get { return XLColor.FromArgb(192, 192, 192); } }
@@ -475,6 +612,9 @@ namespace IndInv.Controllers
 
 		public ActionResult viewPRExcel(Int16 fiscalYear, Int16? coeID)
 		{
+            var coeName = "";
+            if (coeID.HasValue) coeName = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Abbr;
+
 			ModelState.Clear();
 			var viewModel = new PRViewModel
 			{
@@ -495,6 +635,7 @@ namespace IndInv.Controllers
 			var prHeader1Font = ExcelGlobalVariables.prHeader1Font;//XLColor.White;
 			var prHeader2Fill = ExcelGlobalVariables.prHeader2Fill;//XLColor.White;
 			var prHeader2Font = ExcelGlobalVariables.prHeader2Font;//XLColor.Black;
+            var prHeader2Border = ExcelGlobalVariables.prHeader2Border;//XLColor.Black;
 			var prBorder = ExcelGlobalVariables.prBorder;//XLColor.FromArgb(0, 0, 0);
 			var prAreaFill = ExcelGlobalVariables.prAreaFill;//XLColor.FromArgb(192, 192, 192);
 			var prAreaFont = ExcelGlobalVariables.prAreaFont;//XLColor.Black;
@@ -647,6 +788,8 @@ namespace IndInv.Controllers
 
 					prHeader2.Style.Fill.BackgroundColor = prHeader2Fill;
 					prHeader2.Style.Font.FontColor = prHeader2Font;
+                    prHeader2.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                    prHeader2.Style.Border.InsideBorderColor = prHeader2Border;
 
 					currentRow += 2;
 
@@ -1049,10 +1192,10 @@ namespace IndInv.Controllers
 			MemoryStream postImage = new MemoryStream();
 			SLDocument postImageWb = new SLDocument(preImage);
 
-			string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logo.png");
+            string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/SHSheader.png");
 			SLPicture picLogo = new SLPicture(picPath);
-			string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
-			SLPicture picLogoOPEO = new SLPicture(picPathOPEO);
+			//string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+			//SLPicture picLogoOPEO = new SLPicture(picPathOPEO);
 			string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
 			SLPicture picMonthly = new SLPicture(picMonthlyPath);
 			string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
@@ -1072,14 +1215,14 @@ namespace IndInv.Controllers
 				}
 
 				picLogo.SetPosition(0, 0);
-				picLogo.ResizeInPercentage(25, 25);
+				picLogo.ResizeInPercentage(100, 100);
 				postImageWb.InsertPicture(picLogo);
 
-				picLogoOPEO.SetRelativePositionInPixels(0, ws.LastColumnUsed().ColumnNumber() + 1, -140, 0);
-				picLogoOPEO.ResizeInPercentage(45, 45);
-				postImageWb.InsertPicture(picLogoOPEO);
+				//picLogoOPEO.SetRelativePositionInPixels(0, ws.LastColumnUsed().ColumnNumber() + 1, -140, 0);
+				//picLogoOPEO.ResizeInPercentage(45, 45);
+				//postImageWb.InsertPicture(picLogoOPEO);
 
-				if (ws.Name.Substring(0, 3) != "Def")
+				if (ws.Name.Length > 3 && ws.Name.Substring(0, 3)  != "Def")
 				{
 					picTarget.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -240, 1);
 					picNA.SetRelativePositionInPixels(ws.LastRowUsed().RowNumber() + 1, ws.LastColumnUsed().ColumnNumber() + 1, -400, 1);
@@ -1102,7 +1245,7 @@ namespace IndInv.Controllers
 			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
 			httpResponse.Clear();
 			httpResponse.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.xlsx\"");
+            httpResponse.AddHeader("content-disposition", "attachment;filename=\"" + coeName.Replace("/", "") + "_" + DateTime.Now.ToShortDateString() + ".xlsx\"");
 			//httpResponse.ContentType = "application/pdf";
 			//httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
 
@@ -1121,6 +1264,11 @@ namespace IndInv.Controllers
 
 		public ActionResult viewPRPdf(Int16 fiscalYear, Int16? coeID)
 		{
+			MemoryStream outputMemStream = new MemoryStream();
+			ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
+			zipStream.SetLevel(3); //0-9, 9 being the highest level of compression
+			byte[] bytes = null;
+
 			var allCoEs = db.CoEs.ToList();
 			if (coeID != 0 && coeID != null)
 			{
@@ -1134,144 +1282,177 @@ namespace IndInv.Controllers
 			var allMaps = new List<Indicator_CoE_Maps>();
 			allMaps = db.Indicator_CoE_Maps.ToList();
 			ModelState.Clear();
-			var viewModel = new PRViewModel
+
+			foreach (var coe in allCoEs)
 			{
-				//allCoEs = db.CoEs.ToList(),
-				allCoEs = allCoEs,
-				allAnalysts = db.Analysts.ToList(),
-				allMaps = allMaps,
-				allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
-				allFootnotes = db.Footnotes.ToList(),
-				Fiscal_Year = fiscalYear,
-				Analyst_ID = null,
-				allColors = db.Color_Types.ToList(),
-			};
 
-			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
-			httpResponse.Clear();
-			httpResponse.ContentType = "application/pdf";
-			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
-
-			MemoryStream memoryStream = new MemoryStream();
-			string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
-			var test = (this.RenderView("viewPRSimple", viewModel));
-			string value = "<meta charset='UTF-8' />" + test;
-
-			List<string> coeNotes;
-			var topMargin = 6;
-			if (allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes != null && allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes != "")
-			{
-				coeNotes = Regex.Matches(allCoEs.FirstOrDefault(x => x.CoE_ID == coeID).CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
-				var coeNotesCount = coeNotes.Count();
-				topMargin += coeNotesCount * 5;
-			}
-
-			using (var client = new WebClient())
-			{
-				NameValueCollection options = new NameValueCollection();
-				options.Add("apikey", apiKey);
-				options.Add("value", value);
-				options.Add("DisableJavascript", "false");
-				options.Add("PageSize", "Legal");
-				options.Add("UseLandscape", "true");
-				options.Add("Zoom", "1.0");
-				options.Add("MarginLeft", "2");
-				options.Add("MarginTop", "10");
-				options.Add("MarginBottomn", "5");
-				options.Add("MarginRight", "2");
-				//options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
-				byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
-				//httpResponse.BinaryWrite(result);
-				memoryStream.Write(result, 0, result.Length);
-			}
-
-			string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/SHSheader.png");
-			Image logo = Image.GetInstance(picPath);
-			//string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
-			//Image logoOPEO = Image.GetInstance(picPathOPEO);
-			string footerPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/footer.png");
-			Image footer = Image.GetInstance(footerPath);
-			string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
-			string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
-			string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
-			string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
-			string picDraftPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/draft.png");
-			Image picDraft = Image.GetInstance(picDraftPath);
-
-			var pdfDocument = new iTextSharp.text.Document();
-			var outStream = new MemoryStream();
-			var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
-
-			pdfDocument.Open();
-			var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
-
-			for (var page = 1; page <= reader.NumberOfPages; page++)
-			{
-				pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
-				pdfDocument.NewPage();
-				var importedPage = writer.GetImportedPage(reader, page);
-				var pageRotation = reader.GetPageRotation(page);
-				var pageWidth = reader.GetPageSizeWithRotation(page).Width;
-				var pageHeight = reader.GetPageSizeWithRotation(page).Height;
-				switch (pageRotation)
+				var viewModel = new PRViewModel
 				{
-					case 0:
-						writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
-						break;
+					//allCoEs = db.CoEs.ToList(),
+					allCoEs = allCoEs.Where(x=>x.CoE_ID == coe.CoE_ID).ToList(),
+					allAnalysts = db.Analysts.ToList(),
+					allMaps = allMaps,
+					allFootnoteMaps = db.Indicator_Footnote_Maps.ToList(),
+					allFootnotes = db.Footnotes.ToList(),
+					Fiscal_Year = fiscalYear,
+					Analyst_ID = null,
+					allColors = db.Color_Types.ToList(),
+				};
 
-					case 90:
-						writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
-						break;
+				MemoryStream memoryStream = new MemoryStream();
+				string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
+				var test = (this.RenderView("viewPRSimple", viewModel));
+				string value = "<meta charset='UTF-8' />" + test;
 
-					case 180:
-						writer.DirectContent.AddTemplate(
-							importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
-						break;
-
-					case 270:
-						writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
-						break;
-				}
-				pdfDocument.SetPageSize(pdfDocument.PageSize);
-
-				logo.Alignment = Element.ALIGN_CENTER;
-				logo.ScalePercent(70, 70);
-				logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight - 15);
-				writer.DirectContent.AddImage(logo);
-
-				var obj = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
-				var type = obj.GetType();
-				var isDraft = (bool)(type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").GetValue(obj, null) ?? false);
-				if (isDraft)
+				List<string> coeNotes;
+				var topMargin = 6;
+				if (coe.CoE_Notes != "" && coe.CoE_Notes != null)
 				{
-					picDraft.Alignment = Element.ALIGN_CENTER;
-					picDraft.ScalePercent(70, 70);
-					picDraft.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width / 4, 0);
-					writer.DirectContent.AddImage(picDraft);
+					coeNotes = Regex.Matches(coe.CoE_Notes, @"\[.*?\]").Cast<Match>().Select(m => m.Value.Substring(1, m.Value.Length - 2)).ToList();
+					var coeNotesCount = coeNotes.Count();
+					topMargin += coeNotesCount * 5;
 				}
 
-				//logoOPEO.Alignment = Element.ALIGN_CENTER;
-				//logoOPEO.ScalePercent(20, 20);
-				//logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
-				//writer.DirectContent.AddImage(logoOPEO);
-
-				if (page == 1)
+				using (var client = new WebClient())
 				{
-					footer.Alignment = Element.ALIGN_CENTER;
-					footer.ScalePercent(45, 45);
-					footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 10);
-					writer.DirectContent.AddImage(footer);
+					NameValueCollection options = new NameValueCollection();
+					options.Add("apikey", apiKey);
+					options.Add("value", value);
+					options.Add("DisableJavascript", "false");
+					options.Add("PageSize", "Legal");
+					options.Add("UseLandscape", "true");
+					options.Add("Zoom", "1.0");
+					options.Add("MarginLeft", "2");
+					options.Add("MarginTop", "10");
+					options.Add("MarginBottomn", "5");
+					options.Add("MarginRight", "2");
+					//options.Add("HeaderUrl", this.HttpContext.ApplicationInstance.Server.MapPath("viewPRSimple_Header"));
+					byte[] result = client.UploadValues("http://api.html2pdfrocket.com/pdf", options);
+					//httpResponse.BinaryWrite(result);
+					memoryStream.Write(result, 0, result.Length);
+				}
+
+				string picPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/SHSheader.png");
+				Image logo = Image.GetInstance(picPath);
+				//string picPathOPEO = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/logoOPEO.png");
+				//Image logoOPEO = Image.GetInstance(picPathOPEO);
+				string footerPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/footer.png");
+				Image footer = Image.GetInstance(footerPath);
+				string picMonthlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/Monthly.png");
+				string picQuaterlyPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/quaterly.png");
+				string picNAPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/na.png");
+				string picTargetPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/target.png");
+				string picDraftPath = this.HttpContext.ApplicationInstance.Server.MapPath("~/App_Data/draft.png");
+				Image picDraft = Image.GetInstance(picDraftPath);
+
+				var pdfDocument = new iTextSharp.text.Document();
+				var outStream = new MemoryStream();
+				var writer = iTextSharp.text.pdf.PdfWriter.GetInstance(pdfDocument, outStream);
+
+				pdfDocument.Open();
+				var reader = new iTextSharp.text.pdf.PdfReader(memoryStream.ToArray());
+
+				for (var page = 1; page <= reader.NumberOfPages; page++)
+				{
+					pdfDocument.SetPageSize(reader.GetPageSizeWithRotation(page));
+					pdfDocument.NewPage();
+					var importedPage = writer.GetImportedPage(reader, page);
+					var pageRotation = reader.GetPageRotation(page);
+					var pageWidth = reader.GetPageSizeWithRotation(page).Width;
+					var pageHeight = reader.GetPageSizeWithRotation(page).Height;
+					switch (pageRotation)
+					{
+						case 0:
+							writer.DirectContent.AddTemplate(importedPage, 1f, 0, 0, 1f, 0, 0);
+							break;
+
+						case 90:
+							writer.DirectContent.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pageHeight);
+							break;
+
+						case 180:
+							writer.DirectContent.AddTemplate(
+								importedPage, -1f, 0, 0, -1f, pageWidth, pageHeight);
+							break;
+
+						case 270:
+							writer.DirectContent.AddTemplate(importedPage, 0, 1f, -1f, 0, pageWidth, 0);
+							break;
+					}
+					pdfDocument.SetPageSize(pdfDocument.PageSize);
+
+					logo.Alignment = Element.ALIGN_CENTER;
+					logo.ScalePercent(70, 70);
+					logo.SetAbsolutePosition(5, reader.GetPageSizeWithRotation(page).Height - logo.ScaledHeight - 15);
+					writer.DirectContent.AddImage(logo);
+
+					var obj = db.CoEs.FirstOrDefault(x => x.CoE_ID == coeID);
+					var type = obj.GetType();
+					var isDraft = (bool)(type.GetProperty(FiscalYear.FYStrFull("FY_", fiscalYear) + "Draft").GetValue(obj, null) ?? false);
+					if (isDraft)
+					{
+						picDraft.Alignment = Element.ALIGN_CENTER;
+						picDraft.ScalePercent(70, 70);
+						picDraft.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width / 4, 0);
+						writer.DirectContent.AddImage(picDraft);
+					}
+
+					//logoOPEO.Alignment = Element.ALIGN_CENTER;
+					//logoOPEO.ScalePercent(20, 20);
+					//logoOPEO.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - logoOPEO.ScaledWidth - 5, reader.GetPageSizeWithRotation(page).Height - logoOPEO.ScaledHeight - 5);
+					//writer.DirectContent.AddImage(logoOPEO);
+
+					if (page == 1)
+					{
+						footer.Alignment = Element.ALIGN_CENTER;
+						footer.ScalePercent(45, 45);
+						footer.SetAbsolutePosition(reader.GetPageSizeWithRotation(page).Width - footer.ScaledWidth - 6, 10);
+						writer.DirectContent.AddImage(footer);
+					}
+				}
+
+				writer.CloseStream = false;
+				pdfDocument.Close();
+
+				var newEntry = new ZipEntry(coe.CoE_Abbr + ".pdf");
+				newEntry.DateTime = DateTime.Now;
+				zipStream.PutNextEntry(newEntry);
+
+				bytes = outStream.ToArray();
+
+				if (coeID == 0)
+				{
+					MemoryStream inStream = new MemoryStream(bytes);
+					StreamUtils.Copy(inStream, zipStream, new byte[4096]);
+					outStream.Close();
+					zipStream.CloseEntry();
+				}
+				else
+				{
+
+					HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
+					httpResponse.Clear();
+					httpResponse.ContentType = "application/pdf";
+					httpResponse.AddHeader("content-disposition", "attachment;filename=\"" + coe.CoE_Abbr.Replace("/","") + "_" + DateTime.Now.ToShortDateString() + ".pdf\"");
+
+					outStream.WriteTo(httpResponse.OutputStream);
+					outStream.Close();
+					httpResponse.End();
 				}
 			}
 
-			writer.CloseStream = false;
-			pdfDocument.Close();
+			if (coeID == 0)
+			{
+				zipStream.IsStreamOwner = false;    // False stops the Close also Closing the underlying stream.
+				zipStream.Close();          // Must finish the ZipOutputStream before using outputMemStream.
 
-			outStream.WriteTo(httpResponse.OutputStream);
-			outStream.Close();
-			httpResponse.End();
+				outputMemStream.Position = 0;
 
-			return View(viewModel);
+				return File(outputMemStream.ToArray(), "application/octet-stream",  "Reports_" + DateTime.Now.ToShortDateString() + ".zip");
+			}
+
+
+			return View();
 		}
 
 		public ActionResult viewPRDblPdf(Int16 fiscalYear, Int16? coeID)
@@ -1306,7 +1487,7 @@ namespace IndInv.Controllers
 			HttpResponse httpResponse = this.HttpContext.ApplicationInstance.Context.Response;
 			httpResponse.Clear();
 			httpResponse.ContentType = "application/pdf";
-			httpResponse.AddHeader("content-disposition", "attachment;filename=\"test.pdf\"");
+			httpResponse.AddHeader("content-disposition", "attachment;filename=\"" + allCoEs.FirstOrDefault().CoE_Abbr + "_" + DateTime.Now.ToShortDateString() + ".pdf\"");
 
 			MemoryStream memoryStream = new MemoryStream();
 			string apiKey = "2429a8e1-7cf6-4a77-9f7f-f4a85a9fcc14";
@@ -2122,6 +2303,56 @@ namespace IndInv.Controllers
 
 		}
 
+		public ActionResult editAreaCoEMaps (Int16 fiscalYear)
+		{
+			var viewModel = new Edit_Area_CoE_MapViewModel
+			{
+				allAreaCoEMaps = db.Area_CoE_Maps.Where(x=>x.Fiscal_Year == fiscalYear).ToList(),
+				allCoEs = db.CoEs.Where(x=>x.CoE != "").ToList(),
+				allAreas = db.Areas.Where(x=>x.Area != "").ToList(),
+
+				fiscalYear = fiscalYear
+			};
+
+			return View(viewModel);
+		}
+
+		[HttpPost]
+		public void deleteAreaCoEMaps(Int16 mapID, Int16 fiscalYear)
+		{
+			var deleteMap = db.Area_CoE_Maps.FirstOrDefault(x => x.Map_ID == mapID);
+			db.Area_CoE_Maps.Remove(deleteMap);
+			db.SaveChanges();
+		}
+
+		[HttpPost]
+		public void newAreaCoEMap(Int16 coeID, Int16 areaID, Int16 fiscalYear)
+		{
+			if (db.Area_CoE_Maps.Where(x => (x.CoE_ID == coeID) && (x.Area_ID == areaID) && (x.Fiscal_Year == fiscalYear)).Count() == 0)
+			{
+				var newMap = new Area_CoE_Maps();
+				newMap.Area_ID = areaID;
+				newMap.CoE_ID = coeID;
+				newMap.Fiscal_Year = fiscalYear;
+
+				db.Area_CoE_Maps.Add(newMap);
+
+				if (db.Indicator_CoE_Maps.Where(x => x.CoE_ID == coeID && x.Fiscal_Year == fiscalYear).Count(x => x.Indicator.Area_ID == areaID) == 0)
+				{
+					var newIndicator = new Indicators();
+					newIndicator.Area_ID = areaID;
+					db.Indicators.Add(newIndicator);
+
+					var newIndicatorMap = new Indicator_CoE_Maps();
+					newIndicatorMap.Indicator_ID = newIndicator.Indicator_ID;
+					newIndicatorMap.CoE_ID = coeID;
+					newIndicatorMap.Fiscal_Year = fiscalYear;
+					db.Indicator_CoE_Maps.Add(newIndicatorMap);
+				}
+				db.SaveChanges();
+			}
+		}
+
 		[HttpGet]
 		public ActionResult editAnalysts(String Analyst_ID_Filter)
 		{
@@ -2317,7 +2548,6 @@ namespace IndInv.Controllers
 				indicator.FY_13_14_Data_Source_MSH = indicator.FY_13_14_Data_Source_MSH != null ? indicator.FY_13_14_Data_Source_MSH.Replace("NULL", "") : null;
 				indicator.FY_13_14_Data_Source_Benchmark = indicator.FY_13_14_Data_Source_Benchmark != null ? indicator.FY_13_14_Data_Source_Benchmark.Replace("NULL", "") : null;
 				indicator.FY_13_14_OPEO_Lead = indicator.FY_13_14_OPEO_Lead != null ? indicator.FY_13_14_OPEO_Lead.Replace("NULL", "") : null;
-				indicator.FY_13_14_Comment = indicator.FY_13_14_Comment != null ? indicator.FY_13_14_Comment.Replace("NULL", "") : null;
 				indicator.FY_14_15_Q1 = indicator.FY_14_15_Q1 != null ? indicator.FY_14_15_Q1.Replace("NULL", "") : null;
 				indicator.FY_14_15_Q1_Sup = indicator.FY_14_15_Q1_Sup != null ? indicator.FY_14_15_Q1_Sup.Replace("NULL", "") : null;
 				indicator.FY_14_15_Q2 = indicator.FY_14_15_Q2 != null ? indicator.FY_14_15_Q2.Replace("NULL", "") : null;
@@ -2339,7 +2569,6 @@ namespace IndInv.Controllers
 				indicator.FY_14_15_Data_Source_MSH = indicator.FY_14_15_Data_Source_MSH != null ? indicator.FY_14_15_Data_Source_MSH.Replace("NULL", "") : null;
 				indicator.FY_14_15_Data_Source_Benchmark = indicator.FY_14_15_Data_Source_Benchmark != null ? indicator.FY_14_15_Data_Source_Benchmark.Replace("NULL", "") : null;
 				indicator.FY_14_15_OPEO_Lead = indicator.FY_14_15_OPEO_Lead != null ? indicator.FY_14_15_OPEO_Lead.Replace("NULL", "") : null;
-				indicator.FY_14_15_Comment = indicator.FY_14_15_Comment != null ? indicator.FY_14_15_Comment.Replace("NULL", "") : null;
 				indicator.FY_15_16_Q1 = indicator.FY_15_16_Q1 != null ? indicator.FY_15_16_Q1.Replace("NULL", "") : null;
 				indicator.FY_15_16_Q1_Sup = indicator.FY_15_16_Q1_Sup != null ? indicator.FY_15_16_Q1_Sup.Replace("NULL", "") : null;
 				indicator.FY_15_16_Q2 = indicator.FY_15_16_Q2 != null ? indicator.FY_15_16_Q2.Replace("NULL", "") : null;
@@ -2361,7 +2590,6 @@ namespace IndInv.Controllers
 				indicator.FY_15_16_Data_Source_MSH = indicator.FY_15_16_Data_Source_MSH != null ? indicator.FY_15_16_Data_Source_MSH.Replace("NULL", "") : null;
 				indicator.FY_15_16_Data_Source_Benchmark = indicator.FY_15_16_Data_Source_Benchmark != null ? indicator.FY_15_16_Data_Source_Benchmark.Replace("NULL", "") : null;
 				indicator.FY_15_16_OPEO_Lead = indicator.FY_15_16_OPEO_Lead != null ? indicator.FY_15_16_OPEO_Lead.Replace("NULL", "") : null;
-				indicator.FY_15_16_Comment = indicator.FY_15_16_Comment != null ? indicator.FY_15_16_Comment.Replace("NULL", "") : null;
 				db.Entry(indicator).State = EntityState.Modified;
 				db.SaveChanges();
 			}
@@ -3246,7 +3474,11 @@ namespace IndInv.Controllers
                             {FiscalYear.FYStrFull("FY_", fiscalYear) + "Comparator"},
 							{"Definition"},
 							{"Target Rationale"},
-							{"Comparator Source"}
+							{"Comparator Source"},
+							{"Data Source MSH"},
+							{"Data Source Benchmark"},
+							{"OPEO Lead"},
+							{"Comment"}
                         };
 
 			var headerRow = 1;
@@ -3350,6 +3582,22 @@ namespace IndInv.Controllers
 						"",
 						"cssWhite"
 					},
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Data_Source_MSH").GetValue(indicator, null),
+						"",
+						"cssWhite"
+					},
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Data_Source_Benchmark").GetValue(indicator, null),
+						"",
+						"cssWhite"
+					},
+					{(string)indicator.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_OPEO_Lead").GetValue(indicator, null),
+						"",
+						"cssWhite"
+					},
+					{(string)indicator.Comment,
+						"",
+						"cssWhite"
+					},
 				};
 
 				for (var i = 0; i <= columnIndicators.GetUpperBound(0); i++)
@@ -3446,23 +3694,37 @@ namespace IndInv.Controllers
 						x.FY_15_16_Data_Source_Benchmark.Contains(analystName) ||
 						x.FY_15_16_Data_Source_MSH.Contains(analystName)
 						).ToList();
-				} /*else if(fiscalYear == 3){
+				} else if(fiscalYear == 4){
 					viewModelItems = db.Indicators.Where(x =>
-						x.FY_13_14_Data_Source_Benchmark.Contains(analystName) ||
-						x.FY_13_14_Data_Source_MSH.Contains(analystName) ||
-						x.FY_14_15_Data_Source_Benchmark.Contains(analystName) ||
-						x.FY_14_15_Data_Source_MSH.Contains(analystName)
+						x.FY_16_17_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_16_17_Data_Source_MSH.Contains(analystName)
+						).ToList();
+				} else if(fiscalYear == 5){
+					viewModelItems = db.Indicators.Where(x =>
+						x.FY_17_18_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_17_18_Data_Source_MSH.Contains(analystName)
+						).ToList();
+				} else if(fiscalYear == 6){
+					viewModelItems = db.Indicators.Where(x =>
+						x.FY_18_19_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_18_19_Data_Source_MSH.Contains(analystName)
+						).ToList();
+				} else if(fiscalYear == 7){
+					viewModelItems = db.Indicators.Where(x =>
+						x.FY_19_20_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_19_20_Data_Source_MSH.Contains(analystName)
+						).ToList();
+				} else if(fiscalYear == 8){
+					viewModelItems = db.Indicators.Where(x =>
+						x.FY_20_21_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_20_21_Data_Source_MSH.Contains(analystName)
+						).ToList();
+				} else if(fiscalYear == 9){
+					viewModelItems = db.Indicators.Where(x =>
+						x.FY_21_22_Data_Source_Benchmark.Contains(analystName) ||
+						x.FY_21_22_Data_Source_MSH.Contains(analystName)
 						).ToList();
 				}
-				else if (fiscalYear == 3)
-				{
-					viewModelItems = db.Indicators.Where(x =>
-						x.FY_13_14_Data_Source_Benchmark.Contains(analystName) ||
-						x.FY_13_14_Data_Source_MSH.Contains(analystName) ||
-						x.FY_14_15_Data_Source_Benchmark.Contains(analystName) ||
-						x.FY_14_15_Data_Source_MSH.Contains(analystName)
-						).ToList();
-				}*/
 			}
 			else
 			{
@@ -3490,7 +3752,7 @@ namespace IndInv.Controllers
 				Identifier = x.Identifier,
 				Area = x.Area.Area,
 				//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
-				Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z => z.Footnote.Footnote_Symbol).ToList()),
+				Footnote = string.Join(",", x.Indicator_Footnote_Map.Where(z=>z.Fiscal_Year == fiscalYear).Select(z => z.Footnote.Footnote_Symbol).ToList()),
 				FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
 				FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
 				FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),
@@ -3539,7 +3801,7 @@ namespace IndInv.Controllers
 				FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
 				FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
-				FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
+				Comment = x.Comment,
 
 				Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
@@ -3565,7 +3827,7 @@ namespace IndInv.Controllers
 					Identifier = x.Identifier,
 					Area = x.Area.Area,
 					//Footnote = string.Join(",", allFootnotes.Where(y=>y.Indicator.Indicator_ID == x.Indicator_ID).ToList()),
-					Footnote = string.Join(",", x.Indicator_Footnote_Map.Select(z => z.Footnote.Footnote_Symbol).ToList()),
+					Footnote = string.Join(",", x.Indicator_Footnote_Map.Where(z => z.Fiscal_Year == fiscalYear).Select(z => z.Footnote.Footnote_Symbol).ToList()),
 					FY_3 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD").GetValue(x, null),
 					FY_3_Sup = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 3) + "_YTD_Sup").GetValue(x, null),
 					FY_2 = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 2) + "_YTD").GetValue(x, null),
@@ -3614,7 +3876,7 @@ namespace IndInv.Controllers
 					FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
 					FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
-					FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
+					Comment = x.Comment,
 
 					Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 					N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,
@@ -3633,8 +3895,8 @@ namespace IndInv.Controllers
 			{
 				Indicator_ID = x.Indicator_ID,
 				Area_ID = x.Area_ID,
-				CoE = x.Indicator_CoE_Map != null ?
-						(x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault() != null ? x.Indicator_CoE_Map.Where(y => y.Fiscal_Year == fiscalYear).FirstOrDefault().CoE.CoE : "")
+				CoE = db.Indicator_CoE_Maps.FirstOrDefault(y => y.Indicator_ID == x.Indicator_N_Value_ID && y.Fiscal_Year == fiscalYear) != null ?
+						(db.Indicator_CoE_Maps.FirstOrDefault(y=>y.Indicator_ID == x.Indicator_N_Value_ID && y.Fiscal_Year == fiscalYear).CoE.CoE.ToString())
 					  : "",
 				Indicator = x.Indicator,
 				Indicator_Type = x.Indicator_Type,
@@ -3690,7 +3952,7 @@ namespace IndInv.Controllers
 				FY_Q4_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Q4_Color").GetValue(x, null),
 				FY_YTD_Color = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_YTD_Color").GetValue(x, null),
 
-				FY_Comment = (string)x.GetType().GetProperty(FiscalYear.FYStr(fiscalYear, 0) + "_Comment").GetValue(x, null),
+				Comment = x.Comment,
 
 				Format_Code = x.Format == null ? "" : (string)x.Format.GetType().GetProperty("Format_Code").GetValue(x.Format, null),
 				N_Value = x.Indicator_N_Value.HasValue ? x.Indicator_N_Value.Value : false,

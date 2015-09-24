@@ -35,17 +35,19 @@
 }
 <div class="menu-bar">
     <div class="row header-row">
-        <div class="large-5 columns">
+        <div class="large-3 columns">
             <div class="menu-hover menu-button menu-open menu-coe" field="CoE"><i class="fa fa-folder-open-o"></i>Reports</div>
             <div class="menu-hover menu-button menu-open menu-analyst" field="Analyst"><i class="fa fa-folder-open-o"></i>Table</div>
 			<div id="menu-fiscalYear" class="menu-hover menu-button menu-open menu-fiscalYear" field="Fiscal_Year"><i class="fa fa-folder-open-o"></i>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear)</div>
         </div>
-        <div class="large-7 columns">
+        <div class="large-9 columns">
 			@if (Roles.IsUserInRole("Consultant"))
    {
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-footnotes"><i class="fa fa-pencil-square-o"></i>Footnotes</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-coes"><i class="fa fa-pencil-square-o"></i>Edit CoE List</div>
 				@:<div class="menu-hover menu-button menu-button-left menu-edit-dictionary"><i class="fa fa-pencil-square-o"></i>Edit Dictionary</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-areas"><i class="fa fa-pencil-square-o"></i>Edit Areas</div>
+				@:<div class="menu-hover menu-button menu-button-left menu-edit-allpdfs"><i class="fa fa-pencil-square-o"></i>All Reports</div>
 			}
 			<div class="menu-hover menu-button menu-button-left menu-edit-indicatorlinks"><i class="fa fa-pencil-square-o"></i>Edit Links</div>
 			<div class="menu-hover menu-button menu-button-left menu-export"><i class="fa fa-pencil-square-o"></i>Export to Excel</div>
@@ -53,7 +55,8 @@
     </div>	
 </div>
 <div class="row">
-<label>Search Indicators:<input id="searchgrid" type="text" /></label>
+	<br />
+<!--label>Search Indicators:<input id="searchgrid" type="text" /></label-->
 </div>
 
 
@@ -65,9 +68,10 @@
 <div class="footer">
 	<div class="menu-hover menu-button menu-undo"><i class="fa fa-undo"></i>Undo</div>
     <div class="menu-hover menu-button menu-redo"><i class="fa fa-repeat"></i>Redo</div>
-	@if(Roles.IsUserInRole("Consultant")){
+	@if (Roles.IsUserInRole("Consultant"))
+ {
 		<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-format menu-hover'>Turn on Edit with Format </div>
-	}
+ }
 	<div fiscalYear="@Model.FirstOrDefault().Fiscal_Year" class='toggle-button toggle-wordwrap menu-hover'>Toggle Wordwrap </div>
     <div class="calc-title">Sum:<div class ="calc calc-sum">0</div></div><div class="calc-title">Average:<div class ="calc calc-avg">0</div></div><div class="calc-title">Count:<div class ="calc calc-n">0</div></div>
 	<div class="menu-hover menu-button menu-refresh" field="coe"><i class="fa fa-refresh"></i>Refresh</div>
@@ -247,18 +251,51 @@
 
 		var filterListChose = {
 			Indicator_ID: ['Indicator_ID'],
+			FY_3: ['FY_3'],
+			FY_2: ['FY_2'],
+			FY_1: ['FY_1'],
+			FY_Q1: ['FY_Q1'],
+			FY_Q2: ['FY_Q2'],
+			FY_Q3: ['FY_Q3'],
+			FY_Q4: ['FY_Q4'],
+			FY_YTD: ['FY_YTD'],
+			FY_Target: ['FY_Target'],
+			FY_Comparator: ['FY_Comparator'],
+			FY_Performance_Threshold: ['FY_Performance_Threshold'],
+			FY_Definition_Calculation: ['FY_Definition_Calculation'],
+			FY_Target_Rationale: ['FY_Target_Rationale'],
+			FY_Comparator_Source: ['FY_Comparator_Source'],
+			FY_OPEO_Lead: ['FY_OPEO_Lead'],
+			Comment: ['Comment'],
 			Link_ID: ['Link_ID'],
 			Identifier: ['Identifier'],
 			Area: ['Area'],
 			Indicator_Type: ['Indicator_Type'],
 			CoE: ['CoE'],
 			Footnote: ['Footnote'],
-			Indicator: ['Indicator',''],
+			Indicator: ['Indicator'],
 			FY_Data_Source_MSH: ['FY_Data_Source_MSH'],
 			FY_Data_Source_Benchmark: ['FY_Data_Source_Benchmark']
 		}
 		var filterListFull = {
 			Indicator_ID: [],
+			Indicator: [],
+			FY_3: [],
+			FY_2: [],
+			FY_1: [],
+			FY_Q1: [],
+			FY_Q2: [],
+			FY_Q3: [],
+			FY_Q4: [],
+			FY_YTD: [],
+			FY_Target: [],
+			FY_Comparator: [],
+			FY_Performance_Threshold: [],
+			FY_Definition_Calculation: [],
+			FY_Target_Rationale: [],
+			FY_Comparator_Source: [],
+			FY_OPEO_Lead: [],
+			Comment: [],
 			Link_ID: [],
 			Identifier: [],
 			Area: [],
@@ -269,7 +306,6 @@
 			Footnote: []
 		};
 		for (var prop in filterListChose){
-			if (prop === 'Indicator') continue;
 			if (prop === 'Footnotes') break;
 			if (filterListChose.hasOwnProperty(prop)){
 				for (var i=1, len=values.length; i<len; i++){
@@ -293,7 +329,13 @@
 			};
 		})();
 		$('#searchgrid').on('keyup', function (event) {
+
 			var searchText = $(this).val().toLowerCase();
+			if (searchText == ""){
+				filterListChose['Indicator'] = filterListChose['Indicator'].splice(1,1);
+				doFilter();
+
+			}
 			filterListChose['Indicator'][1] = searchText;
 			delay(function(){
 				doFilter();
@@ -312,7 +354,7 @@
 						for (var i=1, len=data.length; i<len; i++){
 							var filterItem = data[i].replace(/&amp;/g, '&');
 							var field = data[0];
-							if (field == "Indicator") {filterItem = filterItem.trim()};
+							//if (field == "Indicator" && i == 1 && filterItem != '') {filterItem = filterItem.trim()};
 							var currValue = datasrch[row][field];
 							if ((currValue === "" || currValue === null) && filterItem === '(Blank)') {
 								currCond = true;
@@ -341,68 +383,77 @@
 			}
 		};
 		clearFilter =  function(field, elTH){
+			if (field == "Indicator") {
+				$('#searchgrid').val('');
+				filterListChose['Indicator'] = filterListChose['Indicator'].splice(1,1);
+			}
 			filterListChose[field] = [field];
 			$('#filter-list > .clicked').removeClass('clicked');
-			elTH.removeClass('filtered')
 			doFilter();
+			filterColumn(elTH,false);
+
 		};
 
 
 		var refreshView = function(){
 			$.get('editInventory',{AnalystID: "@Model.FirstOrDefault().Analyst_ID", fiscalYear: @Model.FirstOrDefault().Fiscal_Year, Link_ID: @Model.FirstOrDefault().Link_ID },function(result){
-        		values = result;
-        		$IndInv.handsontable('loadData', values);
-        		doFilter();
-        	});
-        }
+				values = result;
+				$IndInv.handsontable('loadData', values);
+				doFilter();
+			});
+		}
 		refreshView();
 
 		var colHeadersOrg = [
             "<div class='column-letter'>A</div><br>ID <i field='ID' class='fa fa-filter filter-id filter-button' id='filter-id'></i>",
 			"<div class='column-letter'>B</div><br>Identifier <i field='Identifier' class='fa fa-filter filter-identifier filter-button' id='filter-identifier'></i>",
 			"<div class='column-letter'>C</div><br>CoE  <i field='CoE' class='fa fa-filter filter-coe filter-button' id='filter-coe'></i>",
-            "<div class='column-letter'>D</div><br>Indicator",
+            "<div class='column-letter'>D</div><br>Indicator  <i field='Indicator' class='fa fa-filter filter-indicator filter-button' id='filter-indicator'></i>",
 			"<div class='column-letter'>E</div><br>Area <i field='Area' class='fa fa-filter filter-Area filter-button' id='filter-Area'></i>",
 			"<div class='column-letter'>F</div><br>Type <i field='Indicator_Type' class='fa fa-filter filter-Indicator_Type filter-button' id='filter-Indicator_Type'></i>",
 			"<div class='column-letter'>G</div><br>Footnotes <i field='Footnote' class='fa fa-filter filter-footnote filter-button' id='filter-footnote'></i>",
-            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_3",fiscalYear)",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_3", fiscalYear) <i field='FY_3' class='fa fa-filter filter-FY_3 filter-button' id='filter-FY_3'></i>",
             "<div class='column-letter'>I</div><br>Sup",
-            "<div class='column-letter'>J</div><br>@FiscalYear.FYStrFullFormated("FY_2",fiscalYear)",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_2", fiscalYear) <i field='FY_2' class='fa fa-filter filter-FY_2 filter-button' id='filter-FY_2'></i>",
             "<div class='column-letter'>K</div><br>Sup ",
-            "<div class='column-letter'>L</div><br>@FiscalYear.FYStrFullFormated("FY_1",fiscalYear)",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_1", fiscalYear) <i field='FY_1' class='fa fa-filter filter-FY_1 filter-button' id='filter-FY_1'></i>",
             "<div class='column-letter'>M</div><br>Sup  ",
-            "<div class='column-letter'>N</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q1",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q1 <i field='FY_Q1' class='fa fa-filter filter-FY_Q1 filter-button' id='filter-FY_Q1'></i>",
             "<div class='column-letter'>O</div><br>Sup   ",
-            "<div class='column-letter'>P</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q2",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q2 <i field='FY_Q2' class='fa fa-filter filter-FY_Q2 filter-button' id='filter-FY_Q2'></i>",
             "<div class='column-letter'>Q</div><br>Sup    ",
-            "<div class='column-letter'>R</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q3",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q3 <i field='FY_Q3' class='fa fa-filter filter-FY_Q3 filter-button' id='filter-FY_Q3'></i>",
             "<div class='column-letter'>S</div><br>Sup     ",
-            "<div class='column-letter'>T</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " Q4",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) Q4 <i field='FY_Q4' class='fa fa-filter filter-FY_Q4 filter-button' id='filter-FY_Q4'></i>",
             "<div class='column-letter'>U</div><br>Sup      ",
-            "<div class='column-letter'>V</div><br>@FiscalYear.FYStrFullFormated("FY_0",fiscalYear)" + " YTD",
+            "<div class='column-letter'>H</div><br>@FiscalYear.FYStrFullFormated("FY_0", fiscalYear) YTD <i field='FY_YTD' class='fa fa-filter filter-FY_YTD filter-button' id='filter-FY_YTD'></i>",
             "<div class='column-letter'>W</div><br>Sup           ",
-            "<div class='column-letter'>X</div><br>Target",
+            "<div class='column-letter'>X</div><br>Target <i field='FY_Target' class='fa fa-filter filter-FY_Target filter-button' id='filter-FY_Target'></i>",
             "<div class='column-letter'>Y</div><br>Sup        ",
-            "<div class='column-letter'>Z</div><br>Comparator",
+            "<div class='column-letter'>Z</div><br>Comparator <i field='FY_Comparator' class='fa fa-filter filter-FY_Comparator filter-button' id='filter-FY_Comparator'></i>",
             "<div class='column-letter'>AA</div><br>Comparator" + " Sup",
-            "<div class='column-letter'>AB</div><br>Performance Threshold",
+            "<div class='column-letter'>AB</div><br>Performance Threshold  <i field='FY_Performance_Threshold' class='fa fa-filter filter-FY_Performance_Threshold filter-button' id='filter-FY_Performance_Threshold'></i>",
             "<div class='column-letter'>AC</div><br>Sup          ",
-            "<div class='column-letter'>AD</div><br>Definition Calculation",
-            "<div class='column-letter'>AE</div><br>Target Rationale",
-            "<div class='column-letter'>AF</div><br>Comparator Source",
-            "<div class='column-letter'>AG</div><br>Data Source MSH  <i field='FY_Data_Source_MSH' class='fa fa-filter filter-datasrc filter-button' id='filter-datasrc'></i>",
-            "<div class='column-letter'>AH</div><br>Data Source Benchmark <i field='FY_Data_Source_Benchmark' class='fa fa-filter filter-datasrcbench filter-button' id='filter-datasrcbench'></i>",
-            "<div class='column-letter'>AI</div><br>OPEO Lead",
-			"<div class='column-letter'>AJ</div><br>Comment"
-        ];								
+            "<div class='column-letter'>AD</div><br>Definition Calculation <i field='FY_Definition_Calculation' class='fa fa-filter filter-FY_Definition_Calculation filter-button' id='filter-FY_Definition_Calculation'></i>",
+            "<div class='column-letter'>AE</div><br>Target Rationale <i field='FY_Target_Rationale' class='fa fa-filter filter-FY_Target_Rationale filter-button' id='filter-FY_Target_Rationale'></i>",
+            "<div class='column-letter'>AF</div><br>Comparator Source <i field='FY_Comparator_Source' class='fa fa-filter filter-FY_Comparator_Source filter-button' id='filter-FY_Comparator_Source'></i>",
+            "<div class='column-letter'>AG</div><br>Data Source MSH <i field='FY_Data_Source_MSH' class='fa fa-filter filter-FY_Data_Source_MSH filter-button' id='filter-FY_Data_Source_MSH'></i>",
+            "<div class='column-letter'>AH</div><br>Data Source Benchmark <i field='FY_Data_Source_Benchmark' class='fa fa-filter filter-FY_Data_Source_Benchmark filter-button' id='filter-FY_Data_Source_Benchmark'></i>",
+            "<div class='column-letter'>AI</div><br>OPEO Lead <i field='FY_OPEO_Lead' class='fa fa-filter filter-FY_OPEO_Lead filter-button' id='filter-FY_OPEO_Lead'></i>",
+			"<div class='column-letter'>AJ</div><br>Comment  <i field='Comment' class='fa fa-filter filter-Comment filter-button' id='filter-Comment'></i>",
+		];								
 		var columnsOrg = [
             {data:"Indicator_ID", renderer:"tdRender", readOnly: true},
 			{data:"Identifier", renderer:"tdRender"},//, readOnly: true},
-			{data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-            {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+			{data:"CoE", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+									{ <text>, readOnly: true </text> } },
+            {data:"Indicator", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+												   { <text>, readOnly: true </text> } },
 			{data:"Area", renderer:"tdRender", readOnly: true},
-			{data:"Indicator_Type", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-			{data:"Footnote", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+			{data:"Indicator_Type", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+											   { <text>, readOnly: true </text> } },
+			{data:"Footnote", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+										 { <text>, readOnly: true </text> } },
             {data:"FY_3", renderer:"tdRender"},
             {data:"FY_3_Sup", renderer:"tdRender"},
             {data:"FY_2", renderer:"tdRender"},
@@ -419,20 +470,25 @@
             {data:"FY_Q4_Sup", renderer:"tdRender"},
             {data:"FY_YTD", renderer:"qcolor"},
             {data:"FY_YTD_Sup", renderer:"tdRender"},
-            {data:"FY_Target", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-            {data:"FY_Target_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"FY_Target", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+												   { <text>, readOnly: true </text> } },
+            {data:"FY_Target_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+													   { <text>, readOnly: true </text> } },
             {data:"FY_Comparator", renderer:"compSaved"},
             {data:"FY_Comparator_Sup", renderer:"tdRender"},
-            {data:"FY_Performance_Threshold", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
-            {data:"FY_Performance_Threshold_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"FY_Performance_Threshold", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+																  { <text>, readOnly: true </text> } },
+            {data:"FY_Performance_Threshold_Sup", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+																	  { <text>, readOnly: true </text> } },
             {data:"FY_Definition_Calculation", renderer:"tdRender"},
-            {data:"FY_Target_Rationale", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst")){ <text>, readOnly: true </text> } },
+            {data:"FY_Target_Rationale", renderer:"tdRender" @if (Roles.GetRolesForUser().Contains("Analyst"))
+															 { <text>, readOnly: true </text> } },
             {data:"FY_Comparator_Source", renderer:"tdRender"},
             {data:"FY_Data_Source_MSH", renderer:"tdRender"},
             {data:"FY_Data_Source_Benchmark", renderer:"tdRender"},
-            {data:"FY_OPEO_Lead", renderer:"tdRender"}
-			@if (Roles.GetRolesForUser().Contains("Consultant")){ <text>, {data:"FY_Comment", renderer:"tdRender"} </text> }
-	    ];
+            {data:"FY_OPEO_Lead", renderer:"tdRender"},
+			{data:"Comment", renderer:"tdRender"}
+		];
 		var colWidthsOrg = [50, 100, 150, 250, 100, 100, 100, 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,200,200,200,150,200,100,500];
 		var changesOld = [];
 
@@ -609,29 +665,29 @@
 		        	@foreach (var direction in Model.FirstOrDefault().allDirections)
 		   {
 					<text>
-		        	directions.push('@Html.Raw(direction.Direction)');
-		        	directionIDs.push('@Html.Raw(direction.Direction_ID)');
+					directions.push('@Html.Raw(direction.Direction)');
+					directionIDs.push('@Html.Raw(direction.Direction_ID)');
 		        	</text>
 		   }
-		        	var directionID = 1;
-		        	for(var i =0; i<directions.length; i++){
-		        		if (firstChar == directions[i]){
-		        			directionID = directionIDs[i];
-		        		}
-		        	}
-		        	for(var i =0; i<directions.length; i++){
-		        		if (first2Char == directions[i].replace('≤','<=').replace('≥','>=')){
-		        			directionID = directionIDs[i];
-		        		}
-		        	}
-		        	var updateValueReplace = changedValue.replace('<=','≤').replace('>=','≥');
-		        	if (updateValueReplace !== changedValue){
-		        		changedValue = updateValueReplace;
-		        	}
-		        	$.ajax({
-		        		url: 'changeDirection',
-		        		type: 'POST',
-		        		data: JSON.stringify({indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }),
+					var directionID = 1;
+					for(var i =0; i<directions.length; i++){
+						if (firstChar == directions[i]){
+							directionID = directionIDs[i];
+						}
+					}
+					for(var i =0; i<directions.length; i++){
+						if (first2Char == directions[i].replace('≤','<=').replace('≥','>=')){
+							directionID = directionIDs[i];
+						}
+					}
+					var updateValueReplace = changedValue.replace('<=','≤').replace('>=','≥');
+					if (updateValueReplace !== changedValue){
+						changedValue = updateValueReplace;
+					}
+					$.ajax({
+						url: 'changeDirection',
+						type: 'POST',
+						data: JSON.stringify({indicatorID: indicatorID, directionID: directionID, fiscalYear:@fiscalYear }),
 		        		async: false,
 		        		contentType: 'application/json; charset=utf-8',
 		        		success: function (result) {
@@ -678,7 +734,7 @@
 						updateValue: changedValue,
 						updateValueSup: changedValue,
 						fiscalYear: @Model.FirstOrDefault().Fiscal_Year
-		                };
+						};
 					$.ajaxSetup({ cache: false });
 					var ajaxUrl = changedParameter != "Footnote" ? this.action : "setValueFootnotes";
 					$.ajax({
@@ -688,16 +744,16 @@
 						contentType: 'application/json; charset=utf-8',
 						success: function (result) {
 							$.get('getIndicatorColor', {indicatorID : indicatorID, fiscalYear: @Model.FirstOrDefault().Fiscal_Year}, function (clrData) {
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.Q1_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.Q2_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.Q3_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.Q4_Color, 'set');
-		                		$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.YTD_Color, 'set');
-		                	});
-		                },
-		                error: function (request){
-		                }
-		            });
+								$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q1_Color", clrData.Q1_Color, 'set');
+								$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q2_Color", clrData.Q2_Color, 'set');
+								$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q3_Color", clrData.Q3_Color, 'set');
+								$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_Q4_Color", clrData.Q4_Color, 'set');
+								$IndInv.handsontable("setDataAtRowProp", changedRow, "FY_YTD_Color", clrData.YTD_Color, 'set');
+							});
+						},
+						error: function (request){
+						}
+					});
 					}
 					$IndInv.handsontable("setDataAtRowProp", changedRow, changedParameter, changedValue, 'set');
 				}
@@ -728,6 +784,36 @@
 
 			return result;
 		};
+
+		var setColumns = function(columns){
+			var colHeaders =[];
+			var colWidths = [];
+
+			var colHeadersOld = []
+			var columnsOld = [];
+			var colWidthsOld = []
+
+			var th = $('thead').children();
+			for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+				var currHeader = $IndInv.handsontable("getColHeader",i);
+				var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+				columnsOld.push( { data : $IndInv.handsontable("colToProp",i) })
+				colHeadersOld.push(currHeader)
+				colWidthsOld.push(colWidth);
+			};
+			for(var i =0, len = columnsOrg.length; i<=len; i++){
+				var currCol = columnsOrg[i];
+				var currHeader = colHeadersOrg[i];
+				var colWidth = colWidthsOrg[i];
+				var currColAlph = alphToNum($(currHeader).first().text());
+				columns.push(currCol)
+				colHeaders.push(currHeader)
+				colWidths.push(colWidth);
+			};
+			var table = $IndInv.handsontable('getInstance');
+			updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+		}
+
 
 		var showColumns = function(toUnhide){
 			var colHeaders =[];
@@ -807,6 +893,49 @@
 			};
 			var table = $IndInv.handsontable('getInstance');
 			updateColumnsUndoable(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld);
+		};
+
+		var filterColumn = function(toFilter,set){
+			var toFilterHeaders = [];
+			$.each(toFilter, function(index, value){
+				var colHeader = $(this).find('.colHeader')[0].innerHTML;
+				toFilterHeaders.push(strip_tags(colHeader).toString())//.trim())
+			});
+			var colHeaders = []
+			var columns = [];
+			var colWidths = []
+
+			var colHeadersOld = []
+			var columnsOld = [];
+			var colWidthsOld = []
+
+			//var th = $('thead').children();
+			for(var i =0, len = $IndInv.handsontable("countCols"); i<=len; i++){
+				var currHeader = $IndInv.handsontable("getColHeader",i);
+				//var colWidth = th.find(':contains(' + currHeader + ')').first().width();
+				var colWidth = $IndInv.handsontable("getColWidth",i)
+				if (toFilterHeaders.indexOf(strip_tags(currHeader,"").toString()) === -1) {//.trim()) === -1){
+					columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+					colHeaders.push(currHeader)
+					colWidths.push(colWidth);
+				}else {
+					columns.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+					if(set){
+						if (currHeader.indexOf('fa-filtered') == -1){
+							currHeader = currHeader.replace('fa-filter','fa-filter fa-filtered')
+						}
+					} else{
+						currHeader = currHeader.replace('fa-filter fa-filtered','fa-filter')
+					}
+					colHeaders.push(currHeader)
+					colWidths.push(colWidth);
+				}
+				columnsOld.push( { data : $IndInv.handsontable("colToProp",i), renderer: $IndInv.handsontable("getCellRenderer",1,i)})
+				colHeadersOld.push(currHeader)
+				colWidthsOld.push(colWidth);
+			};
+			var table = $IndInv.handsontable('getInstance');
+			updateColumns(table, columns,colHeaders,colWidths);
 		};
 		updateColumnsUndoable = function(table, columns,colHeaders,colWidths,columnsOld,colHeadersOld,colWidthsOld){
 			updateColumns(table, columns,colHeaders,colWidths);
@@ -906,9 +1035,10 @@
 					doFilter();
 				}
 				if(filterListChose[field].length !== 1){
-					elTH.addClass('filtered');
+					//elTH.addClass('filtered');
+					filterColumn(elTH,true);
 				}else {
-					elTH.removeClass('filtered');
+					filterColumn(elTH,false);
 				}
 			}
 
@@ -1199,10 +1329,10 @@
 								var row = $(this).parent().parent().children().index($(this).parent()) + $IndInv.handsontable("rowOffset");
 								var indicatorID = $(this).closest( "tr" ).children().first()[0].innerHTML;
 								var directionID= @direction.Direction_ID;
-                    			var oldDirectionID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Direction_ID"); //$(this).closest('tr').attr('colorID');
-                    			changeDirectionUndoable(indicatorID, directionID, oldDirectionID,row);
-                    		},
-                    	},
+								var oldDirectionID = $IndInv.handsontable("getDataAtRowProp",row,"FY_Direction_ID"); //$(this).closest('tr').attr('colorID');
+								changeDirectionUndoable(indicatorID, directionID, oldDirectionID,row);
+							},
+						},
 						</text>
 	  }
 					}
@@ -1383,11 +1513,21 @@
 		$(document).on('click', '.menu-edit-dictionary', function(e){
 			e.preventDefault();
 			window.open("editWords?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
-        });
+		});
+
+		$(document).on('click', '.menu-edit-areas', function(e){
+			e.preventDefault();
+			window.open("editAreaCoEMaps?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
 
 		$(document).on('click', '.menu-edit-indicatorlinks', function(e){
 			e.preventDefault();
 			window.open("editIndicator_Links?fiscalYear=" + @fiscalYear, "popupWindow", "width=900,height=1000,scrollbars=yes");
+		});
+
+		$(document).on('click', '.menu-edit-allpdfs', function(e){
+			e.preventDefault();
+			window.open("viewPRPdf?fiscalYear=" + @fiscalYear + "&coeID=0", "popupWindow", "width=900,height=1000,scrollbars=yes");
 		});
 
 		$(document).on('click', '.menu-export', function(e){
@@ -1443,6 +1583,10 @@
 						//Use code Instead of ID
 						htmlContent += "<div class='menu-hover menu-dropdown-button' id ='" + value[field + "_Code"] + "' field='" + field + "'>" + value[field] + "</div>"
 					});
+								@if (Roles.IsUserInRole("Consultant"))
+		{
+					@:htmlContent += "<div class='menu-hover menu-dropdown-button' id ='newFiscalYear'>Add New Fiscal Year</div>"
+		}
 				}
 				htmlContent += "</div>";
 				$('.rowLong').after(htmlContent);
@@ -1461,34 +1605,38 @@
 			});
 		});
 
+		$(document).on('click', '#newFiscalYear', function(e){
+			window.location.href = "../indicator/addFiscalYear";
+		});
+
 		$(document).on('click', '.menu-dropdown-button', function(e){
 			var field = $(this).attr('field')
 			var id = $(this).attr('id');
 			var id1 = $(this).attr('id1');
-			var id2 = $(this).attr('id1');
+			var id2 = $(this).attr('id2');
 			if (id !== null){
 				if (field === "CoE"){
 					if (id1 == 0){
 						window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
-        			} else {
-        				window.location.href = "../indicator/viewPRdbl?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id1 + "&" + field + "ID2=" + id2;
-        			}
+					} else {
+						window.location.href = "../indicator/viewPRdbl?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id1 + "&" + field + "ID2=" + id2;
+					}
 				} else if (field === "Analyst"){
 					window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear&" + field + "ID=" + id;
-            	} else if (field === "Fiscal_Year"){
-            		currAddress = window.location.href
-            		currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
-            		currAddress = currAddress + "&fiscalYear=" + id;
-            		window.location.href = currAddress;
-            	}
+				} else if (field === "Fiscal_Year"){
+					currAddress = window.location.href
+					currAddress = currAddress.replace(currAddress.substr(currAddress.indexOf('fiscalYear='),13),"")
+					currAddress = currAddress + "&fiscalYear=" + id;
+					window.location.href = currAddress;
+				}
 		} else {
 			if (field === "CoE"){
 				window.location.href = "../indicator/viewPR?fiscalYear=@ViewBag.fiscalYear"
 			} else if (field === "Analyst"){
 				window.location.href = "../indicator/editInventory?fiscalYear=@ViewBag.fiscalYear"
-            	}
-		}
-        });
+			}
+	}
+		});
 
 
 		function changeColor(indicatorID, colorID, row){
@@ -1679,7 +1827,7 @@ font-size:medium!important;
     .filter-button:hover {
         color:#0063FF;
     }
-    .filtered > div > span > i {
+    .fa-filtered {
         color:red;
     }
 

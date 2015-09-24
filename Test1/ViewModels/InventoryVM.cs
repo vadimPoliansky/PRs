@@ -79,6 +79,6 @@ namespace IndInv.Models.ViewModels
 		public bool N_Value { get; set; }
 		public string N_Value_ID { get; set; }
 
-		public string FY_Comment { get; set; }
+		public string Comment { get; set; }
     }
 }

@@ -52,6 +52,10 @@
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net40\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="itextsharp, Version=4.1.6.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\itextsharp.dll</HintPath>
@@ -214,6 +218,7 @@
     <Compile Include="ViewModels\AnalystVM.cs" />
     <Compile Include="ViewModels\CoE_NotesVM.cs" />
     <Compile Include="ViewModels\CoEsVM.cs" />
+    <Compile Include="ViewModels\Edit_Area_CoE_MapVM.cs" />
     <Compile Include="ViewModels\Edit_Indicator_LinksVM.cs" />
     <Compile Include="ViewModels\Indicator_LinksVM.cs" />
     <Compile Include="ViewModels\Link_CoEVM.cs" />
@@ -239,6 +244,7 @@
     <Content Include="App_Data\draft.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ICSharpCode.SharpZipLib.dll" />
     <Content Include="Images\draft.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -384,6 +390,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\DocumentFormat.OpenXml.xml" />
+    <Content Include="lib\ICSharpCode.SharpZipLib.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\itextsharp.dll" />
     <Content Include="lib\PdfSharp.dll" />
     <Content Include="lib\SpreadsheetLight.dll">
@@ -933,6 +942,9 @@
     <Content Include="Views\Indicator\editIndicator_Links.cshtml" />
     <Content Include="Views\Indicator\viewIndicator_Links.cshtml" />
     <Content Include="Views\Indicator\viewPRAll.cshtml" />
+    <Content Include="Views\Indicator\editAreaCoEMaps.cshtml" />
+    <Content Include="Views\Indicator\addFiscalYear.cshtml" />
+    <Content Include="Views\Indicator\addFiscalYearCmd.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Movies\Index.cshtml" />

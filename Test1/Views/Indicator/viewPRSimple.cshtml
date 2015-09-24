@@ -42,7 +42,7 @@
         <td rowspan="2", class="prheader prheader-1">@Html.DisplayNameFor(modelItem => Model.allMaps.First().Indicator.Indicator) </td>
         <td rowspan="2", class="prheader prheader-1 remove-in-corp">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_3", fiscalYear)).DisplayName</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_2", fiscalYear)).DisplayName</td>
-        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName YTD</td>
+        <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_1", fiscalYear)).DisplayName</td>
         <td rowspan="1", colspan ="5", class="prheader prheader-1">@FiscalYear.FYStrFull("FY_Header", fiscalYear)</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Target").DisplayName</td>
         <td rowspan="2", class="prheader prheader-1">@properties.GetMetadataForProperty(null, typeof(Indicators), FiscalYear.FYStrFull("FY_", fiscalYear) + "Performance_Threshold").DisplayName</td>
@@ -277,7 +277,7 @@
 				{
 					var cls = columns[i, 2];
 					if (skip) { cls = oldColumns[i, 2]; };
-					if (allNValues.Contains(map)) { cls = "prtd"; };
+					//if (allNValues.Contains(map)) { cls = "prtd"; };
 					if (columns[i, 4] != "0")
 					{
 						<td align="center" indicatorID="@map.Indicator_ID" field="@Html.Raw(columns[i, 3])" colspan="@colSpan" rowspan="@Html.Raw(columns[i, 4])" class="col-td prtd @Html.Raw(cls)">
@@ -356,8 +356,8 @@
     @{numCount = 1;}
     @foreach (var area_map in coe.Area_CoE_Map.Where(x => Model.allMaps.Where(y => y.Indicator.Area == x.Area).Where(y => y.CoE == coe).Any(y => @Model.Analyst_ID.HasValue ? y.Indicator.Analyst_ID == @Model.Analyst_ID : true)).Where(x => x.Fiscal_Year == fiscalYear).OrderBy(x => x.Area.Sort))
 	{
-		var colSpanArea = 5;
-		if (coeID == 31)
+		var colSpanArea = 6;
+        if (coeID == 60 || coeID == 61 || coeID == 31)
 		{
 			colSpanArea--;
 		}	
@@ -867,7 +867,7 @@
     		$(".remove-in-corp").hide();
     	}
     	if(@coeID == 31){
-    		$(".remove-in-periop").hide();
+    	    $(".PR .remove-in-periop").hide();
     	}
 
         var objectiveColumnWidth = $('table').first().width() / 2

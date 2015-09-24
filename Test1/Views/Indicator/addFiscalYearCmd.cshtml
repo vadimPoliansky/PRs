@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "addFiscalYearCmd";
+}
+<script src="~/Scripts/jquery-1.11.0.min.js"></script>
+<div id="warning"><h2>Done!</h2><p>Please refresh to view changes</p></div>
+
+<div id="warning2">
+	<button id="done">Return</button>
+</div>
+<style>
+
+	#warning, #warning2 {
+		text-align:center;
+	}
+
+	body {
+		background-color:#4cff00;
+	}
+
+</style>
+
+<script>
+
+	$('#done').on('click', function (e) {
+		history.go(-2);
+	});
+
+</script>

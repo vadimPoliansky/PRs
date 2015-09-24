@@ -1,0 +1,84 @@
+﻿@model IndInv.Models.ViewModels.Edit_Area_CoE_MapViewModel
+
+@{
+    ViewBag.Title = "editAreaCoEMaps";
+	var fiscalYear = Model.fiscalYear;
+}
+<script src="~/Scripts/jquery-1.11.0.min.js"></script>
+
+<table id="maps">
+	<tr>
+		<td>
+			<div class="newMapID">New:</div>
+		</td>
+		<td>
+			<select id="newCoE">
+				<option value=""> </option>
+				@foreach (var coe in Model.allCoEs.OrderBy(x => x.CoE_Abbr))
+	{
+	 				<option value="@coe.CoE_ID"> @Html.Raw(coe.CoE_Abbr)</option>
+				}
+			</select>
+		</td>
+		<td>
+			<select id="newArea">
+				<option value=""> </option>
+				@foreach(var area in Model.allAreas.OrderBy(x=>x.Area)){
+	 				<option value="@area.Area_ID"> @Html.Raw(area.Area)</option>
+				}
+			</select>
+		</td>
+		<td>
+			<button id='addmap'>Add</button>
+		</td>
+	</tr>
+	@foreach (var map in Model.allAreaCoEMaps.OrderBy(x=>x.CoE.CoE_Abbr))
+ {
+	<tr id="trMapID_@map.Map_ID">
+		<td>
+			@map.Map_ID:
+		</td>
+		<td>
+			<select>
+				<option selected="selected" value="@map.CoE_ID"> @Html.Raw(map.CoE.CoE_Abbr)</option>
+				@foreach(var coe in Model.allCoEs.Where(x=>x.CoE_ID != map.CoE_ID).OrderBy(x=>x.CoE_Abbr)){
+	 				<option value="@coe.CoE_ID"> @Html.Raw(coe.CoE_Abbr)</option>
+				}
+			</select>
+		</td>
+		<td>
+			<select>
+				<option selected="selected" value="@map.Area_ID"> @Html.Raw(map.Area.Area)</option>
+				@foreach(var area in Model.allAreas.Where(x=>x.Area_ID != map.Area_ID).OrderBy(x=>x.Area)){
+	 				<option value="@area.Area_ID"> @Html.Raw(area.Area)</option>
+				}
+			</select>
+		</td>
+		<td>
+			<button class='deletemap' mapID="@map.Map_ID">Delete</button>
+		</td>
+	</tr>
+  }
+</table>
+
+<script>
+	$('.deletemap').on('click', function (e) {
+		var mapID = $(this).attr('mapID');
+		var trID = '#trMapID_' + mapID;
+		$.post('deleteAreaCoEMaps', {fiscalYear: @fiscalYear, mapID: mapID}, function (result) {
+			$(trID).remove();
+		});
+	});
+
+	$('#addmap').on('click', function (e) {
+			var newCoEEle = document.getElementById("newCoE");
+			var coeID= newCoEEle.options[newCoEEle.selectedIndex].value;
+
+			var newAreaEle = document.getElementById("newArea");
+			var areaID= newAreaEle.options[newAreaEle.selectedIndex].value;
+
+			$.post('newAreaCoEMap', {fiscalYear: @fiscalYear, coeID: coeID, areaID: areaID }, function (result) {
+				location = location.href
+			});
+	});
+</script>
